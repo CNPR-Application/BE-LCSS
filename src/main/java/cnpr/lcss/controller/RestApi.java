@@ -16,6 +16,15 @@ public class RestApi {
     AccountService accountService;
 
     /**
+     * @return
+     * @apiNote welcome page
+     */
+    @RequestMapping(value = "/")
+    public String welcome() {
+        return "Welcome to LCSS - Language Center Support System!";
+    }
+
+    /**
      * @param loginRequestDto
      * @return
      * @throws Exception
