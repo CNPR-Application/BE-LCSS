@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,12 +34,15 @@ public class Branch implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Staff> staffs;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<TeachingBranch> teachingBranches;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Student> students;
 }
