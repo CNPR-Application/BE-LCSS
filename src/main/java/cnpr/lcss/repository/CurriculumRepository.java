@@ -11,4 +11,6 @@ import java.util.List;
 public interface CurriculumRepository extends JpaRepository<Curriculum, Integer> {
 
     List<Curriculum> findByCurriculumNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+    List<Curriculum> findByCurriculumCodeContainingIgnoreCase(String keyword, Pageable pageable);
 }
