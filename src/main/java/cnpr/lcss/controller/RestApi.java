@@ -52,4 +52,20 @@ public class RestApi {
         // pageNo starts at 0
         return curriculumService.findByCurriculumNameContains(keyword, pageNo, pageSize);
     }
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 14.0-search-curriculum-by-curriculum-code
+     * @author LamHNT - 2021.06.08
+     */
+    @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
+    public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
+                                                              @RequestParam(value = "pageNo") int pageNo,
+                                                              @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
+    }
 }
