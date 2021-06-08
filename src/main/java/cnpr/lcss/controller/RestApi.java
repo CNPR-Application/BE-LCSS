@@ -45,7 +45,7 @@ public class RestApi {
      * @apiNote 13.0-search-curriculum-by-curriculum-name
      * @author LamHNT - 2021.06.08
      */
-    @RequestMapping(value = "/curriculums", method = RequestMethod.GET)
+    @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
