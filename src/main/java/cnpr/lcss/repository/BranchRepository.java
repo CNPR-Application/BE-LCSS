@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface BranchRepository extends JpaRepository<Branch, String> {
 
-    List<Branch> findByBranchId(int branchId);
+    Branch findByBranchId(int branchId);
 }

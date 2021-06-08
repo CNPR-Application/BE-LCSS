@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -49,7 +50,9 @@ public class RestApi {
      * @throws Exception
      */
     @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Branch> findByBranchId(@PathVariable int branchId) {
+    public Branch findByBranchId(@PathVariable int branchId) {
         return branchService.getBranchByBranchId(branchId);
     }
+
+
 }
