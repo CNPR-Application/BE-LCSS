@@ -33,10 +33,9 @@ public class CurriculumService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> entities = curriculumRepository.findByCurriculumCodeContainingIgnoreCase(keyword, pageable);
-        List<CurriculumResponseDto> dtos = entities.stream().map(Curriculum::convertToDto).collect(Collectors.toList());
+        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCase(keyword, pageable);
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, dtos);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, curriculumList);
 
         return curPgResDtos;
     }
