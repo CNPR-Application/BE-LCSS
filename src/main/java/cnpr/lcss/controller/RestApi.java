@@ -1,5 +1,6 @@
 package cnpr.lcss.controller;
 
+import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.model.LoginResponseDto;
@@ -67,5 +68,10 @@ public class RestApi {
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
         return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
+    }
+
+    @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.GET)
+    public Curriculum getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
+        return curriculumService.findOneByCurriculumId(curriculumId);
     }
 }
