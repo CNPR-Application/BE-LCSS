@@ -40,7 +40,7 @@ public class Curriculum implements Serializable {
     private String learningOutcome;
 
     public CurriculumResponseDto convertToDto() {
-        CurriculumResponseDto curResDto = new CurriculumResponseDto(curriculumId, curriculumCode, curriculumName, image);
+        CurriculumResponseDto curResDto = new CurriculumResponseDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
         return curResDto;
     }
 }
