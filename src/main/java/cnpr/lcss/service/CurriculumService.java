@@ -1,14 +1,18 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
-import cnpr.lcss.errorMessageConfig.ErrorMessage;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.repository.CurriculumRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
 @Service
@@ -17,7 +21,7 @@ public class CurriculumService {
     @Autowired
     CurriculumRepository curriculumRepository;
 
-    ErrorMessage errorMessage;
+    private static final Logger logger = LoggerFactory.getLogger(CurriculumService.class);
 
     // Find Curriculums by Curriculum Name LIKE keyword
     public CurriculumPagingResponseDto findByCurriculumNameContains(String keyword, int pageNo, int pageSize) {
@@ -46,7 +50,11 @@ public class CurriculumService {
     }
 
     // Get Curriculum Details by Curriculum Id
-    public Curriculum findOneByCurriculumId(int curriculumId) throws Exception {
-        return curriculumRepository.findOneByCurriculumId(curriculumId);
+    public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
+        try {
+            return ResponseEntity.ok(curriculumRepository.findOneByCurriculumId(curriculumId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

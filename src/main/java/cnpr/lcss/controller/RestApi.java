@@ -1,12 +1,12 @@
 package cnpr.lcss.controller;
 
-import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.model.LoginResponseDto;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.CurriculumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -71,7 +71,7 @@ public class RestApi {
     }
 
     @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.GET)
-    public Curriculum getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
+    public ResponseEntity<?> getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
         return curriculumService.findOneByCurriculumId(curriculumId);
     }
 }
