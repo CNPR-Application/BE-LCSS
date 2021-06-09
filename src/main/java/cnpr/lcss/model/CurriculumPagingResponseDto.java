@@ -1,5 +1,6 @@
 package cnpr.lcss.model;
 
+import cnpr.lcss.dao.Curriculum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,5 @@ public class CurriculumPagingResponseDto {
 
     private int pageNo;
     private int pageSize;
-    private List<CurriculumResponseDto> curriculumResponseDtos;
+    private List<Curriculum> curriculumResponseDtos;
 }
