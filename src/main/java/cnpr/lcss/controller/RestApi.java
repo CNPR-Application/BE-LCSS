@@ -1,10 +1,12 @@
 package cnpr.lcss.controller;
 
 import cnpr.lcss.dao.Curriculum;
+import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.model.LoginResponseDto;
 import cnpr.lcss.service.AccountService;
+import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,8 @@ public class RestApi {
     AccountService accountService;
     @Autowired
     CurriculumService curriculumService;
+    @Autowired
+    BranchService branchService;
 
     /**
      * @return
@@ -73,5 +77,22 @@ public class RestApi {
     @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.GET)
     public Curriculum getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
         return curriculumService.findOneByCurriculumId(curriculumId);
+    }
+
+    /*-------------------------------BRANCH--------------------------------*/
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.0-search-branch-by-branch-name
+     * @author HuuNT - 2021.06.09
+     */
+    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
+    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                          @RequestParam(value = "pageNo") int pageNo,
+                                                          @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
     }
 }
