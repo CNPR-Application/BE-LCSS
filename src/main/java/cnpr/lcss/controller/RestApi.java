@@ -2,7 +2,6 @@ package cnpr.lcss.controller;
 
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.LoginRequestDto;
-import cnpr.lcss.model.LoginResponseDto;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.CurriculumService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class RestApi {
      * @author LamHNT - 2021.06.03
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public LoginResponseDto checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
+    public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
     }
 
