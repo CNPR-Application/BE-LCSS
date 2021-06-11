@@ -1,6 +1,7 @@
 package cnpr.lcss.controller;
 
 import cnpr.lcss.model.CurriculumPagingResponseDto;
+import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.CurriculumService;
@@ -91,5 +92,17 @@ public class RestApi {
     @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCurriculumByCurriculumId(@PathVariable int curriculumId) throws Exception {
         return curriculumService.deleteByCurriculumId(curriculumId);
+    }
+
+    /**
+     * @param newCur
+     * @return
+     * @throws Exception
+     * @apiNote 17.0-create-curriculum
+     * @author LamHNT - 2021.06.11
+     */
+    @RequestMapping(value = "/curriculums", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewCurriculum(@RequestBody CurriculumRequestDto newCur) throws Exception {
+        return curriculumService.createNewCurriculum(newCur);
     }
 }
