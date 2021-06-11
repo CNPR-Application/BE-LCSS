@@ -69,8 +69,27 @@ public class RestApi {
         return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
     }
 
+    /**
+     * @param curriculumId
+     * @return
+     * @throws Exception
+     * @apiNote 15.0-get-curriculum-details-by-curriculum-id
+     * @author LamHNT - 2021.06.09
+     */
     @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.GET)
     public ResponseEntity<?> getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
         return curriculumService.findOneByCurriculumId(curriculumId);
+    }
+
+    /**
+     * @param curriculumId
+     * @return
+     * @throws Exception
+     * @apiNote 16.0-delete-curriculum-by-curriculum-id
+     * @author LamHNT - 2021.06.10
+     */
+    @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteCurriculumByCurriculumId(@PathVariable int curriculumId) throws Exception {
+        return curriculumService.deleteByCurriculumId(curriculumId);
     }
 }
