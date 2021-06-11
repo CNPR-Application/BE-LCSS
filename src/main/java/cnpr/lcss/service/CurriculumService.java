@@ -3,8 +3,6 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.repository.CurriculumRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.ValidationException;
 import java.util.List;
 
 @Service
@@ -21,7 +18,7 @@ public class CurriculumService {
     @Autowired
     CurriculumRepository curriculumRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(CurriculumService.class);
+    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
 
     // Find Curriculums by Curriculum Name LIKE keyword
     public CurriculumPagingResponseDto findByCurriculumNameContains(String keyword, int pageNo, int pageSize) {
@@ -53,6 +50,27 @@ public class CurriculumService {
     public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
         try {
             return ResponseEntity.ok(curriculumRepository.findOneByCurriculumId(curriculumId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // Delete Curriculum by Curriculum Id
+    // Change isAvailable from True to False
+    public ResponseEntity<?> deleteByCurriculumId(int curriculumId) throws Exception {
+        try {
+            if (!curriculumRepository.existsById(curriculumId)) {
+                throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
+            } else {
+                Curriculum delCur = curriculumRepository.findOneByCurriculumId(curriculumId);
+                if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
+                    delCur.setIsAvailable(Boolean.FALSE);
+                    curriculumRepository.save(delCur);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
