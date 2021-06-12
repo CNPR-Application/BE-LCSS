@@ -110,6 +110,34 @@ public class CurriculumService {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+
+    // Update Curriculum by Curriculum id
+    public ResponseEntity<?> updateCurriculum(int curId, CurriculumRequestDto insCur) throws Exception {
+
+        try {
+            if (!curriculumRepository.existsById(curId)) {
+                throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
+            } else {
+                Curriculum updateCur = curriculumRepository.findOneByCurriculumId(curId);
+
+                updateCur.setCurriculumCode(insCur.getCurriculumCode().trim().replaceAll("\\s+", ""));
+                updateCur.setCurriculumName(insCur.getCurriculumName().trim());
+                updateCur.setDescription(insCur.getDescription().trim());
+                // KEEP THE CREATING DATE
+                updateCur.setCreatingDate(updateCur.getCreatingDate());
+                updateCur.setImage(insCur.getImage().trim());
+                updateCur.setLinkClip(insCur.getLinkClip().trim());
+                updateCur.setLearningOutcome(insCur.getLearningOutcome().trim());
+
+                curriculumRepository.save(updateCur);
+                return ResponseEntity.ok(Boolean.TRUE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }

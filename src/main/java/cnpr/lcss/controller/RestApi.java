@@ -105,4 +105,18 @@ public class RestApi {
     public ResponseEntity<?> createNewCurriculum(@RequestBody CurriculumRequestDto newCur) throws Exception {
         return curriculumService.createNewCurriculum(newCur);
     }
+
+    /**
+     * @param curriculumId
+     * @param insCur
+     * @return
+     * @throws Exception
+     * @apiNote 18.0-edit-curriculum-by-curriculum-id
+     * @author LamHNT - 2021.06.12
+     */
+    @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateCurriculumByCurriculumId(@PathVariable int curriculumId,
+                                                            @RequestBody CurriculumRequestDto insCur) throws Exception {
+        return curriculumService.updateCurriculum(curriculumId, insCur);
+    }
 }
