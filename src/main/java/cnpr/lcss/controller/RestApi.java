@@ -1,9 +1,11 @@
 package cnpr.lcss.controller;
 
+import cnpr.lcss.model.BranchRequestDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.service.AccountService;
+import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,8 @@ public class RestApi {
     AccountService accountService;
     @Autowired
     CurriculumService curriculumService;
-
+    @Autowired
+    BranchService branchService;
     /**
      * @return
      * @apiNote welcome page
@@ -104,5 +107,17 @@ public class RestApi {
     @RequestMapping(value = "/curriculums", method = RequestMethod.POST)
     public ResponseEntity<?> createNewCurriculum(@RequestBody CurriculumRequestDto newCur) throws Exception {
         return curriculumService.createNewCurriculum(newCur);
+    }
+    /**
+     * @apiNote AM11.0 - Create new branch
+     * @author HuuNT -12.06.2021
+     * @param
+     * @body new Branch
+     * @throws Exception
+     * @return true/false
+     */
+    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
+        return branchService.createNewBranch(newBranch);
     }
 }
