@@ -33,6 +33,7 @@ public class RestApi {
      * @apiNote 1.0-check-login
      * @author LamHNT - 2021.06.03
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
