@@ -3,12 +3,13 @@ package cnpr.lcss.controller;
 import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
+import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.model.LoginRequestDto;
-import cnpr.lcss.model.LoginResponseDto;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class RestApi {
      * @return
      * @apiNote welcome page
      */
+    @CrossOrigin
     @RequestMapping(value = "/")
     public String welcome() {
         return "Welcome to LCSS - Language Center Support System!";
@@ -37,8 +39,9 @@ public class RestApi {
      * @apiNote 1.0-check-login
      * @author LamHNT - 2021.06.03
      */
+    @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public LoginResponseDto checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
+    public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
     }
 
@@ -50,6 +53,7 @@ public class RestApi {
      * @apiNote 13.0-search-curriculum-by-curriculum-name
      * @author LamHNT - 2021.06.08
      */
+    @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
                                                               @RequestParam(value = "pageNo") int pageNo,
@@ -66,6 +70,7 @@ public class RestApi {
      * @apiNote 14.0-search-curriculum-by-curriculum-code
      * @author LamHNT - 2021.06.08
      */
+    @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
                                                               @RequestParam(value = "pageNo") int pageNo,
@@ -74,8 +79,16 @@ public class RestApi {
         return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
     }
 
+    /**
+     * @param curriculumId
+     * @return
+     * @throws Exception
+     * @apiNote 15.0-get-curriculum-details-by-curriculum-id
+     * @author LamHNT - 2021.06.09
+     */
+    @CrossOrigin
     @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.GET)
-    public Curriculum getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
+    public ResponseEntity<?> getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
         return curriculumService.findOneByCurriculumId(curriculumId);
     }
 
@@ -94,5 +107,46 @@ public class RestApi {
                                                           @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
         return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
+    }
+
+    /**
+     * @param curriculumId
+     * @return
+     * @throws Exception
+     * @apiNote 16.0-delete-curriculum-by-curriculum-id
+     * @author LamHNT - 2021.06.10
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteCurriculumByCurriculumId(@PathVariable int curriculumId) throws Exception {
+        return curriculumService.deleteByCurriculumId(curriculumId);
+    }
+
+    /**
+     * @param newCur
+     * @return
+     * @throws Exception
+     * @apiNote 17.0-create-curriculum
+     * @author LamHNT - 2021.06.11
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/curriculums", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewCurriculum(@RequestBody CurriculumRequestDto newCur) throws Exception {
+        return curriculumService.createNewCurriculum(newCur);
+    }
+
+    /**
+     * @param curriculumId
+     * @param insCur
+     * @return
+     * @throws Exception
+     * @apiNote 18.0-edit-curriculum-by-curriculum-id
+     * @author LamHNT - 2021.06.12
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/curriculums/{curriculumId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateCurriculumByCurriculumId(@PathVariable int curriculumId,
+                                                            @RequestBody CurriculumRequestDto insCur) throws Exception {
+        return curriculumService.updateCurriculum(curriculumId, insCur);
     }
 }
