@@ -1,6 +1,5 @@
 package cnpr.lcss.controller;
 
-import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
@@ -32,6 +31,8 @@ public class RestApi {
         return "Welcome to LCSS - Language Center Support System!";
     }
 
+    /*-------------------------------ACCOUNT--------------------------------*/
+
     /**
      * @param loginRequestDto
      * @return
@@ -44,6 +45,8 @@ public class RestApi {
     public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
     }
+
+    /*-------------------------------CURRICULUM--------------------------------*/
 
     /**
      * @param keyword
@@ -92,23 +95,6 @@ public class RestApi {
         return curriculumService.findOneByCurriculumId(curriculumId);
     }
 
-    /*-------------------------------BRANCH--------------------------------*/
-    /**
-     * @param keyword
-     * @param pageNo
-     * @param pageSize
-     * @return
-     * @apiNote 8.0-search-branch-by-branch-name
-     * @author HuuNT - 2021.06.09
-     */
-    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
-    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
-                                                          @RequestParam(value = "pageNo") int pageNo,
-                                                          @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
-    }
-
     /**
      * @param curriculumId
      * @return
@@ -148,5 +134,24 @@ public class RestApi {
     public ResponseEntity<?> updateCurriculumByCurriculumId(@PathVariable int curriculumId,
                                                             @RequestBody CurriculumRequestDto insCur) throws Exception {
         return curriculumService.updateCurriculum(curriculumId, insCur);
+    }
+
+    /*-------------------------------BRANCH--------------------------------*/
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.0-search-branch-by-branch-name
+     * @author HuuNT - 2021.06.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
+    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
     }
 }
