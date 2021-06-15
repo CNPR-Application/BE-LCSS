@@ -1,11 +1,7 @@
 package cnpr.lcss.controller;
 
 import cnpr.lcss.dao.Branch;
-import cnpr.lcss.model.BranchPagingResponseDto;
-import cnpr.lcss.model.BranchRequestDto;
-import cnpr.lcss.model.CurriculumPagingResponseDto;
-import cnpr.lcss.model.CurriculumRequestDto;
-import cnpr.lcss.model.LoginRequestDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
@@ -169,18 +165,31 @@ public class RestApi {
     public Branch findByBranchId(@PathVariable int branchId) {
         return branchService.findBranchByBranchId(branchId);
     }
-    
+
     /**
+     * @param
+     * @return true/false
+     * @throws Exception
      * @apiNote AM11.0 - Create new branch
      * @author HuuNT -12.06.2021
-     * @param
      * @body new Branch
-     * @throws Exception
-     * @return true/false
      */
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
     public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
         return branchService.createNewBranch(newBranch);
+    }
+
+    /**
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 10.0-delete-branch-by-id
+     * @author HuuNT- 2021.06.08
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
+        return branchService.deleteByBranchId(branchId);
     }
 }
