@@ -11,4 +11,6 @@ public interface BranchRepository extends JpaRepository<Branch, String> {
     List<Branch> findByBranchNameContainingIgnoreCase(String keyword, Pageable pageable);
     
     Branch findByBranchId(int branchId);
+    
+    Boolean existsBranchByBranchName(String branchName);
 }

@@ -2,6 +2,7 @@ package cnpr.lcss.controller;
 
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.BranchPagingResponseDto;
+import cnpr.lcss.model.BranchRequestDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.model.LoginRequestDto;
@@ -167,5 +168,19 @@ public class RestApi {
     @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Branch findByBranchId(@PathVariable int branchId) {
         return branchService.findBranchByBranchId(branchId);
+    }
+    
+    /**
+     * @apiNote AM11.0 - Create new branch
+     * @author HuuNT -12.06.2021
+     * @param
+     * @body new Branch
+     * @throws Exception
+     * @return true/false
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
+        return branchService.createNewBranch(newBranch);
     }
 }
