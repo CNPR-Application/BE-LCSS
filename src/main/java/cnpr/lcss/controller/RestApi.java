@@ -6,9 +6,8 @@ import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 
 @RestController
 public class RestApi {
@@ -46,12 +45,9 @@ public class RestApi {
      * @apiNote 10.0-delete-branch-by-id
      * @author HuuNT- 2021.06.08
      */
-    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Boolean> removeBranch(@PathVariable int branchId) {
-        HashMap<String, Boolean> map = new HashMap<>();
-        Boolean result = false;
-        result = branchService.removeBranch(branchId);
-        map.put("result", result);
-        return map;
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
+        return branchService.deleteByBranchId(branchId);
     }
 }
