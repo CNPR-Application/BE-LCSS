@@ -22,7 +22,7 @@ public class Branch implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "branch_id")
-    private int branchId;
+    private Integer branchId;
     @Column(name = "branch_name")
     private String branchName;
     @Column(name = "address")
