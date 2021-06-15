@@ -95,13 +95,28 @@ public class RestApi {
      * @return true/false
      * @throws Exception
      * @apiNote 11.0 - Create new branch
-     * @author HuuNT -12.06.2021
+     * @author HuuNT - 12.06.2021
      * @body new Branch
      */
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
     public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
         return branchService.createNewBranch(newBranch);
+    }
+
+    /**
+     * @param branchId
+     * @param insBranch
+     * @return
+     * @throws Exception
+     * @apiNote 12.0 - Update Branch by Branch Id
+     * @author LamHNT - 2021.06.15
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBranchByBranchId(@PathVariable int branchId,
+                                                    @RequestBody BranchRequestDto insBranch) throws Exception {
+        return branchService.updateBranch(branchId, insBranch);
     }
 
     /*-------------------------------CURRICULUM--------------------------------*/

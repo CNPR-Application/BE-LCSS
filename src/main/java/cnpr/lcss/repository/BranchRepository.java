@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface BranchRepository extends JpaRepository<Branch, String> {
+public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
     List<Branch> findByBranchNameContainingIgnoreCase(String keyword, Pageable pageable);
 
@@ -17,4 +17,6 @@ public interface BranchRepository extends JpaRepository<Branch, String> {
     Boolean existsBranchByBranchId(int branchId);
 
     Branch findOneByBranchId(int branchId);
+
+    Boolean existsById(int branchId);
 }
