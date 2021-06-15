@@ -45,6 +45,64 @@ public class RestApi {
         return accountService.checkLogin(loginRequestDto);
     }
 
+    /*-------------------------------BRANCH--------------------------------*/
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.0-search-branch-by-branch-name
+     * @author HuuNT - 2021.06.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
+    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
+    }
+
+    /**
+     * @param branchId: int
+     * @return branchdto
+     * @throws Exception
+     * @apiNote 9.0 - Search Branch by Branch ID
+     * @author HuuNT - 08.June.2021
+     */
+    @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Branch findByBranchId(@PathVariable int branchId) {
+        return branchService.findBranchByBranchId(branchId);
+    }
+
+    /**
+     * @param
+     * @return true/false
+     * @throws Exception
+     * @apiNote 11.0 - Create new branch
+     * @author HuuNT -12.06.2021
+     * @body new Branch
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
+        return branchService.createNewBranch(newBranch);
+    }
+
+    /**
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 10.0-delete-branch-by-id
+     * @author HuuNT- 2021.06.08
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
+        return branchService.deleteByBranchId(branchId);
+    }
+
     /*-------------------------------CURRICULUM--------------------------------*/
 
     /**
@@ -133,63 +191,5 @@ public class RestApi {
     public ResponseEntity<?> updateCurriculumByCurriculumId(@PathVariable int curriculumId,
                                                             @RequestBody CurriculumRequestDto insCur) throws Exception {
         return curriculumService.updateCurriculum(curriculumId, insCur);
-    }
-
-    /*-------------------------------BRANCH--------------------------------*/
-
-    /**
-     * @param keyword
-     * @param pageNo
-     * @param pageSize
-     * @return
-     * @apiNote 8.0-search-branch-by-branch-name
-     * @author HuuNT - 2021.06.09
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
-    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
-                                                      @RequestParam(value = "pageNo") int pageNo,
-                                                      @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
-    }
-
-    /**
-     * @param branchId: int
-     * @return branchdto
-     * @throws Exception
-     * @apiNote AS9.0 - Search Branch by Branch ID
-     * @author HuuNT - 08.June.2021
-     */
-    @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Branch findByBranchId(@PathVariable int branchId) {
-        return branchService.findBranchByBranchId(branchId);
-    }
-
-    /**
-     * @param
-     * @return true/false
-     * @throws Exception
-     * @apiNote AM11.0 - Create new branch
-     * @author HuuNT -12.06.2021
-     * @body new Branch
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
-        return branchService.createNewBranch(newBranch);
-    }
-
-    /**
-     * @param branchId
-     * @return
-     * @throws Exception
-     * @apiNote 10.0-delete-branch-by-id
-     * @author HuuNT- 2021.06.08
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
-        return branchService.deleteByBranchId(branchId);
     }
 }
