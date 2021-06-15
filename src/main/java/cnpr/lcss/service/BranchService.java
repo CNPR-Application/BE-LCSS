@@ -22,6 +22,8 @@ public class BranchService {
 
     private final String DUPLICATE_NAME = "Duplicate Branch Name!";
     private final String BRANCH_ID_DOES_NOT_EXIST = "Branch Id does not exist!";
+    String regex = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
+    private final String PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX = "Phone Number does not match syntax!";
 
     // Find Branch by Branch Name LIKE keyword
     public BranchPagingResponseDto findByBranchNameContainingIgnoreCase(String keyword, int pageNo, int pageSize) {
@@ -55,7 +57,11 @@ public class BranchService {
                 createBranch.setAddress(newBranch.getAddress().trim());
                 createBranch.setOpeningDate(newBranch.getOpeningDate());
                 createBranch.setIsAvailable(Boolean.TRUE);
-                createBranch.setPhone(newBranch.getPhone().trim());
+                if (!newBranch.getPhone().matches(regex)) {
+                    throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
+                } else {
+                    createBranch.setPhone(newBranch.getPhone().trim());
+                }
 
                 branchRepository.save(createBranch);
                 return ResponseEntity.ok(Boolean.TRUE);
@@ -85,6 +91,33 @@ public class BranchService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // Update Branch by Branch id
+    public ResponseEntity<?> updateBranch(int branchId, BranchRequestDto insBranch) throws Exception {
+        try {
+            if (!branchRepository.existsById(branchId)) {
+                throw new IllegalArgumentException(BRANCH_ID_DOES_NOT_EXIST);
+            } else {
+                Branch updateBranch = branchRepository.findOneByBranchId(branchId);
+
+                updateBranch.setBranchName(insBranch.getBranchName().trim());
+                updateBranch.setAddress(insBranch.getAddress().trim());
+                // KEEP THE OPENING DATE
+                updateBranch.setOpeningDate(updateBranch.getOpeningDate());
+                if (!insBranch.getPhone().matches(regex)) {
+                    throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
+                } else {
+                    updateBranch.setPhone(insBranch.getPhone().trim());
+                }
+
+                branchRepository.save(updateBranch);
+                return ResponseEntity.ok(Boolean.TRUE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
         }
     }
 }
