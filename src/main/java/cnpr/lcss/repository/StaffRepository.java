@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface StaffRepository extends JpaRepository<Staff, String> {
 
     @Query("SELECT s.branch.branchId FROM Staff s WHERE s.staffUsername = :username")
-    int findBranchIdByStaffUsername(@Param("username") String staffUsername);
+    Integer findBranchIdByStaffUsername(@Param("username") String staffUsername);
 
     @Query("SELECT s.branch.branchName FROM Staff s WHERE s.staffUsername = :username")
     String findBranchNameByStaffUsername(@Param("username") String staffUsername);
