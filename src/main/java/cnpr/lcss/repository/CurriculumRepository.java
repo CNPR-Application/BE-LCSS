@@ -15,4 +15,8 @@ public interface CurriculumRepository extends JpaRepository<Curriculum, Integer>
     List<Curriculum> findByCurriculumCodeContainingIgnoreCase(String keyword, Pageable pageable);
 
     Curriculum findOneByCurriculumId(int curriculumId);
+
+    Boolean existsCurriculumByCurriculumCode(String curriculumCode);
+
+    Boolean existsCurriculumByCurriculumName(String curriculumName);
 }

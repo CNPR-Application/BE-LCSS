@@ -1,7 +1,6 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Account;
-import cnpr.lcss.errorMessageConfig.ErrorMessage;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.model.LoginResponseDto;
 import cnpr.lcss.repository.AccountRepository;
@@ -9,6 +8,8 @@ import cnpr.lcss.repository.StaffRepository;
 import cnpr.lcss.repository.StudentRepository;
 import cnpr.lcss.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,16 +24,14 @@ public class AccountService {
     @Autowired
     TeacherRepository teacherRepository;
 
-    ErrorMessage errorMessage;
-
     // Check login
-    public LoginResponseDto checkLogin(LoginRequestDto loginRequest) throws Exception {
+    public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
         try {
             if (loginRequest.getUsername() == null || loginRequest.getUsername().isEmpty()
                     || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
-                throw new Exception(errorMessage.LackOfUsernameOrPassword());
+                throw new NullPointerException();
             } else {
                 if (accountRepository.existsById(loginRequest.getUsername())) {
                     Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
@@ -84,16 +83,16 @@ public class AccountService {
                             loginResponseDto.setExperience(null);
                             loginResponseDto.setRating(null);
                         }
+                        return ResponseEntity.ok(loginResponseDto);
                     } else {
-                        throw new Exception(errorMessage.PasswordNotMatch());
+                        throw new Exception();
                     }
                 } else {
-                    throw new Exception(errorMessage.UsernameNotExist(loginRequest.getUsername()));
+                    throw new Exception();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        return loginResponseDto;
     }
 }
