@@ -1,8 +1,7 @@
 package cnpr.lcss.controller;
 
-import cnpr.lcss.model.CurriculumPagingResponseDto;
-import cnpr.lcss.model.CurriculumRequestDto;
-import cnpr.lcss.model.LoginRequestDto;
+import cnpr.lcss.dao.Branch;
+import cnpr.lcss.model.*;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
@@ -31,6 +30,8 @@ public class RestApi {
         return "Welcome to LCSS - Language Center Support System!";
     }
 
+    /*-------------------------------ACCOUNT--------------------------------*/
+
     /**
      * @param loginRequestDto
      * @return
@@ -42,6 +43,38 @@ public class RestApi {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
+    }
+
+    /*-------------------------------BRANCH--------------------------------*/
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.0-search-branch-by-branch-name
+     * @author HuuNT - 2021.06.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
+    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
+    }
+
+    /**
+     * @param branchId: int
+     * @return branchdto
+     * @throws Exception
+     * @apiNote 9.0 - Search Branch by Branch ID
+     * @author HuuNT - 08.June.2021
+     */
+    @CrossOrigin
+    @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Branch findByBranchId(@PathVariable int branchId) {
+        return branchService.findBranchByBranchId(branchId);
     }
 
     /**
@@ -56,6 +89,22 @@ public class RestApi {
     public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
         return branchService.deleteByBranchId(branchId);
     }
+
+    /**
+     * @param
+     * @return true/false
+     * @throws Exception
+     * @apiNote 11.0 - Create new branch
+     * @author HuuNT -12.06.2021
+     * @body new Branch
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
+        return branchService.createNewBranch(newBranch);
+    }
+
+    /*-------------------------------CURRICULUM--------------------------------*/
 
     /**
      * @param keyword
