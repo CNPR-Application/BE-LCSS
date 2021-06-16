@@ -5,6 +5,7 @@ import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,10 @@ public class CurriculumService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         List<Curriculum> curriculumList = curriculumRepository.findByCurriculumNameContainingIgnoreCase(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findAll(pageable);
+        int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);
 
         return curPgResDtos;
     }
@@ -45,8 +48,10 @@ public class CurriculumService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCase(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findAll(pageable);
+        int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);
 
         return curPgResDtos;
     }

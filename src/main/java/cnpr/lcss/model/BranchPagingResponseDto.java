@@ -16,5 +16,6 @@ public class BranchPagingResponseDto {
 
     private int pageNo;
     private int pageSize;
+    private int pageTotal;
     private List<Branch> branchResponseDtos;
 }
