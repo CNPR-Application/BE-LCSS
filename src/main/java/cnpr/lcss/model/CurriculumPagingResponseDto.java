@@ -16,5 +16,6 @@ public class CurriculumPagingResponseDto {
 
     private int pageNo;
     private int pageSize;
+    private int pageTotal;
     private List<Curriculum> curriculumResponseDtos;
 }

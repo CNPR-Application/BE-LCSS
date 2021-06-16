@@ -5,6 +5,7 @@ import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.BranchRequestDto;
 import cnpr.lcss.repository.BranchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,10 @@ public class BranchService {
     @Autowired
     BranchRepository branchRepository;
 
+    private final String regex = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
+
     private final String DUPLICATE_NAME = "Duplicate Branch Name!";
     private final String BRANCH_ID_DOES_NOT_EXIST = "Branch Id does not exist!";
-    String regex = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     private final String PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX = "Phone Number does not match syntax!";
 
     // Find Branch by Branch Name LIKE keyword
@@ -32,8 +34,10 @@ public class BranchService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         List<Branch> branchList = branchRepository.findByBranchNameContainingIgnoreCase(keyword, pageable);
+        Page<Branch> page = branchRepository.findAll(pageable);
+        int pageTotal = page.getTotalPages();
 
-        BranchPagingResponseDto branchPagingResponseDto = new BranchPagingResponseDto(pageNo, pageSize, branchList);
+        BranchPagingResponseDto branchPagingResponseDto = new BranchPagingResponseDto(pageNo, pageSize, pageTotal, branchList);
 
         return branchPagingResponseDto;
     }
