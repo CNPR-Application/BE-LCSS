@@ -27,12 +27,12 @@ public class CurriculumService {
     private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
 
     // Find Curriculums by Curriculum Name LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumNameContains(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumNameContainsAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumNameContainingIgnoreCase(keyword, pageable);
+        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
         Page<Curriculum> page = curriculumRepository.findAll(pageable);
         int pageTotal = page.getTotalPages();
 
@@ -42,12 +42,12 @@ public class CurriculumService {
     }
 
     // Find Curriculums by Curriculum Code LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumCodeContains(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumCodeContainsAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCase(keyword, pageable);
+        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
         Page<Curriculum> page = curriculumRepository.findAll(pageable);
         int pageTotal = page.getTotalPages();
 

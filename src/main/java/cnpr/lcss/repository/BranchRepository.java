@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
-    List<Branch> findByBranchNameContainingIgnoreCase(String keyword, Pageable pageable);
+    List<Branch> findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, Pageable pageable);
 
     Branch findByBranchId(int branchId);
 

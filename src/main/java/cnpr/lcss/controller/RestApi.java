@@ -61,7 +61,7 @@ public class RestApi {
                                                       @RequestParam(value = "pageNo") int pageNo,
                                                       @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
+        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageNo, pageSize);
     }
 
     /**
@@ -135,7 +135,7 @@ public class RestApi {
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumNameContains(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumNameContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
     }
 
     /**
@@ -152,7 +152,7 @@ public class RestApi {
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumCodeContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
     }
 
     /**
