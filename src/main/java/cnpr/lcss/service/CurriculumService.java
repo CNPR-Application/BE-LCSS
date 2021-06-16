@@ -32,8 +32,8 @@ public class CurriculumService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
-        Page<Curriculum> page = curriculumRepository.findAll(pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        List<Curriculum> curriculumList = page.getContent();
         int pageTotal = page.getTotalPages();
 
         CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);
@@ -47,8 +47,8 @@ public class CurriculumService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
-        Page<Curriculum> page = curriculumRepository.findAll(pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        List<Curriculum> curriculumList = page.getContent();
         int pageTotal = page.getTotalPages();
 
         CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);

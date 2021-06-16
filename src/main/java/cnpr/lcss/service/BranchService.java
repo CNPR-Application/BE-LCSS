@@ -33,8 +33,8 @@ public class BranchService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Branch> branchList = branchRepository.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
-        Page<Branch> page = branchRepository.findAll(pageable);
+        Page<Branch> page = branchRepository.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        List<Branch> branchList = page.getContent();
         int pageTotal = page.getTotalPages();
 
         BranchPagingResponseDto branchPagingResponseDto = new BranchPagingResponseDto(pageNo, pageSize, pageTotal, branchList);
