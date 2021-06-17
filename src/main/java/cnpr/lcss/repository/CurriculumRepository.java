@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CurriculumRepository extends JpaRepository<Curriculum, Integer> {
+public interface    CurriculumRepository extends JpaRepository<Curriculum, Integer> {
 
     Page<Curriculum> findByCurriculumNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, Pageable pageable);
 

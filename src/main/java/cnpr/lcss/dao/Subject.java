@@ -1,5 +1,7 @@
 package cnpr.lcss.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "subject")
-public class Subject implements Serializable {
+public class    Subject implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +45,9 @@ public class Subject implements Serializable {
     @Column(name = "rating")
     private String rating;
 
-    @OneToMany(mappedBy = "subject")
+
+    @OneToMany(mappedBy = "subject",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<SubjectDetail> subjectDetailList;
 
     @ManyToOne
