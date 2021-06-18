@@ -2,16 +2,14 @@ package cnpr.lcss.model;
 
 import cnpr.lcss.dao.Curriculum;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class CurriculumPagingResponseDto {
 
     private int pageNo;

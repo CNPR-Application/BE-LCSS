@@ -5,6 +5,7 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
+import cnpr.lcss.service.SubjectDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public class RestApi {
     CurriculumService curriculumService;
     @Autowired
     BranchService branchService;
+    @Autowired
+    SubjectDetailService subjectDetailService;
 
     /**
      * @return
@@ -207,5 +210,23 @@ public class RestApi {
     public ResponseEntity<?> updateCurriculumByCurriculumId(@PathVariable int curriculumId,
                                                             @RequestBody CurriculumRequestDto insCur) throws Exception {
         return curriculumService.updateCurriculum(curriculumId, insCur);
+    }
+
+    /*-------------------------------CURRICULUM--------------------------------*/
+
+    /**
+     * @param subjectId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 26.0-search-subject-detail-by-subject-id
+     * @author LamHNT - 2021.06.18
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
+    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                                       @RequestParam(value = "pageNo") int pageNo,
+                                                                       @RequestParam(value = "pageSize") int pageSize) {
+        return subjectDetailService.findSubjectDetailBySubjectId(subjectId, pageNo, pageSize);
     }
 }
