@@ -1,17 +1,16 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.SubjectDetailDto;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "subject_detail")
 public class SubjectDetail implements Serializable {
@@ -27,7 +26,19 @@ public class SubjectDetail implements Serializable {
     @Column(name = "learning_outcome")
     private String learningOutcome;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    public SubjectDetail(int subjectDetailId, int weekNum, String weekDescription, String learningOutcome) {
+        this.subjectDetailId = subjectDetailId;
+        this.weekNum = weekNum;
+        this.weekDescription = weekDescription;
+        this.learningOutcome = learningOutcome;
+    }
+
+    public SubjectDetailDto convertToDto() {
+        SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, learningOutcome);
+        return subjectDetailDto;
+    }
 }
