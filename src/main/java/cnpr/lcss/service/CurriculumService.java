@@ -1,9 +1,11 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
+import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
+import cnpr.lcss.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +23,13 @@ public class CurriculumService {
 
     @Autowired
     CurriculumRepository curriculumRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
 
     private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
     private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
     private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
+    private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
 
     // Find Curriculums by Curriculum Name LIKE keyword
     public CurriculumPagingResponseDto findByCurriculumNameContainsAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
@@ -65,23 +70,53 @@ public class CurriculumService {
         }
     }
 
-    // Delete Curriculum by Curriculum Id
-    // Change isAvailable from True to False
+    /**
+     * Delete Curriculum by Curriculum Id
+     * ---
+     * Check whether all Curriculum's Subjects are available or not
+     * If there is one is available -> MUST NOT delete Curriculum
+     * Else, able to delete.
+     * ---
+     * DELETE = Change isAvailable from True to False
+     */
+
     public ResponseEntity<?> deleteByCurriculumId(int curriculumId) throws Exception {
+
+        Boolean curriculumAbleToDelete = true;
+
         try {
             if (!curriculumRepository.existsById(curriculumId)) {
                 throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
             } else {
                 Curriculum delCur = curriculumRepository.findOneByCurriculumId(curriculumId);
                 if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
-                    delCur.setIsAvailable(Boolean.FALSE);
-                    curriculumRepository.save(delCur);
+                    // Check whether this Curriculum has Subject(s)
+                    int noOfSubjects = subjectRepository.countByCurriculum_CurriculumId(curriculumId);
+
+                    List<Subject> subjectList = subjectRepository.findAllByCurriculum_CurriculumId(curriculumId);
+                    for (Subject subject : subjectList) {
+                        if (subject.isAvailable()) {
+                            curriculumAbleToDelete = false;
+                        }
+                    }
+
+                    if (noOfSubjects == 0
+                            || (noOfSubjects > 0 && curriculumAbleToDelete == true)) {
+                        delCur.setIsAvailable(Boolean.FALSE);
+                        curriculumRepository.save(delCur);
+                    } else if (noOfSubjects > 0 && curriculumAbleToDelete == false) {
+                        throw new Exception(CURRICULUM_UNABLE_TO_DELETE);
+                    } else {
+                        throw new Exception();
+                    }
+
                     return ResponseEntity.ok(Boolean.TRUE);
                 } else {
                     return ResponseEntity.ok(Boolean.FALSE);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
