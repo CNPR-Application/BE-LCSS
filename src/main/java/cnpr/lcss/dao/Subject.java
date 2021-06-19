@@ -47,4 +47,13 @@ public class Subject implements Serializable {
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
+
+    // Modify Getter & Setter
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }
