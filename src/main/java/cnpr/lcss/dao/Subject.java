@@ -44,13 +44,14 @@ public class    Subject implements Serializable {
     private int slotPerWeek;
     @Column(name = "rating")
     private String rating;
-
+    @Column(name="curriculum_id")
+    private int curriculumIdd;
 
     @OneToMany(mappedBy = "subject",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<SubjectDetail> subjectDetailList;
 
-    @ManyToOne
-    @JoinColumn(name = "curriculum_id")
-    private Curriculum curriculum;
+//    @ManyToOne
+//    @JoinColumn(name = "curriculum_id")
+//    private Curriculum curriculum;
 }

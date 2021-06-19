@@ -21,7 +21,7 @@ public class SubjectService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Subject> page = subjectRepository.findSubjectByCurriculum_CurriculumIdAndAndIsAvailableIsTrue(keyword, pageable);
+        Page<Subject> page = subjectRepository.findSubjectByCurriculumIddAndAndIsAvailableIsTrue(keyword, pageable);
         List<Subject> subjectList = page.getContent();
         int pageTotal = page.getTotalPages();
 

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface SubjectRepository extends JpaRepository<Subject,Integer> {
-    Page<Subject> findSubjectByCurriculum_CurriculumIdAndAndIsAvailableIsTrue(int keyword, Pageable pageable);
+    Page<Subject> findSubjectByCurriculumIddAndAndIsAvailableIsTrue(int keyword, Pageable pageable);
 
 
 }
