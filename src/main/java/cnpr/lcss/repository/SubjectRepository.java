@@ -12,4 +12,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     int countByCurriculum_CurriculumId(int curriculumId);
 
     List<Subject> findAllByCurriculum_CurriculumId(int curriculumId);
+
+    Subject findBySubjectId(int subjectId);
+
+    boolean findAvailableBySubjectId(int subjectId);
 }

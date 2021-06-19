@@ -71,13 +71,14 @@ public class CurriculumService {
     }
 
     /**
-     * Delete Curriculum by Curriculum Id
-     * ---
-     * Check whether all Curriculum's Subjects are available or not
-     * If there is one is available -> MUST NOT delete Curriculum
+     * Delete Curriculum by Curriculum Id.
+     * <p>
+     * Check whether all Curriculum's Subjects are available or not.
+     * <p>
+     * If there is one is available -> MUST NOT delete Curriculum.
      * Else, able to delete.
-     * ---
-     * DELETE = Change isAvailable from True to False
+     * <p>
+     * DELETE = Change isAvailable from True to False.
      */
 
     public ResponseEntity<?> deleteByCurriculumId(int curriculumId) throws Exception {
@@ -95,7 +96,7 @@ public class CurriculumService {
 
                     List<Subject> subjectList = subjectRepository.findAllByCurriculum_CurriculumId(curriculumId);
                     for (Subject subject : subjectList) {
-                        if (subject.isAvailable()) {
+                        if (subject.getIsAvailable()) {
                             curriculumAbleToDelete = false;
                         }
                     }
