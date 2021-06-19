@@ -230,6 +230,13 @@ public class RestApi {
         return subjectDetailService.findSubjectDetailBySubjectId(subjectId, pageNo, pageSize);
     }
 
+    /**
+     * @param newSubjectDetail
+     * @return
+     * @throws Exception
+     * @apiNote 28.0-create-new-subject-detail
+     * @author LamHNT - 2021.06.20
+     */
     @CrossOrigin
     @RequestMapping(value = "/subjects/details", method = RequestMethod.POST)
     public ResponseEntity<?> createNewSubjectDetail(@RequestBody SubjectDetailRequestDto newSubjectDetail) throws Exception {
