@@ -33,7 +33,7 @@ public class SubjectDetail implements Serializable {
     private Subject subject;
 
     /**
-     * --- modify constructor ---
+     * --- modify constructor, getter, setter ---
      */
 
     public SubjectDetail(int subjectDetailId, int weekNum, String weekDescription, boolean isAvailable, String learningOutcome) {
@@ -45,7 +45,15 @@ public class SubjectDetail implements Serializable {
     }
 
     public SubjectDetailDto convertToDto() {
-        SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, isAvailable, learningOutcome);
+        SubjectDetailDto subjectDetailDto = new SubjectDetailDto();
         return subjectDetailDto;
+    }
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 }
