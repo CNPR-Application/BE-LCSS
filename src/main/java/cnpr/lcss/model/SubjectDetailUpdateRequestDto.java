@@ -11,5 +11,14 @@ public class SubjectDetailUpdateRequestDto {
 
     private int weekNum;
     private String weekDescription;
+    private boolean isAvailable;
     private String learningOutcome;
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }

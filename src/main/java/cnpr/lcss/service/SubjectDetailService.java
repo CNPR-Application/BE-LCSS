@@ -93,6 +93,7 @@ public class SubjectDetailService {
 
                     updateSubjectDetail.setWeekNum(insSubjectDetail.getWeekNum());
                     updateSubjectDetail.setWeekDescription(insSubjectDetail.getWeekDescription().trim());
+                    updateSubjectDetail.setIsAvailable(insSubjectDetail.getIsAvailable());
                     updateSubjectDetail.setLearningOutcome(insSubjectDetail.getLearningOutcome().trim());
 
                     subjectDetailRepository.save(updateSubjectDetail);
