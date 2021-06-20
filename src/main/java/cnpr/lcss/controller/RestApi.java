@@ -231,6 +231,19 @@ public class RestApi {
     }
 
     /**
+     * @param subjectDetailId
+     * @return
+     * @throws Exception
+     * @apiNote 27.0-delete-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(@PathVariable int subjectDetailId) throws Exception {
+        return subjectDetailService.deleteSubjectDetailBySubjectDetailId(subjectDetailId);
+    }
+
+    /**
      * @param newSubjectDetail
      * @return
      * @throws Exception
