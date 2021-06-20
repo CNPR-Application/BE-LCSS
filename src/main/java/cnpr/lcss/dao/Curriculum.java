@@ -35,4 +35,6 @@ public class Curriculum implements Serializable {
     private String linkClip;
     @Column(name = "learning_outcome")
     private String learningOutcome;
+
+
 }

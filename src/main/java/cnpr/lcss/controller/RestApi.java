@@ -2,10 +2,7 @@ package cnpr.lcss.controller;
 
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.*;
-import cnpr.lcss.service.AccountService;
-import cnpr.lcss.service.BranchService;
-import cnpr.lcss.service.CurriculumService;
-import cnpr.lcss.service.SubjectDetailService;
+import cnpr.lcss.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +19,8 @@ public class RestApi {
     BranchService branchService;
     @Autowired
     SubjectDetailService subjectDetailService;
+    @Autowired
+    SubjectService subjectService;
 
     /**
      * @return
@@ -270,5 +269,23 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    /**-------------------------------SUBJECT--------------------------------**/
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 19.0-search-subject-by-subject-name
+     * @author HuuNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
+                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                              @RequestParam(value = "pageNo") int pageNo,
+                                                              @RequestParam(value = "pageSize") int pageSize) {
+
+        return subjectService.findBySubjectNameContainsAndIsAvailableIsTrue(keyword,isAvailable, pageNo, pageSize);
     }
 }
