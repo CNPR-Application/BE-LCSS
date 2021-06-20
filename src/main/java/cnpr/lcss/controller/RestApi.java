@@ -225,9 +225,10 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
     public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
                                                                        @RequestParam(value = "pageNo") int pageNo,
                                                                        @RequestParam(value = "pageSize") int pageSize) {
-        return subjectDetailService.findSubjectDetailBySubjectId(subjectId, pageNo, pageSize);
+        return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
     }
 
     /**

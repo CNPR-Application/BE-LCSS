@@ -10,17 +10,21 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, Integer> {
-
+    
     @Query(value = "SELECT " +
             "new SubjectDetail(sd.subjectDetailId, sd.weekNum, sd.weekDescription, sd.isAvailable, sd.learningOutcome) " +
             "FROM SubjectDetail sd " +
             "INNER JOIN Subject s ON sd.subject.subjectId = s.subjectId " +
-            "WHERE sd.subject.subjectId = s.subjectId",
+            "WHERE sd.subject.subjectId = :subjectId " +
+            "AND sd.isAvailable = :isAvailable",
             countQuery = "SELECT COUNT (sd.subjectDetailId) " +
                     "FROM SubjectDetail sd " +
                     "INNER JOIN Subject s ON sd.subject.subjectId = s.subjectId " +
-                    "WHERE sd.subject.subjectId = s.subjectId")
-    Page<SubjectDetail> findSubjectDetailBySubjectId(@Param(value = "subjectId") int subjectId, Pageable pageable);
+                    "WHERE sd.subject.subjectId = :subjectId " +
+                    "AND sd.isAvailable = :isAvailable")
+    Page<SubjectDetail> findSubjectDetailBySubjectIdAndIsAvailable(@Param(value = "subjectId") int subjectId,
+                                                                   @Param(value = "isAvailable") boolean isAvailable,
+                                                                   Pageable pageable);
 
     SubjectDetail findBySubjectDetailId(int subjectDetailId);
 }

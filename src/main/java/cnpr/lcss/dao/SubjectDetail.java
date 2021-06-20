@@ -45,7 +45,7 @@ public class SubjectDetail implements Serializable {
     }
 
     public SubjectDetailDto convertToDto() {
-        SubjectDetailDto subjectDetailDto = new SubjectDetailDto();
+        SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, isAvailable, learningOutcome);
         return subjectDetailDto;
     }
 

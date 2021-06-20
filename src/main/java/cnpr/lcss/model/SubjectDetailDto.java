@@ -18,7 +18,6 @@ public class SubjectDetailDto {
     /**
      * --- modify getter & setter ---
      */
-
     public boolean getIsAvailable() {
         return isAvailable;
     }
