@@ -31,6 +31,7 @@ public class SubjectDetailService {
     private final String SUBJECT_DOES_NOT_EXIST = "Subject Id does not exist!";
     private final String SUBJECT_UNAVAILABLE = "Subject is being disable!";
     private final String SUBJECT_DETAIL_ID_NOT_EXIST = "Subject Detail Id does not exist!";
+    private final String SUBJECT_DETAIL_UNAVAILABLE = "Subject Detail is currently UNAVAILABLE!";
 
     // Find Subject Detail by Subject Id
     public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, int pageNo, int pageSize) {
@@ -99,6 +100,31 @@ public class SubjectDetailService {
                     subjectDetailRepository.save(updateSubjectDetail);
                 } else {
                     throw new Exception(WEEK_NUM_MUST_BE_POSITIVE);
+                }
+            } else {
+                throw new IllegalArgumentException(SUBJECT_DETAIL_ID_NOT_EXIST);
+            }
+            return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+
+    // Delete Subject Detail by Subject Detail Id
+    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(int subjectDetailId) throws Exception {
+
+        try {
+            if (subjectDetailRepository.existsById(subjectDetailId)) {
+                // Find Subject Detail by Subject Detail Id
+                SubjectDetail subjectDetail = subjectDetailRepository.findBySubjectDetailId(subjectDetailId);
+                // Check whether subject detail is available or not
+                if (subjectDetail.getIsAvailable() == true) {
+                    // If being available, change to unavailable
+                    subjectDetail.setIsAvailable(false);
+                    subjectDetailRepository.save(subjectDetail);
+                } else {
+                    throw new Exception(SUBJECT_DETAIL_UNAVAILABLE);
                 }
             } else {
                 throw new IllegalArgumentException(SUBJECT_DETAIL_ID_NOT_EXIST);
