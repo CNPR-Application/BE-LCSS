@@ -21,4 +21,6 @@ public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, In
                     "INNER JOIN Subject s ON sd.subject.subjectId = s.subjectId " +
                     "WHERE sd.subject.subjectId = s.subjectId")
     Page<SubjectDetail> findSubjectDetailBySubjectId(@Param(value = "subjectId") int subjectId, Pageable pageable);
+
+    SubjectDetail findBySubjectDetailId(int subjectDetailId);
 }
