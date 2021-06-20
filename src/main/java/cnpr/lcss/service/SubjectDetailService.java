@@ -62,6 +62,7 @@ public class SubjectDetailService {
 
                         newSubjectDetail.setSubject(subject);
                         newSubjectDetail.setWeekNum(insSubjectDetail.getWeekNum());
+                        newSubjectDetail.setIsAvailable(true);
                         newSubjectDetail.setWeekDescription(insSubjectDetail.getWeekDescription().trim());
                         newSubjectDetail.setLearningOutcome(insSubjectDetail.getLearningOutcome().trim());
 
