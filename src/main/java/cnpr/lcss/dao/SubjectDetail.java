@@ -23,6 +23,8 @@ public class SubjectDetail implements Serializable {
     private int weekNum;
     @Column(name = "week_description")
     private String weekDescription;
+    @Column(name = "is_available")
+    private boolean isAvailable;
     @Column(name = "learning_outcome")
     private String learningOutcome;
 
@@ -30,15 +32,20 @@ public class SubjectDetail implements Serializable {
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    public SubjectDetail(int subjectDetailId, int weekNum, String weekDescription, String learningOutcome) {
+    /**
+     * --- modify constructor ---
+     */
+
+    public SubjectDetail(int subjectDetailId, int weekNum, String weekDescription, boolean isAvailable, String learningOutcome) {
         this.subjectDetailId = subjectDetailId;
         this.weekNum = weekNum;
         this.weekDescription = weekDescription;
+        this.isAvailable = isAvailable;
         this.learningOutcome = learningOutcome;
     }
 
     public SubjectDetailDto convertToDto() {
-        SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, learningOutcome);
+        SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, isAvailable, learningOutcome);
         return subjectDetailDto;
     }
 }
