@@ -242,4 +242,19 @@ public class RestApi {
     public ResponseEntity<?> createNewSubjectDetail(@RequestBody SubjectDetailRequestDto newSubjectDetail) throws Exception {
         return subjectDetailService.createNewSubjectDetail(newSubjectDetail);
     }
+
+    /**
+     * @param subjectDetailId
+     * @param subjectDetailUpdateRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 29.0-update-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
+                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+        return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
 }

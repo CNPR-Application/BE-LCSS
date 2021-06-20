@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, Integer> {
 
     @Query(value = "SELECT " +
-            "new SubjectDetail(sd.subjectDetailId, sd.weekNum, sd.weekDescription,sd.learningOutcome) " +
+            "new SubjectDetail(sd.subjectDetailId, sd.weekNum, sd.weekDescription, sd.isAvailable, sd.learningOutcome) " +
             "FROM SubjectDetail sd " +
             "INNER JOIN Subject s ON sd.subject.subjectId = s.subjectId " +
             "WHERE sd.subject.subjectId = s.subjectId",
@@ -21,4 +21,6 @@ public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, In
                     "INNER JOIN Subject s ON sd.subject.subjectId = s.subjectId " +
                     "WHERE sd.subject.subjectId = s.subjectId")
     Page<SubjectDetail> findSubjectDetailBySubjectId(@Param(value = "subjectId") int subjectId, Pageable pageable);
+
+    SubjectDetail findBySubjectDetailId(int subjectDetailId);
 }
