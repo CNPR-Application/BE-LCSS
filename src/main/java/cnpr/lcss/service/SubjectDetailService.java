@@ -34,12 +34,12 @@ public class SubjectDetailService {
     private final String SUBJECT_DETAIL_UNAVAILABLE = "Subject Detail is currently UNAVAILABLE!";
 
     // Find Subject Detail by Subject Id
-    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, int pageNo, int pageSize) {
+    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<SubjectDetail> page = subjectDetailRepository.findSubjectDetailBySubjectId(subjectId, pageable);
+        Page<SubjectDetail> page = subjectDetailRepository.findSubjectDetailBySubjectIdAndIsAvailable(subjectId, isAvailable, pageable);
         List<SubjectDetail> subjectDetailList = page.getContent();
         List<SubjectDetailDto> subjectDetailDtoList = subjectDetailList.stream().map(subjectDetail -> subjectDetail.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
