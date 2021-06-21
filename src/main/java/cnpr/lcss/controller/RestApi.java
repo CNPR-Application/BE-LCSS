@@ -285,10 +285,10 @@ public class RestApi {
     @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
     public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
                                                         @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
 
-        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
+        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
@@ -307,6 +307,6 @@ public class RestApi {
                                                         @RequestParam(value = "pageNo") int pageNo,
                                                         @RequestParam(value = "pageSize") int pageSize) {
 
-        return subjectService.findBySubjectCodeAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
+        return subjectService.findBySubjectCodeAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 }
