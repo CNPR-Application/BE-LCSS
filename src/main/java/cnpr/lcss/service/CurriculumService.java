@@ -139,7 +139,7 @@ public class CurriculumService {
                 if (curriculumRepository.existsCurriculumByCurriculumName(newCur.getCurriculumName()) == Boolean.TRUE) {
                     throw new Exception(DUPLICATE_NAME);
                 } else {
-                    Curriculum insCur = new Curriculum();
+                        Curriculum insCur = new Curriculum();
 
                     insCur.setCurriculumCode(newCur.getCurriculumCode().trim().replaceAll("\\s+", ""));
                     insCur.setCurriculumName(newCur.getCurriculumName().trim());

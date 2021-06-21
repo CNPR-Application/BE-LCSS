@@ -18,9 +18,10 @@ public class RestApi {
     @Autowired
     BranchService branchService;
     @Autowired
-    SubjectDetailService subjectDetailService;
-    @Autowired
     SubjectService subjectService;
+    @Autowired
+    SubjectDetailService subjectDetailService;
+
 
     /**
      * @return
@@ -213,6 +214,43 @@ public class RestApi {
         return curriculumService.updateCurriculum(curriculumId, insCur);
     }
 
+    /**-------------------------------SUBJECT--------------------------------**/
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 19.0-search-subject-by-subject-name
+     * @author HuuNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
+                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
+
+        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
+    }
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 21.0-search-subject-by-curriculum-id
+     * @author HuuNT - 2021.06.17
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "curriculumId", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
+                                                                @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                                @RequestParam(value = "pageNo") int pageNo,
+                                                                @RequestParam(value = "pageSize") int pageSize) {
+        return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
+    }
+
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**
@@ -271,23 +309,6 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
-    }
-    /**-------------------------------SUBJECT--------------------------------**/
-    /**
-     * @param keyword
-     * @param pageNo
-     * @param pageSize
-     * @return
-     * @apiNote 19.0-search-subject-by-subject-name
-     * @author HuuNT - 2021.06.21
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
-                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
 
-        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
     }
 }

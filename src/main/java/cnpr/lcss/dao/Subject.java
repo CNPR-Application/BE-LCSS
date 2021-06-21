@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "subject")
-public class Subject implements Serializable {
+public class    Subject implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +69,7 @@ public class Subject implements Serializable {
     }
 
     // Modify Getter & Setter
+
     public boolean getIsAvailable() {
         return isAvailable;
     }
