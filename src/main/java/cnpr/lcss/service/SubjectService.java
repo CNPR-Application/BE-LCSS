@@ -1,9 +1,6 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.dao.Subject;
-import cnpr.lcss.model.CurriculumPagingResponseDto;
-import cnpr.lcss.model.SubjectDetailDto;
 import cnpr.lcss.model.SubjectDto;
 import cnpr.lcss.model.SubjectPagingResponseDto;
 import cnpr.lcss.repository.SubjectRepository;
@@ -21,11 +18,11 @@ public class SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword,boolean isAvailable, int pageNo, int pageSize) {
+    public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Subject> page = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword,isAvailable, pageable);
+        Page<Subject> page = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
         List<Subject> subjectList = page.getContent();
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
 
@@ -35,11 +32,12 @@ public class SubjectService {
 
         return subPgResDtos;
     }
-    public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code,boolean isAvailable, int pageNo, int pageSize) {
+
+    public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Subject> page = subjectRepository.findBySubjectCodeAndIsAvailable(code,isAvailable, pageable);
+        Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
         List<Subject> subjectList = page.getContent();
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
 
