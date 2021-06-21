@@ -1,12 +1,10 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.SubjectDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,8 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "subject")
 public class    Subject implements Serializable {
@@ -53,6 +50,7 @@ public class    Subject implements Serializable {
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
+
     public Subject(String subjectCode, String subjectName, float price, Date creatingDate, String description, boolean isAvailable, String image, int slot, int slotPerWeek, String rating) {
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -70,6 +68,7 @@ public class    Subject implements Serializable {
         SubjectDto subjectDto = new SubjectDto(subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating);
         return subjectDto;
     }
+
 
     // Modify Getter & Setter
 
