@@ -17,11 +17,11 @@ public class SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public SubjectPagingResponseDto findSubjectByCurriculum_CurriculumIdAndAndIsAvailableIsTrue(int keyword, int pageNo, int pageSize) {
+    public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailableIsTrue(int keyword,boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Subject> page = subjectRepository.findSubjectByCurriculumIddAndAndIsAvailableIsTrue(keyword, pageable);
+        Page<Subject> page = subjectRepository.findByCurriculum_CurriculumIdAndIsAvailable(keyword,isAvailable,pageable);
         List<Subject> subjectList = page.getContent();
         int pageTotal = page.getTotalPages();
 
