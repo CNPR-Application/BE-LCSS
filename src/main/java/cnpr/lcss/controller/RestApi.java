@@ -21,8 +21,6 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     SubjectDetailService subjectDetailService;
-    @Autowired
-    SubjectService subjectService;
 
 
     /**
@@ -216,8 +214,25 @@ public class RestApi {
         return curriculumService.updateCurriculum(curriculumId, insCur);
     }
 
+    /**-------------------------------SUBJECT--------------------------------**/
 
-    //-------------------------SUBJECT-------------------------///
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 19.0-search-subject-by-subject-name
+     * @author HuuNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
+                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
+
+        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
+    }
 
     /**
      * @param keyword
@@ -233,71 +248,52 @@ public class RestApi {
                                                                 @RequestParam(value = "isAvailable") boolean isAvailable,
                                                                 @RequestParam(value = "pageNo") int pageNo,
                                                                 @RequestParam(value = "pageSize") int pageSize) {
-        return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword,isAvailable ,pageNo, pageSize);
+        return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
-        /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
-        /**
-         * @param subjectId
-         * @param pageNo
-         * @param pageSize
-         * @return
-         * @apiNote 26.0-search-subject-detail-by-subject-id
-         * @author LamHNT - 2021.06.18
-         */
-        @CrossOrigin
-        @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
-        public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId (
-        @RequestParam(value = "subjectId") int subjectId,
-        @RequestParam(value = "isAvailable") boolean isAvailable,
-        @RequestParam(value = "pageNo") int pageNo,
-        @RequestParam(value = "pageSize") int pageSize){
-            return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
-        }
+    /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
-        /**
-         * @param subjectDetailId
-         * @return
-         * @throws Exception
-         * @apiNote 27.0-delete-subject-detail-by-subject-detail-id
-         * @author LamHNT - 2021.06.21
-         */
-        @CrossOrigin
-        @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.DELETE)
-        public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId ( @PathVariable int subjectDetailId) throws
-        Exception {
-            return subjectDetailService.deleteSubjectDetailBySubjectDetailId(subjectDetailId);
-        }
+    /**
+     * @param subjectId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 26.0-search-subject-detail-by-subject-id
+     * @author LamHNT - 2021.06.18
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
+    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                                       @RequestParam(value = "pageNo") int pageNo,
+                                                                       @RequestParam(value = "pageSize") int pageSize) {
+        return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
+    }
 
-        /**
-         * @param newSubjectDetail
-         * @return
-         * @throws Exception
-         * @apiNote 28.0-create-new-subject-detail
-         * @author LamHNT - 2021.06.20
-         */
-        @CrossOrigin
-        @RequestMapping(value = "/subjects/details", method = RequestMethod.POST)
-        public ResponseEntity<?> createNewSubjectDetail (@RequestBody SubjectDetailRequestDto newSubjectDetail) throws
-        Exception {
-            return subjectDetailService.createNewSubjectDetail(newSubjectDetail);
-        }
+    /**
+     * @param subjectDetailId
+     * @return
+     * @throws Exception
+     * @apiNote 27.0-delete-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(@PathVariable int subjectDetailId) throws Exception {
+        return subjectDetailService.deleteSubjectDetailBySubjectDetailId(subjectDetailId);
+    }
 
-        /**
-         * @param subjectDetailId
-         * @param subjectDetailUpdateRequestDto
-         * @return
-         * @throws Exception
-         * @apiNote 29.0-update-subject-detail-by-subject-detail-id
-         * @author LamHNT - 2021.06.20
-         */
-        @CrossOrigin
-        @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
-        public ResponseEntity<?> updateSubjectDetail ( @PathVariable int subjectDetailId,
-        @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
-            return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
-
-        }
+    /**
+     * @param newSubjectDetail
+     * @return
+     * @throws Exception
+     * @apiNote 28.0-create-new-subject-detail
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewSubjectDetail(@RequestBody SubjectDetailRequestDto newSubjectDetail) throws Exception {
+        return subjectDetailService.createNewSubjectDetail(newSubjectDetail);
     }
 
     /**
@@ -313,25 +309,6 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
-    }
-    
-    /**-------------------------------SUBJECT--------------------------------**/
-    
-    /**
-     * @param keyword
-     * @param pageNo
-     * @param pageSize
-     * @return
-     * @apiNote 19.0-search-subject-by-subject-name
-     * @author HuuNT - 2021.06.21
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
-                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
 
-        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
     }
 }
