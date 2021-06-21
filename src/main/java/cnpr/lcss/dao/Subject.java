@@ -1,5 +1,7 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.SubjectDetailDto;
+import cnpr.lcss.model.SubjectDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,6 +49,24 @@ public class Subject implements Serializable {
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
+
+    public Subject(String subjectCode, String subjectName, float price, Date creatingDate, String description, boolean isAvailable, String image, int slot, int slotPerWeek, String rating) {
+        this.subjectCode = subjectCode;
+        this.subjectName = subjectName;
+        this.price = price;
+        this.creatingDate = creatingDate;
+        this.description = description;
+        this.isAvailable = isAvailable;
+        this.image = image;
+        this.slot = slot;
+        this.slotPerWeek = slotPerWeek;
+        this.rating = rating;
+
+    }
+    public SubjectDto convertToDto() {
+        SubjectDto subjectDto = new SubjectDto(subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating, curriculum.getCurriculumId());
+        return subjectDto;
+    }
 
     // Modify Getter & Setter
     public boolean getIsAvailable() {

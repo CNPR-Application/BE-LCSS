@@ -1,6 +1,10 @@
 package cnpr.lcss.repository;
 
+
 import cnpr.lcss.dao.Subject;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +20,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     Subject findBySubjectId(int subjectId);
 
     boolean findAvailableBySubjectId(int subjectId);
+
+    Page<Subject> findBySubjectNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable , Pageable pageable);
+
 }
