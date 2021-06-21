@@ -5,6 +5,7 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.AccountService;
 import cnpr.lcss.service.BranchService;
 import cnpr.lcss.service.CurriculumService;
+import cnpr.lcss.service.SubjectDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public class RestApi {
     CurriculumService curriculumService;
     @Autowired
     BranchService branchService;
+    @Autowired
+    SubjectDetailService subjectDetailService;
 
     /**
      * @return
@@ -30,7 +33,7 @@ public class RestApi {
         return "Welcome to LCSS - Language Center Support System!";
     }
 
-    /*-------------------------------ACCOUNT--------------------------------*/
+    /**-------------------------------ACCOUNT--------------------------------**/
 
     /**
      * @param loginRequestDto
@@ -45,7 +48,81 @@ public class RestApi {
         return accountService.checkLogin(loginRequestDto);
     }
 
-    /*-------------------------------CURRICULUM--------------------------------*/
+    /**-------------------------------BRANCH--------------------------------**/
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.0-search-branch-by-branch-name
+     * @author HuuNT - 2021.06.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
+    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+    }
+
+    /**
+     * @param branchId: int
+     * @return branchdto
+     * @throws Exception
+     * @apiNote 9.0 - Search Branch by Branch ID
+     * @author HuuNT - 08.June.2021
+     */
+    @CrossOrigin
+    @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Branch findByBranchId(@PathVariable int branchId) {
+        return branchService.findBranchByBranchId(branchId);
+    }
+
+    /**
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 10.0-delete-branch-by-id
+     * @author HuuNT- 2021.06.08
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
+        return branchService.deleteByBranchId(branchId);
+    }
+
+    /**
+     * @param
+     * @return true/false
+     * @throws Exception
+     * @apiNote 11.0 - Create new branch
+     * @author HuuNT - 12.06.2021
+     * @body new Branch
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
+        return branchService.createNewBranch(newBranch);
+    }
+
+    /**
+     * @param branchId
+     * @param insBranch
+     * @return
+     * @throws Exception
+     * @apiNote 12.0 - Update Branch by Branch Id
+     * @author LamHNT - 2021.06.15
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBranchByBranchId(@PathVariable int branchId,
+                                                    @RequestBody BranchRequestDto insBranch) throws Exception {
+        return branchService.updateBranch(branchId, insBranch);
+    }
+
+    /**-------------------------------CURRICULUM--------------------------------**/
 
     /**
      * @param keyword
@@ -61,7 +138,7 @@ public class RestApi {
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumNameContains(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumNameContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
     }
 
     /**
@@ -78,7 +155,7 @@ public class RestApi {
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumCodeContains(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumCodeContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
     }
 
     /**
@@ -135,61 +212,63 @@ public class RestApi {
         return curriculumService.updateCurriculum(curriculumId, insCur);
     }
 
-    /*-------------------------------BRANCH--------------------------------*/
+    /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**
-     * @param keyword
+     * @param subjectId
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 8.0-search-branch-by-branch-name
-     * @author HuuNT - 2021.06.09
+     * @apiNote 26.0-search-subject-detail-by-subject-id
+     * @author LamHNT - 2021.06.18
      */
     @CrossOrigin
-    @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
-    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
-                                                      @RequestParam(value = "pageNo") int pageNo,
-                                                      @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCase(keyword, pageNo, pageSize);
+    @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
+    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                                       @RequestParam(value = "pageNo") int pageNo,
+                                                                       @RequestParam(value = "pageSize") int pageSize) {
+        return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
     }
 
     /**
-     * @param branchId: int
-     * @return branchdto
-     * @throws Exception
-     * @apiNote AS9.0 - Search Branch by Branch ID
-     * @author HuuNT - 08.June.2021
-     */
-    @RequestMapping(value = "admin/branches/{branchId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Branch findByBranchId(@PathVariable int branchId) {
-        return branchService.findBranchByBranchId(branchId);
-    }
-
-    /**
-     * @param
-     * @return true/false
-     * @throws Exception
-     * @apiNote AM11.0 - Create new branch
-     * @author HuuNT -12.06.2021
-     * @body new Branch
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/admin/branches", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
-        return branchService.createNewBranch(newBranch);
-    }
-
-    /**
-     * @param branchId
+     * @param subjectDetailId
      * @return
      * @throws Exception
-     * @apiNote 10.0-delete-branch-by-id
-     * @author HuuNT- 2021.06.08
+     * @apiNote 27.0-delete-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.21
      */
     @CrossOrigin
-    @RequestMapping(value = "/admin/branches/{branchId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
-        return branchService.deleteByBranchId(branchId);
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(@PathVariable int subjectDetailId) throws Exception {
+        return subjectDetailService.deleteSubjectDetailBySubjectDetailId(subjectDetailId);
+    }
+
+    /**
+     * @param newSubjectDetail
+     * @return
+     * @throws Exception
+     * @apiNote 28.0-create-new-subject-detail
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewSubjectDetail(@RequestBody SubjectDetailRequestDto newSubjectDetail) throws Exception {
+        return subjectDetailService.createNewSubjectDetail(newSubjectDetail);
+    }
+
+    /**
+     * @param subjectDetailId
+     * @param subjectDetailUpdateRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 29.0-update-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
+                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+        return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
     }
 }
