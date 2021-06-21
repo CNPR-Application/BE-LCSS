@@ -7,12 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurriculumRequestDto {
+public class SubjectDetailRequestDto {
 
-    private String curriculumCode;
-    private String curriculumName;
-    private String description;
-    private String image;
-    private String linkClip;
+    private int subjectId;
+    private int weekNum;
+    private String weekDescription;
     private String learningOutcome;
 }

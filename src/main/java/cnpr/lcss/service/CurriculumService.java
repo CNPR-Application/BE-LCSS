@@ -1,10 +1,14 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
+import cnpr.lcss.dao.Subject;
+import cnpr.lcss.model.CurriculumDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
+import cnpr.lcss.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,39 +18,49 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CurriculumService {
 
     @Autowired
     CurriculumRepository curriculumRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
 
     private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
     private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
     private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
+    private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
 
     // Find Curriculums by Curriculum Name LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumNameContains(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumNameContainingIgnoreCase(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
+        List<Curriculum> curriculumList = page.getContent();
+        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
 
         return curPgResDtos;
     }
 
     // Find Curriculums by Curriculum Code LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumCodeContains(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        List<Curriculum> curriculumList = curriculumRepository.findByCurriculumCodeContainingIgnoreCase(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
+        List<Curriculum> curriculumList = page.getContent();
+        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
 
         return curPgResDtos;
     }
@@ -60,23 +74,54 @@ public class CurriculumService {
         }
     }
 
-    // Delete Curriculum by Curriculum Id
-    // Change isAvailable from True to False
+    /**
+     * Delete Curriculum by Curriculum Id.
+     * <p>
+     * Check whether all Curriculum's Subjects are available or not.
+     * <p>
+     * If there is one is available -> MUST NOT delete Curriculum.
+     * Else, able to delete.
+     * <p>
+     * DELETE = Change isAvailable from True to False.
+     */
+
     public ResponseEntity<?> deleteByCurriculumId(int curriculumId) throws Exception {
+
+        Boolean curriculumAbleToDelete = true;
+
         try {
             if (!curriculumRepository.existsById(curriculumId)) {
                 throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
             } else {
                 Curriculum delCur = curriculumRepository.findOneByCurriculumId(curriculumId);
-                if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
-                    delCur.setIsAvailable(Boolean.FALSE);
-                    curriculumRepository.save(delCur);
+                if (delCur.getIsAvailable()) {
+                    // Check whether this Curriculum has Subject(s)
+                    int noOfSubjects = subjectRepository.countByCurriculum_CurriculumId(curriculumId);
+
+                    List<Subject> subjectList = subjectRepository.findAllByCurriculum_CurriculumId(curriculumId);
+                    for (Subject subject : subjectList) {
+                        if (subject.getIsAvailable()) {
+                            curriculumAbleToDelete = false;
+                        }
+                    }
+
+                    if (noOfSubjects == 0
+                            || (noOfSubjects > 0 && curriculumAbleToDelete == true)) {
+                        delCur.setIsAvailable(Boolean.FALSE);
+                        curriculumRepository.save(delCur);
+                    } else if (noOfSubjects > 0 && curriculumAbleToDelete == false) {
+                        throw new Exception(CURRICULUM_UNABLE_TO_DELETE);
+                    } else {
+                        throw new Exception();
+                    }
+
                     return ResponseEntity.ok(Boolean.TRUE);
                 } else {
                     return ResponseEntity.ok(Boolean.FALSE);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
