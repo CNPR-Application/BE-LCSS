@@ -290,4 +290,23 @@ public class RestApi {
 
         return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
     }
+
+    /**
+     * @param keyword
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 20.0-search-subject-by-subject-code
+     * @author HuuNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByCode(@RequestParam(value = "code") String keyword,
+                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
+
+        return subjectService.findBySubjectCodeAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
+    }
 }

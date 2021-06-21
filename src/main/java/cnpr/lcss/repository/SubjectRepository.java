@@ -22,5 +22,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     boolean findAvailableBySubjectId(int subjectId);
 
     Page<Subject> findBySubjectNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable , Pageable pageable);
-
+    Page<Subject> findBySubjectCodeAndIsAvailable(String code,boolean isAvailable, Pageable pageable);
 }
