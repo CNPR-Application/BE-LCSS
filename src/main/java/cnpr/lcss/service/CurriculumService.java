@@ -2,6 +2,7 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.dao.Subject;
+import cnpr.lcss.model.CurriculumDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CurriculumService {
@@ -32,16 +34,18 @@ public class CurriculumService {
     private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
 
     // Find Curriculums by Curriculum Name LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumNameContainsAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumNameContainsAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
+        System.out.println(page);
         List<Curriculum> curriculumList = page.getContent();
+        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
 
         return curPgResDtos;
     }
@@ -54,9 +58,10 @@ public class CurriculumService {
 
         Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
         List<Curriculum> curriculumList = page.getContent();
+        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumList);
+        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
 
         return curPgResDtos;
     }
@@ -90,7 +95,7 @@ public class CurriculumService {
                 throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
             } else {
                 Curriculum delCur = curriculumRepository.findOneByCurriculumId(curriculumId);
-                if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
+                if (delCur.getIsAvailable()) {
                     // Check whether this Curriculum has Subject(s)
                     int noOfSubjects = subjectRepository.countByCurriculum_CurriculumId(curriculumId);
 
