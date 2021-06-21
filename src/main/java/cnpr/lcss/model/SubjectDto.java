@@ -20,6 +20,8 @@ public class SubjectDto {
     private int slot;
     private int slotPerWeek;
     private String rating;
+    private int curriculumId;
+
     /**
      * --- modify getter & setter ---
      */

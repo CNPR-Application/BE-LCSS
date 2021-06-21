@@ -64,7 +64,7 @@ public class Subject implements Serializable {
 
     }
     public SubjectDto convertToDto() {
-        SubjectDto subjectDto = new SubjectDto(subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating);
+        SubjectDto subjectDto = new SubjectDto(subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating, curriculum.getCurriculumId());
         return subjectDto;
     }
 

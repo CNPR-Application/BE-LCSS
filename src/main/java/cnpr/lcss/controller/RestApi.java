@@ -286,6 +286,6 @@ public class RestApi {
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
 
-        return subjectService.findBySubjectNameContainsAndIsAvailableIsTrue(keyword,isAvailable, pageNo, pageSize);
+        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
     }
 }

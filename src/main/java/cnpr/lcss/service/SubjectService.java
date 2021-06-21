@@ -21,7 +21,7 @@ public class SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailableIsTrue(String keyword,boolean isAvailable, int pageNo, int pageSize) {
+    public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword,boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
