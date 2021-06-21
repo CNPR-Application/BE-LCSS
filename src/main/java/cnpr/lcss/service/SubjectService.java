@@ -48,4 +48,19 @@ public class SubjectService {
 
         return subjectPagingResponseDto;
     }
+
+    public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
+        List<Subject> subjectList = page.getContent();
+        List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
+
+        int pageTotal = page.getTotalPages();
+
+        SubjectPagingResponseDto subPgResDtos = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
+
+        return subPgResDtos;
+    }
 }
