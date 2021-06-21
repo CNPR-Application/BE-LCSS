@@ -9,18 +9,17 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SubjectDto {
-    private String subjectCode;
-    private String subjectName;
-    private float price;
-    private Date creatingDate;
-    private String description;
-    private boolean isAvailable;
-    private String image;
-    private int slot;
-    private int slotPerWeek;
-    private String rating;
+public class CurriculumDto {
+
     private int curriculumId;
+    private String curriculumCode;
+    private String curriculumName;
+    private String description;
+    private Date creatingDate;
+    private Boolean isAvailable;
+    private String image;
+    private String linkClip;
+    private String learningOutcome;
 
     /**
      * --- modify getter & setter ---

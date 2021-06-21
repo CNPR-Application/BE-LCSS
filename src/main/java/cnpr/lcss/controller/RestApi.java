@@ -2,11 +2,7 @@ package cnpr.lcss.controller;
 
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.*;
-import cnpr.lcss.service.AccountService;
-import cnpr.lcss.service.BranchService;
-import cnpr.lcss.service.CurriculumService;
-import cnpr.lcss.service.SubjectService;
-import cnpr.lcss.service.SubjectDetailService;
+import cnpr.lcss.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +21,8 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     SubjectDetailService subjectDetailService;
+    @Autowired
+    SubjectService subjectService;
 
 
     /**
@@ -139,10 +137,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
+                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumNameContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
@@ -156,10 +155,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
+                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumCodeContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
@@ -299,3 +299,39 @@ public class RestApi {
 
         }
     }
+
+    /**
+     * @param subjectDetailId
+     * @param subjectDetailUpdateRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 29.0-update-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
+                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+        return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    
+    /**-------------------------------SUBJECT--------------------------------**/
+    
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 19.0-search-subject-by-subject-name
+     * @author HuuNT - 2021.06.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
+    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
+                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                              @RequestParam(value = "pageNo") int pageNo,
+                                                              @RequestParam(value = "pageSize") int pageSize) {
+
+        return subjectService.findBySubjectNameContainsAndIsAvailable(keyword,isAvailable, pageNo, pageSize);
+    }
+}
