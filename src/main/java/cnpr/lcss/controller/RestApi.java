@@ -134,10 +134,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
+                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumNameContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
@@ -151,10 +152,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
     public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
+                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
                                                               @RequestParam(value = "pageNo") int pageNo,
                                                               @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return curriculumService.findByCurriculumCodeContainsAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return curriculumService.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
