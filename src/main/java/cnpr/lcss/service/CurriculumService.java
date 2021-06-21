@@ -174,6 +174,7 @@ public class CurriculumService {
                 updateCur.setDescription(insCur.getDescription().trim());
                 // KEEP THE CREATING DATE
                 updateCur.setCreatingDate(updateCur.getCreatingDate());
+                updateCur.setIsAvailable(insCur.getIsAvailable());
                 updateCur.setImage(insCur.getImage().trim());
                 updateCur.setLinkClip(insCur.getLinkClip().trim());
                 updateCur.setLearningOutcome(insCur.getLearningOutcome().trim());

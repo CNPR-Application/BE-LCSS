@@ -45,9 +45,9 @@ public class Curriculum implements Serializable {
     }
 
     public void setIsAvailable(boolean isAvailable) {
-        isAvailable = isAvailable;
+        this.isAvailable = isAvailable;
     }
-    
+
     public CurriculumDto convertToDto() {
         CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
         return curriculumDto;
