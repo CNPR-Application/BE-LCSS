@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class SubjectDto {
+    
     private int subjectId;
     private String subjectCode;
     private String subjectName;
@@ -32,6 +33,6 @@ public class SubjectDto {
     }
 
     public void setIsAvailable(boolean isAvailable) {
-        isAvailable = isAvailable;
+        this.isAvailable = isAvailable;
     }
 }

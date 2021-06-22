@@ -9,6 +9,7 @@ import cnpr.lcss.model.SubjectUpdateRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,16 +84,38 @@ public class SubjectService {
 
         return subPgResDtos;
     }
-    public ResponseEntity<?> findOneBySubjectId(int subjectId) throws Exception {
+
+    public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
+
         try {
-            Subject subject=subjectRepository.findBySubjectId(subjectId);
-            SubjectDto subjectDto=subject.convertToDto();
-            return ResponseEntity.ok(subjectDto);
+            if (subjectRepository.existsById(subjectId)) {
+                Map<String, Object> mapObj = new LinkedHashMap<>();
+
+                Subject subject = subjectRepository.findBySubjectId(subjectId);
+
+                mapObj.put("subjectId", subject.getSubjectId());
+                mapObj.put("subjectCode", subject.getSubjectCode());
+                mapObj.put("subjectName", subject.getSubjectName());
+                mapObj.put("price", subject.getPrice());
+                mapObj.put("creatingDate", subject.getCreatingDate());
+                mapObj.put("description", subject.getDescription());
+                mapObj.put("isAvailable", subject.getIsAvailable());
+                mapObj.put("image", subject.getImage());
+                mapObj.put("slot", subject.getSlot());
+                mapObj.put("slotPerWeek", subject.getSlotPerWeek());
+                mapObj.put("rating", subject.getRating());
+                mapObj.put("curriculumId", subject.getCurriculum().getCurriculumId());
+                mapObj.put("curriculumCode", subject.getCurriculum().getCurriculumCode());
+                mapObj.put("curriculumName", subject.getCurriculum().getCurriculumName());
+
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
@@ -127,6 +154,7 @@ public class SubjectService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+
     public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
 
         try {
@@ -138,10 +166,10 @@ public class SubjectService {
                     List<SubjectDetail> subjectDetailList = subjectDetailRepository.findSubjectDetailBySubject_SubjectId(subjectId);
                     for (SubjectDetail subjectDetail : subjectDetailList) {
                         subjectDetail.setIsAvailable(false);
-                        
+
                     }
-                        deleteSubject.setIsAvailable(Boolean.FALSE);
-                        subjectRepository.save(deleteSubject);
+                    deleteSubject.setIsAvailable(Boolean.FALSE);
+                    subjectRepository.save(deleteSubject);
                     return ResponseEntity.ok(Boolean.TRUE);
                 } else {
                     return ResponseEntity.ok(Boolean.FALSE);
