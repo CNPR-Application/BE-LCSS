@@ -3,6 +3,7 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.CurriculumRequestDto;
+import cnpr.lcss.model.SubjectCreateRequestDto;
 import cnpr.lcss.model.SubjectDto;
 import cnpr.lcss.model.SubjectPagingResponseDto;
 import cnpr.lcss.repository.CurriculumRepository;
@@ -29,7 +30,9 @@ public class SubjectService {
     private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
     private final String DUPLICATE_CODE = "Duplicate Subject Code!";
     private final String DUPLICATE_NAME = "Duplicate Subject Name!";
-
+    private final String INVALID_PRICE = "Price CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -77,7 +80,7 @@ public class SubjectService {
 
 
     @Transactional
-    public ResponseEntity<?> createNewSubject(SubjectDto newSub) throws Exception {
+    public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
 
         Date creatingDate = new Date();
 
@@ -91,7 +94,16 @@ public class SubjectService {
                 //NOT EXIST CURRICULUM then throw EXCEPTION
                 if(curriculumRepository.existsByCurriculumId(newSub.getCurriculumId()) == Boolean.FALSE) {
                     throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
-                } else {
+                }
+                if(newSub.getPrice()<=0) {
+                    throw new Exception(INVALID_PRICE);
+                }
+                if(newSub.getSlot()<=0) {
+                    throw new Exception(INVALID_SLOT);
+                }
+                if(newSub.getSlotPerWeek()<=0) {
+                    throw new Exception(INVALID_SLOT_PER_WEEK);
+                }else {
                     Subject insSub = new Subject();
 
                     insSub.setSubjectCode(newSub.getSubjectCode().trim().replaceAll("\\s+", ""));

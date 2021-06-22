@@ -281,7 +281,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewSubject(@RequestBody SubjectDto newSub) throws Exception {
+    public ResponseEntity<?> createNewSubject(@RequestBody SubjectCreateRequestDto newSub) throws Exception {
         return subjectService.createNewSubject(newSub);
     }
 
