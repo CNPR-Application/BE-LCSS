@@ -271,6 +271,19 @@ public class RestApi {
                                                                 @RequestParam(value = "pageSize") int pageSize) {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    /**
+     *
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 22.0-get-subject-detail
+     * @author HuuNT - 2021.06.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getSubjectInformation(@PathVariable int subjectId) throws Exception {
+        return subjectService.findOneBySubjectId(subjectId);
+    }
 
     /**
      * @param subjectId

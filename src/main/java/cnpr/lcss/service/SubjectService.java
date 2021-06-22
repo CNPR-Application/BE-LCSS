@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class SubjectService {
 
     @Autowired
     SubjectRepository subjectRepository;
+    @Autowired
+    SubjectDetailService subjectDetailService;
     @Autowired
     CurriculumRepository curriculumRepository;
 
@@ -73,6 +76,16 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+    public ResponseEntity<?> findOneBySubjectId(int subjectId) throws Exception {
+        try {
+            Subject subject=subjectRepository.findBySubjectId(subjectId);
+            SubjectDto subjectDto=subject.convertToDto();
+            return ResponseEntity.ok(subjectDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
@@ -101,7 +114,7 @@ public class SubjectService {
                 updateSubject.setSlotPerWeek(insSub.getSlotPerWeek());
                 updateSubject.setRating(insSub.getRating());
                 updateSubject.setCurriculum(curriculumRepository.findOneByCurriculumId(insSub.getCurriculumId()));
-                
+
                 subjectRepository.save(updateSubject);
 
                 return ResponseEntity.ok(Boolean.TRUE);
