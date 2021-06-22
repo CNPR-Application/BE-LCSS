@@ -1,5 +1,6 @@
 package cnpr.lcss.model;
 
+import cnpr.lcss.dao.Curriculum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class SubjectDto {
+    private int subjectId;
     private String subjectCode;
     private String subjectName;
     private float price;
@@ -20,7 +22,7 @@ public class SubjectDto {
     private int slot;
     private int slotPerWeek;
     private String rating;
-    private int curriculumId;
+    private Curriculum curriculum;
 
     /**
      * --- modify getter & setter ---
