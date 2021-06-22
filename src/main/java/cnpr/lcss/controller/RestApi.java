@@ -271,6 +271,20 @@ public class RestApi {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
 
+    /**
+     * @param
+     * @param
+     * @param
+     * @return
+     * @apiNote 24.0-create-subject
+     * @author HuuNT - 2022.06.17
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewSubject(@RequestBody SubjectDto newSub) throws Exception {
+        return subjectService.createNewSubject(newSub);
+    }
+
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**

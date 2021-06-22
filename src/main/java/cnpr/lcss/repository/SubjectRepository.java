@@ -18,12 +18,14 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Subject findBySubjectId(int subjectId);
 
-    boolean findAvailableBySubjectId(int subjectId);
-
     Page<Subject> findByCurriculum_CurriculumIdAndIsAvailable(int keyword, boolean isAvailable, Pageable pageable);
 
     Page<Subject> findBySubjectNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, Pageable pageable);
     
     Page<Subject> findBySubjectCodeContainingIgnoreCaseAndIsAvailable(String code, boolean isAvailable, Pageable pageable);
 
+
+    Boolean existsSubjectBySubjectCode(String subjectCode);
+
+    Boolean existsSubjectBySubjectName(String subjectName);
 }
