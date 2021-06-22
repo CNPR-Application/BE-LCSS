@@ -61,10 +61,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
     public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "isAvailable") boolean isAvailable,
                                                       @RequestParam(value = "pageNo") int pageNo,
                                                       @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
