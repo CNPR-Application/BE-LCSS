@@ -1,21 +1,28 @@
 package cnpr.lcss.model;
 
+import cnpr.lcss.dao.Curriculum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurriculumRequestDto {
-
-    private String curriculumCode;
-    private String curriculumName;
+public class SubjectDto {
+    private int subjectId;
+    private String subjectCode;
+    private String subjectName;
+    private float price;
+    private Date creatingDate;
     private String description;
     private boolean isAvailable;
     private String image;
-    private String linkClip;
-    private String learningOutcome;
+    private int slot;
+    private int slotPerWeek;
+    private String rating;
+    private Curriculum curriculum;
 
     /**
      * --- modify getter & setter ---
@@ -25,6 +32,6 @@ public class CurriculumRequestDto {
     }
 
     public void setIsAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
+        isAvailable = isAvailable;
     }
 }

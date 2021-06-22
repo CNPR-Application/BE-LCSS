@@ -9,10 +9,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurriculumPagingResponseDto {
+public class SubjectDetailPagingResponseDto {
 
     private int pageNo;
     private int pageSize;
     private int pageTotal;
-    private List<CurriculumDto> curriculumResponseDtos;
+    List<SubjectDetailDto> subjectDetailDtoList;
 }
