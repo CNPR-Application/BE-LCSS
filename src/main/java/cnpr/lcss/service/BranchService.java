@@ -27,13 +27,13 @@ public class BranchService {
     private final String BRANCH_ID_DOES_NOT_EXIST = "Branch Id does not exist!";
     private final String PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX = "Phone Number does not match syntax!";
 
-    // Find Branch by Branch Name LIKE keyword
-    public BranchPagingResponseDto findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
+    // Find Branch by Branch Name LIKE keyword And Is Available (true/false)
+    public BranchPagingResponseDto findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Branch> page = branchRepository.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        Page<Branch> page = branchRepository.findByBranchNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
         List<Branch> branchList = page.getContent();
         int pageTotal = page.getTotalPages();
 
