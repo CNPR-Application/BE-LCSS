@@ -270,7 +270,20 @@ public class RestApi {
                                                                 @RequestParam(value = "pageSize") int pageSize) {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
-
+    /**
+     * @param subjectId
+     * @param subjectUpdateRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 29.0-update-subject-detail-by-subject-detail-id
+     * @author LamHNT - 2021.06.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectId,
+                                                 @RequestBody SubjectUpdateRequestDto subjectUpdateRequestDto) throws Exception {
+        return subjectService.updateSubject(subjectId, subjectUpdateRequestDto);
+    }
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**
