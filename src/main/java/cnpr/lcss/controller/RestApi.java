@@ -299,7 +299,11 @@ public class RestApi {
                                                  @RequestBody SubjectUpdateRequestDto subjectUpdateRequestDto) throws Exception {
         return subjectService.updateSubject(subjectId, subjectUpdateRequestDto);
     }
-
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectBySubjectId(@PathVariable int subjectId) throws Exception {
+        return subjectService.deleteSubjectBySubjectId(subjectId);
+    }
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**
