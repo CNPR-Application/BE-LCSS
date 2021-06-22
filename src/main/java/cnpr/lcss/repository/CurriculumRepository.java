@@ -23,4 +23,5 @@ public interface    CurriculumRepository extends JpaRepository<Curriculum, Integ
     Boolean existsCurriculumByCurriculumCode(String curriculumCode);
 
     Boolean existsCurriculumByCurriculumName(String curriculumName);
+    Boolean existsCurriculumByCurriculumId(int curriculumId);
 }
