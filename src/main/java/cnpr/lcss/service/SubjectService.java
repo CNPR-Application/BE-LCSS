@@ -18,14 +18,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubjectService {
-    private final String SUBJECT_ID_DOES_NOT_EXIST= "Subject Id does not exist!";
-    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
-    private final String INVALID_PRICE = "Price CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
+
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
     CurriculumRepository curriculumRepository;
+
+    private final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
+    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
+    private final String INVALID_PRICE = "Price CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
 
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
@@ -71,19 +73,23 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
             if (!subjectRepository.existsById(subId)) {
                 throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
-            }if(subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(),subId) == Boolean.TRUE){
-               throw new Exception(DUPLICATE_NAME);
-            }if(insSub.getPrice()<=0){
-                throw new Exception(INVALID_PRICE);
-            }if(curriculumRepository.existsCurriculumByCurriculumId(insSub.getCurriculumId())==Boolean.FALSE){
-                throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
             }
-            else {
+            if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
+                throw new Exception(DUPLICATE_NAME);
+            }
+            if (insSub.getPrice() <= 0) {
+                throw new Exception(INVALID_PRICE);
+            }
+            if (curriculumRepository.existsCurriculumByCurriculumId(insSub.getCurriculumId()) == Boolean.FALSE) {
+                throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
+            } else {
                 Subject updateSubject = subjectRepository.findBySubjectId(subId);
+
                 updateSubject.setSubjectName(insSub.getSubjectName().trim());
                 updateSubject.setPrice(insSub.getPrice());
                 updateSubject.setDescription(insSub.getDescription().trim());
@@ -95,7 +101,9 @@ public class SubjectService {
                 updateSubject.setSlotPerWeek(insSub.getSlotPerWeek());
                 updateSubject.setRating(insSub.getRating());
                 updateSubject.setCurriculum(curriculumRepository.findOneByCurriculumId(insSub.getCurriculumId()));
+                
                 subjectRepository.save(updateSubject);
+
                 return ResponseEntity.ok(Boolean.TRUE);
             }
         } catch (Exception e) {

@@ -13,7 +13,6 @@ public class SubjectUpdateRequestDto {
 
     private String subjectName;
     private float price;
-    private Date creatingDate;
     private String description;
     private boolean isAvailable;
     private String image;
