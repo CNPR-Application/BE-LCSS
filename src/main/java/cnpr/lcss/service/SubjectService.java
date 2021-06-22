@@ -1,10 +1,13 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.dao.Subject;
+import cnpr.lcss.dao.SubjectDetail;
 import cnpr.lcss.model.SubjectDto;
 import cnpr.lcss.model.SubjectPagingResponseDto;
 import cnpr.lcss.model.SubjectUpdateRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
+import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +26,7 @@ public class SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
-    SubjectDetailService subjectDetailService;
+    SubjectDetailRepository subjectDetailRepository;
     @Autowired
     CurriculumRepository curriculumRepository;
 
@@ -122,6 +125,31 @@ public class SubjectService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+    public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
+
+        try {
+            if (!subjectRepository.existsById(subjectId)) {
+                throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
+            } else {
+                Subject deleteSubject = subjectRepository.findBySubjectId(subjectId);
+                if (deleteSubject.getIsAvailable()) {
+                    List<SubjectDetail> subjectDetailList = subjectDetailRepository.findSubjectDetailBySubject_SubjectId(subjectId);
+                    for (SubjectDetail subjectDetail : subjectDetailList) {
+                        subjectDetail.setIsAvailable(false);
+                        
+                    }
+                        deleteSubject.setIsAvailable(Boolean.FALSE);
+                        subjectRepository.save(deleteSubject);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
