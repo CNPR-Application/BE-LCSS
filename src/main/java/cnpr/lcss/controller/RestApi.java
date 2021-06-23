@@ -61,10 +61,11 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
     public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                      @RequestParam(value = "isAvailable") boolean isAvailable,
                                                       @RequestParam(value = "pageNo") int pageNo,
                                                       @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageNo, pageSize);
+        return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, isAvailable, pageNo, pageSize);
     }
 
     /**
@@ -272,17 +273,58 @@ public class RestApi {
     }
 
     /**
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 22.0-search-subject-by-subject-id
+     * @author HuuNT - 2021.06.22 / LamHNT - 2021.06.23
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchSubjectAndCurriculumInfoBySubjectId(@PathVariable int subjectId) throws Exception {
+        return subjectService.findSubjectAndCurriculumBySubjectId(subjectId);
+    }
+
+    /**
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 23.0-delete-subject-included-subject-detail
+     * @author HuuNT - 2021.06.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectBySubjectId(@PathVariable int subjectId) throws Exception {
+        return subjectService.deleteSubjectBySubjectId(subjectId);
+    }
+
+    /**
      * @param
      * @param
      * @param
      * @return
      * @apiNote 24.0-create-subject
-     * @author HuuNT - 2022.06.17
+     * @author HuuNT - 2021.06.17 / LamHNT - 2021.06.023
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", method = RequestMethod.POST)
     public ResponseEntity<?> createNewSubject(@RequestBody SubjectCreateRequestDto newSub) throws Exception {
         return subjectService.createNewSubject(newSub);
+    }
+
+    /**
+     * @param subjectId
+     * @param subjectUpdateRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 25.0-update-subject-by-subject-id
+     * @author HuuNT - 2021.06.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectId,
+                                                 @RequestBody SubjectUpdateRequestDto subjectUpdateRequestDto) throws Exception {
+        return subjectService.updateSubject(subjectId, subjectUpdateRequestDto);
     }
 
     /**-------------------------------SUBJECT DETAIL--------------------------------**/

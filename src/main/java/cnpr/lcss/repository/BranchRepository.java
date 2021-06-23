@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
-    Page<Branch> findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, Pageable pageable);
+    Page<Branch> findByBranchNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, Pageable pageable);
 
     Branch findByBranchId(int branchId);
 
