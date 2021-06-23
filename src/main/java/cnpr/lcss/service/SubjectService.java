@@ -168,7 +168,6 @@ public class SubjectService {
                     List<SubjectDetail> subjectDetailList = subjectDetailRepository.findSubjectDetailBySubject_SubjectId(subjectId);
                     for (SubjectDetail subjectDetail : subjectDetailList) {
                         subjectDetail.setIsAvailable(false);
-
                     }
                     deleteSubject.setIsAvailable(Boolean.FALSE);
                     subjectRepository.save(deleteSubject);
