@@ -1,7 +1,9 @@
 package cnpr.lcss.model;
 
 import cnpr.lcss.dao.Branch;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
