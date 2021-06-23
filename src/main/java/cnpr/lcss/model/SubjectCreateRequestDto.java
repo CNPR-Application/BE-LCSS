@@ -19,6 +19,5 @@ public class SubjectCreateRequestDto {
     private String image;
     private int slot;
     private int slotPerWeek;
-    private String rating;
     private int curriculumId;
 }
