@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface    CurriculumRepository extends JpaRepository<Curriculum, Integer> {
+public interface CurriculumRepository extends JpaRepository<Curriculum, Integer> {
 
     Page<Curriculum> findByCurriculumNameContainingIgnoreCaseAndIsAvailable(@Param("name") String name,
                                                                             @Param("isAvailable") boolean isAvailable,
@@ -23,4 +23,6 @@ public interface    CurriculumRepository extends JpaRepository<Curriculum, Integ
     Boolean existsCurriculumByCurriculumCode(String curriculumCode);
 
     Boolean existsCurriculumByCurriculumName(String curriculumName);
+
+    Boolean existsByCurriculumId(int curriculumId);
 }
