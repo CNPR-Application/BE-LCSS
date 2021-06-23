@@ -23,15 +23,14 @@ import java.util.stream.Collectors;
 @Service
 public class CurriculumService {
 
-    @Autowired
-    CurriculumRepository curriculumRepository;
-    @Autowired
-    SubjectRepository subjectRepository;
-
     private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
     private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
     private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
     private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
+    @Autowired
+    CurriculumRepository curriculumRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
 
     // Find Curriculums by Curriculum Name LIKE keyword
     public CurriculumPagingResponseDto findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {

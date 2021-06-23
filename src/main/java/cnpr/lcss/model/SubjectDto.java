@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class SubjectDto {
-    
+
     private int subjectId;
     private String subjectCode;
     private String subjectName;

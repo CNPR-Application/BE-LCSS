@@ -287,6 +287,33 @@ public class RestApi {
 
     /**
      * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 23.0-delete-subject-included-subject-detail
+     * @author HuuNT - 2021.06.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubjectBySubjectId(@PathVariable int subjectId) throws Exception {
+        return subjectService.deleteSubjectBySubjectId(subjectId);
+    }
+
+    /**
+     * @param
+     * @param
+     * @param
+     * @return
+     * @apiNote 24.0-create-subject
+     * @author HuuNT - 2021.06.17 / LamHNT - 2021.06.023
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewSubject(@RequestBody SubjectCreateRequestDto newSub) throws Exception {
+        return subjectService.createNewSubject(newSub);
+    }
+
+    /**
+     * @param subjectId
      * @param subjectUpdateRequestDto
      * @return
      * @throws Exception
@@ -300,11 +327,6 @@ public class RestApi {
         return subjectService.updateSubject(subjectId, subjectUpdateRequestDto);
     }
 
-    @CrossOrigin
-    @RequestMapping(value = "/subjects/{subjectId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteSubjectBySubjectId(@PathVariable int subjectId) throws Exception {
-        return subjectService.deleteSubjectBySubjectId(subjectId);
-    }
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
 
     /**
