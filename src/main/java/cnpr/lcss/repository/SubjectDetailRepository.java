@@ -31,6 +31,4 @@ public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, In
     List<SubjectDetail> findSubjectDetailBySubject_SubjectId(int subjectId);
 
     SubjectDetail findBySubjectDetailId(int subjectDetailId);
-
-    int countBySubjectDetailId(int subjectDetailId);
 }
