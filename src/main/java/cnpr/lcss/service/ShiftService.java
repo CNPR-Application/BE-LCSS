@@ -1,6 +1,7 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
+import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.ShiftDto;
 import cnpr.lcss.model.ShiftRequestDto;
 import cnpr.lcss.repository.ShiftRepository;
@@ -9,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 @Service
@@ -24,6 +29,7 @@ public class ShiftService {
     private final String DAY_OF_WEEK_PATTERN_ERROR = "DayOfWeek must be [MON-WED-FRI ,TUE-THU-SAT ,SAT-SUN]!";
     private final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
     private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
+    private final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
 
     // Create New Shift
     public ResponseEntity<?> createNewShift(ShiftRequestDto shiftRequestDto) throws Exception {
@@ -54,4 +60,29 @@ public class ShiftService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    // Find Shift by Shift Id
+    public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
+
+        try {
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+
+            if (shiftRepository.existsById(shiftId)) {
+                Shift shift = shiftRepository.findShiftByShiftId(shiftId);
+
+                String[] arrListStr = shift.getDescription().split(", ");
+
+                mapObj.put("shiftId", shift.getShiftId());
+                mapObj.put("dayOfWeek", arrListStr[0].trim());
+                mapObj.put("timeStart", arrListStr[1].trim());
+                mapObj.put("timeEnd", arrListStr[2].trim());
+            } else {
+                throw new IllegalArgumentException(SHIFT_ID_NOT_EXIST);
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

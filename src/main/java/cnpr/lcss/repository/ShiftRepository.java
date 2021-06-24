@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftRepository extends JpaRepository<Shift, Integer> {
-    
+
+    Shift findShiftByShiftId(int shiftId);
 }
