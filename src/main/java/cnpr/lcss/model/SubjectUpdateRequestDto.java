@@ -7,19 +7,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurriculumRequestDto {
+public class SubjectUpdateRequestDto {
 
-    private String curriculumCode;
-    private String curriculumName;
+    private String subjectName;
+    private float price;
     private String description;
     private boolean isAvailable;
     private String image;
-    private String linkClip;
-    private String learningOutcome;
+    private int slot;
+    private int slotPerWeek;
+    private String rating;
+    private int curriculumId;
 
-    /**
-     * --- modify getter & setter ---
-     */
     public boolean getIsAvailable() {
         return isAvailable;
     }

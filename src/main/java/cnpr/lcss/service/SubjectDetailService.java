@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +23,17 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectDetailService {
 
-    @Autowired
-    SubjectDetailRepository subjectDetailRepository;
-    @Autowired
-    SubjectRepository subjectRepository;
-
     private final String WEEK_NUM_MUST_BE_POSITIVE = "Number of weeks must be larger than 0!";
     private final String SUBJECT_DOES_NOT_EXIST = "Subject Id does not exist!";
     private final String SUBJECT_UNAVAILABLE = "Subject is being disable!";
     private final String SUBJECT_DETAIL_ID_NOT_EXIST = "Subject Detail Id does not exist!";
     private final String SUBJECT_DETAIL_UNAVAILABLE = "Subject Detail is currently UNAVAILABLE!";
+    private final String WEEK_NUM_REACH_LIMIT = "Number of weeks for this Subject are at their limit!";
+
+    @Autowired
+    SubjectDetailRepository subjectDetailRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
 
     // Find Subject Detail by Subject Id
     public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
@@ -58,18 +60,25 @@ public class SubjectDetailService {
                 Subject subject = subjectRepository.findBySubjectId(insSubjectDetail.getSubjectId());
                 boolean availableSubject = subject.getIsAvailable();
                 if (availableSubject) {
-                    if (insSubjectDetail.getWeekNum() > 0) {
-                        SubjectDetail newSubjectDetail = new SubjectDetail();
+                    /**
+                     * WeekNum <= Slot/SlotPerWeek
+                     */
+                    if (insSubjectDetail.getWeekNum() <= (subject.getSlot() / subject.getSlotPerWeek())) {
+                        if (insSubjectDetail.getWeekNum() > 0) {
+                            SubjectDetail newSubjectDetail = new SubjectDetail();
 
-                        newSubjectDetail.setSubject(subject);
-                        newSubjectDetail.setWeekNum(insSubjectDetail.getWeekNum());
-                        newSubjectDetail.setIsAvailable(true);
-                        newSubjectDetail.setWeekDescription(insSubjectDetail.getWeekDescription().trim());
-                        newSubjectDetail.setLearningOutcome(insSubjectDetail.getLearningOutcome().trim());
+                            newSubjectDetail.setSubject(subject);
+                            newSubjectDetail.setWeekNum(insSubjectDetail.getWeekNum());
+                            newSubjectDetail.setIsAvailable(true);
+                            newSubjectDetail.setWeekDescription(insSubjectDetail.getWeekDescription().trim());
+                            newSubjectDetail.setLearningOutcome(insSubjectDetail.getLearningOutcome().trim());
 
-                        subjectDetailRepository.save(newSubjectDetail);
+                            subjectDetailRepository.save(newSubjectDetail);
+                        } else {
+                            throw new Exception(WEEK_NUM_MUST_BE_POSITIVE);
+                        }
                     } else {
-                        throw new Exception(WEEK_NUM_MUST_BE_POSITIVE);
+                        throw new Exception(WEEK_NUM_REACH_LIMIT);
                     }
                 } else {
                     throw new Exception(SUBJECT_UNAVAILABLE);
@@ -80,7 +89,7 @@ public class SubjectDetailService {
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

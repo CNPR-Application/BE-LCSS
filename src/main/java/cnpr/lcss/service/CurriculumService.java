@@ -23,24 +23,22 @@ import java.util.stream.Collectors;
 @Service
 public class CurriculumService {
 
+    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
+    private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
+    private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
+    private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
     @Autowired
     CurriculumRepository curriculumRepository;
     @Autowired
     SubjectRepository subjectRepository;
 
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
-    private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
-    private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
-
     // Find Curriculums by Curriculum Name LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumNameContainsAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-        System.out.println(page);
         List<Curriculum> curriculumList = page.getContent();
         List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
@@ -51,12 +49,12 @@ public class CurriculumService {
     }
 
     // Find Curriculums by Curriculum Code LIKE keyword
-    public CurriculumPagingResponseDto findByCurriculumCodeContainsAndIsAvailableIsTrue(String keyword, int pageNo, int pageSize) {
+    public CurriculumPagingResponseDto findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailableIsTrue(keyword, pageable);
+        Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
         List<Curriculum> curriculumList = page.getContent();
         List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
@@ -175,6 +173,7 @@ public class CurriculumService {
                 updateCur.setDescription(insCur.getDescription().trim());
                 // KEEP THE CREATING DATE
                 updateCur.setCreatingDate(updateCur.getCreatingDate());
+                updateCur.setIsAvailable(insCur.getIsAvailable());
                 updateCur.setImage(insCur.getImage().trim());
                 updateCur.setLinkClip(insCur.getLinkClip().trim());
                 updateCur.setLearningOutcome(insCur.getLearningOutcome().trim());
