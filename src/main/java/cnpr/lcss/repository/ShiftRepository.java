@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftRepository extends JpaRepository<Shift, Integer> {
+
+    Shift findShiftByShiftId(int shiftId);
+    
     Page<Shift> findAll(Pageable pageable);
+    
     Shift findShiftByShiftId(int shiftId);
 }

@@ -463,6 +463,22 @@ public class RestApi {
      * -------------------------------SHIFT--------------------------------
      */
 
+    //<editor-fold desc="71.0-search-shift-by-shift-id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 71.0-search-shift-by-shift-id
+     * @author HuuNT - 2021.06.24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.findShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="73.0-create-new-shift">
 
     /**
