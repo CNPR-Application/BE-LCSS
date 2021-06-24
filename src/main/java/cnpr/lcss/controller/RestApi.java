@@ -478,4 +478,18 @@ public class RestApi {
         return shiftService.createNewShift(shiftRequestDto);
     }
     //</editor-fold>
+
+    /**
+     *
+     * @param shiftId
+     * @return
+     * apiNote 71.0-search-shift-by-shift-id
+     * author HuuNT - 2021.24.06
+     * @throws Exception
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.findShiftByShiftId(shiftId);
+    }
 }

@@ -1,6 +1,7 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
+import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.ShiftDto;
 import cnpr.lcss.model.ShiftRequestDto;
 import cnpr.lcss.repository.ShiftRepository;
@@ -9,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 @Service
@@ -54,4 +59,21 @@ public class ShiftService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
+        try {
+
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+
+            Shift shift= shiftRepository.findShiftByShiftId(shiftId);
+            String[] arrListStr = shift.getDescription().split(",");
+            mapObj.put("shiftId", shift.getShiftId());
+            mapObj.put("dayOfWeek", arrListStr[0]);
+            mapObj.put("timeStart", arrListStr[1]);
+            mapObj.put("timeEnd", arrListStr[2]);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
