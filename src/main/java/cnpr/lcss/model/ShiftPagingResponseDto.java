@@ -15,3 +15,4 @@ public class ShiftPagingResponseDto {
     private int pageTotal;
     List<ShiftDto> shiftDtos;
 }
+

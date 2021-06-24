@@ -28,7 +28,6 @@ public class ShiftService {
     private final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
     private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
     private final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
-
     @Autowired
     ShiftRepository shiftRepository;
 
@@ -60,6 +59,21 @@ public class ShiftService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    public ShiftPagingResponseDto findByDescriptionContainingIgnoreCase(String keyword, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<Shift> page = shiftRepository.findByDescriptionContainingIgnoreCase(keyword, pageable);
+        List<Shift> shiftList = page.getContent();
+        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+
+        int pageTotal = page.getTotalPages();
+
+        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(pageNo, pageSize, pageTotal, shiftDtoList);
+
+        return shiftPagingResponseDto;
     }
 
     // Find Shift by Shift Id
