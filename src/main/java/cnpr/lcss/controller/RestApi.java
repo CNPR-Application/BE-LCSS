@@ -21,7 +21,10 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     SubjectDetailService subjectDetailService;
+    @Autowired
+    ShiftService shiftService;
 
+    //<editor-fold desc="Welcome Page">
 
     /**
      * @return
@@ -32,8 +35,11 @@ public class RestApi {
     public String welcome() {
         return "Welcome to LCSS - Language Center Support System!";
     }
+    //</editor-fold>
 
     /**-------------------------------ACCOUNT--------------------------------**/
+
+    //<editor-fold desc="1.0-check-login">
 
     /**
      * @param loginRequestDto
@@ -47,8 +53,11 @@ public class RestApi {
     public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
     }
+    //</editor-fold>
 
     /**-------------------------------BRANCH--------------------------------**/
+
+    //<editor-fold desc="8.0-search-branch-by-branch-name">
 
     /**
      * @param keyword
@@ -67,6 +76,9 @@ public class RestApi {
         // pageNo starts at 0
         return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="9.0 - Search Branch by Branch ID">
 
     /**
      * @param branchId: int
@@ -80,6 +92,9 @@ public class RestApi {
     public Branch findByBranchId(@PathVariable int branchId) {
         return branchService.findBranchByBranchId(branchId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="10.0-delete-branch-by-id">
 
     /**
      * @param branchId
@@ -93,6 +108,9 @@ public class RestApi {
     public ResponseEntity<?> deleteBranchByBranchId(@PathVariable int branchId) throws Exception {
         return branchService.deleteByBranchId(branchId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="11.0 - Create new branch">
 
     /**
      * @param
@@ -107,6 +125,9 @@ public class RestApi {
     public ResponseEntity<?> createNewBranch(@RequestBody BranchRequestDto newBranch) throws Exception {
         return branchService.createNewBranch(newBranch);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="12.0 - Update Branch by Branch Id">
 
     /**
      * @param branchId
@@ -122,8 +143,11 @@ public class RestApi {
                                                     @RequestBody BranchRequestDto insBranch) throws Exception {
         return branchService.updateBranch(branchId, insBranch);
     }
+    //</editor-fold>
 
     /**-------------------------------CURRICULUM--------------------------------**/
+
+    //<editor-fold desc="13.0-search-curriculum-by-curriculum-name">
 
     /**
      * @param keyword
@@ -142,6 +166,9 @@ public class RestApi {
         // pageNo starts at 0
         return curriculumService.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="14.0-search-curriculum-by-curriculum-code">
 
     /**
      * @param keyword
@@ -160,6 +187,9 @@ public class RestApi {
         // pageNo starts at 0
         return curriculumService.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="15.0-get-curriculum-details-by-curriculum-id">
 
     /**
      * @param curriculumId
@@ -173,6 +203,9 @@ public class RestApi {
     public ResponseEntity<?> getCurriculumDetails(@PathVariable int curriculumId) throws Exception {
         return curriculumService.findOneByCurriculumId(curriculumId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="16.0-delete-curriculum-by-curriculum-id">
 
     /**
      * @param curriculumId
@@ -186,6 +219,9 @@ public class RestApi {
     public ResponseEntity<?> deleteCurriculumByCurriculumId(@PathVariable int curriculumId) throws Exception {
         return curriculumService.deleteByCurriculumId(curriculumId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="17.0-create-curriculum">
 
     /**
      * @param newCur
@@ -199,6 +235,9 @@ public class RestApi {
     public ResponseEntity<?> createNewCurriculum(@RequestBody CurriculumRequestDto newCur) throws Exception {
         return curriculumService.createNewCurriculum(newCur);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="18.0-edit-curriculum-by-curriculum-id">
 
     /**
      * @param curriculumId
@@ -214,8 +253,11 @@ public class RestApi {
                                                             @RequestBody CurriculumRequestDto insCur) throws Exception {
         return curriculumService.updateCurriculum(curriculumId, insCur);
     }
+    //</editor-fold>
 
     /**-------------------------------SUBJECT--------------------------------**/
+
+    //<editor-fold desc="19.0-search-subject-by-subject-name">
 
     /**
      * @param keyword
@@ -234,6 +276,9 @@ public class RestApi {
 
         return subjectService.findBySubjectNameContainsAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="20.0-search-subject-by-subject-code">
 
     /**
      * @param keyword
@@ -253,7 +298,9 @@ public class RestApi {
 
         return subjectService.findBySubjectCodeAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="21.0-search-subject-by-curriculum-id">
 
     /**
      * @param keyword
@@ -271,6 +318,9 @@ public class RestApi {
                                                                 @RequestParam(value = "pageSize") int pageSize) {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="22.0-search-subject-by-subject-id">
 
     /**
      * @param subjectId
@@ -284,6 +334,9 @@ public class RestApi {
     public ResponseEntity<?> searchSubjectAndCurriculumInfoBySubjectId(@PathVariable int subjectId) throws Exception {
         return subjectService.findSubjectAndCurriculumBySubjectId(subjectId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="23.0-delete-subject-included-subject-detail">
 
     /**
      * @param subjectId
@@ -297,6 +350,9 @@ public class RestApi {
     public ResponseEntity<?> deleteSubjectBySubjectId(@PathVariable int subjectId) throws Exception {
         return subjectService.deleteSubjectBySubjectId(subjectId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="24.0-create-subject">
 
     /**
      * @param
@@ -311,6 +367,9 @@ public class RestApi {
     public ResponseEntity<?> createNewSubject(@RequestBody SubjectCreateRequestDto newSub) throws Exception {
         return subjectService.createNewSubject(newSub);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="25.0-update-subject-by-subject-id">
 
     /**
      * @param subjectId
@@ -326,8 +385,11 @@ public class RestApi {
                                                  @RequestBody SubjectUpdateRequestDto subjectUpdateRequestDto) throws Exception {
         return subjectService.updateSubject(subjectId, subjectUpdateRequestDto);
     }
+    //</editor-fold>
 
     /**-------------------------------SUBJECT DETAIL--------------------------------**/
+
+    //<editor-fold desc="26.0-search-subject-detail-by-subject-id">
 
     /**
      * @param subjectId
@@ -345,6 +407,9 @@ public class RestApi {
                                                                        @RequestParam(value = "pageSize") int pageSize) {
         return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="27.0-delete-subject-detail-by-subject-detail-id">
 
     /**
      * @param subjectDetailId
@@ -358,6 +423,9 @@ public class RestApi {
     public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(@PathVariable int subjectDetailId) throws Exception {
         return subjectDetailService.deleteSubjectDetailBySubjectDetailId(subjectDetailId);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="28.0-create-new-subject-detail">
 
     /**
      * @param newSubjectDetail
@@ -371,6 +439,9 @@ public class RestApi {
     public ResponseEntity<?> createNewSubjectDetail(@RequestBody SubjectDetailRequestDto newSubjectDetail) throws Exception {
         return subjectDetailService.createNewSubjectDetail(newSubjectDetail);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="29.0-update-subject-detail-by-subject-detail-id">
 
     /**
      * @param subjectDetailId
@@ -386,4 +457,58 @@ public class RestApi {
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
     }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SHIFT--------------------------------
+     */
+
+    //<editor-fold desc="71.0-search-shift-by-shift-id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 71.0-search-shift-by-shift-id
+     * @author HuuNT - 2021.06.24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.findShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="73.0-create-new-shift">
+
+    /**
+     * @param shiftRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 73.0-create-new-shift
+     * @author LamHNT - 2021.06.24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
+        return shiftService.createNewShift(shiftRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="75.0-get-all-shift">
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 75.0-get-all-shift
+     * @author HuuNT - 2021-06-24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
+                                              @RequestParam(value = "pageSize") int pageSize) {
+        return shiftService.findAllShift(pageNo, pageSize);
+    }
+    //</editor-fold>
 }
