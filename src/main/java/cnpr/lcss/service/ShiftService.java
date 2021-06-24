@@ -12,11 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class ShiftService {
@@ -60,6 +59,20 @@ public class ShiftService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+    public ShiftPagingResponseDto findByDescriptionContainingIgnoreCase(String keyword,int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<Shift> page = shiftRepository.findByDescriptionContainingIgnoreCase(keyword, pageable);
+        List<Shift> shiftList = page.getContent();
+        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+
+        int pageTotal = page.getTotalPages();
+
+        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(pageNo, pageSize, pageTotal, shiftDtoList);
+
+        return shiftPagingResponseDto;
     }
 
     // Find Shift by Shift Id
