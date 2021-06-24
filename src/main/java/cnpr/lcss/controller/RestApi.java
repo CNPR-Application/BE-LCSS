@@ -477,5 +477,14 @@ public class RestApi {
     public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
         return shiftService.createNewShift(shiftRequestDto);
     }
+
     //</editor-fold>
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
+    public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
+                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
+    }
 }
