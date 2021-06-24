@@ -477,6 +477,15 @@ public class RestApi {
     public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
         return shiftService.createNewShift(shiftRequestDto);
     }
+
+    /**
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 75.0 0 Get All Shift
+     * @author HuuNT - 2021-06-24
+     */
     @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
     public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
