@@ -19,11 +19,11 @@ public class ShiftService {
 
     private final String DAY_OF_WEEK_PATTERN = "(MON-WED-FRI)|(TUE-THU-SAT)|(SAT-SUN)";
     private final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
-    private final String TIME_END_PATTERN = "(09:30)|(14:00)|(15:30)|(18:00)|(19:30)|(21:00)";
+    private final String TIME_END_PATTERN = "(09:30)|(11:00)|(15:30)|(17:00)|(19:30)|(21:00)";
 
     private final String DAY_OF_WEEK_PATTERN_ERROR = "DayOfWeek must be [MON-WED-FRI ,TUE-THU-SAT ,SAT-SUN]!";
     private final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
-    private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 14:00, 15:30, 18:00, 19:30, 21:00]!";
+    private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
 
     // Create New Shift
     public ResponseEntity<?> createNewShift(ShiftRequestDto shiftRequestDto) throws Exception {
