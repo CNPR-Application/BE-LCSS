@@ -7,12 +7,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SubjectDetailUpdateRequestDto {
+public class SubjectUpdateRequestDto {
 
-    private int weekNum;
-    private String weekDescription;
+    private String subjectName;
+    private float price;
+    private String description;
     private boolean isAvailable;
-    private String learningOutcome;
+    private String image;
+    private int slot;
+    private int slotPerWeek;
+    private String rating;
+    private int curriculumId;
 
     public boolean getIsAvailable() {
         return isAvailable;

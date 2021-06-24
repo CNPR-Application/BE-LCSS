@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.CurriculumDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,4 +36,20 @@ public class Curriculum implements Serializable {
     private String linkClip;
     @Column(name = "learning_outcome")
     private String learningOutcome;
+
+    /**
+     * --- modify constructor, getter, setter ---
+     */
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public CurriculumDto convertToDto() {
+        CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
+        return curriculumDto;
+    }
 }
