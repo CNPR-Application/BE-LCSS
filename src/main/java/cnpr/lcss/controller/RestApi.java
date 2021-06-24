@@ -21,6 +21,8 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     SubjectDetailService subjectDetailService;
+    @Autowired
+    ShiftService shiftService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -454,6 +456,26 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SHIFT--------------------------------
+     */
+
+    //<editor-fold desc="73.0-create-new-shift">
+
+    /**
+     * @param shiftRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 73.0-create-new-shift
+     * @author LamHNT - 2021.06.24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
+        return shiftService.createNewShift(shiftRequestDto);
     }
     //</editor-fold>
 }
