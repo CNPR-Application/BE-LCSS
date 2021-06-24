@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.ShiftDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,10 @@ public class Shift implements Serializable {
     private int shiftId;
     @Column(name = "description")
     private String description;
+
+    public ShiftDto convertToDto() {
+        String[] strings = description.split(", ");
+        ShiftDto shiftDto = new ShiftDto(shiftId, strings[0], strings[1], strings[2]);
+        return shiftDto;
+    }
 }

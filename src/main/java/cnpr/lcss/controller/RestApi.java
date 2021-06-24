@@ -494,4 +494,21 @@ public class RestApi {
         return shiftService.createNewShift(shiftRequestDto);
     }
     //</editor-fold>
+
+    //<editor-fold desc="75.0-get-all-shift">
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 75.0-get-all-shift
+     * @author HuuNT - 2021-06-24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
+                                              @RequestParam(value = "pageSize") int pageSize) {
+        return shiftService.findAllShift(pageNo, pageSize);
+    }
+    //</editor-fold>
 }
