@@ -1,8 +1,9 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
-import cnpr.lcss.dao.Subject;
-import cnpr.lcss.model.*;
+import cnpr.lcss.model.ShiftDto;
+import cnpr.lcss.model.ShiftPagingResponseDto;
+import cnpr.lcss.model.ShiftRequestDto;
 import cnpr.lcss.repository.ShiftRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,29 +12,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 @Service
 public class ShiftService {
 
-    @Autowired
-    ShiftRepository shiftRepository;
-
     private final String DAY_OF_WEEK_PATTERN = "(MON-WED-FRI)|(TUE-THU-SAT)|(SAT-SUN)";
     private final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
     private final String TIME_END_PATTERN = "(09:30)|(11:00)|(15:30)|(17:00)|(19:30)|(21:00)";
-
     private final String DAY_OF_WEEK_PATTERN_ERROR = "DayOfWeek must be [MON-WED-FRI ,TUE-THU-SAT ,SAT-SUN]!";
     private final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
     private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
     private final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
+
+    @Autowired
+    ShiftRepository shiftRepository;
 
     // Create New Shift
     public ResponseEntity<?> createNewShift(ShiftRequestDto shiftRequestDto) throws Exception {
@@ -89,7 +86,7 @@ public class ShiftService {
         }
     }
 
-
+    // Get All Shifts
     public ShiftPagingResponseDto findAllShift(int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -97,6 +94,7 @@ public class ShiftService {
         List<Shift> shiftList = page.getContent();
         List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
+
         ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(pageNo, pageSize, pageTotal, shiftDtoList);
         return shiftPagingResponseDto;
     }

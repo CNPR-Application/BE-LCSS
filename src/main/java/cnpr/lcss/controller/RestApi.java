@@ -493,13 +493,15 @@ public class RestApi {
     public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
         return shiftService.createNewShift(shiftRequestDto);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="75.0-get-all-shift">
 
     /**
-     *
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 75.0 0 Get All Shift
+     * @apiNote 75.0-get-all-shift
      * @author HuuNT - 2021-06-24
      */
     @CrossOrigin
