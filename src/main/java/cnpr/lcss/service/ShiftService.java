@@ -1,7 +1,6 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
-import cnpr.lcss.model.*;
 import cnpr.lcss.model.ShiftDto;
 import cnpr.lcss.model.ShiftPagingResponseDto;
 import cnpr.lcss.model.ShiftRequestDto;
@@ -14,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.LinkedHashMap;
@@ -36,8 +33,6 @@ public class ShiftService {
     private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
     private final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
 
-    @Autowired
-    ShiftRepository shiftRepository;
 
     // Create New Shift
     public ResponseEntity<?> createNewShift(ShiftRequestDto shiftRequestDto) throws Exception {
@@ -68,7 +63,8 @@ public class ShiftService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    public ShiftPagingResponseDto findByDescriptionContainingIgnoreCase(String keyword,int pageNo, int pageSize) {
+
+    public ShiftPagingResponseDto findByDescriptionContainingIgnoreCase(String keyword, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
