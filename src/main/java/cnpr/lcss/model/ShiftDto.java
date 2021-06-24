@@ -13,5 +13,4 @@ public class ShiftDto {
     private String dayOfWeek;
     private String timeStart;
     private String timeEnd;
-
 }

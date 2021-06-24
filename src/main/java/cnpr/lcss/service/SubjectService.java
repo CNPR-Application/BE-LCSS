@@ -27,20 +27,20 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectService {
 
+    private final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
+    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
+    private final String DUPLICATE_CODE = "Duplicate Subject Code!";
+    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
+    private final String INVALID_PRICE = "Price CAN NOT BE LOWER THAN ZERO!";
+    private final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
     SubjectDetailRepository subjectDetailRepository;
     @Autowired
     CurriculumRepository curriculumRepository;
-
-    private final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private final String DUPLICATE_CODE = "Duplicate Subject Code!";
-    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
-    private final String INVALID_PRICE = "Price CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
 
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
@@ -127,7 +127,7 @@ public class SubjectService {
             if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
                 throw new Exception(DUPLICATE_NAME);
             }
-            if (insSub.getPrice() <= 0) {
+            if (insSub.getPrice() < 0) {
                 throw new Exception(INVALID_PRICE);
             }
             if (!curriculumRepository.existsById(insSub.getCurriculumId())) {
@@ -198,7 +198,7 @@ public class SubjectService {
                 if (curriculumRepository.existsByCurriculumId(newSub.getCurriculumId()) == Boolean.FALSE) {
                     throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
                 }
-                if (newSub.getPrice() <= 0) {
+                if (newSub.getPrice() < 0) {
                     throw new Exception(INVALID_PRICE);
                 }
                 if (newSub.getSlot() <= 0) {
