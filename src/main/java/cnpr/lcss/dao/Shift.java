@@ -26,4 +26,5 @@ public class Shift implements Serializable {
         ShiftDto shiftDto = new ShiftDto(shiftId, strings[0], strings[1], strings[2]);
         return shiftDto;
     }
+
 }

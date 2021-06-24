@@ -493,22 +493,26 @@ public class RestApi {
     public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
         return shiftService.createNewShift(shiftRequestDto);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="75.0-get-all-shift">
+    //</editor-fold>
+    //<editor-fold desc="72.0-search-shift-by-description">
 
     /**
+     *
+     * @param keyword
      * @param pageNo
      * @param pageSize
-     * @return
-     * @apiNote 75.0-get-all-shift
+     * @apiNote 72.0-search-shift-by-description
      * @author HuuNT - 2021-06-24
+     * @return
      */
     @CrossOrigin
-    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
-    public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
-                                              @RequestParam(value = "pageSize") int pageSize) {
-        return shiftService.findAllShift(pageNo, pageSize);
+    @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
+    public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
+                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
     }
     //</editor-fold>
 }
