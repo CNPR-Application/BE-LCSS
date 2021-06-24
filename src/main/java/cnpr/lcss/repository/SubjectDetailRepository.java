@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, Integer> {
-    
+
     @Query(value = "SELECT " +
             "new SubjectDetail(sd.subjectDetailId, sd.weekNum, sd.weekDescription, sd.isAvailable, sd.learningOutcome) " +
             "FROM SubjectDetail sd " +
@@ -25,6 +27,8 @@ public interface SubjectDetailRepository extends JpaRepository<SubjectDetail, In
     Page<SubjectDetail> findSubjectDetailBySubjectIdAndIsAvailable(@Param(value = "subjectId") int subjectId,
                                                                    @Param(value = "isAvailable") boolean isAvailable,
                                                                    Pageable pageable);
+
+    List<SubjectDetail> findSubjectDetailBySubject_SubjectId(int subjectId);
 
     SubjectDetail findBySubjectDetailId(int subjectDetailId);
 }
