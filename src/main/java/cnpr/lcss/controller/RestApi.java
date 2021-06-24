@@ -479,6 +479,26 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="72.0-search-shift-by-description">
+
+    /**
+     * @param keyword
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 72.0-search-shift-by-description
+     * @author HuuNT - 2021-06-24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
+    public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
+                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="73.0-create-new-shift">
 
     /**
@@ -495,24 +515,21 @@ public class RestApi {
     }
 
     //</editor-fold>
-    //<editor-fold desc="72.0-search-shift-by-description">
+
+    //<editor-fold desc="75.0-get-all-shift">
 
     /**
-     *
-     * @param keyword
      * @param pageNo
      * @param pageSize
-     * @apiNote 72.0-search-shift-by-description
-     * @author HuuNT - 2021-06-24
      * @return
+     * @apiNote 75.0-get-all-shift
+     * @author HuuNT - 2021-06-24
      */
     @CrossOrigin
-    @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
-    public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
-                                                           @RequestParam(value = "pageNo") int pageNo,
-                                                           @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
-        return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
+    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
+                                              @RequestParam(value = "pageSize") int pageSize) {
+        return shiftService.findAllShift(pageNo, pageSize);
     }
     //</editor-fold>
 }
