@@ -158,7 +158,6 @@ public class ShiftService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
     }
     //</editor-fold>
 }
