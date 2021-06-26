@@ -518,6 +518,23 @@ public class RestApi {
 
     //</editor-fold>
 
+    //<editor-fold desc="74.0-delete-shift-by-id">
+
+    /**
+     *
+     * @param shiftId
+     * @return
+     * @apiNote 74.0-Delete-Shift
+     * @author HuuNT - 2021.06.26
+     * @throws Exception
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.deleteShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="75.0-get-all-shift-by-isAvailable">
 
 

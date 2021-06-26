@@ -66,7 +66,7 @@ public class ShiftService {
                         }
                         shift.setDayOfWeek(shiftRequestDto.getDayOfWeek());
                         shift.setDuration(shiftRequestDto.getDuration());
-                        shift.setAvailable(true);
+                        shift.setIsAvailable(true);
 
                         if (!shiftRepository.existsByDayOfWeekAndTimeStartAndDuration(shift.getDayOfWeek(), shift.getTimeStart(), shift.getDuration())) {
                             shiftRepository.save(shift);
@@ -136,5 +136,24 @@ public class ShiftService {
         ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
         return shiftPagingResponseDto;
     }
+    public ResponseEntity<?> deleteShiftByShiftId(int shiftId) throws Exception {
+        try {
+            if (!shiftRepository.existsById(shiftId)) {
+                throw new IllegalArgumentException(SHIFT_ID_NOT_EXIST);
+            } else {
+                Shift deleteShift = shiftRepository.findShiftByShiftId(shiftId);
+                if (deleteShift.getIsAvailable()) {
+                    deleteShift.setIsAvailable(false);
+                    shiftRepository.save(deleteShift);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
 
+    }
 }

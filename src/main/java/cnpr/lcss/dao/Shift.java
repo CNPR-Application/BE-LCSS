@@ -33,5 +33,12 @@ public class Shift implements Serializable {
         ShiftDto shiftDto = new ShiftDto(shiftId, timeStart, timeEnd, dayOfWeek, duration, isAvailable);
         return shiftDto;
     }
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 
 }
