@@ -1,6 +1,7 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Shift;
+import cnpr.lcss.dao.Subject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
 //    Page<Shift> findByDescriptionContainingIgnoreCase(String keyword, Pageable pageable);
 
     Page<Shift> findAll(Pageable pageable);
+    Page<Shift> findByIsAvailable(boolean isAvailable, Pageable pageable);
 
 //    Shift findShiftByShiftId(int shiftId);
 

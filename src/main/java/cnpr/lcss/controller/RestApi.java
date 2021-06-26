@@ -516,20 +516,25 @@ public class RestApi {
 
     //</editor-fold>
 
-    //<editor-fold desc="75.0-get-all-shift">
+    //<editor-fold desc="75.0-get-all-shift-by-isAvailable">
+
 
     /**
+     *
+      * @param isAvailable
      * @param pageNo
      * @param pageSize
+     * @throws Exception
+     * @apiNote 75.0-get-all-shift-by-isAvailable
+     * @author HuuNT 2021-06-26
      * @return
-     * @apiNote 75.0-get-all-shift
-     * @author HuuNT - 2021-06-24
      */
-/*    @CrossOrigin
+    @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
-    public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
+    public ShiftPagingResponseDto getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
+                                                @RequestParam(value = "pageNo") int pageNo,
                                               @RequestParam(value = "pageSize") int pageSize) {
-        return shiftService.findAllShift(pageNo, pageSize);
-    }*/
+        return shiftService.findAllShiftByIsAvailable(isAvailable,pageNo, pageSize);
+    }
     //</editor-fold>
 }

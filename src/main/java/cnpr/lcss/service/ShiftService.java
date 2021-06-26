@@ -1,9 +1,13 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
-import cnpr.lcss.model.ShiftRequestDto;
+import cnpr.lcss.dao.Subject;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.ShiftRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ShiftService {
@@ -124,15 +130,16 @@ public class ShiftService {
     }*/
 
     // Get All Shifts
-/*    public ShiftPagingResponseDto findAllShift(int pageNo, int pageSize) {
+   public ShiftPagingResponseDto findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        Page<Shift> page = shiftRepository.findAll(pageable);
+        Page<Shift> page = shiftRepository.findByIsAvailable(isAvailable,pageable);
         List<Shift> shiftList = page.getContent();
         List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
         ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(pageNo, pageSize, pageTotal, shiftDtoList);
         return shiftPagingResponseDto;
-    }*/
+    }
+
 }
