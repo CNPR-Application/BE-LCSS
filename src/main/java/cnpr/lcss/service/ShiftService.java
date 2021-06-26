@@ -67,7 +67,6 @@ public class ShiftService {
                             throw new Exception(SHIFT_EXISTED_ERROR);
                         }
                     } else {
-                        System.out.println(shiftRequestDto.getDuration() % 90);
                         throw new Exception(DURATION_ERROR);
                     }
                 } else {
