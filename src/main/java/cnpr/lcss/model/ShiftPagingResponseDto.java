@@ -10,9 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class ShiftPagingResponseDto {
+    
+    List<ShiftDto> shiftDtos;
     private int pageNo;
     private int pageSize;
     private int pageTotal;
-    List<ShiftDto> shiftDtos;
 }
 

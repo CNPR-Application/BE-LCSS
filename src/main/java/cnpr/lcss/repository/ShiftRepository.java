@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftRepository extends JpaRepository<Shift, Integer> {
-
-//    Page<Shift> findByDescriptionContainingIgnoreCase(String keyword, Pageable pageable);
+    
+    Page<Shift> findShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, Pageable pageable);
 
     Page<Shift> findAll(Pageable pageable);
 

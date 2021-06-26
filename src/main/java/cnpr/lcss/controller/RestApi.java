@@ -479,24 +479,26 @@ public class RestApi {
     }*/
     //</editor-fold>
 
-    //<editor-fold desc="72.0-search-shift-by-description">
+    //<editor-fold desc="72.0-search-shift-by-dow-and-by-time-start-containing">
 
     /**
-     * @param keyword
+     * @param dayOfWeek
+     * @param timeStart
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 72.0-search-shift-by-description
-     * @author HuuNT - 2021-06-24
+     * @apiNote 72.0-search-shift-by-dow-and-by-time-start-containing
+     * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
      */
-/*    @CrossOrigin
-    @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
-    public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
-                                                           @RequestParam(value = "pageNo") int pageNo,
-                                                           @RequestParam(value = "pageSize") int pageSize) {
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
+                                                                                        @RequestParam(value = "timeStart") String timeStart,
+                                                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                                                        @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
-        return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
-    }*/
+        return shiftService.searchShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageNo, pageSize);
+    }
     //</editor-fold>
 
     //<editor-fold desc="73.0-create-new-shift">
