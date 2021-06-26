@@ -160,4 +160,31 @@ public class ShiftService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="Revival Shift by ID">
+    public ResponseEntity<?> revivalShiftbyShiftId(int shiftID) throws Exception {
+        try {
+            if (!shiftRepository.existsById(shiftID)) {
+                throw new IllegalArgumentException(SHIFT_ID_NOT_EXIST);
+            } else {
+                Shift updateShift = shiftRepository.findShiftByShiftId(shiftID);
+                //nếu shift có isAvailable là false, sửa thành true, trả response là true
+                if (updateShift.getIsAvailable() == false) {
+                    updateShift.setIsAvailable(true);
+                    shiftRepository.save(updateShift);
+                    return ResponseEntity.ok(Boolean.TRUE);
+
+                }//còn lại là response false
+                else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+    //</editor-fold>
+
 }

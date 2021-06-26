@@ -534,12 +534,11 @@ public class RestApi {
     //<editor-fold desc="74.0-delete-shift-by-id">
 
     /**
-     *
      * @param shiftId
      * @return
+     * @throws Exception
      * @apiNote 74.0-Delete-Shift
      * @author HuuNT - 2021.06.26
-     * @throws Exception
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.DELETE)
@@ -566,6 +565,22 @@ public class RestApi {
                                                            @RequestParam(value = "pageNo") int pageNo,
                                                            @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="76.0-Revival Shift by Id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 76.0-revival shift by id
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
 }
