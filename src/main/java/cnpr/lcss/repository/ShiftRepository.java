@@ -15,5 +15,5 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
 
 //    Shift findShiftByShiftId(int shiftId);
 
-    boolean existsByTimeStartAndDuration(String timeStart, int duration);
+    boolean existsByDayOfWeekAndTimeStartAndDuration(String dayOfWeek, String timeStart, int duration);
 }
