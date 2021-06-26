@@ -472,7 +472,7 @@ public class RestApi {
      * @apiNote 71.0-search-shift-by-shift-id
      * @author HuuNT - 2021.06.26
      */
-   @CrossOrigin
+    @CrossOrigin
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
     public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.findShiftByShiftId(shiftId);
@@ -491,7 +491,7 @@ public class RestApi {
      * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
      */
     @CrossOrigin
-    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    @RequestMapping(value = "/shifts", params = "dayOfWeek", method = RequestMethod.GET)
     public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
                                                                                         @RequestParam(value = "timeStart") String timeStart,
                                                                                         @RequestParam(value = "pageNo") int pageNo,
@@ -522,21 +522,20 @@ public class RestApi {
 
 
     /**
-     *
-      * @param isAvailable
+     * @param isAvailable
      * @param pageNo
      * @param pageSize
+     * @return
      * @throws Exception
      * @apiNote 75.0-get-all-shift-by-isAvailable
      * @author HuuNT 2021-06-26
-     * @return
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
     public ShiftPagingResponseDto getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
-                                                @RequestParam(value = "pageNo") int pageNo,
-                                              @RequestParam(value = "pageSize") int pageSize) {
-        return shiftService.findAllShiftByIsAvailable(isAvailable,pageNo, pageSize);
+                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) {
+        return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
 }
