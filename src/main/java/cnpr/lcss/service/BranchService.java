@@ -108,6 +108,8 @@ public class BranchService {
                 updateBranch.setAddress(insBranch.getAddress().trim());
                 //EDIT BRANCH DATE
                 updateBranch.setOpeningDate(insBranch.getOpeningDate());
+                //ADMIN now can edit branch isAvailable
+                updateBranch.setIsAvailable(insBranch.getIsAvailable());
                 if (!insBranch.getPhone().matches(regex)) {
                     throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
                 } else {

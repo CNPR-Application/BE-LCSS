@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 public class ShiftDto {
 
     private int shiftId;
-    private String description;
+    private String dayOfWeek;
+    private String timeStart;
+    private String timeEnd;
 }
