@@ -13,7 +13,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
 
     Page<Shift> findAll(Pageable pageable);
 
-//    Shift findShiftByShiftId(int shiftId);
+    Shift findShiftByShiftId(int shiftId);
 
     boolean existsByDayOfWeekAndTimeStartAndDuration(String dayOfWeek, String timeStart, int duration);
 }

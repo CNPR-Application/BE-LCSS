@@ -101,28 +101,20 @@ public class ShiftService {
     }*/
 
     // Find Shift by Shift Id
-/*    public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
+   public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
 
         try {
-            Map<String, Object> mapObj = new LinkedHashMap<>();
-
             if (shiftRepository.existsById(shiftId)) {
-                Shift shift = shiftRepository.findShiftByShiftId(shiftId);
 
-                String[] arrListStr = shift.getDescription().split(", ");
 
-                mapObj.put("shiftId", shift.getShiftId());
-                mapObj.put("dayOfWeek", arrListStr[0].trim());
-                mapObj.put("timeStart", arrListStr[1].trim());
-                mapObj.put("timeEnd", arrListStr[2].trim());
+            return ResponseEntity.ok(shiftRepository.findShiftByShiftId(shiftId));
             } else {
                 throw new IllegalArgumentException(SHIFT_ID_NOT_EXIST);
             }
-            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-    }*/
+    }
 
     // Get All Shifts
 /*    public ShiftPagingResponseDto findAllShift(int pageNo, int pageSize) {
