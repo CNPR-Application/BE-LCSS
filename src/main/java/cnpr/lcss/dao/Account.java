@@ -38,7 +38,9 @@ public class Account implements Serializable {
     @Column(name = "role")
     private String role;
     @Column(name = "is_available")
-    private String isAvailable;
+    private boolean isAvailable;
     @Column(name = "creating_date")
     private Date creatingDate;
+
+
 }

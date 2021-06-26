@@ -42,6 +42,7 @@ public class SubjectService {
     @Autowired
     CurriculumRepository curriculumRepository;
 
+    //<editor-fold desc="Find by Subject Name Contains and Is Available">
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -56,7 +57,9 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find Subject by Curriculum Id and Is Available">
     public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -71,7 +74,9 @@ public class SubjectService {
 
         return subjectPagingResponseDto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find by Subject Code and Is Available">
     public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -86,7 +91,9 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find Subject and Curriculum by Subject Id">
     public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
 
         try {
@@ -118,7 +125,9 @@ public class SubjectService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Update Subject">
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
             if (!subjectRepository.existsById(subId)) {
@@ -156,7 +165,9 @@ public class SubjectService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Delete Subject by Subject Id">
     public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
 
         try {
@@ -181,7 +192,9 @@ public class SubjectService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Create New Subject">
     @Transactional
     public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
 
@@ -230,4 +243,5 @@ public class SubjectService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 }

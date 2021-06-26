@@ -55,6 +55,19 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="3.1-search-info-by-username">
+
+    /**
+     * @param username
+     * @return
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
+        return accountService.searchInfoByUsername(username);
+    }
+    //</editor-fold>
+
     /**-------------------------------BRANCH--------------------------------**/
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
