@@ -61,7 +61,7 @@ public class ShiftService {
                         shift.setDuration(shiftRequestDto.getDuration());
                         shift.setAvailable(true);
 
-                        if (!shiftRepository.existsByTimeStartAndDuration(shift.getTimeStart(), shift.getDuration())) {
+                        if (!shiftRepository.existsByDayOfWeekAndTimeStartAndDuration(shift.getDayOfWeek(), shift.getTimeStart(), shift.getDuration())) {
                             shiftRepository.save(shift);
                         } else {
                             throw new Exception(SHIFT_EXISTED_ERROR);
