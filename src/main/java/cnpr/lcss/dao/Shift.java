@@ -18,12 +18,19 @@ public class Shift implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int shiftId;
-    @Column(name = "description")
-    private String description;
+    @Column(name = "time_start")
+    private String timeStart;
+    @Column(name = "time_end")
+    private String timeEnd;
+    @Column(name = "day_of_week")
+    private String dayOfWeek;
+    @Column(name = "duration")
+    private int duration;
+    @Column(name = "is_available")
+    private boolean isAvailable;
 
     public ShiftDto convertToDto() {
-        String[] strings = description.split(", ");
-        ShiftDto shiftDto = new ShiftDto(shiftId, strings[0], strings[1], strings[2]);
+        ShiftDto shiftDto = new ShiftDto(shiftId, timeStart, timeEnd, dayOfWeek, duration, isAvailable);
         return shiftDto;
     }
 
