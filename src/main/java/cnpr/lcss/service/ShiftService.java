@@ -108,7 +108,7 @@ public class ShiftService {
     }
     //</editor-fold>
 
-    // Find Shift by Shift Id
+    //<editor-fold desc="Find Shift by Shift Id">
     public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
 
         try {
@@ -123,8 +123,9 @@ public class ShiftService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
-    // Get All Shifts
+    //<editor-fold desc="Get All Shift By isAvailable">
     public ShiftPagingResponseDto findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -136,6 +137,9 @@ public class ShiftService {
         ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
         return shiftPagingResponseDto;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Delete Shift By Id">
     public ResponseEntity<?> deleteShiftByShiftId(int shiftId) throws Exception {
         try {
             if (!shiftRepository.existsById(shiftId)) {
@@ -156,4 +160,5 @@ public class ShiftService {
         }
 
     }
+    //</editor-fold>
 }
