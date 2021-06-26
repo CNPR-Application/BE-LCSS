@@ -472,11 +472,11 @@ public class RestApi {
      * @apiNote 71.0-search-shift-by-shift-id
      * @author HuuNT - 2021.06.24
      */
-    @CrossOrigin
+/*    @CrossOrigin
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
     public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.findShiftByShiftId(shiftId);
-    }
+    }*/
     //</editor-fold>
 
     //<editor-fold desc="72.0-search-shift-by-description">
@@ -489,14 +489,14 @@ public class RestApi {
      * @apiNote 72.0-search-shift-by-description
      * @author HuuNT - 2021-06-24
      */
-    @CrossOrigin
+/*    @CrossOrigin
     @RequestMapping(value = "/shifts", params = "description", method = RequestMethod.GET)
     public ShiftPagingResponseDto searchShiftByDescription(@RequestParam(value = "description") String keyword,
                                                            @RequestParam(value = "pageNo") int pageNo,
                                                            @RequestParam(value = "pageSize") int pageSize) {
         // pageNo starts at 0
         return shiftService.findByDescriptionContainingIgnoreCase(keyword, pageNo, pageSize);
-    }
+    }*/
     //</editor-fold>
 
     //<editor-fold desc="73.0-create-new-shift">
@@ -525,11 +525,11 @@ public class RestApi {
      * @apiNote 75.0-get-all-shift
      * @author HuuNT - 2021-06-24
      */
-    @CrossOrigin
+/*    @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
     public ShiftPagingResponseDto getAllShift(@RequestParam(value = "pageNo") int pageNo,
                                               @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.findAllShift(pageNo, pageSize);
-    }
+    }*/
     //</editor-fold>
 }

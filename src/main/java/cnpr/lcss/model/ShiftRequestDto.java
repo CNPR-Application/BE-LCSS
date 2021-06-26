@@ -11,5 +11,5 @@ public class ShiftRequestDto {
 
     private String dayOfWeek;
     private String timeStart;
-    private String timeEnd;
+    private int duration;
 }
