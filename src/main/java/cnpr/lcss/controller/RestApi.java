@@ -470,13 +470,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 71.0-search-shift-by-shift-id
-     * @author HuuNT - 2021.06.24
+     * @author HuuNT - 2021.06.26
      */
-/*    @CrossOrigin
+   @CrossOrigin
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
     public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.findShiftByShiftId(shiftId);
-    }*/
+    }
     //</editor-fold>
 
     //<editor-fold desc="72.0-search-shift-by-dow-and-by-time-start-containing">
