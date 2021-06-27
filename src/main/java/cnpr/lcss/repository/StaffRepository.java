@@ -14,4 +14,6 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
 
     @Query("SELECT s.branch.branchName FROM Staff s WHERE s.staffUsername = :username")
     String findBranchNameByStaffUsername(@Param("username") String staffUsername);
+
+    Staff findStaffByStaffUsername(String username);
 }

@@ -1,30 +1,39 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Account;
+import cnpr.lcss.dao.*;
+import cnpr.lcss.model.AccountRequestDto;
 import cnpr.lcss.model.LoginRequestDto;
 import cnpr.lcss.model.LoginResponseDto;
-import cnpr.lcss.repository.AccountRepository;
-import cnpr.lcss.repository.StaffRepository;
-import cnpr.lcss.repository.StudentRepository;
-import cnpr.lcss.repository.TeacherRepository;
+import cnpr.lcss.model.StaffDto;
+import cnpr.lcss.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class AccountService {
 
-    private final String ROLE_MANAGER = "manger";
-    private final String ROLE_STAFF = "staff";
-    private final String ROLE_ADMIN = "admin";
-    private final String ROLE_TEACHER = "teacher";
-    private final String ROLE_STUDENT = "student";
-    private final String USERNAME_NOT_EXIST = "Username does not exist!";
-    private final String PASSWORD_NOT_MATCH = "Password does not match!";
+    private static final String ROLE_MANAGER = "manger";
+    private static final String ROLE_STAFF = "staff";
+    private static final String ROLE_ADMIN = "admin";
+    private static final String ROLE_TEACHER = "teacher";
+    private static final String ROLE_STUDENT = "student";
+    private static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
+    private static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
+    private static final String PASSWORD_NOT_MATCH = "Password does not match!";
+    private static final String USERNAME_NOT_EXIST = "Username does not exist!";
+    private static final String BRANCH_ID_NOT_EXIST = "Brand Id does not exist!";
+    private static final String INVALID_PARENT_NAME = "Parent's name is null or empty!";
+    private static final String INVALID_PHONE_PATTERN = "Phone number is invalid!";
+    private static final String UPDATE_TEACHER_EXP_ERROR = "Error at Update Teacher's Experience!";
+    private static final String UPDATE_STUDENT_PARENT_INFO_ERROR = "Error at Update Student's parent's information!";
+    private static final String UPDATE_BRANCH_ERROR = "Error at Update Branch!";
 
     @Autowired
     AccountRepository accountRepository;
@@ -34,6 +43,10 @@ public class AccountService {
     StudentRepository studentRepository;
     @Autowired
     TeacherRepository teacherRepository;
+    @Autowired
+    BranchRepository branchRepository;
+    @Autowired
+    TeachingBranchRepository teachingBranchRepository;
 
     //<editor-fold desc="Check login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
@@ -161,6 +174,144 @@ public class AccountService {
                 return ResponseEntity.ok(mapObj);
             } else {
                 throw new Exception(USERNAME_NOT_EXIST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Update Account">
+    public ResponseEntity<?> updateAccount(String username, AccountRequestDto insAcc) throws Exception {
+        try {
+            // Check username existence
+            if (accountRepository.existsByUsername(username)) {
+                // Find user's role
+                String userRole = accountRepository.findRoleByUsername(username);
+
+                // Find account by username
+                Account updateAcc = accountRepository.findOneByUsername(username);
+
+                // Update Name
+                if (insAcc.getName() != null && !insAcc.getName().isEmpty()) {
+                    updateAcc.setName(insAcc.getName().trim());
+                }
+
+                // Update Address
+                if (insAcc.getAddress() != null && !insAcc.getAddress().isEmpty()) {
+                    updateAcc.setAddress(insAcc.getAddress().trim());
+                }
+
+                // Update Email
+                if (insAcc.getEmail() != null && !insAcc.getEmail().isEmpty()
+                        && insAcc.getEmail().matches(EMAIL_PATTERN)) {
+                    updateAcc.setEmail(insAcc.getEmail().trim());
+                }
+
+                // Update Birthday
+                if (insAcc.getBirthday() != null) {
+                    updateAcc.setBirthday(insAcc.getBirthday());
+                }
+
+                // Update Phone
+                if (insAcc.getPhone() != null && !insAcc.getPhone().isEmpty()
+                        && insAcc.getPhone().matches(PHONE_PATTERN)) {
+                    updateAcc.setPhone(insAcc.getPhone().trim());
+                }
+
+                // Update Image
+                if (insAcc.getImage() != null && !insAcc.getImage().isEmpty()) {
+                    updateAcc.setImage(insAcc.getImage().trim());
+                }
+
+                // Update Branch Id
+                // Check Branch Id existence
+                if (branchRepository.existsById(insAcc.getBranchId())) {
+                    // Find Branch by insAcc's branch id
+                    Branch updateBranch = branchRepository.findByBranchId(insAcc.getBranchId());
+
+                    try {
+                        // Role: ADMIN, MANAGER, STAFF
+                        if (userRole.equalsIgnoreCase(ROLE_ADMIN)
+                                || userRole.equalsIgnoreCase(ROLE_MANAGER)
+                                || userRole.equalsIgnoreCase(ROLE_STAFF)) {
+                            Staff staff = staffRepository.findStaffByStaffUsername(username);
+                            staff.setBranch(updateBranch);
+                            staffRepository.save(staff);
+                        } else
+                            // Role: TEACHER
+                            if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
+                                Date today = new Date();
+                                Teacher teacher = teacherRepository.findTeacherByTeacherUsername(username);
+                                List<TeachingBranch> teachingBranchList = teacher.getTeachingBranchList();
+                                for (TeachingBranch teachingBranch : teachingBranchList) {
+                                    if (!teachingBranch.getBranch().getBranchId().equals(updateBranch)) {
+                                        TeachingBranch newTeachingBranch = new TeachingBranch(updateBranch, teacher, today);
+                                        teachingBranchRepository.save(newTeachingBranch);
+                                    }
+                                }
+                                teacherRepository.save(teacher);
+                            }
+                            // Role: STUDENT
+                            else {
+                                Student student = studentRepository.findStudentByStudentUsername(username);
+                                student.setBranch(updateBranch);
+                                studentRepository.save(student);
+                            }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new Exception(UPDATE_BRANCH_ERROR);
+                    }
+
+                    // Update Parent's information
+                    // Role: STUDENT
+                    if (userRole.equalsIgnoreCase(ROLE_STUDENT)) {
+                        try {
+                            Student student = studentRepository.findStudentByStudentUsername(username);
+                            // Update Parent's name
+                            if (insAcc.getParentName() != null && !insAcc.getParentName().isEmpty()) {
+                                student.setParentName(insAcc.getParentName().trim());
+                            } else {
+                                throw new Exception(INVALID_PARENT_NAME);
+                            }
+
+                            // Update Parent's phone
+                            if (insAcc.getParentPhone() != null && insAcc.getParentPhone().matches(PHONE_PATTERN)) {
+                                student.setParentPhone(insAcc.getParentPhone());
+                            } else {
+                                throw new Exception(INVALID_PHONE_PATTERN);
+                            }
+
+                            studentRepository.save(student);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            throw new Exception(UPDATE_STUDENT_PARENT_INFO_ERROR);
+                        }
+                    }
+
+                    // Update Teacher's Experience
+                    // Role: TEACHER
+                    if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
+                        try {
+                            Teacher teacher = teacherRepository.findTeacherByTeacherUsername(username);
+                            if (insAcc.getExperience() != null && !insAcc.getExperience().isEmpty()) {
+                                teacher.setExperience(insAcc.getExperience().trim());
+                            }
+                            teacherRepository.save(teacher);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            throw new Exception(UPDATE_TEACHER_EXP_ERROR);
+                        }
+                    }
+
+                    accountRepository.save(updateAcc);
+                    return ResponseEntity.ok(true);
+                } else {
+                    throw new IllegalArgumentException(BRANCH_ID_NOT_EXIST);
+                }
+            } else {
+                throw new IllegalArgumentException(USERNAME_NOT_EXIST);
             }
         } catch (Exception e) {
             e.printStackTrace();

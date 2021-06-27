@@ -24,4 +24,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             "JOIN TeachingBranch tb ON b.branchId = tb.branch.branchId" +
             " WHERE tb.teacher.teacherUsername = :username")
     String findBranchNameByTeacherUsername(@Param("username") String teacherUsername);
+
+    Teacher findTeacherByTeacherUsername(String teacherUsername);
 }

@@ -30,4 +30,10 @@ public class TeachingBranch implements Serializable {
 
     @Column(name = "starting_date")
     private Date startingDate;
+
+    public TeachingBranch(Branch branch, Teacher teacher, Date startingDate) {
+        this.branch = branch;
+        this.teacher = teacher;
+        this.startingDate = startingDate;
+    }
 }

@@ -20,4 +20,6 @@ public interface StudentRepository extends JpaRepository<Student, String> {
 
     @Query("SELECT b.branchName FROM Branch b JOIN Student s ON b.branchId = s.branch.branchId WHERE s.studentUsername = :username")
     String findBranchNameByStudentUsername(@Param("username") String studentUsername);
+
+    Student findStudentByStudentUsername(String studentUsername);
 }
