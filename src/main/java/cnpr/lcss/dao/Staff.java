@@ -1,6 +1,5 @@
 package cnpr.lcss.dao;
 
-import cnpr.lcss.model.StaffDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,19 +15,15 @@ import java.io.Serializable;
 public class Staff implements Serializable {
 
     @Id
-    @Column(name = "staff_username")
-    private String staffUsername;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-    @OneToOne
-    @JoinColumn(name = "username")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "staff_username", referencedColumnName = "username")
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
-
-    public StaffDto convertToDto() {
-        StaffDto dto = new StaffDto(staffUsername, branch.getBranchId());
-        return dto;
-    }
 }

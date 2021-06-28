@@ -20,12 +20,12 @@ public class TeachingBranch implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_username")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     @Column(name = "starting_date")

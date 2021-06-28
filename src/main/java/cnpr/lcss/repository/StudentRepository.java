@@ -9,17 +9,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String> {
 
-    @Query("SELECT s.parentName FROM Student s WHERE s.studentUsername = :username")
+    @Query("SELECT s.parentName FROM Student s WHERE s.account.username = :username")
     String findParentNameByStudentUsername(@Param("username") String studentUsername);
 
-    @Query("SELECT s.parentPhone FROM Student s WHERE s.studentUsername = :username")
+    @Query("SELECT s.parentPhone FROM Student s WHERE s.account.username = :username")
     String findParentPhoneByStudentUsername(@Param("username") String studentUsername);
 
-    @Query("SELECT s.branch.branchId FROM Student s JOIN Account a ON s.studentUsername = a.username WHERE a.username = :username")
+    @Query("SELECT s.branch.branchId FROM Student s JOIN Account a ON s.account.username = a.username WHERE a.username = :username")
     int findBranchIdByStudentUsername(@Param("username") String studentUsername);
 
-    @Query("SELECT b.branchName FROM Branch b JOIN Student s ON b.branchId = s.branch.branchId WHERE s.studentUsername = :username")
+    @Query("SELECT b.branchName FROM Branch b JOIN Student s ON b.branchId = s.branch.branchId WHERE s.account.username = :username")
     String findBranchNameByStudentUsername(@Param("username") String studentUsername);
 
-    Student findStudentByStudentUsername(String studentUsername);
+    Student findStudentByAccount_Username(String studentUsername);
 }

@@ -19,21 +19,33 @@ import java.util.Map;
 @Service
 public class AccountService {
 
+    /**
+     * -----USER ROLE-----
+     **/
     private static final String ROLE_MANAGER = "manger";
     private static final String ROLE_STAFF = "staff";
     private static final String ROLE_ADMIN = "admin";
     private static final String ROLE_TEACHER = "teacher";
     private static final String ROLE_STUDENT = "student";
+    /**
+     * -----PATTERN-----
+     **/
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
     private static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
+    /**
+     * -----ERROR MSG-----
+     **/
     private static final String PASSWORD_NOT_MATCH = "Password does not match!";
     private static final String USERNAME_NOT_EXIST = "Username does not exist!";
     private static final String BRANCH_ID_NOT_EXIST = "Brand Id does not exist!";
     private static final String INVALID_PARENT_NAME = "Parent's name is null or empty!";
     private static final String INVALID_PHONE_PATTERN = "Phone number is invalid!";
-    private static final String UPDATE_TEACHER_EXP_ERROR = "Error at Update Teacher's Experience!";
-    private static final String UPDATE_STUDENT_PARENT_INFO_ERROR = "Error at Update Student's parent's information!";
-    private static final String UPDATE_BRANCH_ERROR = "Error at Update Branch!";
+    private static final String INVALID_EMAIL_PATTERN = "Email is invalid!";
+    private static final String INVALID_BIRTHDAY = "Birthday is invalid!";
+    private static final String INVALID_TEACHER_EXP = "Teacher's experience is null or empty!";
+    private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
+    private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
+    private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
 
     @Autowired
     AccountRepository accountRepository;
@@ -196,28 +208,38 @@ public class AccountService {
                 // Update Name
                 if (insAcc.getName() != null && !insAcc.getName().isEmpty()) {
                     updateAcc.setName(insAcc.getName().trim());
+                } else {
+                    throw new Exception(NULL_OR_EMPTY_NAME);
                 }
 
                 // Update Address
                 if (insAcc.getAddress() != null && !insAcc.getAddress().isEmpty()) {
                     updateAcc.setAddress(insAcc.getAddress().trim());
+                } else {
+                    throw new Exception(NULL_OR_EMPTY_ADDRESS);
                 }
 
                 // Update Email
                 if (insAcc.getEmail() != null && !insAcc.getEmail().isEmpty()
                         && insAcc.getEmail().matches(EMAIL_PATTERN)) {
                     updateAcc.setEmail(insAcc.getEmail().trim());
+                } else {
+                    throw new Exception(INVALID_EMAIL_PATTERN);
                 }
 
                 // Update Birthday
                 if (insAcc.getBirthday() != null) {
                     updateAcc.setBirthday(insAcc.getBirthday());
+                } else {
+                    throw new Exception(INVALID_BIRTHDAY);
                 }
 
                 // Update Phone
                 if (insAcc.getPhone() != null && !insAcc.getPhone().isEmpty()
                         && insAcc.getPhone().matches(PHONE_PATTERN)) {
                     updateAcc.setPhone(insAcc.getPhone().trim());
+                } else {
+                    throw new Exception(INVALID_PHONE_PATTERN);
                 }
 
                 // Update Image
@@ -231,78 +253,68 @@ public class AccountService {
                     // Find Branch by insAcc's branch id
                     Branch updateBranch = branchRepository.findByBranchId(insAcc.getBranchId());
 
-                    try {
-                        // Role: ADMIN, MANAGER, STAFF
-                        if (userRole.equalsIgnoreCase(ROLE_ADMIN)
-                                || userRole.equalsIgnoreCase(ROLE_MANAGER)
-                                || userRole.equalsIgnoreCase(ROLE_STAFF)) {
-                            Staff staff = staffRepository.findStaffByStaffUsername(username);
-                            staff.setBranch(updateBranch);
-                            staffRepository.save(staff);
-                        } else
-                            // Role: TEACHER
-                            if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
-                                Date today = new Date();
-                                Teacher teacher = teacherRepository.findTeacherByTeacherUsername(username);
-                                List<TeachingBranch> teachingBranchList = teacher.getTeachingBranchList();
-                                for (TeachingBranch teachingBranch : teachingBranchList) {
-                                    if (!teachingBranch.getBranch().getBranchId().equals(updateBranch)) {
-                                        TeachingBranch newTeachingBranch = new TeachingBranch(updateBranch, teacher, today);
-                                        teachingBranchRepository.save(newTeachingBranch);
-                                    }
-                                }
-                                teacherRepository.save(teacher);
+                    // Role: ADMIN, MANAGER, STAFF
+                    if (userRole.equalsIgnoreCase(ROLE_ADMIN)
+                            || userRole.equalsIgnoreCase(ROLE_MANAGER)
+                            || userRole.equalsIgnoreCase(ROLE_STAFF)) {
+                        Staff staff = staffRepository.findByAccount_Username(username);
+                        staff.setBranch(updateBranch);
+                        staffRepository.save(staff);
+                    } else
+                        // Role: TEACHER
+                        if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
+                            // Generate Starting Date
+                            Date today = new Date();
+                            // Find Teacher by username
+                            Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
+                            if (!teachingBranchRepository.existsByTeacher_TeacherIdAndBranch_BranchId(teacher.getTeacherId(), insAcc.getBranchId())) {
+                                TeachingBranch newTeachingBranch = new TeachingBranch();
+                                newTeachingBranch.setBranch(branchRepository.findByBranchId(insAcc.getBranchId()));
+                                newTeachingBranch.setTeacher(teacher);
+                                newTeachingBranch.setStartingDate(today);
+                                teachingBranchRepository.save(newTeachingBranch);
+                            } else {
+                                throw new Exception(DUPLICATE_BRANCH_ID);
                             }
-                            // Role: STUDENT
-                            else {
-                                Student student = studentRepository.findStudentByStudentUsername(username);
-                                student.setBranch(updateBranch);
-                                studentRepository.save(student);
-                            }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new Exception(UPDATE_BRANCH_ERROR);
-                    }
+                        }
+                        // Role: STUDENT
+                        else {
+                            Student student = studentRepository.findStudentByAccount_Username(username);
+                            student.setBranch(updateBranch);
+                            studentRepository.save(student);
+                        }
 
                     // Update Parent's information
                     // Role: STUDENT
                     if (userRole.equalsIgnoreCase(ROLE_STUDENT)) {
-                        try {
-                            Student student = studentRepository.findStudentByStudentUsername(username);
-                            // Update Parent's name
-                            if (insAcc.getParentName() != null && !insAcc.getParentName().isEmpty()) {
-                                student.setParentName(insAcc.getParentName().trim());
-                            } else {
-                                throw new Exception(INVALID_PARENT_NAME);
-                            }
-
-                            // Update Parent's phone
-                            if (insAcc.getParentPhone() != null && insAcc.getParentPhone().matches(PHONE_PATTERN)) {
-                                student.setParentPhone(insAcc.getParentPhone());
-                            } else {
-                                throw new Exception(INVALID_PHONE_PATTERN);
-                            }
-
-                            studentRepository.save(student);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            throw new Exception(UPDATE_STUDENT_PARENT_INFO_ERROR);
+                        Student student = studentRepository.findStudentByAccount_Username(username);
+                        // Update Parent's name
+                        if (insAcc.getParentName() != null && !insAcc.getParentName().isEmpty()) {
+                            student.setParentName(insAcc.getParentName().trim());
+                        } else {
+                            throw new Exception(INVALID_PARENT_NAME);
                         }
+
+                        // Update Parent's phone
+                        if (insAcc.getParentPhone() != null && insAcc.getParentPhone().matches(PHONE_PATTERN)) {
+                            student.setParentPhone(insAcc.getParentPhone());
+                        } else {
+                            throw new Exception(INVALID_PHONE_PATTERN);
+                        }
+
+                        studentRepository.save(student);
                     }
 
                     // Update Teacher's Experience
                     // Role: TEACHER
                     if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
-                        try {
-                            Teacher teacher = teacherRepository.findTeacherByTeacherUsername(username);
-                            if (insAcc.getExperience() != null && !insAcc.getExperience().isEmpty()) {
-                                teacher.setExperience(insAcc.getExperience().trim());
-                            }
-                            teacherRepository.save(teacher);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            throw new Exception(UPDATE_TEACHER_EXP_ERROR);
+                        Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
+                        if (insAcc.getExperience() != null && !insAcc.getExperience().isEmpty()) {
+                            teacher.setExperience(insAcc.getExperience().trim());
+                        } else {
+                            throw new Exception(INVALID_TEACHER_EXP);
                         }
+                        teacherRepository.save(teacher);
                     }
 
                     accountRepository.save(updateAcc);
@@ -313,10 +325,11 @@ public class AccountService {
             } else {
                 throw new IllegalArgumentException(USERNAME_NOT_EXIST);
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    //</editor-fold>
+//</editor-fold>
 }

@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftRepository extends JpaRepository<Shift, Integer> {
-    
+
     Page<Shift> findShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, Pageable pageable);
 
     Page<Shift> findAll(Pageable pageable);
+
     Page<Shift> findByIsAvailable(boolean isAvailable, Pageable pageable);
 
     Shift findShiftByShiftId(int shiftId);
