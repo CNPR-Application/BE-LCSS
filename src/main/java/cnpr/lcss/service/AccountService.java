@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +45,11 @@ public class AccountService {
     private static final String INVALID_EMAIL_PATTERN = "Email is invalid!";
     private static final String INVALID_BIRTHDAY = "Birthday is invalid!";
     private static final String INVALID_TEACHER_EXP = "Teacher's experience is null or empty!";
+    private static final String INVALID_STAFF_BIRTHDAY = "Staff MUST older or equal to 18 yo!";
+    private static final String INVALID_MANAGER_BIRTHDAY = "Manager MUST older or equal to 18 yo!";
+    private static final String INVALID_ADMIN_BIRTHDAY = "Admin MUST older or equal to 18 yo!";
+    private static final String INVALID_TEACHER_BIRTHDAY = "Teacher MUST older or equal to 15 yo!";
+    private static final String INVALID_STUDENT_BIRTHDAY = "Student MUST older or equal to 3 yo!";
     private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
     private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
@@ -197,6 +204,8 @@ public class AccountService {
     //<editor-fold desc="Update Account">
     public ResponseEntity<?> updateAccount(String username, AccountRequestDto insAcc) throws Exception {
         try {
+            Date today = new Date();
+
             // Check username existence
             if (accountRepository.existsByUsername(username)) {
                 // Find user's role
@@ -228,7 +237,30 @@ public class AccountService {
                 }
 
                 // Update Birthday
-                if (insAcc.getBirthday() != null) {
+                if ((insAcc.getBirthday() != null) && (insAcc.getBirthday() != today)) {
+                    // Calculate years old
+                    int yo = today.getYear() - insAcc.getBirthday().getYear();
+                    // Role: ADMIN, MANAGER, STAFF
+                    // OLDER OR EQUAL 18
+                    if (userRole.equalsIgnoreCase(ROLE_ADMIN) && yo < 18) {
+                        throw new Exception(INVALID_ADMIN_BIRTHDAY);
+                    }
+                    if (userRole.equalsIgnoreCase(ROLE_MANAGER) && yo < 18) {
+                        throw new Exception(INVALID_MANAGER_BIRTHDAY);
+                    }
+                    if (userRole.equalsIgnoreCase(ROLE_STAFF) && yo < 18) {
+                        throw new Exception(INVALID_STAFF_BIRTHDAY);
+                    }
+                    // Role: TEACHER
+                    // OLDER OR EQUAL 15
+                    if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 15) {
+                        throw new Exception(INVALID_TEACHER_BIRTHDAY);
+                    }
+                    // Role: STUDENT
+                    // OLDER OR EQUAL 3
+                    if (userRole.equalsIgnoreCase(ROLE_STUDENT) && yo < 3) {
+                        throw new Exception(INVALID_STUDENT_BIRTHDAY);
+                    }
                     updateAcc.setBirthday(insAcc.getBirthday());
                 } else {
                     throw new Exception(INVALID_BIRTHDAY);
@@ -263,8 +295,6 @@ public class AccountService {
                     } else
                         // Role: TEACHER
                         if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
-                            // Generate Starting Date
-                            Date today = new Date();
                             // Find Teacher by username
                             Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
                             if (!teachingBranchRepository.existsByTeacher_TeacherIdAndBranch_BranchId(teacher.getTeacherId(), insAcc.getBranchId())) {
