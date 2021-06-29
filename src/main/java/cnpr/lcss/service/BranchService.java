@@ -18,14 +18,12 @@ import java.util.List;
 @Service
 public class BranchService {
 
-    @Autowired
-    BranchRepository branchRepository;
-
     private final String regex = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
-
     private final String DUPLICATE_NAME = "Duplicate Branch Name!";
     private final String BRANCH_ID_DOES_NOT_EXIST = "Branch Id does not exist!";
     private final String PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX = "Phone Number does not match syntax!";
+    @Autowired
+    BranchRepository branchRepository;
 
     // Find Branch by Branch Name LIKE keyword And Is Available (true/false)
     public BranchPagingResponseDto findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
@@ -110,6 +108,8 @@ public class BranchService {
                 updateBranch.setAddress(insBranch.getAddress().trim());
                 //EDIT BRANCH DATE
                 updateBranch.setOpeningDate(insBranch.getOpeningDate());
+                //ADMIN now can edit branch isAvailable
+                updateBranch.setIsAvailable(insBranch.getIsAvailable());
                 if (!insBranch.getPhone().matches(regex)) {
                     throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
                 } else {

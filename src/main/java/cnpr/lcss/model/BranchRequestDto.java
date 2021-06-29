@@ -13,6 +13,15 @@ public class BranchRequestDto {
 
     private String branchName;
     private String address;
+    private boolean isAvailable;
     private Date openingDate;
     private String phone;
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "subject")
-public class    Subject implements Serializable {
+public class Subject implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,8 +62,9 @@ public class    Subject implements Serializable {
         this.rating = rating;
 
     }
+
     public SubjectDto convertToDto() {
-        SubjectDto subjectDto = new SubjectDto(subjectId,subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating, curriculum);
+        SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
         return subjectDto;
     }
     // Modify Getter & Setter
