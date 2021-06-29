@@ -60,11 +60,31 @@ public class RestApi {
     /**
      * @param username
      * @return
+     * @apiNote 3.1-search-info-by-username
+     * @author LamHNT - 2021.06.26
      */
     @CrossOrigin
     @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
         return accountService.searchInfoByUsername(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="5.0-update-account">
+
+    /**
+     * @param username
+     * @param insAcc
+     * @return
+     * @throws Exception
+     * @apiNote 5.0-update-account
+     * @author LamHNT - 2021.06.27
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", params = "username", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAccount(@RequestParam String username,
+                                           @RequestBody AccountRequestDto insAcc) throws Exception {
+        return accountService.updateAccount(username, insAcc);
     }
     //</editor-fold>
 
@@ -472,9 +492,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**
-     * -------------------------------SHIFT--------------------------------
-     */
+    /**-------------------------------SHIFT--------------------------------**/
 
     //<editor-fold desc="71.0-search-shift-by-shift-id">
 
@@ -531,6 +549,22 @@ public class RestApi {
 
     //</editor-fold>
 
+    //<editor-fold desc="74.0-delete-shift-by-id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 74.0-Delete-Shift
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.deleteShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="75.0-get-all-shift-by-isAvailable">
 
 
@@ -549,6 +583,22 @@ public class RestApi {
                                                            @RequestParam(value = "pageNo") int pageNo,
                                                            @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="76.0-Revival Shift by Id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 76.0-revival shift by id
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
 }

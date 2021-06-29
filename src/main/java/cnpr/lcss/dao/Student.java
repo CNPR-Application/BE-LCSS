@@ -15,12 +15,9 @@ import java.io.Serializable;
 public class Student implements Serializable {
 
     @Id
-    @Column(name = "student_username")
-    private String studentUsername;
-
-    @OneToOne
-    @JoinColumn(name = "student_username")
-    private Account account;
+    @GeneratedValue
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "parent_phone")
     private String parentPhone;
@@ -28,8 +25,11 @@ public class Student implements Serializable {
     @Column(name = "parent_name")
     private String parentName;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_username", referencedColumnName = "username")
+    private Account account;
+
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
-
 }

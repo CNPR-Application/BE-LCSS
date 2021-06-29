@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,13 +28,20 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectService {
 
-    private final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private final String DUPLICATE_CODE = "Duplicate Subject Code!";
-    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
-    private final String INVALID_PRICE = "Price CAN NOT BE LOWER THAN ZERO!";
-    private final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    /**
+     * -----PATTERN-----
+     */
+    private static final String RATING_PATTERN = "#.#";
+    /**
+     * -----ERROR MSG-----
+     */
+    private static final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
+    private static final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
+    private static final String DUPLICATE_CODE = "Duplicate Subject Code!";
+    private static final String DUPLICATE_NAME = "Duplicate Subject Name!";
+    private static final String INVALID_PRICE = "Price CAN NOT BE LOWER THAN ZERO!";
+    private static final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private static final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
 
     @Autowired
     SubjectRepository subjectRepository;
@@ -41,6 +49,17 @@ public class SubjectService {
     SubjectDetailRepository subjectDetailRepository;
     @Autowired
     CurriculumRepository curriculumRepository;
+
+    //<editor-fold desc="Calculate Rating">
+    private String calculateRating(String rating) {
+        DecimalFormat df = new DecimalFormat(RATING_PATTERN);
+        String[] arrOfInpStr = rating.split("/");
+        double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
+        System.out.println(result);
+        String finalResult = df.format(result);
+        return finalResult;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Find by Subject Name Contains and Is Available">
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
@@ -95,7 +114,7 @@ public class SubjectService {
 
     //<editor-fold desc="Find Subject and Curriculum by Subject Id">
     public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
-
+        DecimalFormat df = new DecimalFormat("#.#");
         try {
             if (subjectRepository.existsById(subjectId)) {
                 Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -112,7 +131,7 @@ public class SubjectService {
                 mapObj.put("image", subject.getImage());
                 mapObj.put("slot", subject.getSlot());
                 mapObj.put("slotPerWeek", subject.getSlotPerWeek());
-                mapObj.put("rating", subject.getRating());
+                mapObj.put("rating", calculateRating(subject.getRating()));
                 mapObj.put("curriculumId", subject.getCurriculum().getCurriculumId());
                 mapObj.put("curriculumCode", subject.getCurriculum().getCurriculumCode());
                 mapObj.put("curriculumName", subject.getCurriculum().getCurriculumName());
@@ -122,6 +141,7 @@ public class SubjectService {
                 throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
