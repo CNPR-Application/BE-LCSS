@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,21 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectService {
 
+    /**
+     * -----PATTERN-----
+     */
+    private static final String RATING_PATTERN = "#.#";
+    /**
+     * -----ERROR MSG-----
+     */
+    private static final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
+    private static final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
+    private static final String DUPLICATE_CODE = "Duplicate Subject Code!";
+    private static final String DUPLICATE_NAME = "Duplicate Subject Name!";
+    private static final String INVALID_PRICE = "Price CAN NOT BE LOWER THAN ZERO!";
+    private static final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    private static final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
@@ -34,14 +50,18 @@ public class SubjectService {
     @Autowired
     CurriculumRepository curriculumRepository;
 
-    private final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private final String DUPLICATE_CODE = "Duplicate Subject Code!";
-    private final String DUPLICATE_NAME = "Duplicate Subject Name!";
-    private final String INVALID_PRICE = "Price CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
+    //<editor-fold desc="Calculate Rating">
+    private String calculateRating(String rating) {
+        DecimalFormat df = new DecimalFormat(RATING_PATTERN);
+        String[] arrOfInpStr = rating.split("/");
+        double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
+        System.out.println(result);
+        String finalResult = df.format(result);
+        return finalResult;
+    }
+    //</editor-fold>
 
+    //<editor-fold desc="Find by Subject Name Contains and Is Available">
     public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -56,7 +76,9 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find Subject by Curriculum Id and Is Available">
     public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -71,7 +93,9 @@ public class SubjectService {
 
         return subjectPagingResponseDto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find by Subject Code and Is Available">
     public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -86,9 +110,11 @@ public class SubjectService {
 
         return subPgResDtos;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Find Subject and Curriculum by Subject Id">
     public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
-
+        DecimalFormat df = new DecimalFormat("#.#");
         try {
             if (subjectRepository.existsById(subjectId)) {
                 Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -105,7 +131,7 @@ public class SubjectService {
                 mapObj.put("image", subject.getImage());
                 mapObj.put("slot", subject.getSlot());
                 mapObj.put("slotPerWeek", subject.getSlotPerWeek());
-                mapObj.put("rating", subject.getRating());
+                mapObj.put("rating", calculateRating(subject.getRating()));
                 mapObj.put("curriculumId", subject.getCurriculum().getCurriculumId());
                 mapObj.put("curriculumCode", subject.getCurriculum().getCurriculumCode());
                 mapObj.put("curriculumName", subject.getCurriculum().getCurriculumName());
@@ -115,10 +141,13 @@ public class SubjectService {
                 throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Update Subject">
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
             if (!subjectRepository.existsById(subId)) {
@@ -127,7 +156,7 @@ public class SubjectService {
             if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
                 throw new Exception(DUPLICATE_NAME);
             }
-            if (insSub.getPrice() <= 0) {
+            if (insSub.getPrice() < 0) {
                 throw new Exception(INVALID_PRICE);
             }
             if (!curriculumRepository.existsById(insSub.getCurriculumId())) {
@@ -156,7 +185,9 @@ public class SubjectService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Delete Subject by Subject Id">
     public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
 
         try {
@@ -181,7 +212,9 @@ public class SubjectService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Create New Subject">
     @Transactional
     public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
 
@@ -198,7 +231,7 @@ public class SubjectService {
                 if (curriculumRepository.existsByCurriculumId(newSub.getCurriculumId()) == Boolean.FALSE) {
                     throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
                 }
-                if (newSub.getPrice() <= 0) {
+                if (newSub.getPrice() < 0) {
                     throw new Exception(INVALID_PRICE);
                 }
                 if (newSub.getSlot() <= 0) {
@@ -230,4 +263,5 @@ public class SubjectService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 }

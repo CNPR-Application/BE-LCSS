@@ -21,6 +21,8 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     SubjectDetailService subjectDetailService;
+    @Autowired
+    ShiftService shiftService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -50,6 +52,39 @@ public class RestApi {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> checkLogin(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         return accountService.checkLogin(loginRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="3.1-search-info-by-username">
+
+    /**
+     * @param username
+     * @return
+     * @apiNote 3.1-search-info-by-username
+     * @author LamHNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
+        return accountService.searchInfoByUsername(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="5.0-update-account">
+
+    /**
+     * @param username
+     * @param insAcc
+     * @return
+     * @throws Exception
+     * @apiNote 5.0-update-account
+     * @author LamHNT - 2021.06.27
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", params = "username", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAccount(@RequestParam String username,
+                                           @RequestBody AccountRequestDto insAcc) throws Exception {
+        return accountService.updateAccount(username, insAcc);
     }
     //</editor-fold>
 
@@ -454,6 +489,116 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    //</editor-fold>
+
+    /**-------------------------------SHIFT--------------------------------**/
+
+    //<editor-fold desc="71.0-search-shift-by-shift-id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 71.0-search-shift-by-shift-id
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.findShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="72.0-search-shift-by-dow-and-by-time-start-containing">
+
+    /**
+     * @param dayOfWeek
+     * @param timeStart
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 72.0-search-shift-by-dow-and-by-time-start-containing
+     * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", params = "dayOfWeek", method = RequestMethod.GET)
+    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
+                                                                                        @RequestParam(value = "timeStart") String timeStart,
+                                                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                                                        @RequestParam(value = "pageSize") int pageSize) {
+        // pageNo starts at 0
+        return shiftService.searchShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="73.0-create-new-shift">
+
+    /**
+     * @param shiftRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 73.0-create-new-shift
+     * @author LamHNT - 2021.06.24
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewShift(@RequestBody ShiftRequestDto shiftRequestDto) throws Exception {
+        return shiftService.createNewShift(shiftRequestDto);
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="74.0-delete-shift-by-id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 74.0-Delete-Shift
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.deleteShiftByShiftId(shiftId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="75.0-get-all-shift-by-isAvailable">
+
+
+    /**
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 75.0-get-all-shift-by-isAvailable
+     * @author HuuNT 2021-06-26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts", method = RequestMethod.GET)
+    public ShiftPagingResponseDto getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
+                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) {
+        return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="76.0-Revival Shift by Id">
+
+    /**
+     * @param shiftId
+     * @return
+     * @throws Exception
+     * @apiNote 76.0-revival shift by id
+     * @author HuuNT - 2021.06.26
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
+        return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
 }
