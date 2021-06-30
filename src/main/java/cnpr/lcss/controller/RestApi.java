@@ -621,7 +621,7 @@ public class RestApi {
      * -------------------------------FIREBASE--------------------------------
      **/
 
-    @CrossOrigin
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public Object upload(@RequestParam(value = "id") String id,
                          @RequestBody ImageRequestDto base64) {
