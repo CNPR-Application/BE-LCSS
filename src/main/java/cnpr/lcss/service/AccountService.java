@@ -227,51 +227,59 @@ public class AccountService {
         try {
             if (accountRepository.existsByUsername(username)) {
                 Map<String, Object> mapObj = new LinkedHashMap();
-                Account account = accountRepository.findOneByUsername(username);
-
-                mapObj.put("username", account.getUsername());
-                mapObj.put("name", account.getName());
-                mapObj.put("address", account.getAddress());
-                mapObj.put("email", account.getEmail());
-                mapObj.put("birthday", account.getBirthday());
-                mapObj.put("phone", account.getPhone());
-                mapObj.put("image", account.getImage());
-                mapObj.put("role", account.getRole());
-                mapObj.put("creatingDate", account.getCreatingDate());
+                Account acc = accountRepository.findOneByUsername(username);
+                AccountResponseDto accDto = new AccountResponseDto();
+                accDto.setUsername(acc.getUsername());
+                accDto.setName(acc.getName());
+                accDto.setAddress(acc.getAddress());
+                accDto.setEmail(acc.getEmail());
+                accDto.setBirthday(acc.getBirthday());
+                accDto.setPhone(acc.getPhone());
+                accDto.setImage(acc.getImage());
+                accDto.setRole(acc.getRole());
+                accDto.setCreatingDate(acc.getCreatingDate());
+                accDto.setIsAvailable(acc.getIsAvailable());
                 // Role: Admin, Manager, Staff
-                if (account.getRole().equalsIgnoreCase(ROLE_MANAGER) || account.getRole().equalsIgnoreCase(ROLE_STAFF)
-                        || account.getRole().equalsIgnoreCase(ROLE_ADMIN)) {
-                    mapObj.put("branchId", staffRepository.findBranchIdByStaffUsername(username));
-                    mapObj.put("branchName", staffRepository.findBranchNameByStaffUsername(username));
+                if (acc.getRole().equalsIgnoreCase(ROLE_MANAGER) || acc.getRole().equalsIgnoreCase(ROLE_STAFF)
+                        || acc.getRole().equalsIgnoreCase(ROLE_ADMIN)) {
+                    List<Branch> branchList = branchRepository.findStaffBranchByAccountUsername(acc.getUsername());
+                    List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                    accDto.setBranchResponseDtoList(branchResponseDtoList);
                 } // Role: Teacher
-                else if (account.getRole().equalsIgnoreCase(ROLE_TEACHER)) {
-                    mapObj.put("branchId", teacherRepository.findBranchIdByTeacherUsername(username));
-                    mapObj.put("branchName", teacherRepository.findBranchNameByTeacherUsername(username));
+                else if (acc.getRole().equalsIgnoreCase(ROLE_TEACHER)) {
+
+                    List<Branch> branchList = branchRepository.findTeacherBranchByAccountUsername(acc.getUsername());
+                    List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                    accDto.setBranchResponseDtoList(branchResponseDtoList);
+
                 } // Role: Student
-                else if (account.getRole().equalsIgnoreCase(ROLE_STUDENT)) {
-                    mapObj.put("branchId", studentRepository.findBranchIdByStudentUsername(username));
-                    mapObj.put("branchName", studentRepository.findBranchNameByStudentUsername(username));
+                else if (acc.getRole().equalsIgnoreCase(ROLE_STUDENT)) {
+                    List<Branch> branchList = branchRepository.findStudentBranchByAccountUsername(acc.getUsername());
+                    List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                    accDto.setBranchResponseDtoList(branchResponseDtoList);
+
                 } else {
                     throw new Exception();
                 }
                 // Role: Student
-                if (account.getRole().equalsIgnoreCase(ROLE_STUDENT)) {
-                    mapObj.put("parentPhone", studentRepository.findParentPhoneByStudentUsername(username));
-                    mapObj.put("parentName", studentRepository.findParentNameByStudentUsername(username));
+                if (acc.getRole().equalsIgnoreCase(ROLE_STUDENT)) {
+                    accDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(acc.getUsername()));
+                    accDto.setParentName(studentRepository.findParentNameByStudentUsername(acc.getUsername()));
                 } else {
-                    mapObj.put("parentPhone", null);
-                    mapObj.put("parentName", null);
+                    accDto.setParentPhone(null);
+                    accDto.setParentName(null);
+
                 }
                 // Role: Teacher
-                if (account.getRole().equalsIgnoreCase(ROLE_TEACHER)) {
-                    mapObj.put("experience", teacherRepository.findExperienceByTeacherUsername(username));
-                    mapObj.put("rating", teacherRepository.findRatingByTeacherUsername(username));
-                } else {
-                    mapObj.put("experience", null);
-                    mapObj.put("rating", null);
-                }
+                if (acc.getRole().equalsIgnoreCase(ROLE_TEACHER)) {
+                    accDto.setExperience(teacherRepository.findExperienceByTeacherUsername(acc.getUsername()));
+                    accDto.setRating(teacherRepository.findRatingByTeacherUsername(acc.getUsername()));
 
-                return ResponseEntity.ok(mapObj);
+                } else {
+                    accDto.setExperience(null);
+                    accDto.setRating(null);
+                }
+                return ResponseEntity.ok(accDto);
             } else {
                 throw new Exception(USERNAME_NOT_EXIST);
             }
