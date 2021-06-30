@@ -78,7 +78,7 @@ public class RestApi {
      * @author LamHNT - 2021.06.26
      */
     @CrossOrigin
-    @RequestMapping(value = "/accounts/{username}", params = "username", method = RequestMethod.GET)
+    @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
         return accountService.searchInfoByUsername(username);
     }
