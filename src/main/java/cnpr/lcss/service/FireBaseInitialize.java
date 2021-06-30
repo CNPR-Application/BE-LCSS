@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 @Service
 public class FireBaseInitialize {
 
-
     @PostConstruct
     public void initialize() {
         try {
