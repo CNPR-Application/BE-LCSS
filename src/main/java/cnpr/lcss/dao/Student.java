@@ -32,4 +32,11 @@ public class Student implements Serializable {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
+
+    public Student(String parentPhone, String parentName, Account account, Branch branch) {
+        this.parentPhone = parentPhone;
+        this.parentName = parentName;
+        this.account = account;
+        this.branch = branch;
+    }
 }
