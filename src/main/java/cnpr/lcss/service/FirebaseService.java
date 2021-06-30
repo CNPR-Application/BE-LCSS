@@ -52,7 +52,9 @@ public class FirebaseService {
     public void enodeBase64toImageandSave(String image64) throws IOException {
         byte[] data = Base64.decodeBase64(image64);
         //location of project resource
-        Path destinationFile = Paths.get("C:/Users/Admin/Desktop/29-06/BE-LCSS/src/main/java/cnpr/lcss/image", "myImage.jpg");
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        Path destinationFile = Paths.get(s, "myImage.jpg");
         Files.write(destinationFile, data);
     }
 
@@ -87,7 +89,9 @@ public class FirebaseService {
         try {
             String base64 = imageRequestDto.getImage();
             enodeBase64toImageandSave(base64);
-            File file = new File("C:/Users/Admin/Desktop/29-06/BE-LCSS/src/main/java/cnpr/lcss/image/myImage.jpg");//folder store image just encode, then delete the image
+            Path currentRelativePath = Paths.get("");
+            String s = currentRelativePath.toAbsolutePath().toString();
+            File file = new File(s,"/myImage.jpg");//folder store image just encode, then delete the image
             String fileName = file.getName();                                               // to get original file name
             fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
             String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
