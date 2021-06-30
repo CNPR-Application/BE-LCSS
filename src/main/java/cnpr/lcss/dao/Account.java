@@ -47,4 +47,12 @@ public class Account implements Serializable {
 
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }

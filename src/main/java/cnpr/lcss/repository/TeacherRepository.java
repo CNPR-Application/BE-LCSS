@@ -15,14 +15,17 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     @Query("SELECT t.rating FROM Teacher t WHERE t.account.username = :username")
     String findRatingByTeacherUsername(@Param("username") String teacherUsername);
 
-    @Query("SELECT tb.branch.branchId FROM Teacher t " +
-            "JOIN TeachingBranch tb ON t.account.username = tb.teacher.account.username " +
+    @Query("SELECT tb.branch.branchId " +
+            "FROM Teacher t " +
+            "JOIN TeachingBranch tb ON t.teacherId = tb.teacher.teacherId " +
             "WHERE t.account.username = :username")
     int findBranchIdByTeacherUsername(@Param("username") String teacherUsername);
 
-    @Query("SELECT b.branchName FROM Branch b " +
-            "JOIN TeachingBranch tb ON b.branchId = tb.branch.branchId" +
-            " WHERE tb.teacher.account.username = :username")
+    @Query("SELECT b.branchName " +
+            "FROM Branch b " +
+            "JOIN TeachingBranch tb ON b.branchId = tb.branch.branchId " +
+            "JOIN Teacher t ON t.teacherId = tb.teacher.teacherId " +
+            "WHERE t.account.username = :username")
     String findBranchNameByTeacherUsername(@Param("username") String teacherUsername);
 
     Teacher findTeacherByAccount_Username(String teacherUsername);

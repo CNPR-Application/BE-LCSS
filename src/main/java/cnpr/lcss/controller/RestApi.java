@@ -57,6 +57,18 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="2.0-search-account-like-username-paging">
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", params = "role", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAccountLikeUsernamePaging(@RequestParam(value = "role") String role,
+                                                             @RequestParam(value = "username") String keyword,
+                                                             @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                             @RequestParam(value = "pageNo") int pageNo,
+                                                             @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchAccountLikeUsernamePaging(role, keyword, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="3.1-search-info-by-username">
 
     /**
@@ -66,7 +78,7 @@ public class RestApi {
      * @author LamHNT - 2021.06.26
      */
     @CrossOrigin
-    @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/accounts/{username}", params = "username", method = RequestMethod.GET)
     public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
         return accountService.searchInfoByUsername(username);
     }
