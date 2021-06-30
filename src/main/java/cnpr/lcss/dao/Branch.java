@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.BranchResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class Branch implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "branch_id")
-    private Integer branchId;
+    private int branchId;
     @Column(name = "branch_name")
     private String branchName;
     @Column(name = "address")
@@ -43,4 +44,14 @@ public class Branch implements Serializable {
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Student> students;
+
+    public Branch(int branchId, String branchName) {
+        this.branchId = branchId;
+        this.branchName = branchName;
+    }
+
+    public BranchResponseDto convertToBranchResponseDto() {
+        BranchResponseDto dto = new BranchResponseDto(branchId, branchName);
+        return dto;
+    }
 }

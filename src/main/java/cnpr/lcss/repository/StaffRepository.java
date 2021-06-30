@@ -1,7 +1,6 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Staff;
-import cnpr.lcss.model.StaffDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
