@@ -102,6 +102,7 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="6.0 Delete Account">
     /**
      *
      * @param keyword
@@ -111,10 +112,11 @@ public class RestApi {
      * @throws Exception
      */
     @CrossOrigin
-    @RequestMapping(value = "/account", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
         return accountService.deleteByUserName(keyword);
     }
+    //</editor-fold>
     /**-------------------------------BRANCH--------------------------------**/
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
