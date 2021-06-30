@@ -26,4 +26,9 @@ public class Staff implements Serializable {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
+
+    public Staff(Account account, Branch branch) {
+        this.account = account;
+        this.branch = branch;
+    }
 }

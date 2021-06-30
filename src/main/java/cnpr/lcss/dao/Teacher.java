@@ -16,6 +16,7 @@ import java.util.List;
 public class Teacher implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "teacher_id")
     private int teacherId;
     @Column(name = "experience")
@@ -29,4 +30,10 @@ public class Teacher implements Serializable {
 
     @OneToMany(mappedBy = "teacher")
     private List<TeachingBranch> teachingBranchList;
+
+    public Teacher(String experience, String rating, Account account) {
+        this.experience = experience;
+        this.rating = rating;
+        this.account = account;
+    }
 }

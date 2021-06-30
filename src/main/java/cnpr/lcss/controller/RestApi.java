@@ -84,6 +84,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="4.0-create-new-account">
+
+    /**
+     * @param newAccount
+     * @return
+     * @throws Exception
+     * @apiNote 4.0 Create New Account
+     * @author LamHNT - 2021.06.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewAccount(@RequestBody NewAccountRequestDto newAccount) throws Exception {
+        return accountService.createNewAccount(newAccount);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="5.0-update-account">
 
     /**
