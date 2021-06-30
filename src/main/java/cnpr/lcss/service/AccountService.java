@@ -20,7 +20,7 @@ public class AccountService {
     /**
      * -----USER ROLE-----
      **/
-    private static final String ROLE_MANAGER = "manger";
+    private static final String ROLE_MANAGER = "manager";
     private static final String ROLE_STAFF = "staff";
     private static final String ROLE_ADMIN = "admin";
     private static final String ROLE_TEACHER = "teacher";
