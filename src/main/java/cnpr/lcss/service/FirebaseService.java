@@ -73,7 +73,7 @@ public class FirebaseService {
         //String uid="huunt";
         //String customToken= FirebaseAuth.getInstance().createCustomToken(uid);
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));
-        String dowloadURL = String.format("https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/%s?alt=media", URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+        String dowloadURL = String.format("https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/%s?alt=media", URLEncoder.encode(fileName, String.valueOf(StandardCharsets.UTF_8)));
         //storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
         //System.out.println(" public "+ fileName);
         return dowloadURL;
@@ -91,7 +91,7 @@ public class FirebaseService {
             enodeBase64toImageandSave(base64);
             Path currentRelativePath = Paths.get("");
             String s = currentRelativePath.toAbsolutePath().toString();
-            File file = new File(s,"/myImage.jpg");//folder store image just encode, then delete the image
+            File file = new File(s, "/myImage.jpg");//folder store image just encode, then delete the image
             String fileName = file.getName();                                               // to get original file name
             fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
             String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
