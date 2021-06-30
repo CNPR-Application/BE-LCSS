@@ -23,6 +23,8 @@ public class RestApi {
     SubjectDetailService subjectDetailService;
     @Autowired
     ShiftService shiftService;
+    @Autowired
+    FirebaseService fireBaseService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -601,4 +603,16 @@ public class RestApi {
         return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
+
+
+    /**
+     * -------------------------------FIREBASE--------------------------------
+     **/
+
+    @CrossOrigin
+    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    public Object upload(@RequestParam(value = "id") String id,
+                         @RequestBody ImageRequestDto base64) {
+        return fireBaseService.upload(base64, id);
+    }
 }
