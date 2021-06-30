@@ -25,6 +25,7 @@ public class AccountService {
     private static final String ROLE_ADMIN = "admin";
     private static final String ROLE_TEACHER = "teacher";
     private static final String ROLE_STUDENT = "student";
+
     /**
      * -----PATTERN-----
      **/
@@ -451,4 +452,24 @@ public class AccountService {
         }
     }
 //</editor-fold>
+
+    public ResponseEntity<?> deleteByUserNamae(String userName) throws Exception {
+        try {
+            if (!accountRepository.existsByUsername(userName)) {
+                throw new IllegalArgumentException();
+            } else {
+                Branch delCur = branchRepository.findOneByBranchId(branchId);
+                if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
+                    delCur.setIsAvailable(Boolean.FALSE);
+                    branchRepository.save(delCur);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

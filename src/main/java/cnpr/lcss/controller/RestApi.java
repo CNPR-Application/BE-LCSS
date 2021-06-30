@@ -102,6 +102,11 @@ public class RestApi {
     }
     //</editor-fold>
 
+    @CrossOrigin
+    @RequestMapping(value = "/account", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
+        return accountService.deleteByUserName(keyword);
+    }
     /**-------------------------------BRANCH--------------------------------**/
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
