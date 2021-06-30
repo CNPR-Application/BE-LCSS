@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class AccountRequestDto {
-    
+
     private String name;
     private String address;
     private String email;

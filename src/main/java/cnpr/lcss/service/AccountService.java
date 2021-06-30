@@ -1,22 +1,18 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.*;
-import cnpr.lcss.model.AccountRequestDto;
-import cnpr.lcss.model.LoginRequestDto;
-import cnpr.lcss.model.LoginResponseDto;
-import cnpr.lcss.model.StaffDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -50,6 +46,7 @@ public class AccountService {
     private static final String INVALID_ADMIN_BIRTHDAY = "Admin MUST older or equal to 18 yo!";
     private static final String INVALID_TEACHER_BIRTHDAY = "Teacher MUST older or equal to 15 yo!";
     private static final String INVALID_STUDENT_BIRTHDAY = "Student MUST older or equal to 3 yo!";
+    private static final String INVALID_ROLE = "Role is invalid!";
     private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
     private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
@@ -67,7 +64,7 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
-    //<editor-fold desc="Check login">
+    //<editor-fold desc="1.0 Check login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
@@ -141,7 +138,91 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search Information by Username">
+    //<editor-fold desc="2.0 Search Account Like Username">
+    public ResponseEntity<?> searchAccountLikeUsernamePaging(String role, String keyword, boolean isAvailable, int pageNo, int pageSize) throws Exception {
+        try {
+            // Check Role existence
+            if (role.equalsIgnoreCase(ROLE_ADMIN) || role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)
+                    || role.equalsIgnoreCase(ROLE_TEACHER) || role.equalsIgnoreCase(ROLE_STUDENT)) {
+                // pageNo starts at 0
+                // always set first page = 1 ---> pageNo - 1
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+                Page<Account> page = accountRepository.findByRoleEqualsAndUsernameContainingAndIsAvailable(role, keyword, isAvailable, pageable);
+                int totalPage = page.getTotalPages();
+                List<Account> accountList = page.getContent();
+                List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
+                AccountResponsePagingDto accountResponsePagingDto = new AccountResponsePagingDto();
+
+                for (Account account : accountList) {
+                    Account acc = accountRepository.findOneByUsername(account.getUsername());
+                    AccountResponseDto accDto = new AccountResponseDto();
+                    accDto.setUsername(acc.getUsername());
+                    accDto.setName(acc.getName());
+                    accDto.setAddress(acc.getAddress());
+                    accDto.setEmail(acc.getEmail());
+                    accDto.setBirthday(acc.getBirthday());
+                    accDto.setPhone(acc.getPhone());
+                    accDto.setImage(acc.getImage());
+                    accDto.setRole(acc.getRole());
+                    accDto.setCreatingDate(acc.getCreatingDate());
+                    accDto.setIsAvailable(acc.getIsAvailable());
+                    // Branch
+                    // Role: Admin, Manager, Staff
+                    if (role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)
+                            || role.equalsIgnoreCase(ROLE_ADMIN)) {
+                        List<Branch> branchList = branchRepository.findStaffBranchByAccountUsername(acc.getUsername());
+                        List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                        accDto.setBranchResponseDtoList(branchResponseDtoList);
+                    } // Role: Teacher
+                    else if (role.equalsIgnoreCase(ROLE_TEACHER)) {
+                        List<Branch> branchList = branchRepository.findTeacherBranchByAccountUsername(acc.getUsername());
+                        List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                        accDto.setBranchResponseDtoList(branchResponseDtoList);
+                    } // Role: Student
+                    else if (role.equalsIgnoreCase(ROLE_STUDENT)) {
+                        List<Branch> branchList = branchRepository.findStudentBranchByAccountUsername(acc.getUsername());
+                        List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
+                        accDto.setBranchResponseDtoList(branchResponseDtoList);
+                    }
+                    // Parent's information
+                    // Role: Student
+                    if (role.equalsIgnoreCase(ROLE_STUDENT)) {
+                        accDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(acc.getUsername()));
+                        accDto.setParentName(studentRepository.findParentNameByStudentUsername(acc.getUsername()));
+                    } else {
+                        accDto.setParentPhone(null);
+                        accDto.setParentName(null);
+                    }
+                    // Teacher's exp & rating
+                    // Role: Teacher
+                    if (role.equalsIgnoreCase(ROLE_TEACHER)) {
+                        accDto.setExperience(teacherRepository.findExperienceByTeacherUsername(acc.getUsername()));
+                        accDto.setRating(teacherRepository.findRatingByTeacherUsername(acc.getUsername()));
+                    } else {
+                        accDto.setExperience(null);
+                        accDto.setRating(null);
+                    }
+                    accountResponseDtoList.add(accDto);
+                }
+
+                accountResponsePagingDto.setPageNo(pageNo);
+                accountResponsePagingDto.setPageSize(pageSize);
+                accountResponsePagingDto.setTotalPage(totalPage);
+                accountResponsePagingDto.setAccountResponseDtoList(accountResponseDtoList);
+
+                return ResponseEntity.status(HttpStatus.OK).body(accountResponsePagingDto);
+            } else {
+                throw new Exception(INVALID_ROLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="3.1 Search Information by Username">
     public ResponseEntity<?> searchInfoByUsername(String username) throws Exception {
         try {
             if (accountRepository.existsByUsername(username)) {
@@ -201,7 +282,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Update Account">
+    //<editor-fold desc="5.0 Update Account">
     public ResponseEntity<?> updateAccount(String username, AccountRequestDto insAcc) throws Exception {
         try {
             Date today = new Date();
