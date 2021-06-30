@@ -119,13 +119,13 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="6.0 Delete Account">
+
     /**
-     *
      * @param keyword
      * @return
+     * @throws Exception
      * @apiNote 6.0 - Delete Account by User Name
      * @author HuuNT - 2021.06.30
-     * @throws Exception
      */
     @CrossOrigin
     @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -133,6 +133,7 @@ public class RestApi {
         return accountService.deleteByUserName(keyword);
     }
     //</editor-fold>
+
     /**-------------------------------BRANCH--------------------------------**/
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
@@ -646,16 +647,17 @@ public class RestApi {
         return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
-
-
+    
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
 
+    //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public Object upload(@RequestParam(value = "id") String id,
                          @RequestBody ImageRequestDto base64) {
         return fireBaseService.upload(base64, id);
     }
+    //</editor-fold>
 }
