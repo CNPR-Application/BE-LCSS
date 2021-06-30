@@ -102,6 +102,14 @@ public class RestApi {
     }
     //</editor-fold>
 
+    /**
+     *
+     * @param keyword
+     * @return
+     * @apiNote 6.0 - Delete Account by User Name
+     * @author HuuNT - 2021.06.30
+     * @throws Exception
+     */
     @CrossOrigin
     @RequestMapping(value = "/account", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
