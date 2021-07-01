@@ -707,15 +707,8 @@ public class AccountService {
 
             if (userRole.equalsIgnoreCase(ROLE_MANAGER) || userRole.equalsIgnoreCase(ROLE_STAFF)) {
                 if (role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)) {
-                    if (userRole.equalsIgnoreCase(role)) {
-                        account.setRole(role);
-                        return ResponseEntity.status(HttpStatus.OK).body(true + "\nUser's role already: " + userRole);
-                    } else if (!userRole.equalsIgnoreCase(role)) {
-                        account.setRole(role);
-                        return ResponseEntity.status(HttpStatus.OK).body(true + "\nUpdate role successful!");
-                    } else {
-                        return ResponseEntity.badRequest().body(false);
-                    }
+                    account.setRole(role);
+                    return ResponseEntity.ok(true);
                 } else {
                     throw new Exception(INVALID_NEW_ROLE);
                 }
