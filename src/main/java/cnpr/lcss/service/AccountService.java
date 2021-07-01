@@ -465,6 +465,7 @@ public class AccountService {
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
+            accountRepository.save(accTmp);
 
             // Branch Id
             // Check Branch Id existence
@@ -480,41 +481,51 @@ public class AccountService {
             if (userRole.equalsIgnoreCase(ROLE_ADMIN)
                     || userRole.equalsIgnoreCase(ROLE_MANAGER)
                     || userRole.equalsIgnoreCase(ROLE_STAFF)) {
-                Staff staff = new Staff(accTmp, branch);
+                Account accountStaff = accountRepository.findOneByUsername(accTmp.getUsername());
+                Staff staff = new Staff(accountStaff, branch);
                 staffRepository.save(staff);
-            } else
-                // Role: TEACHER
-                if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
-                    Teacher teacher = new Teacher();
-                    if (newAcc.getExperience() != null && !newAcc.getExperience().isEmpty()) {
-                        teacher.setAccount(accTmp);
-                        teacher.setRating(null);
-                        teacher.setExperience(newAcc.getExperience());
-                    } else {
-                        throw new Exception(INVALID_TEACHER_EXP);
-                    }
+            }
+
+            // Role: STUDENT
+            if (userRole.equalsIgnoreCase(ROLE_STUDENT)) {
+                Student student = new Student();
+                // Insert Parent's name
+                if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
+                    student.setParentName(newAcc.getParentName());
+                } else {
+                    throw new Exception(INVALID_NAME);
+                }
+                // Insert Parent's phone
+                if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
+                    student.setParentPhone(newAcc.getParentPhone());
+                } else {
+                    throw new Exception(INVALID_PHONE_PATTERN);
+                }
+                Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
+                student.setAccount(accountStudent);
+                student.setBranch(branch);
+                studentRepository.save(student);
+            }
+
+            // Role: TEACHER
+            if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
+                Teacher teacher = new Teacher();
+                TeachingBranch teachingBranch = new TeachingBranch();
+                Account accountTeacher = accountRepository.findOneByUsername(accTmp.getUsername());
+                if (newAcc.getExperience() != null && !newAcc.getExperience().isEmpty()) {
+                    teacher.setAccount(accountTeacher);
+                    teacher.setRating(null);
+                    teacher.setExperience(newAcc.getExperience());
                     teacherRepository.save(teacher);
+                    teachingBranch.setBranch(branch);
+                    teachingBranch.setStartingDate(today);
+                    teachingBranch.setTeacher(teacherRepository.findTeacherByAccount_Username(accountTeacher.getUsername()));
+                    teachingBranchRepository.save(teachingBranch);
+                } else {
+                    throw new Exception(INVALID_TEACHER_EXP);
                 }
-                // Role: STUDENT
-                else {
-                    Student student = new Student();
-                    // Insert Parent's name
-                    if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
-                        student.setParentName(newAcc.getParentName());
-                    } else {
-                        throw new Exception(INVALID_NAME);
-                    }
-                    // Insert Parent's phone
-                    if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
-                        student.setParentPhone(newAcc.getParentPhone());
-                    } else {
-                        throw new Exception(INVALID_PHONE_PATTERN);
-                    }
-                    student.setAccount(accTmp);
-                    student.setBranch(branch);
-                    studentRepository.save(student);
-                }
-            accountRepository.save(accTmp);
+            }
+
             return ResponseEntity.ok(true);
         } catch (Exception e) {
             e.printStackTrace();
