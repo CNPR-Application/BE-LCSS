@@ -708,6 +708,7 @@ public class AccountService {
             if (userRole.equalsIgnoreCase(ROLE_MANAGER) || userRole.equalsIgnoreCase(ROLE_STAFF)) {
                 if (role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)) {
                     account.setRole(role);
+                    accountRepository.save(account);
                     return ResponseEntity.ok(true);
                 } else {
                     throw new Exception(INVALID_NEW_ROLE);
