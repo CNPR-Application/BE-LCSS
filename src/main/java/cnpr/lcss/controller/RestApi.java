@@ -655,17 +655,6 @@ public class RestApi {
      * -------------------------------FIREBASE--------------------------------
      **/
 
-    //<editor-fold desc="7.1-Edit-Image">
-    /**
-     *
-     * @param id
-     * @param base64
-     * @return url, true/false
-     * @apiNote 7.1-edit-image
-     * @author HuuNT-2021.07.01
-     */
-
-
     //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
