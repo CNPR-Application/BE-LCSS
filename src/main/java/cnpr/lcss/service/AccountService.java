@@ -46,6 +46,7 @@ public class AccountService {
     private static final String USERNAME_NOT_EXIST = "Username does not exist!";
     private static final String BRANCH_ID_NOT_EXIST = "Brand Id does not exist!";
     private static final String INVALID_NAME = "Name is null, empty, or unreal!";
+    private static final String INVALID_PARENT_NAME = "Parent Name is null, empty, or unreal!";
     private static final String INVALID_PHONE_PATTERN = "Phone number is invalid!";
     private static final String INVALID_EMAIL_PATTERN = "Email is invalid!";
     private static final String INVALID_BIRTHDAY = "Birthday is invalid!";
@@ -493,7 +494,7 @@ public class AccountService {
                 if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
                     student.setParentName(newAcc.getParentName());
                 } else {
-                    throw new Exception(INVALID_NAME);
+                    throw new Exception(INVALID_PARENT_NAME);
                 }
                 // Insert Parent's phone
                 if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
@@ -525,6 +526,9 @@ public class AccountService {
                     throw new Exception(INVALID_TEACHER_EXP);
                 }
             }
+
+            SendEmailService sendEmailService = new SendEmailService();
+            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
 
             return ResponseEntity.ok(true);
         } catch (Exception e) {
