@@ -27,8 +27,6 @@ public class AccountService {
     private static final String ROLE_ADMIN = "admin";
     private static final String ROLE_TEACHER = "teacher";
     private static final String ROLE_STUDENT = "student";
-
-
     /**
      * -----PATTERN-----
      **/
@@ -58,6 +56,8 @@ public class AccountService {
     private static final String INVALID_TEACHER_BIRTHDAY = "Teacher MUST older or equal to 15 yo!";
     private static final String INVALID_STUDENT_BIRTHDAY = "Student MUST older or equal to 3 yo!";
     private static final String INVALID_ROLE = "Role is invalid!";
+    private static final String INVALID_CHANGE_ROLE = "User's role MUST BE Manager or Staff!";
+    private static final String INVALID_NEW_ROLE = "New role MUST BE Manager or Staff!";
     private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
     private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
@@ -698,6 +698,36 @@ public class AccountService {
         }
     }
 //</editor-fold>
+
+    //<editor-fold desc="5.1 Update Role">
+    public ResponseEntity<?> updateRole(String username, String role) throws Exception {
+        try {
+            String userRole = accountRepository.findRoleByUsername(username);
+            Account account = accountRepository.findOneByUsername(username);
+
+            if (userRole.equalsIgnoreCase(ROLE_MANAGER) || userRole.equalsIgnoreCase(ROLE_STAFF)) {
+                if (role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)) {
+                    if (userRole.equalsIgnoreCase(role)) {
+                        account.setRole(role);
+                        return ResponseEntity.status(HttpStatus.OK).body(true + "\nUser's role already: " + userRole);
+                    } else if (!userRole.equalsIgnoreCase(role)) {
+                        account.setRole(role);
+                        return ResponseEntity.status(HttpStatus.OK).body(true + "\nUpdate role successful!");
+                    } else {
+                        return ResponseEntity.badRequest().body(false);
+                    }
+                } else {
+                    throw new Exception(INVALID_NEW_ROLE);
+                }
+            } else {
+                throw new Exception(INVALID_CHANGE_ROLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 
     //<editor-fold desc="6.0 Delete Account by UserName">
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {

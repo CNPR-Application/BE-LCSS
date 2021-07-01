@@ -121,6 +121,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="5.1-update-role">
+
+    /**
+     * @param username
+     * @param role
+     * @return
+     * @throws Exception
+     * @apiNote 5.1-update-role
+     * @author LamHNT - 2021.07.01
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/role", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateRoleByUsername(@RequestParam(value = "username") String username,
+                                                  @RequestBody String role) throws Exception {
+        return accountService.updateRole(username, role);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="6.0 Delete Account">
 
     /**
@@ -650,7 +668,7 @@ public class RestApi {
         return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
@@ -659,7 +677,7 @@ public class RestApi {
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public ImageResponseDTO upload(@RequestParam(value = "id") String id,
-                         @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
+                                   @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
