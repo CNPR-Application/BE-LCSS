@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,20 +92,21 @@ public class AccountService {
     //</editor-fold>
 
     //<editor-fold desc="Generate Password">
-    private char[] generatePassword(int length) {
-        String combinedChars = CAPITAL_CASE_LETTERS + LOWER_CASE_LETTERS + SPECIAL_CHARACTERS + NUMBERS;
-        Random random = new Random();
-        char[] password = new char[length];
+    private String generatePassword(int length) {
+        final String chars = CAPITAL_CASE_LETTERS + LOWER_CASE_LETTERS + SPECIAL_CHARACTERS + NUMBERS;
 
-        password[0] = LOWER_CASE_LETTERS.charAt(random.nextInt(LOWER_CASE_LETTERS.length()));
-        password[1] = CAPITAL_CASE_LETTERS.charAt(random.nextInt(CAPITAL_CASE_LETTERS.length()));
-        password[2] = SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length()));
-        password[3] = NUMBERS.charAt(random.nextInt(NUMBERS.length()));
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
 
-        for (int i = 4; i < length; i++) {
-            password[i] = combinedChars.charAt(random.nextInt(combinedChars.length()));
+        // each iteration of the loop randomly chooses a character from the given
+        // ASCII range and appends it to the `StringBuilder` instance
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
         }
-        return password;
+
+        return sb.toString();
     }
     //</editor-fold>
 
