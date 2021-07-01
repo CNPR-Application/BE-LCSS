@@ -3,10 +3,13 @@ package cnpr.lcss.controller;
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
+import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 public class RestApi {
@@ -666,8 +669,8 @@ public class RestApi {
     //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
-    public Object upload(@RequestParam(value = "id") String id,
-                         @RequestBody ImageRequestDto base64) {
+    public ImageResponseDTO upload(@RequestParam(value = "id") String id,
+                         @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
