@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,9 +77,18 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
+    //<editor-fold desc="Convert from Unicode to normal string">
+    public static String stripAccents(String s) {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Generate Username">
     private String generateUsername(String name) throws Exception {
         String username;
+        name = stripAccents(name);
         int randNum = (int) Math.floor(Math.random() * (RAND_MAX - RAND_MIN + 1) + RAND_MIN);
 
         if (name != null && !name.isEmpty() && name.matches(NAME_PATTERN)) {
@@ -363,7 +373,7 @@ public class AccountService {
             }
 
             // Name
-            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && newAcc.getName().matches(NAME_PATTERN)) {
+            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
                 account.setName(newAcc.getName());
             } else {
                 throw new Exception(INVALID_NAME);
@@ -489,7 +499,7 @@ public class AccountService {
                 else {
                     Student student = new Student();
                     // Insert Parent's name
-                    if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty()) {
+                    if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
                         student.setParentName(newAcc.getParentName());
                     } else {
                         throw new Exception(INVALID_NAME);
