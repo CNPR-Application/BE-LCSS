@@ -84,6 +84,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="4.0-create-new-account">
+
+    /**
+     * @param newAccount
+     * @return
+     * @throws Exception
+     * @apiNote 4.0 Create New Account
+     * @author LamHNT - 2021.06.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewAccount(@RequestBody NewAccountRequestDto newAccount) throws Exception {
+        return accountService.createNewAccount(newAccount);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="5.0-update-account">
 
     /**
@@ -99,6 +115,22 @@ public class RestApi {
     public ResponseEntity<?> updateAccount(@RequestParam String username,
                                            @RequestBody AccountRequestDto insAcc) throws Exception {
         return accountService.updateAccount(username, insAcc);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="6.0 Delete Account">
+
+    /**
+     * @param keyword
+     * @return
+     * @throws Exception
+     * @apiNote 6.0 - Delete Account by User Name
+     * @author HuuNT - 2021.06.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
+        return accountService.deleteByUserName(keyword);
     }
     //</editor-fold>
 
@@ -615,11 +647,11 @@ public class RestApi {
         return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
-
-
+    
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
+
     //<editor-fold desc="7.1-Edit-Image">
     /**
      *
@@ -629,6 +661,9 @@ public class RestApi {
      * @apiNote 7.1-edit-image
      * @author HuuNT-2021.07.01
      */
+
+
+    //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public Object upload(@RequestParam(value = "id") String id,
