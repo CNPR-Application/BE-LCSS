@@ -21,4 +21,13 @@ public class AccountRequestDto {
     private String parentName;
     private String parentPhone;
     private String experience;
+    private boolean isAvailable;
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }
