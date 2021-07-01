@@ -591,6 +591,9 @@ public class AccountService {
                     updateAcc.setImage(insAcc.getImage().trim());
                 }
 
+                // Update Is Available
+                updateAcc.setIsAvailable(insAcc.getIsAvailable());
+
                 // Update Branch Id
                 // Check Branch Id existence
                 if (branchRepository.existsById(insAcc.getBranchId())) {
