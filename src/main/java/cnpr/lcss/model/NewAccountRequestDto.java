@@ -9,16 +9,16 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AccountRequestDto {
-
+public class NewAccountRequestDto {
     private String name;
     private String address;
     private String email;
     private Date birthday;
     private String phone;
     private String image;
+    private String role;
     private int branchId;
-    private String parentName;
     private String parentPhone;
+    private String parentName;
     private String experience;
 }

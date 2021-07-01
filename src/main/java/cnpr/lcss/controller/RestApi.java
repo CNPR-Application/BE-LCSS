@@ -23,6 +23,8 @@ public class RestApi {
     SubjectDetailService subjectDetailService;
     @Autowired
     ShiftService shiftService;
+    @Autowired
+    FirebaseService fireBaseService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -55,6 +57,18 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="2.0-search-account-like-username-paging">
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", params = "role", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAccountLikeUsernamePaging(@RequestParam(value = "role") String role,
+                                                             @RequestParam(value = "username") String keyword,
+                                                             @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                             @RequestParam(value = "pageNo") int pageNo,
+                                                             @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchAccountLikeUsernamePaging(role, keyword, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="3.1-search-info-by-username">
 
     /**
@@ -67,6 +81,22 @@ public class RestApi {
     @RequestMapping(value = "/accounts/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
         return accountService.searchInfoByUsername(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="4.0-create-new-account">
+
+    /**
+     * @param newAccount
+     * @return
+     * @throws Exception
+     * @apiNote 4.0 Create New Account
+     * @author LamHNT - 2021.06.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewAccount(@RequestBody NewAccountRequestDto newAccount) throws Exception {
+        return accountService.createNewAccount(newAccount);
     }
     //</editor-fold>
 
@@ -85,6 +115,22 @@ public class RestApi {
     public ResponseEntity<?> updateAccount(@RequestParam String username,
                                            @RequestBody AccountRequestDto insAcc) throws Exception {
         return accountService.updateAccount(username, insAcc);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="6.0 Delete Account">
+
+    /**
+     * @param keyword
+     * @return
+     * @throws Exception
+     * @apiNote 6.0 - Delete Account by User Name
+     * @author HuuNT - 2021.06.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
+        return accountService.deleteByUserName(keyword);
     }
     //</editor-fold>
 
@@ -599,6 +645,19 @@ public class RestApi {
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
     public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.revivalShiftbyShiftId(shiftId);
+    }
+    //</editor-fold>
+    
+    /**
+     * -------------------------------FIREBASE--------------------------------
+     **/
+
+    //<editor-fold desc="Upload Image via Firebase">
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    public Object upload(@RequestParam(value = "id") String id,
+                         @RequestBody ImageRequestDto base64) {
+        return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
 }

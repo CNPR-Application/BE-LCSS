@@ -9,11 +9,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ShiftPagingResponseDto {
-
-    List<ShiftDto> shiftDtos;
+public class AccountResponsePagingDto {
     private int pageNo;
     private int pageSize;
-    private int pageTotal;
+    private int totalPage;
+    private List<AccountResponseDto> accountResponseDtoList;
 }
-

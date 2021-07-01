@@ -4,8 +4,11 @@ import cnpr.lcss.dao.Branch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 @Repository
 
@@ -22,4 +25,23 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
     Branch findOneByBranchId(int branchId);
 
     Boolean existsById(int branchId);
+
+    @Query(value = "SELECT new Branch(b.branchId, b.branchName) " +
+            "FROM Branch b " +
+            "JOIN TeachingBranch tb on b.branchId = tb.branch.branchId " +
+            "JOIN Teacher t on t.teacherId = tb.teacher.teacherId " +
+            "WHERE t.account.username = :username")
+    List<Branch> findTeacherBranchByAccountUsername(@Param(value = "username") String username);
+
+    @Query(value = "SELECT new Branch(b.branchId, b.branchName) " +
+            "FROM Branch b " +
+            "JOIN Staff s ON s.branch.branchId = b.branchId " +
+            "WHERE s.account.username = :username")
+    List<Branch> findStaffBranchByAccountUsername(@Param(value = "username") String username);
+
+    @Query(value = "SELECT new Branch(b.branchId, b.branchName) " +
+            "FROM Branch b " +
+            "JOIN Student s ON s.branch.branchId = b.branchId " +
+            "WHERE s.account.username = :username")
+    List<Branch> findStudentBranchByAccountUsername(@Param(value = "username") String username);
 }
