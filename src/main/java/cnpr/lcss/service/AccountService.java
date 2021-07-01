@@ -25,6 +25,8 @@ public class AccountService {
     private static final String ROLE_ADMIN = "admin";
     private static final String ROLE_TEACHER = "teacher";
     private static final String ROLE_STUDENT = "student";
+
+
     /**
      * -----PATTERN-----
      **/
@@ -670,4 +672,26 @@ public class AccountService {
         }
     }
 //</editor-fold>
+
+    //<editor-fold desc="6.0 Delete Account by UserName">
+    public ResponseEntity<?> deleteByUserName(String userName) throws Exception {
+        try {
+            if (!accountRepository.existsByUsername(userName)) {
+                throw new IllegalArgumentException(USERNAME_NOT_EXIST);
+            } else {
+                Account delAccount = accountRepository.findOneByUsername(userName);
+                if (delAccount.getIsAvailable()) {
+                    delAccount.setIsAvailable(false);
+                    accountRepository.save(delAccount);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
