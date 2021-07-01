@@ -5,6 +5,7 @@ import cnpr.lcss.dao.Account;
 import cnpr.lcss.dao.Curriculum;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.ImageRequestDto;
+import cnpr.lcss.model.ImageResponseDTO;
 import cnpr.lcss.repository.AccountRepository;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectRepository;
@@ -16,8 +17,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -84,54 +83,57 @@ public class FirebaseService {
     }
 
 
-    public ResponseEntity<?> upload(ImageRequestDto imageRequestDto, String id) {
+    public ImageResponseDTO upload(ImageRequestDto imageRequestDto, String id) throws IOException, FirebaseAuthException {
+        boolean result = false;
+        String base64 = imageRequestDto.getImage();
+        enodeBase64toImageandSave(base64);
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        File file = new File(s, "/myImage.jpg");//folder store image just encode, then delete the image
+        String fileName = file.getName();                                               // to get original file name
+        fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
+        String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
+        file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
 
-        try {
-            String base64 = imageRequestDto.getImage();
-            enodeBase64toImageandSave(base64);
-            Path currentRelativePath = Paths.get("");
-            String s = currentRelativePath.toAbsolutePath().toString();
-            File file = new File(s, "/myImage.jpg");//folder store image just encode, then delete the image
-            String fileName = file.getName();                                               // to get original file name
-            fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
-            String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
-            file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
 
+        if (imageRequestDto.getKeyword().matches(CURRICULUM)) {
+            int idCurInsert = Integer.parseInt(id);
+            if (curriculumRepository.existsByCurriculumId(idCurInsert)) {
+                Curriculum insCur = curriculumRepository.findOneByCurriculumId(idCurInsert);
+                insCur.setImage(TEMP_URL);
+                curriculumRepository.save(insCur);
+                result = true;
 
-            if (imageRequestDto.getKeyword().matches(CURRICULUM)) {
-                int idCurInsert = Integer.parseInt(id);
-                if (curriculumRepository.existsByCurriculumId(idCurInsert)) {
-                    Curriculum insCur = curriculumRepository.findOneByCurriculumId(idCurInsert);
-                    insCur.setImage(TEMP_URL);
-                    curriculumRepository.save(insCur);
-                } else {
-                    throw new IllegalArgumentException(CURRICULUM_ID_NOT_EXIST);
-                }
+            } else {
+                throw new IllegalArgumentException(CURRICULUM_ID_NOT_EXIST);
             }
-            if (imageRequestDto.getKeyword().matches(AVATAR)) {
-                if (accountRepository.existsByUsername(id)) {
-                    Account account = accountRepository.findOneByUsername(id);
-                    account.setImage(TEMP_URL);
-                    accountRepository.save(account);
-                } else {
-                    throw new IllegalArgumentException(USERNAME_NOT_EXIST);
-                }
-            }
-            if (imageRequestDto.getKeyword().matches(SUBJECT)) {
-                int idSubIns = Integer.parseInt(id);
-                if (subjectRepository.existsSubjectBySubjectId(idSubIns)) {
-                    Subject insSub = subjectRepository.findBySubjectId(idSubIns);
-                    insSub.setImage(TEMP_URL);
-                    subjectRepository.save(insSub);
-                } else {
-                    throw new IllegalArgumentException(SUBJECT_ID_NOT_EXIST);
-                }
-            }
-            return ResponseEntity.ok(Boolean.TRUE + ", " + TEMP_URL);    // Your customized response
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+        if (imageRequestDto.getKeyword().matches(AVATAR)) {
+            if (accountRepository.existsByUsername(id)) {
+                Account account = accountRepository.findOneByUsername(id);
+                account.setImage(TEMP_URL);
+                accountRepository.save(account);
+                result = true;
+
+
+            } else {
+                throw new IllegalArgumentException(USERNAME_NOT_EXIST);
+            }
+        }
+        if (imageRequestDto.getKeyword().matches(SUBJECT)) {
+            int idSubIns = Integer.parseInt(id);
+            if (subjectRepository.existsSubjectBySubjectId(idSubIns)) {
+                Subject insSub = subjectRepository.findBySubjectId(idSubIns);
+                insSub.setImage(TEMP_URL);
+                subjectRepository.save(insSub);
+                result = true;
+
+            } else {
+                throw new IllegalArgumentException(SUBJECT_ID_NOT_EXIST);
+            }
+        }
+        ImageResponseDTO imageResponseDTO = new ImageResponseDTO(result, TEMP_URL);
+        return imageResponseDTO;
 
     }
 }
