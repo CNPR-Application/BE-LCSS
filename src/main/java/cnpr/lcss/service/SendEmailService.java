@@ -9,7 +9,7 @@ import java.util.Properties;
 
 @Service
 public class SendEmailService {
-    public void sendGmail(String userGmail, String acountName, String accountUsername, String accountPassword) {
+    public void sendGmail(String userGmail, String accountName, String accountUsername, String accountPassword) {
         final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
         final String username = "nguyenthehuu116";
         final String password = "Thehuu2908";
@@ -36,11 +36,11 @@ public class SendEmailService {
                     InternetAddress.parse(userGmail)
             );
             message.setSubject("WELCOME TO " + branchName);
-            message.setText("Dear " + acountName + ","
+            message.setText("Dear " + accountName + ","
                     + "\n\nThank you for joining us!"
-                    + "\n\nHere is your username: " + accountUsername +
-                    "\n\npassword: " + accountPassword
-                    +"\n\nPlease change your's password after the 1st login.");
+                    + "\n\nHere is your username: " + accountUsername
+                    + "\n\npassword: " + accountPassword
+                    + "\n\nPlease change your password after the 1st login.");
 
             Transport.send(message);
 
