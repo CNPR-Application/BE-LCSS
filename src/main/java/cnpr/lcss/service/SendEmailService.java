@@ -39,11 +39,11 @@ public class SendEmailService {
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("Chào mừng bạn đến với trung tâm CNPR !");
-            message.setText("Tài khoản đăng nhập của bạn là: " + accountUsername + "."
-                    + "\n\nMật khẩu: " + accountPassword + "."
+            message.setSubject("Chào mừng bạn đến với trung tâm CNPR!");
+            message.setText("Tài khoản đăng nhập của bạn là: " + accountUsername
+                    + "\n\nMật khẩu: " + accountPassword
                     + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
-                    + "\n\nChúc bạn một ngày vui vẻ !"
+                    + "\n\nChúc bạn một ngày vui vẻ!"
                     + "\n\nCNPR");
 
             Transport.send(message);
@@ -52,8 +52,6 @@ public class SendEmailService {
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
-
-
         }
     }
 }
