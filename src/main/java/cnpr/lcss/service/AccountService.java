@@ -10,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -376,8 +378,11 @@ public class AccountService {
     //</editor-fold>
 
     //<editor-fold desc="4.0 Create New Account">
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
         Date today = new Date();
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+
         try {
             Account account = new Account();
             String newUsername;
@@ -558,7 +563,9 @@ public class AccountService {
             SendEmailService sendEmailService = new SendEmailService();
             sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
 
-            return ResponseEntity.ok(true);
+            mapObj.put("username", accTmp.getUsername());
+
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
