@@ -11,7 +11,7 @@ import java.util.Properties;
 public class SendEmailService {
 
 
-    public boolean sendGmail(String userGmail, String acountName, String accountUsername, String accountPassword) {
+    public boolean sendGmail(String userGmail, String acountName, String accountUsername, String accountPassword) throws AuthenticationFailedException {
 
         final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
         final String username = "lcssfall2021";
@@ -51,7 +51,8 @@ public class SendEmailService {
             return result;
         } catch (MessagingException e) {
             e.printStackTrace();
-            return result;
+            throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
+
 
         }
     }

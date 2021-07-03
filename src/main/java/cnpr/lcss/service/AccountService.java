@@ -486,20 +486,24 @@ public class AccountService {
             // Creating Date
             account.setCreatingDate(today);
 
-            // Temporary New Account
-            Account accTmp = new Account();
-            accTmp.setUsername(newUsername);
-            accTmp.setPassword(newPassword);
-            accTmp.setName(newAcc.getName());
-            accTmp.setBirthday(newAcc.getBirthday());
-            accTmp.setAddress(newAcc.getAddress());
-            accTmp.setPhone(newAcc.getPhone());
-            accTmp.setEmail(newAcc.getEmail());
-            accTmp.setImage(newAcc.getImage());
-            accTmp.setRole(userRole);
-            accTmp.setIsAvailable(true);
-            accTmp.setCreatingDate(today);
-            accountRepository.save(accTmp);
+                // Temporary New Account
+                Account accTmp = new Account();
+                accTmp.setUsername(newUsername);
+                accTmp.setPassword(newPassword);
+                accTmp.setName(newAcc.getName());
+                accTmp.setBirthday(newAcc.getBirthday());
+                accTmp.setAddress(newAcc.getAddress());
+                accTmp.setPhone(newAcc.getPhone());
+                accTmp.setEmail(newAcc.getEmail());
+                accTmp.setImage(newAcc.getImage());
+                accTmp.setRole(userRole);
+                accTmp.setIsAvailable(true);
+                accTmp.setCreatingDate(today);
+                boolean checkGmail=false;
+                SendEmailService sendEmailService = new SendEmailService();
+                checkGmail=sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+                if(checkGmail)
+                accountRepository.save(accTmp);
 
             // Branch Id
             // Check Branch Id existence
@@ -560,8 +564,7 @@ public class AccountService {
                 }
             }
 
-            SendEmailService sendEmailService = new SendEmailService();
-            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+
 
             mapObj.put("username", accTmp.getUsername());
 
