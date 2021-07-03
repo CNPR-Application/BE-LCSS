@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.util.*;
@@ -347,6 +348,7 @@ public class AccountService {
     //</editor-fold>
 
     //<editor-fold desc="4.0 Create New Account">
+
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
         Date today = new Date();
         try {
@@ -525,11 +527,15 @@ public class AccountService {
                     throw new Exception(INVALID_TEACHER_EXP);
                 }
             }
+            boolean result;
             SendEmailService sendEmailService = new SendEmailService();
-            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
-
-            return ResponseEntity.ok(true);
-        } catch (Exception e) {
+            result=sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+            if(result==true){
+                return  ResponseEntity.ok(true);
+            }else {
+                return ResponseEntity.ok(false);
+            }
+            } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
