@@ -9,11 +9,15 @@ import java.util.Properties;
 
 @Service
 public class SendEmailService {
-    public void sendGmail(String userGmail, String accountName, String accountUsername, String accountPassword) {
-        final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
-        final String username = "nguyenthehuu116";
-        final String password = "Thehuu2908";
 
+
+    public boolean sendGmail(String userGmail, String acountName, String accountUsername, String accountPassword) throws AuthenticationFailedException {
+
+        final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
+        final String username = "lcssfall2021";
+        final String password = "lcss@123";
+
+        boolean result = false;
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");
@@ -35,17 +39,19 @@ public class SendEmailService {
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("WELCOME TO " + branchName);
-            message.setText("Dear " + accountName + ","
-                    + "\n\nThank you for joining us!"
-                    + "\n\nHere is your username: " + accountUsername
-                    + "\n\npassword: " + accountPassword
-                    + "\n\nPlease change your password after the 1st login.");
+            message.setSubject("Chào mừng bạn đến với trung tâm CNPR!");
+            message.setText("Tài khoản đăng nhập của bạn là: " + accountUsername
+                    + "\n\nMật khẩu: " + accountPassword
+                    + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
+                    + "\n\nChúc bạn một ngày vui vẻ!"
+                    + "\n\nCNPR");
 
             Transport.send(message);
-
+            result = true;
+            return result;
         } catch (MessagingException e) {
             e.printStackTrace();
+            throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
         }
     }
 }

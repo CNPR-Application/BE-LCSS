@@ -69,6 +69,7 @@ public class AccountService {
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
     private static final String GENERATE_USERNAME_ERROR = "Generate username error!";
     private static final String GENERATE_PASSWORD_ERROR = "Generate password error!";
+    private static final String EMAIL_SENDING_ERROR = "Sending Email failed!";
 
     @Autowired
     AccountRepository accountRepository;
@@ -499,7 +500,14 @@ public class AccountService {
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
-            accountRepository.save(accTmp);
+            boolean checkGmail = false;
+            SendEmailService sendEmailService = new SendEmailService();
+            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+            if (checkGmail) {
+                accountRepository.save(accTmp);
+            } else {
+                throw new Exception(EMAIL_SENDING_ERROR);
+            }
 
             // Branch Id
             // Check Branch Id existence
@@ -559,9 +567,6 @@ public class AccountService {
                     throw new Exception(INVALID_TEACHER_EXP);
                 }
             }
-
-            SendEmailService sendEmailService = new SendEmailService();
-            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
 
             mapObj.put("username", accTmp.getUsername());
 
