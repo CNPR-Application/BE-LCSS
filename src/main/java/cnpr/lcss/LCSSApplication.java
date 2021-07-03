@@ -9,11 +9,6 @@ import java.io.IOException;
 public class LCSSApplication {
 
     public static void main(String[] args) throws IOException {
-
         SpringApplication.run(LCSSApplication.class, args);
-
-
     }
-
-
 }

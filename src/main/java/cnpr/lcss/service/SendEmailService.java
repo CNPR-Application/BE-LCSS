@@ -34,7 +34,7 @@ public class SendEmailService {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("lcssfall2021@gmail.com"));
+            message.setFrom(new InternetAddress("nguyenthehuu116@gmail.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
