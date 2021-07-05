@@ -64,6 +64,7 @@ public class AccountService {
     private static final String INVALID_ROLE = "Role is invalid!";
     private static final String INVALID_CHANGE_ROLE = "User's role MUST BE Manager or Staff!";
     private static final String INVALID_NEW_ROLE = "New role MUST BE Manager or Staff!";
+    private static final String INVALID_IS_AVAILABLE = "Account is no longer active!";
     private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
     private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
@@ -163,6 +164,12 @@ public class AccountService {
             } else {
                 if (accountRepository.existsById(loginRequest.getUsername())) {
                     Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
+
+                    // Check whether account is available or not
+                    if (!acc.getIsAvailable()) {
+                        throw new Exception(INVALID_IS_AVAILABLE);
+                    }
+
                     String accUsername = acc.getUsername();
                     if (acc.getPassword().equals(loginRequest.getPassword())) {
                         loginResponseDto.setName(acc.getName());
