@@ -467,7 +467,7 @@ public class AccountService {
                     throw new Exception(INVALID_STAFF_BIRTHDAY);
                 }
                 // Role: TEACHER
-                // OLDER OR EQUAL 15
+                // OLDER OR EQUAL 18
                 if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 18) {
                     throw new Exception(INVALID_TEACHER_BIRTHDAY);
                 }
@@ -629,8 +629,8 @@ public class AccountService {
                         throw new Exception(INVALID_STAFF_BIRTHDAY);
                     }
                     // Role: TEACHER
-                    // OLDER OR EQUAL 15
-                    if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 15) {
+                    // OLDER OR EQUAL 18
+                    if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 18) {
                         throw new Exception(INVALID_TEACHER_BIRTHDAY);
                     }
                     // Role: STUDENT
@@ -657,7 +657,7 @@ public class AccountService {
                 }
 
                 // Update Is Available
-                updateAcc.setIsAvailable(insAcc.getIsAvailable());
+                updateAcc.setIsAvailable(updateAcc.getIsAvailable());
 
                 // Update Branch Id
                 // Check Branch Id existence
