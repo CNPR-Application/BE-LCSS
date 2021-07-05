@@ -57,4 +57,12 @@ public class Branch implements Serializable {
         BranchResponseDto dto = new BranchResponseDto(branchId, branchName);
         return dto;
     }
+
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }

@@ -28,6 +28,8 @@ public class RestApi {
     ShiftService shiftService;
     @Autowired
     FirebaseService fireBaseService;
+    @Autowired
+    ClassService classService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -42,7 +44,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------ACCOUNT--------------------------------**/
+    /**
+     * -------------------------------ACCOUNT--------------------------------
+     */
 
     //<editor-fold desc="1.0-check-login">
 
@@ -155,7 +159,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------BRANCH--------------------------------**/
+    /**
+     * -------------------------------BRANCH--------------------------------
+     */
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
 
@@ -245,7 +251,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------CURRICULUM--------------------------------**/
+    /**
+     * -------------------------------CURRICULUM--------------------------------
+     */
 
     //<editor-fold desc="13.0-search-curriculum-by-curriculum-name">
 
@@ -355,7 +363,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SUBJECT--------------------------------**/
+    /**
+     * -------------------------------SUBJECT--------------------------------
+     */
 
     //<editor-fold desc="19.0-search-subject-by-subject-name">
 
@@ -487,7 +497,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SUBJECT DETAIL--------------------------------**/
+    /**
+     * -------------------------------SUBJECT DETAIL--------------------------------
+     */
 
     //<editor-fold desc="26.0-search-subject-detail-by-subject-id">
 
@@ -559,7 +571,29 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SHIFT--------------------------------**/
+    /**
+     * -------------------------------CLASS-------------------------------
+     */
+
+    //<editor-fold desc="53-create-new-class">
+
+    /**
+     * @param classRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 53-create-new-class
+     * @author LamHNT - 2021.07.05
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewClass(@RequestBody ClassRequestDto classRequestDto) throws Exception {
+        return classService.createNewClass(classRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SHIFT--------------------------------
+     */
 
     //<editor-fold desc="71.0-search-shift-by-shift-id">
 

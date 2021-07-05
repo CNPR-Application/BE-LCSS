@@ -44,4 +44,9 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
             "JOIN Student s ON s.branch.branchId = b.branchId " +
             "WHERE s.account.username = :username")
     List<Branch> findStudentBranchByAccountUsername(@Param(value = "username") String username);
+
+    @Query(value = "SELECT b.isAvailable " +
+            "FROM Branch AS b " +
+            "WHERE b.branchId = :branchId")
+    boolean findIsAvailableByBranchId(@Param(value = "branchId") int branchId);
 }

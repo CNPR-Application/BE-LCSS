@@ -16,10 +16,11 @@ import java.util.Date;
 public class Class implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id")
     private int classId;
     @Column(name = "class_name")
-    private int className;
+    private String className;
     @Column(name = "opening_date")
     private Date openingDate;
     @Column(name = "status")
