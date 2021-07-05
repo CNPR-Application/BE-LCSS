@@ -34,6 +34,9 @@ public class Branch implements Serializable {
     private String phone;
 
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    private List<Class> classList;
+
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Staff> staffs;
 
