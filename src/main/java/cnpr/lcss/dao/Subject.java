@@ -45,6 +45,9 @@ public class Subject implements Serializable {
     @OneToMany(mappedBy = "subject")
     private List<SubjectDetail> subjectDetailList;
 
+    @OneToMany(mappedBy = "subject")
+    private List<Class> classList;
+
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
