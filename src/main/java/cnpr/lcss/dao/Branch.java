@@ -34,6 +34,9 @@ public class Branch implements Serializable {
     private String phone;
 
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    private List<Class> classList;
+
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Staff> staffs;
 
@@ -53,5 +56,13 @@ public class Branch implements Serializable {
     public BranchResponseDto convertToBranchResponseDto() {
         BranchResponseDto dto = new BranchResponseDto(branchId, branchName);
         return dto;
+    }
+
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 }

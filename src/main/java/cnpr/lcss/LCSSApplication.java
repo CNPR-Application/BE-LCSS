@@ -11,5 +11,4 @@ public class LCSSApplication {
     public static void main(String[] args) throws IOException {
         SpringApplication.run(LCSSApplication.class, args);
     }
-
 }

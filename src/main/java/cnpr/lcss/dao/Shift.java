@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +29,9 @@ public class Shift implements Serializable {
     private int duration;
     @Column(name = "is_available")
     private boolean isAvailable;
+
+    @OneToMany(mappedBy = "shift")
+    private List<Class> classList;
 
     public ShiftDto convertToDto() {
         ShiftDto shiftDto = new ShiftDto(shiftId, timeStart, timeEnd, dayOfWeek, duration, isAvailable);

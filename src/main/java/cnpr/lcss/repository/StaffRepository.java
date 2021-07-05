@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, String> {
+public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     @Query("SELECT s.branch.branchId " +
             "FROM Staff AS s " +

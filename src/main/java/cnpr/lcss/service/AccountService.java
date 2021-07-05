@@ -10,8 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,20 +25,21 @@ public class AccountService {
      * -----USER ROLE-----
      **/
     private static final String ROLE_MANAGER = "manager";
+    private static final String ROLE_MANAGER_CODE = "ql";
     private static final String ROLE_STAFF = "staff";
+    private static final String ROLE_STAFF_CODE = "nv";
     private static final String ROLE_ADMIN = "admin";
+    private static final String ROLE_ADMIN_CODE = "ad";
     private static final String ROLE_TEACHER = "teacher";
+    private static final String ROLE_TEACHER_CODE = "gv";
     private static final String ROLE_STUDENT = "student";
-
-
+    private static final String ROLE_STUDENT_CODE = "hs";
     /**
      * -----PATTERN-----
      **/
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
     private static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     private static final String NAME_PATTERN = "[A-Za-z ]*";
-    private static final int RAND_MIN = 100000;
-    private static final int RAND_MAX = 999999;
     private static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     private static final String SPECIAL_CHARACTERS = "!@#$";
@@ -47,6 +51,7 @@ public class AccountService {
     private static final String USERNAME_NOT_EXIST = "Username does not exist!";
     private static final String BRANCH_ID_NOT_EXIST = "Brand Id does not exist!";
     private static final String INVALID_NAME = "Name is null, empty, or unreal!";
+    private static final String INVALID_PARENT_NAME = "Parent Name is null, empty, or unreal!";
     private static final String INVALID_PHONE_PATTERN = "Phone number is invalid!";
     private static final String INVALID_EMAIL_PATTERN = "Email is invalid!";
     private static final String INVALID_BIRTHDAY = "Birthday is invalid!";
@@ -57,11 +62,14 @@ public class AccountService {
     private static final String INVALID_TEACHER_BIRTHDAY = "Teacher MUST older or equal to 15 yo!";
     private static final String INVALID_STUDENT_BIRTHDAY = "Student MUST older or equal to 3 yo!";
     private static final String INVALID_ROLE = "Role is invalid!";
+    private static final String INVALID_CHANGE_ROLE = "User's role MUST BE Manager or Staff!";
+    private static final String INVALID_NEW_ROLE = "New role MUST BE Manager or Staff!";
     private static final String DUPLICATE_BRANCH_ID = "Branch id already existed!";
     private static final String NULL_OR_EMPTY_NAME = "Null or Empty Name!";
     private static final String NULL_OR_EMPTY_ADDRESS = "Null or Empty Address!";
     private static final String GENERATE_USERNAME_ERROR = "Generate username error!";
     private static final String GENERATE_PASSWORD_ERROR = "Generate password error!";
+    private static final String EMAIL_SENDING_ERROR = "Sending Email failed!";
 
     @Autowired
     AccountRepository accountRepository;
@@ -76,14 +84,48 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
+    //<editor-fold desc="Convert from Unicode to normal string">
+    public static String stripAccents(String s) {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Generate Username">
-    private String generateUsername(String name) throws Exception {
+    private String generateUsername(String name, String role) throws Exception {
         String username;
-        int randNum = (int) Math.floor(Math.random() * (RAND_MAX - RAND_MIN + 1) + RAND_MIN);
+        name = stripAccents(name);
 
         if (name != null && !name.isEmpty() && name.matches(NAME_PATTERN)) {
             String[] parts = name.split("\\s+");
-            username = parts[parts.length - 1] + randNum;
+            // Get First Name
+            username = parts[parts.length - 1];
+
+            // ADMIN
+            if (role.equalsIgnoreCase(ROLE_ADMIN)) {
+                username += ROLE_ADMIN_CODE + String.format("%06d", (accountRepository.countByRole(ROLE_ADMIN) + 1));
+            }
+
+            // MANAGER
+            if (role.equalsIgnoreCase(ROLE_MANAGER)) {
+                username += ROLE_MANAGER_CODE + String.format("%06d", (accountRepository.countByRole(ROLE_MANAGER) + 1));
+            }
+
+            // STAFF
+            if (role.equalsIgnoreCase(ROLE_STAFF)) {
+                username += ROLE_STAFF_CODE + String.format("%06d", (accountRepository.countByRole(ROLE_STAFF) + 1));
+            }
+
+            // TEACHER
+            if (role.equalsIgnoreCase(ROLE_TEACHER)) {
+                username += ROLE_TEACHER_CODE + String.format("%06d", (accountRepository.countByRole(ROLE_TEACHER) + 1));
+            }
+
+            // STUDENT
+            if (role.equalsIgnoreCase(ROLE_STUDENT)) {
+                username += ROLE_STUDENT_CODE + String.format("%06d", (accountRepository.countByRole(ROLE_STUDENT) + 1));
+            }
         } else {
             throw new Exception(INVALID_NAME);
         }
@@ -337,8 +379,11 @@ public class AccountService {
     //</editor-fold>
 
     //<editor-fold desc="4.0 Create New Account">
+    @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
         Date today = new Date();
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+
         try {
             Account account = new Account();
             String newUsername;
@@ -347,7 +392,7 @@ public class AccountService {
             // Username
             try {
                 do {
-                    newUsername = generateUsername(newAcc.getName());
+                    newUsername = generateUsername(newAcc.getName(), newAcc.getRole());
                     account.setUsername(newUsername);
                 } while (accountRepository.existsByUsername(account.getUsername()));
             } catch (Exception e) {
@@ -363,7 +408,7 @@ public class AccountService {
             }
 
             // Name
-            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && newAcc.getName().matches(NAME_PATTERN)) {
+            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
                 account.setName(newAcc.getName());
             } else {
                 throw new Exception(INVALID_NAME);
@@ -423,7 +468,7 @@ public class AccountService {
                 }
                 // Role: TEACHER
                 // OLDER OR EQUAL 15
-                if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 15) {
+                if (userRole.equalsIgnoreCase(ROLE_TEACHER) && yo < 18) {
                     throw new Exception(INVALID_TEACHER_BIRTHDAY);
                 }
                 // Role: STUDENT
@@ -455,6 +500,14 @@ public class AccountService {
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
+            boolean checkGmail = false;
+            SendEmailService sendEmailService = new SendEmailService();
+            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+            if (checkGmail) {
+                accountRepository.save(accTmp);
+            } else {
+                throw new Exception(EMAIL_SENDING_ERROR);
+            }
 
             // Branch Id
             // Check Branch Id existence
@@ -470,42 +523,54 @@ public class AccountService {
             if (userRole.equalsIgnoreCase(ROLE_ADMIN)
                     || userRole.equalsIgnoreCase(ROLE_MANAGER)
                     || userRole.equalsIgnoreCase(ROLE_STAFF)) {
-                Staff staff = new Staff(accTmp, branch);
+                Account accountStaff = accountRepository.findOneByUsername(accTmp.getUsername());
+                Staff staff = new Staff(accountStaff, branch);
                 staffRepository.save(staff);
-            } else
-                // Role: TEACHER
-                if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
-                    Teacher teacher = new Teacher();
-                    if (newAcc.getExperience() != null && !newAcc.getExperience().isEmpty()) {
-                        teacher.setAccount(accTmp);
-                        teacher.setRating(null);
-                        teacher.setExperience(newAcc.getExperience());
-                    } else {
-                        throw new Exception(INVALID_TEACHER_EXP);
-                    }
+            }
+
+            // Role: STUDENT
+            if (userRole.equalsIgnoreCase(ROLE_STUDENT)) {
+                Student student = new Student();
+                // Insert Parent's name
+                if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
+                    student.setParentName(newAcc.getParentName());
+                } else {
+                    throw new Exception(INVALID_PARENT_NAME);
+                }
+                // Insert Parent's phone
+                if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
+                    student.setParentPhone(newAcc.getParentPhone());
+                } else {
+                    throw new Exception(INVALID_PHONE_PATTERN);
+                }
+                Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
+                student.setAccount(accountStudent);
+                student.setBranch(branch);
+                studentRepository.save(student);
+            }
+
+            // Role: TEACHER
+            if (userRole.equalsIgnoreCase(ROLE_TEACHER)) {
+                Teacher teacher = new Teacher();
+                TeachingBranch teachingBranch = new TeachingBranch();
+                Account accountTeacher = accountRepository.findOneByUsername(accTmp.getUsername());
+                if (newAcc.getExperience() != null && !newAcc.getExperience().isEmpty()) {
+                    teacher.setAccount(accountTeacher);
+                    teacher.setRating(null);
+                    teacher.setExperience(newAcc.getExperience());
                     teacherRepository.save(teacher);
+                    teachingBranch.setBranch(branch);
+                    teachingBranch.setStartingDate(today);
+                    teachingBranch.setTeacher(teacherRepository.findTeacherByAccount_Username(accountTeacher.getUsername()));
+                    teachingBranchRepository.save(teachingBranch);
+                } else {
+                    throw new Exception(INVALID_TEACHER_EXP);
                 }
-                // Role: STUDENT
-                else {
-                    Student student = new Student();
-                    // Insert Parent's name
-                    if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty()) {
-                        student.setParentName(newAcc.getParentName());
-                    } else {
-                        throw new Exception(INVALID_NAME);
-                    }
-                    // Insert Parent's phone
-                    if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
-                        student.setParentPhone(newAcc.getParentPhone());
-                    } else {
-                        throw new Exception(INVALID_PHONE_PATTERN);
-                    }
-                    student.setAccount(accTmp);
-                    student.setBranch(branch);
-                    studentRepository.save(student);
-                }
-            accountRepository.save(accTmp);
-            return ResponseEntity.ok(true);
+            }
+
+            mapObj.put("username", accTmp.getUsername());
+
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -677,6 +742,30 @@ public class AccountService {
         }
     }
 //</editor-fold>
+
+    //<editor-fold desc="5.1 Update Role">
+    public ResponseEntity<?> updateRole(String username, String role) throws Exception {
+        try {
+            String userRole = accountRepository.findRoleByUsername(username);
+            Account account = accountRepository.findOneByUsername(username);
+
+            if (userRole.equalsIgnoreCase(ROLE_MANAGER) || userRole.equalsIgnoreCase(ROLE_STAFF)) {
+                if (role.equalsIgnoreCase(ROLE_MANAGER) || role.equalsIgnoreCase(ROLE_STAFF)) {
+                    account.setRole(role);
+                    accountRepository.save(account);
+                    return ResponseEntity.ok(true);
+                } else {
+                    throw new Exception(INVALID_NEW_ROLE);
+                }
+            } else {
+                throw new Exception(INVALID_CHANGE_ROLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 
     //<editor-fold desc="6.0 Delete Account by UserName">
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {

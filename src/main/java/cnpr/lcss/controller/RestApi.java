@@ -28,6 +28,8 @@ public class RestApi {
     ShiftService shiftService;
     @Autowired
     FirebaseService fireBaseService;
+    @Autowired
+    ClassService classService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -42,7 +44,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------ACCOUNT--------------------------------**/
+    /**
+     * -------------------------------ACCOUNT--------------------------------
+     */
 
     //<editor-fold desc="1.0-check-login">
 
@@ -121,6 +125,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="5.1-update-role">
+
+    /**
+     * @param username
+     * @param role
+     * @return
+     * @throws Exception
+     * @apiNote 5.1-update-role
+     * @author LamHNT - 2021.07.01
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin/role", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateRoleByUsername(@RequestParam(value = "username") String username,
+                                                  @RequestBody String role) throws Exception {
+        return accountService.updateRole(username, role);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="6.0 Delete Account">
 
     /**
@@ -137,7 +159,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------BRANCH--------------------------------**/
+    /**
+     * -------------------------------BRANCH--------------------------------
+     */
 
     //<editor-fold desc="8.0-search-branch-by-branch-name">
 
@@ -227,7 +251,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------CURRICULUM--------------------------------**/
+    /**
+     * -------------------------------CURRICULUM--------------------------------
+     */
 
     //<editor-fold desc="13.0-search-curriculum-by-curriculum-name">
 
@@ -337,7 +363,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SUBJECT--------------------------------**/
+    /**
+     * -------------------------------SUBJECT--------------------------------
+     */
 
     //<editor-fold desc="19.0-search-subject-by-subject-name">
 
@@ -469,7 +497,9 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SUBJECT DETAIL--------------------------------**/
+    /**
+     * -------------------------------SUBJECT DETAIL--------------------------------
+     */
 
     //<editor-fold desc="26.0-search-subject-detail-by-subject-id">
 
@@ -541,7 +571,29 @@ public class RestApi {
     }
     //</editor-fold>
 
-    /**-------------------------------SHIFT--------------------------------**/
+    /**
+     * -------------------------------CLASS-------------------------------
+     */
+
+    //<editor-fold desc="53-create-new-class">
+
+    /**
+     * @param classRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 53-create-new-class
+     * @author LamHNT - 2021.07.05
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewClass(@RequestBody ClassRequestDto classRequestDto) throws Exception {
+        return classService.createNewClass(classRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SHIFT--------------------------------
+     */
 
     //<editor-fold desc="71.0-search-shift-by-shift-id">
 
@@ -650,7 +702,7 @@ public class RestApi {
         return shiftService.revivalShiftbyShiftId(shiftId);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
@@ -659,7 +711,7 @@ public class RestApi {
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public ImageResponseDTO upload(@RequestParam(value = "id") String id,
-                         @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
+                                   @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
