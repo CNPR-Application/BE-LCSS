@@ -1,28 +1,23 @@
 package cnpr.lcss.dao;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "student")
 public class Student implements Serializable {
 
     @Id
-    @Column(name = "student_username")
-    private String studentUsername;
-
-    @OneToOne
-    @JoinColumn(name = "student_username")
-    private Account account;
+    @GeneratedValue
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "parent_phone")
     private String parentPhone;
@@ -30,8 +25,18 @@ public class Student implements Serializable {
     @Column(name = "parent_name")
     private String parentName;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_username", referencedColumnName = "username")
+    private Account account;
+
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
+    public Student(String parentPhone, String parentName, Account account, Branch branch) {
+        this.parentPhone = parentPhone;
+        this.parentName = parentName;
+        this.account = account;
+        this.branch = branch;
+    }
 }
