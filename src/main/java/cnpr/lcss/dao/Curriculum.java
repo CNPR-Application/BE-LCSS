@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,6 +37,9 @@ public class Curriculum implements Serializable {
     private String linkClip;
     @Column(name = "learning_outcome")
     private String learningOutcome;
+
+    @OneToMany(mappedBy = "curriculum")
+    private List<RegisteringGuest> registeringGuestList;
 
     /**
      * --- modify constructor, getter, setter ---
