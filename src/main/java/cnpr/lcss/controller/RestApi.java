@@ -30,6 +30,8 @@ public class RestApi {
     FirebaseService fireBaseService;
     @Autowired
     ClassService classService;
+    @Autowired
+    RegisteringGuestService registeringGuestService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -568,6 +570,26 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------REGISTERING GUEST-------------------------------
+     */
+
+    //<editor-fold desc="41-register-guest">
+
+    /**
+     * @param insGuest
+     * @return
+     * @throws Exception
+     * @apiNote 41-register-guest
+     * @author LamHNT - 2021.07.05
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/guests", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewRegisteringGuest(@RequestBody RegisteringGuestRequestDto insGuest) throws Exception {
+        return registeringGuestService.createNewRegisteringGuest(insGuest);
     }
     //</editor-fold>
 
