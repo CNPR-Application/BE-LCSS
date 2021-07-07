@@ -623,6 +623,27 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Get all class by branchId and status">
+    /**
+     *
+     * @param branchId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 49.1-get-all-class-by-branchId-status
+     * @author LamHNT & HuuNT - 2021.07.07
+     * @throws Exception
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes",params = "branchId", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(@RequestParam(value = "branchId") int branchId,
+                                                                                           @RequestParam(value = "status") String status,
+                                                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchAllClassByBranchIdAndStatusPaging(branchId, status, pageNo, pageSize);
+    }
+    //</editor-fold>
     //<editor-fold desc="53-create-new-class">
 
     /**
