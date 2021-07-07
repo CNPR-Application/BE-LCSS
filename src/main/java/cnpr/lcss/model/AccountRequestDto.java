@@ -9,21 +9,20 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurriculumDto {
+public class AccountRequestDto {
 
-    private int curriculumId;
-    private String curriculumCode;
-    private String curriculumName;
-    private String description;
-    private Date creatingDate;
-    private Boolean isAvailable;
+    private String name;
+    private String address;
+    private String email;
+    private Date birthday;
+    private String phone;
     private String image;
-    private String linkClip;
-    private String learningOutcome;
+    private int branchId;
+    private String parentName;
+    private String parentPhone;
+    private String experience;
+    private boolean isAvailable;
 
-    /**
-     * --- modify getter & setter ---
-     */
     public boolean getIsAvailable() {
         return isAvailable;
     }

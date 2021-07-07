@@ -9,19 +9,24 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
-    @Query("SELECT t.experience FROM Teacher t WHERE t.teacherUsername = :username")
+    @Query("SELECT t.experience FROM Teacher t WHERE t.account.username = :username")
     String findExperienceByTeacherUsername(@Param("username") String teacherUsername);
 
-    @Query("SELECT t.rating FROM Teacher t WHERE t.teacherUsername = :username")
+    @Query("SELECT t.rating FROM Teacher t WHERE t.account.username = :username")
     String findRatingByTeacherUsername(@Param("username") String teacherUsername);
 
-    @Query("SELECT tb.branch.branchId FROM Teacher t " +
-            "JOIN TeachingBranch tb ON t.teacherUsername = tb.teacher.teacherUsername " +
-            "WHERE t.teacherUsername = :username")
+    @Query("SELECT tb.branch.branchId " +
+            "FROM Teacher t " +
+            "JOIN TeachingBranch tb ON t.teacherId = tb.teacher.teacherId " +
+            "WHERE t.account.username = :username")
     int findBranchIdByTeacherUsername(@Param("username") String teacherUsername);
 
-    @Query("SELECT b.branchName FROM Branch b " +
-            "JOIN TeachingBranch tb ON b.branchId = tb.branch.branchId" +
-            " WHERE tb.teacher.teacherUsername = :username")
+    @Query("SELECT b.branchName " +
+            "FROM Branch b " +
+            "JOIN TeachingBranch tb ON b.branchId = tb.branch.branchId " +
+            "JOIN Teacher t ON t.teacherId = tb.teacher.teacherId " +
+            "WHERE t.account.username = :username")
     String findBranchNameByTeacherUsername(@Param("username") String teacherUsername);
+
+    Teacher findTeacherByAccount_Username(String teacherUsername);
 }

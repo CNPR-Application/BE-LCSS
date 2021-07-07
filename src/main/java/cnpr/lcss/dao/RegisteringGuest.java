@@ -12,28 +12,31 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "teaching_branch")
-public class TeachingBranch implements Serializable {
+@Table(name = "registering_guest")
+public class RegisteringGuest implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "customer_name")
+    private String customerName;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "city")
+    private String city;
+    @Column(name = "booking_date")
+    private Date bookingDate;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "status")
+    private String status;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-
-    @Column(name = "starting_date")
-    private Date startingDate;
-
-    public TeachingBranch(Branch branch, Teacher teacher, Date startingDate) {
-        this.branch = branch;
-        this.teacher = teacher;
-        this.startingDate = startingDate;
-    }
+    @JoinColumn(name = "curriculum_id")
+    private Curriculum curriculum;
 }

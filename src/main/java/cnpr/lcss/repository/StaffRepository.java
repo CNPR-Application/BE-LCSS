@@ -7,11 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, String> {
+public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
-    @Query("SELECT s.branch.branchId FROM Staff s WHERE s.staffUsername = :username")
+    @Query("SELECT s.branch.branchId " +
+            "FROM Staff AS s " +
+            "WHERE s.account.username = :username")
     Integer findBranchIdByStaffUsername(@Param("username") String staffUsername);
 
-    @Query("SELECT s.branch.branchName FROM Staff s WHERE s.staffUsername = :username")
+    @Query("SELECT s.branch.branchName " +
+            "FROM Staff AS s " +
+            "WHERE s.account.username = :username")
     String findBranchNameByStaffUsername(@Param("username") String staffUsername);
+
+    Staff findByAccount_Username(String staffUsername);
 }

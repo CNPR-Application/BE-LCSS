@@ -45,6 +45,9 @@ public class Subject implements Serializable {
     @OneToMany(mappedBy = "subject")
     private List<SubjectDetail> subjectDetailList;
 
+    @OneToMany(mappedBy = "subject")
+    private List<Class> classList;
+
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
@@ -60,13 +63,13 @@ public class Subject implements Serializable {
         this.slot = slot;
         this.slotPerWeek = slotPerWeek;
         this.rating = rating;
-
     }
 
     public SubjectDto convertToDto() {
         SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
         return subjectDto;
     }
+
     // Modify Getter & Setter
 
     public boolean getIsAvailable() {
