@@ -57,6 +57,15 @@ public class Branch implements Serializable {
         this.branchName = branchName;
     }
 
+    public Branch(int branchId, String branchName, String address, Boolean isAvailable, Date openingDate, String phone) {
+        this.branchId = branchId;
+        this.branchName = branchName;
+        this.address = address;
+        this.isAvailable = isAvailable;
+        this.openingDate = openingDate;
+        this.phone = phone;
+    }
+
     public BranchResponseDto convertToBranchResponseDto() {
         BranchResponseDto dto = new BranchResponseDto(branchId, branchName);
         return dto;
