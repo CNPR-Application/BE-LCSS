@@ -381,7 +381,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByName(@RequestParam(value = "name") String keyword,
+    public ResponseEntity<?> searchSubjectByName(@RequestParam(value = "name") String keyword,
                                                         @RequestParam(value = "isAvailable") boolean isAvailable,
                                                         @RequestParam(value = "pageNo") int pageNo,
                                                         @RequestParam(value = "pageSize") int pageSize) {

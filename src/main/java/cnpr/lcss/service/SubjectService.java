@@ -1,11 +1,9 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.SubjectDetail;
-import cnpr.lcss.model.SubjectCreateRequestDto;
-import cnpr.lcss.model.SubjectDto;
-import cnpr.lcss.model.SubjectPagingResponseDto;
-import cnpr.lcss.model.SubjectUpdateRequestDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
@@ -62,19 +60,27 @@ public class SubjectService {
     //</editor-fold>
 
     //<editor-fold desc="Find by Subject Name Contains and Is Available">
-    public SubjectPagingResponseDto findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
+    public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        try{
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Map<String, Object> mapObj = new LinkedHashMap<>();
 
-        Page<Subject> page = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-        List<Subject> subjectList = page.getContent();
-        List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
+            Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword,isAvailable,pageable);
+            List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
+            int pageTotal = subjectList.getTotalPages();
 
-        int pageTotal = page.getTotalPages();
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("classList", subjectDtoList);
 
-        SubjectPagingResponseDto subPgResDtos = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
+            return ResponseEntity.ok(mapObj);
 
-        return subPgResDtos;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     //</editor-fold>
 
