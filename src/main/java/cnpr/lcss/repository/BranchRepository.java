@@ -13,7 +13,9 @@ import java.util.List;
 @Repository
 
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
-
+    @Query(value = "SELECT new Branch(b.branchId, b.branchName,b.address,b.isAvailable,b.openingDate,b.phone) " +
+            "FROM Branch b " +
+            "WHERE b.branchName like %:keyword%  AND b.isAvailable=:isAvailable")
     Page<Branch> findByBranchNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, Pageable pageable);
 
     Branch findByBranchId(int branchId);
