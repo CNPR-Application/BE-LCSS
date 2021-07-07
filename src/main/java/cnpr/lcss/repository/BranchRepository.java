@@ -49,4 +49,9 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
             "FROM Branch AS b " +
             "WHERE b.branchId = :branchId")
     boolean findIsAvailableByBranchId(@Param(value = "branchId") int branchId);
+
+    @Query(value = "SELECT b.branchName " +
+            "FROM Branch AS b " +
+            "WHERE b.branchId = :branchId")
+    String findBranch_BranchNameByBranchId(@Param(value = "branchId") int branchId);
 }
