@@ -48,4 +48,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             "FROM Subject AS s " +
             "WHERE s.subjectId = :subjectId")
     String findSubject_SubjectNameBySubjectId(@Param(value = "subjectId") int subjectId);
+
+    @Query(value = "SELECT s.slotPerWeek " +
+            "FROM Subject AS s " +
+            "WHERE s.subjectId = :subjectId")
+    int findSlotPerWeekBySubjectId(@Param(value = "subjectId") int subjectId);
 }

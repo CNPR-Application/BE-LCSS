@@ -32,7 +32,6 @@ public class ClassService {
     private static final String CLASS_STATUS_STUDYING = "studying";
     private static final String CLASS_STATUS_FINISHED = "finished";
     private static final String CLASS_STATUS_CANCELED = "canceled";
-
     /**
      * -----ERROR MSG-----
      */
@@ -41,7 +40,12 @@ public class ClassService {
     private static final String INVALID_BRANCH_ID = "Branch Id is non-exist or not available!";
     private static final String INVALID_SUBJECT_ID = "Subject Id is non-exist or not available!";
     private static final String INVALID_SHIFT_ID = "Shift Id is non-exist or not available!";
-
+    private static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
+    /**
+     * -----PATTERN-----
+     */
+    private static final String TWO_DAYS_OF_WEEK_PATTERN = "(((\\d)[-])+(\\d|[C][N])){1}";
+    private static final String THREE_DAYS_OF_WEEK_PATTERN = "(((\\d)[-]){2})+(\\d|[C][N]){1}";
     @Autowired
     ClassRepository classRepository;
     @Autowired
@@ -100,9 +104,23 @@ public class ClassService {
             newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
 
             // Shift Id
+            // Check existence & is available
             if (shiftRepository.existsById(insClass.getShiftId())
                     && shiftRepository.findIsAvailableByShiftId(insClass.getShiftId())) {
-                newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
+                // Check compatibility of subject's slot per week & shift's day of week
+                /**
+                 * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+                 * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+                 * Else throw new Exception
+                 */
+                int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
+                String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
+                if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(TWO_DAYS_OF_WEEK_PATTERN))
+                        || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(THREE_DAYS_OF_WEEK_PATTERN)) {
+                    newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
+                } else {
+                    throw new ValidationException(INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
+                }
             } else {
                 throw new ValidationException(INVALID_SHIFT_ID);
             }
