@@ -23,15 +23,21 @@ import java.util.stream.Collectors;
 @Service
 public class ShiftService {
 
-    private final String DAY_OF_WEEK_PATTERN = "((\\d)[-])+(\\d|[C][N])";
-    private final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
-    private final String TIME_END_PATTERN = "(09:30)|(11:00)|(15:30)|(17:00)|(19:30)|(21:00)";
-    private final String DAY_OF_WEEK_PATTERN_ERROR = "DayOfWeek must be 2 days or more, separated by [-]! (2-4-6, 3-5, 7-CN)";
-    private final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
-    private final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
-    private final String DURATION_ERROR = "Duration must be multiples of 90 and larger than 0!";
-    private final String SHIFT_EXISTED_ERROR = "This shift is already defined!";
-    private final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
+    /**
+     * -----PATTERN-----
+     */
+    private static final String DAY_OF_WEEK_PATTERN = "((\\d)[-])+(\\d|[C][N])";
+    private static final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
+    private static final String TIME_END_PATTERN = "(09:30)|(11:00)|(15:30)|(17:00)|(19:30)|(21:00)";
+    /**
+     * -----ERROR MSG-----
+     */
+    private static final String DAY_OF_WEEK_PATTERN_ERROR = "DayOfWeek must be 2 days or more, separated by [-]! (2-4-6, 3-5, 7-CN)";
+    private static final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
+    private static final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
+    private static final String DURATION_ERROR = "Duration must be multiples of 90 and larger than 0!";
+    private static final String SHIFT_EXISTED_ERROR = "This shift is already defined!";
+    private static final String SHIFT_ID_NOT_EXIST = "Shift ID does not exist!";
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     @Autowired
     ShiftRepository shiftRepository;
