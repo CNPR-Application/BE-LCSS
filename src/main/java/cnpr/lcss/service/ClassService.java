@@ -117,45 +117,58 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search all Class by Branch Id and Subject Id and Shift Id and Status - Paging">
+    //<editor-fold desc="Search all Class by Branch Id / Subject Id / Shift Id / Status - Paging">
     public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
         try {
-            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            if (branchRepository.existsBranchByBranchId(branchId)) {
+                if (subjectRepository.existsSubjectBySubjectId(subjectId)) {
+                    if (shiftRepository.existsById(shiftId)) {
+                        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-            HashMap<String, Object> mapObj = new LinkedHashMap();
-            Page<Class> classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatus(branchId, subjectId, shiftId, status, pageable);
-            List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
-            int pageTotal = classList.getTotalPages();
+                        HashMap<String, Object> mapObj = new LinkedHashMap();
+                        Page<Class> classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatus(branchId, subjectId, shiftId, status, pageable);
+                        List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
+                        int pageTotal = classList.getTotalPages();
 
-            for (ClassDto aClass : classDtoList) {
-                // Subject Name
-                aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-                // Branch Name
-                aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-                // Shift Description
-                String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
-                        + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                        + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
-                aClass.setShiftDescription(description);
-                // Teacher AND Room
-                if (aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_CANCELED)) {
-                    aClass.setTeacherId(0);
-                    aClass.setTeacherName(null);
-                    aClass.setRoomNo(0);
+                        for (ClassDto aClass : classDtoList) {
+                            // Subject Name
+                            aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                            // Branch Name
+                            aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                            // Shift Description
+                            String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                                    + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                            aClass.setShiftDescription(description);
+                            // Teacher AND Room
+                            if (aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_CANCELED)) {
+                                aClass.setTeacherId(0);
+                                aClass.setTeacherName(null);
+                                aClass.setRoomNo(0);
+                            } else {
+                                // TODO: create connection between Session and Teacher
+                                // TODO: check validation of Status
+                                // Temporary set to 0 or null
+                                aClass.setTeacherId(0);
+                                aClass.setTeacherName(null);
+                                aClass.setRoomNo(0);
+                            }
+                        }
+
+                        mapObj.put("pageNo", pageNo);
+                        mapObj.put("pageSize", pageSize);
+                        mapObj.put("pageTotal", pageTotal);
+                        mapObj.put("classList", classDtoList);
+                        return ResponseEntity.ok(mapObj);
+                    } else {
+                        throw new ValidationException(INVALID_SHIFT_ID);
+                    }
                 } else {
-                    // TODO: create connection between Session and Teacher
-                    // Temporary set to 0 or null
-                    aClass.setTeacherId(0);
-                    aClass.setTeacherName(null);
-                    aClass.setRoomNo(0);
+                    throw new ValidationException(INVALID_SUBJECT_ID);
                 }
+            } else {
+                throw new ValidationException(INVALID_BRANCH_ID);
             }
-
-            mapObj.put("pageNo", pageNo);
-            mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
-            mapObj.put("classList", classDtoList);
-            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
