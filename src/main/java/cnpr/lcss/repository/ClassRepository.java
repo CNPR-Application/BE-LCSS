@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     Page<Class> findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatus(int branchId, int subjectId, int shiftId, String status, Pageable pageable);
+
+    Page<Class> findClassByBranch_BranchIdAndStatus(int branchId, String status, Pageable pageable);
 }
