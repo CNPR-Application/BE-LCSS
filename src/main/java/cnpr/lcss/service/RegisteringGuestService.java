@@ -32,7 +32,6 @@ public class RegisteringGuestService {
     private static final String INVALID_CUSTOMER_NAME = "Invalid customer name!";
     private static final String INVALID_PHONE = "Invalid phone number!";
     private static final String INVALID_CITY = "Invalid city!";
-    private static final String INVALID_DESCRIPTION = "Invalid description!";
     private static final String INVALID_CURRICULUM = "Curriculum is non-exist or not available!";
     private static final String INVALID_BRANCH = "Branch is non-exist or not available!";
 
@@ -84,11 +83,7 @@ public class RegisteringGuestService {
             newGuest.setBookingDate(today);
 
             // Description
-            if (insGuest.getDescription() != null && !insGuest.getDescription().isEmpty()) {
-                newGuest.setDescription(insGuest.getDescription());
-            } else {
-                throw new ValidationException(INVALID_DESCRIPTION);
-            }
+            newGuest.setDescription(insGuest.getDescription());
 
             // Status
             /**
