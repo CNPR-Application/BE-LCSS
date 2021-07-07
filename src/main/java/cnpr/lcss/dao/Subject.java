@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.SubjectDto;
+import cnpr.lcss.model.SubjectSearchDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,7 +70,10 @@ public class Subject implements Serializable {
         SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
         return subjectDto;
     }
-
+    public SubjectSearchDto convertToSearchDto(){
+        SubjectSearchDto subjectSearchDto=new SubjectSearchDto(subjectId,subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating,curriculum.getCurriculumId(),curriculum.getCurriculumCode(),curriculum.getCurriculumName());
+        return subjectSearchDto;
+    }
     // Modify Getter & Setter
 
     public boolean getIsAvailable() {
