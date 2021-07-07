@@ -25,4 +25,19 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
             "FROM Shift AS s " +
             "WHERE s.shiftId = :shiftId")
     Boolean findIsAvailableByShiftId(@Param(value = "shiftId") int shiftId);
+
+    @Query(value = "SELECT s.timeStart " +
+            "FROM Shift AS s " +
+            "WHERE s.shiftId = :shiftId")
+    String findShift_TimeStartByShiftId(@Param(value = "shiftId") int shiftId);
+
+    @Query(value = "SELECT s.timeEnd " +
+            "FROM Shift AS s " +
+            "WHERE s.shiftId = :shiftId")
+    String findShift_TimeEndByShiftId(@Param(value = "shiftId") int shiftId);
+
+    @Query(value = "SELECT s.dayOfWeek " +
+            "FROM Shift AS s " +
+            "WHERE s.shiftId = :shiftId")
+    String findShift_DayOfWeekByShiftId(@Param(value = "shiftId") int shiftId);
 }

@@ -597,6 +597,32 @@ public class RestApi {
      * -------------------------------CLASS-------------------------------
      */
 
+    //<editor-fold desc="49-search-class-by-subject-id-shift-id-status-paging">
+
+    /**
+     * @param branchId
+     * @param subjectId
+     * @param shiftId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 49-search-class-by-subject-id-shift-id-status-paging
+     * @author LamHNT & HuuNT - 2021.07.07
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(@RequestParam(value = "branchId") int branchId,
+                                                                                           @RequestParam(value = "subjectId") int subjectId,
+                                                                                           @RequestParam(value = "shiftId") int shiftId,
+                                                                                           @RequestParam(value = "status") String status,
+                                                                                           @RequestParam(value = "pageNo") int pageNo,
+                                                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(branchId, subjectId, shiftId, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="53-create-new-class">
 
     /**

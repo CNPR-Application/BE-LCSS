@@ -1,18 +1,26 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
+import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.ClassRepository;
 import cnpr.lcss.repository.ShiftRepository;
 import cnpr.lcss.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.ValidationException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassService {
@@ -21,6 +29,9 @@ public class ClassService {
      * -----CLASS CONSTANT VARIABLE-----
      */
     private static final String CLASS_STATUS_WAITING = "waiting";
+    private static final String CLASS_STATUS_STUDYING = "studying";
+    private static final String CLASS_STATUS_FINISHED = "finished";
+    private static final String CLASS_STATUS_CANCELED = "canceled";
 
     /**
      * -----ERROR MSG-----
@@ -99,6 +110,52 @@ public class ClassService {
             classRepository.save(newClass);
 
             return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Search all Class by Branch Id and Subject Id and Shift Id and Status - Paging">
+    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+            HashMap<String, Object> mapObj = new LinkedHashMap();
+            Page<Class> classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatus(branchId, subjectId, shiftId, status, pageable);
+            List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
+            int pageTotal = classList.getTotalPages();
+
+            for (ClassDto aClass : classDtoList) {
+                // Subject Name
+                aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                // Branch Name
+                aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                // Shift Description
+                String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                        + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                        + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                aClass.setShiftDescription(description);
+                // Teacher AND Room
+                if (aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_CANCELED)) {
+                    aClass.setTeacherId(0);
+                    aClass.setTeacherName(null);
+                    aClass.setRoomNo(0);
+                } else {
+                    // TODO: create connection between Session and Teacher
+                    // Temporary set to 0 or null
+                    aClass.setTeacherId(0);
+                    aClass.setTeacherName(null);
+                    aClass.setRoomNo(0);
+                }
+            }
+
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("classList", classDtoList);
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
