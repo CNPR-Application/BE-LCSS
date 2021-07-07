@@ -73,7 +73,7 @@ public class SubjectService {
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
             mapObj.put("pageTotal", pageTotal);
-            mapObj.put("classList", subjectDtoList);
+            mapObj.put("subjectsResponseDtos", subjectDtoList);
 
             return ResponseEntity.ok(mapObj);
 
