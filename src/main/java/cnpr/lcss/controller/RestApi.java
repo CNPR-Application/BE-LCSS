@@ -597,7 +597,7 @@ public class RestApi {
      * -------------------------------CLASS-------------------------------
      */
 
-    //<editor-fold desc="49-search-class-by-subject-id-shift-id-status-paging">
+    //<editor-fold desc="49.0-search-class-by-subject-id-shift-id-status-paging">
 
     /**
      * @param branchId
@@ -608,8 +608,8 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
-     * @apiNote 49-search-class-by-subject-id-shift-id-status-paging
-     * @author LamHNT & HuuNT - 2021.07.07
+     * @apiNote 49.0-search-class-by-subject-id-shift-id-status-paging
+     * @author LamHNT - 2021.07.07
      */
     @CrossOrigin
     @RequestMapping(value = "/classes", method = RequestMethod.GET)
@@ -623,27 +623,28 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get all class by branchId and status">
+    //<editor-fold desc="49.1-get-all-class-by-branchId-status">
+
     /**
-     *
      * @param branchId
      * @param status
      * @param pageNo
      * @param pageSize
      * @return
+     * @throws Exception
      * @apiNote 49.1-get-all-class-by-branchId-status
      * @author LamHNT & HuuNT - 2021.07.07
-     * @throws Exception
      */
     @CrossOrigin
-    @RequestMapping(value = "/classes",params = "branchId", method = RequestMethod.GET)
+    @RequestMapping(value = "/classes", params = "branchId", method = RequestMethod.GET)
     public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(@RequestParam(value = "branchId") int branchId,
-                                                                                           @RequestParam(value = "status") String status,
-                                                                                           @RequestParam(value = "pageNo") int pageNo,
-                                                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+                                                                     @RequestParam(value = "status") String status,
+                                                                     @RequestParam(value = "pageNo") int pageNo,
+                                                                     @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return classService.searchAllClassByBranchIdAndStatusPaging(branchId, status, pageNo, pageSize);
     }
     //</editor-fold>
+
     //<editor-fold desc="53-create-new-class">
 
     /**
