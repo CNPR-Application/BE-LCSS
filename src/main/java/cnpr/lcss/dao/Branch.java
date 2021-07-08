@@ -35,22 +35,21 @@ public class Branch implements Serializable {
 
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     private List<Class> classList;
-
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Staff> staffs;
-
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<TeachingBranch> teachingBranches;
-
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Student> students;
-
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<RegisteringGuest> registeringGuestList;
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Booking> bookingList;
 
     public Branch(int branchId, String branchName) {
         this.branchId = branchId;

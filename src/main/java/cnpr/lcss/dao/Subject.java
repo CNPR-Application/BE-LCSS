@@ -45,9 +45,10 @@ public class Subject implements Serializable {
 
     @OneToMany(mappedBy = "subject")
     private List<SubjectDetail> subjectDetailList;
-
     @OneToMany(mappedBy = "subject")
     private List<Class> classList;
+    @OneToMany(mappedBy = "subject")
+    private List<Booking> bookingList;
 
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
@@ -70,8 +71,9 @@ public class Subject implements Serializable {
         SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
         return subjectDto;
     }
-    public SubjectSearchDto convertToSearchDto(){
-        SubjectSearchDto subjectSearchDto=new SubjectSearchDto(subjectId,subjectCode,subjectName,price,creatingDate,description,isAvailable,image,slot,slotPerWeek,rating,curriculum.getCurriculumId(),curriculum.getCurriculumCode(),curriculum.getCurriculumName());
+
+    public SubjectSearchDto convertToSearchDto() {
+        SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
         return subjectSearchDto;
     }
     // Modify Getter & Setter
