@@ -577,6 +577,24 @@ public class RestApi {
      * -------------------------------GUEST-------------------------------
      */
 
+    /**
+     * @param branchId
+     * @param name
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/guests", method = RequestMethod.GET)
+    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndName(@RequestParam(value = "branchId") int branchId,
+                                                                              @RequestParam(value = "name") String name,
+                                                                              @RequestParam(value = "phone") String phone,
+                                                                              @RequestParam(value = "curriculumName") String curriculumName,
+                                                                              @RequestParam(value = "pageNo") int pageNo,
+                                                                              @RequestParam(value = "pageSize") int pageSize) {
+        return registeringGuestService.findRegisterGuestByBranchIdAndCustomerName(branchId, name, phone, curriculumName, pageNo, pageSize);
+    }
+
     //<editor-fold desc="41.0-register-guest">
 
     /**
@@ -609,6 +627,7 @@ public class RestApi {
         return registeringGuestService.updateGuest(guestId, status);
     }
     //</editor-fold>
+
 
     /**
      * -------------------------------CLASS-------------------------------
