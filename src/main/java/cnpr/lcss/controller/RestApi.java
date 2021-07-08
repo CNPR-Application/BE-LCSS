@@ -32,6 +32,8 @@ public class RestApi {
     ClassService classService;
     @Autowired
     RegisteringGuestService registeringGuestService;
+    @Autowired
+    BookingService bookingService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -628,6 +630,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+
+    /**
+     * -------------------------------BOOKING-------------------------------
+     */
+
+    //<editor-fold desc="47.0-create-new-booking">
+
+    /**
+     * @param bookingRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 47.0-create-new-booking
+     * @author LamHNT - 2021.07.08
+     */
+    public ResponseEntity<?> createNewBooking(@RequestBody BookingRequestDto bookingRequestDto) throws Exception {
+        return bookingService.createNewBooking(bookingRequestDto);
+    }
+    //</editor-fold>
 
     /**
      * -------------------------------CLASS-------------------------------
