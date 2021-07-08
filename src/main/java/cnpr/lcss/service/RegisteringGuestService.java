@@ -156,7 +156,7 @@ public class RegisteringGuestService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumName(branchId,customerName,phone,curriculumName,pageable);
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId,customerName,phone,curriculumName,pageable);
         List<RegisteringGuest> registeringGuestList = page.getContent();
         List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
