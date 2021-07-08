@@ -382,9 +382,9 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
     public ResponseEntity<?> searchSubjectByName(@RequestParam(value = "name") String keyword,
-                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                        @RequestParam(value = "pageNo") int pageNo,
-                                                        @RequestParam(value = "pageSize") int pageSize) {
+                                                 @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                 @RequestParam(value = "pageNo") int pageNo,
+                                                 @RequestParam(value = "pageSize") int pageSize) {
 
         return subjectService.findBySubjectNameContainsAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
@@ -574,10 +574,10 @@ public class RestApi {
     //</editor-fold>
 
     /**
-     * -------------------------------REGISTERING GUEST-------------------------------
+     * -------------------------------GUEST-------------------------------
      */
 
-    //<editor-fold desc="41-register-guest">
+    //<editor-fold desc="41.0-register-guest">
 
     /**
      * @param insGuest
@@ -590,6 +590,23 @@ public class RestApi {
     @RequestMapping(value = "/guests", method = RequestMethod.POST)
     public ResponseEntity<?> createNewRegisteringGuest(@RequestBody RegisteringGuestRequestDto insGuest) throws Exception {
         return registeringGuestService.createNewRegisteringGuest(insGuest);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="42.0-update-guest">
+
+    /**
+     * @param guestId
+     * @param status
+     * @return
+     * @throws Exception
+     * @apiNote 42.0-update-guest
+     * @author LamHNT - 2021.07.08
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/guests/{guestId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateGuest(@PathVariable int guestId, @RequestBody String status) throws Exception {
+        return registeringGuestService.updateGuest(guestId, status);
     }
     //</editor-fold>
 

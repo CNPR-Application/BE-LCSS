@@ -21,6 +21,8 @@ public class RegisteringGuestService {
      * -----GUEST STATUS-----
      **/
     private static final String STATUS_PENDING = "pending";
+    private static final String STATUS_CONTACTED = "contacted";
+    private static final String STATUS_CANCELED = "canceled";
     /**
      * -----PATTERN-----
      **/
@@ -34,6 +36,8 @@ public class RegisteringGuestService {
     private static final String INVALID_CITY = "Invalid city!";
     private static final String INVALID_CURRICULUM = "Curriculum is non-exist or not available!";
     private static final String INVALID_BRANCH = "Branch is non-exist or not available!";
+    private static final String INVALID_GUEST_ID = "Guest ID is non-exist!";
+    private static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
 
     @Autowired
     CurriculumRepository curriculumRepository;
@@ -112,6 +116,29 @@ public class RegisteringGuestService {
             return ResponseEntity.ok(true);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Update Guest (status)">
+    public ResponseEntity<?> updateGuest(int guestId, String status) throws Exception {
+        try {
+            if (registeringGuestRepository.existsById(guestId)) {
+                RegisteringGuest updateGuest = registeringGuestRepository.getById(guestId);
+                if (status.equalsIgnoreCase(STATUS_PENDING)
+                        || status.equalsIgnoreCase(STATUS_CONTACTED)
+                        || status.equalsIgnoreCase(STATUS_CANCELED)) {
+                    updateGuest.setStatus(status);
+                    registeringGuestRepository.save(updateGuest);
+                } else {
+                    throw new ValidationException(INVALID_GUEST_STATUS);
+                }
+            } else {
+                throw new ValidationException(INVALID_GUEST_ID);
+            }
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
