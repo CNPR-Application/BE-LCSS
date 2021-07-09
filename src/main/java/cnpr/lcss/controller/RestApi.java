@@ -661,11 +661,13 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
+    //<editor-fold desc="44.0-Search Booking By StudentId">
     /**
      *
      * @param studentId
      * @param pageNo
      * @param pageSize
+     * @apiNote 44.0-search-booking-by-studentId
      * @author HuuNT - 2021.07.09
      * @return
      */
@@ -676,6 +678,7 @@ public class RestApi {
                                                                  @RequestParam(value = "pageSize") int pageSize) {
         return bookingService.findBookingByStudentId(studentId, pageNo, pageSize);
     }
+    //</editor-fold>
 
     //<editor-fold desc="47.0-create-new-booking">
 

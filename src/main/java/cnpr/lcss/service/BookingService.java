@@ -196,6 +196,7 @@ public class BookingService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Search Booking By  Student Id">
     public BookingSearchResponsePagingDto findBookingByStudentId(int studentId, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -210,4 +211,5 @@ public class BookingService {
 
         return bookingSearchResponsePagingDto;
     }
+    //</editor-fold>
 }
