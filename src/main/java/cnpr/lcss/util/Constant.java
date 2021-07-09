@@ -55,4 +55,9 @@ public class Constant {
     // Error Message
     public static final String INVALID_SUBJECT_ID = "Subject ID not exist!";
     public static final String INVALID_SUBJECT_AVAILABLE = "Subject not available!";
+
+    /**
+     * -----OTHERS-----
+     */
+    public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
 }
