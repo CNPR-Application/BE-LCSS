@@ -603,18 +603,18 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="39.0-search guest by status">
+
     /**
-     *
      * @param branchId
      * @param status
      * @param pageNo
      * @param pageSize
+     * @return
      * @apiNote 39.0-search Guest by Status
      * @author HuuNT - 2021.07-09
-     * @return
      */
     @CrossOrigin
-    @RequestMapping(value = "/guests",params = "status", method = RequestMethod.GET)
+    @RequestMapping(value = "/guests", params = "status", method = RequestMethod.GET)
     public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
                                                                                 @RequestParam(value = "status") String status,
                                                                                 @RequestParam(value = "pageNo") int pageNo,
@@ -660,6 +660,22 @@ public class RestApi {
     /**
      * -------------------------------BOOKING-------------------------------
      */
+
+    /**
+     *
+     * @param studentId
+     * @param pageNo
+     * @param pageSize
+     * @author HuuNT - 2021.07.09
+     * @return
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings", method = RequestMethod.GET)
+    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentId") int studentId,
+                                                                 @RequestParam(value = "pageNo") int pageNo,
+                                                                 @RequestParam(value = "pageSize") int pageSize) {
+        return bookingService.findBookingByStudentId(studentId, pageNo, pageSize);
+    }
 
     //<editor-fold desc="47.0-create-new-booking">
 
