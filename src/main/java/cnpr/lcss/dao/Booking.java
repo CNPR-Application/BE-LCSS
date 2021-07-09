@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.BookingSearchResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -65,5 +66,24 @@ public class Booking implements Serializable {
                 ", shift=" + shift +
                 ", studentInClassList=" + studentInClassList +
                 '}';
+    }
+    public BookingSearchResponseDto convertToSearchDto(){
+        BookingSearchResponseDto bookingSearchResponseDto=new BookingSearchResponseDto(
+        bookingId,
+        payingDate,
+        subject.getSubjectId(),
+        subject.getSubjectName(),
+        shift.getShiftId(),
+        shift.getDayOfWeek()+"-"+"("+shift.getTimeStart()+"-"+shift.getTimeEnd()+")",
+        student.getId(),
+        student.getAccount().getName(),
+        student.getAccount().getImage(),
+        status,
+        branch.getBranchId(),
+        branch.getBranchName(),
+        payingPrice,
+        description
+        );
+        return bookingSearchResponseDto;
     }
 }

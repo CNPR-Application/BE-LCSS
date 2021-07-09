@@ -1,11 +1,15 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Booking;
+import cnpr.lcss.dao.RegisteringGuest;
 import cnpr.lcss.dao.StudentInClass;
-import cnpr.lcss.model.BookingRequestDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.xml.bind.ValidationException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -188,6 +193,23 @@ public class BookingService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Search Booking By  Student Id">
+    public BookingSearchResponsePagingDto findBookingByStudentId(int studentId, int pageNo, int pageSize) {
+        // pageNo starts at 0
+        // always set first page = 1 ---> pageNo - 1
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<Booking> page = bookingRepository.findBookingByStudent_Id(studentId,pageable) ;
+        List<Booking> bookingList = page.getContent();
+        List<BookingSearchResponseDto> bookingSearchResponseDtoList = bookingList.stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
+
+        BookingSearchResponsePagingDto bookingSearchResponsePagingDto = new BookingSearchResponsePagingDto(pageNo,pageSize,pageTotal,bookingSearchResponseDtoList);
+
+        return bookingSearchResponsePagingDto;
     }
     //</editor-fold>
 }
