@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.RegisteringGuestSearchResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,4 +40,9 @@ public class RegisteringGuest implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
+
+    public RegisteringGuestSearchResponseDto convertToDto() {
+        RegisteringGuestSearchResponseDto registeringGuestSearchResponseDto = new RegisteringGuestSearchResponseDto(id, customerName, phone, city, bookingDate, curriculum.getCurriculumId(),curriculum.getCurriculumName(), description, branch.getBranchId(), status);
+        return registeringGuestSearchResponseDto;
+    }
 }

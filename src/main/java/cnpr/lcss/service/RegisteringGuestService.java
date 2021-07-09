@@ -1,11 +1,16 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Branch;
 import cnpr.lcss.dao.RegisteringGuest;
-import cnpr.lcss.model.RegisteringGuestRequestDto;
+import cnpr.lcss.dao.SubjectDetail;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.RegisteringGuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +18,8 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.ValidationException;
 import java.text.Normalizer;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RegisteringGuestService {
@@ -143,4 +150,22 @@ public class RegisteringGuestService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="Search Guest By BranchID And Name,Phone,CurName and Paging">
+    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName,String phone, String curriculumName, int pageNo,  int pageSize) {
+        // pageNo starts at 0
+        // always set first page = 1 ---> pageNo - 1
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId,customerName,phone,curriculumName,pageable);
+        List<RegisteringGuest> registeringGuestList = page.getContent();
+        List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
+
+        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo,pageSize,pageTotal,registeringGuestSearchResponseDtos);
+
+        return registeringGuestSearchPagingResponseDto;
+    }
+    //</editor-fold>
+
 }
