@@ -579,15 +579,16 @@ public class RestApi {
      * -------------------------------GUEST-------------------------------
      */
 
-    //<editor-fold desc="35.0 Search Guest by BranchId and NAME,PHONE,CURNAME and PAGING">
+    //<editor-fold desc="Search Guest by BranchId and NAME, PHONE, CURNAME and PAGING">
+
     /**
      * @param branchId
      * @param name
      * @param pageNo
      * @param pageSize
+     * @return
      * @author HuuNT 2021-07-08
      * @apiNote 35.0-search guest by branchId and LIKE name, phone, curriculumName and Paging
-     * @return
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", method = RequestMethod.GET)
@@ -598,6 +599,27 @@ public class RestApi {
                                                                               @RequestParam(value = "pageNo") int pageNo,
                                                                               @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndCustomerName(branchId, name, phone, curriculumName, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="39.0-search guest by status">
+    /**
+     *
+     * @param branchId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @apiNote 39.0-search Guest by Status
+     * @author HuuNT - 2021.07-09
+     * @return
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/guests",params = "status", method = RequestMethod.GET)
+    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
+                                                                                @RequestParam(value = "status") String status,
+                                                                                @RequestParam(value = "pageNo") int pageNo,
+                                                                                @RequestParam(value = "pageSize") int pageSize) {
+        return registeringGuestService.findRegisterGuestByBranchIdAndStatus(branchId, status, pageNo, pageSize);
     }
     //</editor-fold>
 

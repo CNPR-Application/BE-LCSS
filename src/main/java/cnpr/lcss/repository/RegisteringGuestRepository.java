@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RegisteringGuestRepository extends JpaRepository<RegisteringGuest, Integer> {
     Page<RegisteringGuest> findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(int branchId, String customerName,String phone,String curriculumName, Pageable pageable);
+
+    Page<RegisteringGuest> findRegisteringGuestByBranch_BranchIdAndStatusContaining(int branchId, String status,Pageable pageable);
 }
