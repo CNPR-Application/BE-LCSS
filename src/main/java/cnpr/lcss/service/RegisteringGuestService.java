@@ -168,4 +168,20 @@ public class RegisteringGuestService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Search Guest by Status">
+    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndStatus(int branchId, String status, int pageNo,  int pageSize) {
+        // pageNo starts at 0
+        // always set first page = 1 ---> pageNo - 1
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndStatusContaining(branchId,status,pageable);
+        List<RegisteringGuest> registeringGuestList = page.getContent();
+        List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
+
+        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo,pageSize,pageTotal,registeringGuestSearchResponseDtos);
+
+        return registeringGuestSearchPagingResponseDto;
+    }
+    //</editor-fold>
 }
