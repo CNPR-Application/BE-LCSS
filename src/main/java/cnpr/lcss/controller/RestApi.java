@@ -579,11 +579,14 @@ public class RestApi {
      * -------------------------------GUEST-------------------------------
      */
 
+    //<editor-fold desc="Search Guest by BranchId and NAME,PHONE,CURNAME and PAGING">
     /**
      * @param branchId
      * @param name
      * @param pageNo
      * @param pageSize
+     * @author HuuNT 2021-07-08
+     * @apiNote 35.0-search guest by branchId and LIKE name, phone, curriculumName and Paging
      * @return
      */
     @CrossOrigin
@@ -596,6 +599,7 @@ public class RestApi {
                                                                               @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndCustomerName(branchId, name, phone, curriculumName, pageNo, pageSize);
     }
+    //</editor-fold>
 
     //<editor-fold desc="41.0-register-guest">
 

@@ -151,6 +151,7 @@ public class RegisteringGuestService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Search Guest By BranchID And Name,Phone,CurName and Paging">
     public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName,String phone, String curriculumName, int pageNo,  int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -165,5 +166,6 @@ public class RegisteringGuestService {
 
         return registeringGuestSearchPagingResponseDto;
     }
+    //</editor-fold>
 
 }
