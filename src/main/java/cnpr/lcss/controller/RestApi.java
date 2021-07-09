@@ -579,7 +579,7 @@ public class RestApi {
      * -------------------------------GUEST-------------------------------
      */
 
-    //<editor-fold desc="Search Guest by BranchId and NAME, PHONE, CURNAME and PAGING">
+    //<editor-fold desc="35.0-Search Guest by BranchId and NAME, PHONE, CURNAME and PAGING">
 
     /**
      * @param branchId
@@ -603,18 +603,18 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="39.0-search guest by status">
+
     /**
-     *
      * @param branchId
      * @param status
      * @param pageNo
      * @param pageSize
+     * @return
      * @apiNote 39.0-search Guest by Status
      * @author HuuNT - 2021.07-09
-     * @return
      */
     @CrossOrigin
-    @RequestMapping(value = "/guests",params = "status", method = RequestMethod.GET)
+    @RequestMapping(value = "/guests", params = "status", method = RequestMethod.GET)
     public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
                                                                                 @RequestParam(value = "status") String status,
                                                                                 @RequestParam(value = "pageNo") int pageNo,
@@ -696,10 +696,10 @@ public class RestApi {
      * @author LamHNT - 2021.07.07
      */
     @CrossOrigin
-    @RequestMapping(value = "/classes", method = RequestMethod.GET)
-    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(@RequestParam(value = "branchId") int branchId,
-                                                                                           @RequestParam(value = "subjectId") int subjectId,
-                                                                                           @RequestParam(value = "shiftId") int shiftId,
+    @RequestMapping(value = "/classes/{branchId}/filter", params = "subjectId", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(@PathVariable(value = "branchId") int branchId,
+                                                                                           @RequestParam(value = "subjectId", required = false) int subjectId,
+                                                                                           @RequestParam(value = "shiftId", required = false) int shiftId,
                                                                                            @RequestParam(value = "status") String status,
                                                                                            @RequestParam(value = "pageNo") int pageNo,
                                                                                            @RequestParam(value = "pageSize") int pageSize) throws Exception {
