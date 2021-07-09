@@ -50,6 +50,19 @@ public class BookingService {
              * Insert data to Booking
              */
 
+            // Subject ID
+            // Check existence
+            if (subjectRepository.existsSubjectBySubjectId(insBooking.getSubjectId())) {
+                // Check is available
+                if (subjectRepository.findIsAvailableBySubjectId(insBooking.getSubjectId())) {
+                    newBooking.setSubject(subjectRepository.findBySubjectId(insBooking.getSubjectId()));
+                } else {
+                    throw new ValidationException(Constant.INVALID_SUBJECT_AVAILABLE);
+                }
+            } else {
+                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
+            }
+
             // Paying Price
             // GREATER or EQUAL to Subject's Price
             Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId());
@@ -92,19 +105,6 @@ public class BookingService {
                 }
             } else {
                 throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-
-            // Subject ID
-            // Check existence
-            if (subjectRepository.existsById(insBooking.getSubjectId())) {
-                // Check is available
-                if (subjectRepository.findIsAvailableBySubjectId(insBooking.getSubjectId())) {
-                    newBooking.setSubject(subjectRepository.findBySubjectId(insBooking.getSubjectId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SUBJECT_AVAILABLE);
-                }
-            } else {
-                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
             }
 
             // Shift ID
