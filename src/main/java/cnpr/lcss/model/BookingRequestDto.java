@@ -8,5 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class BookingRequestDto {
-
+    private float payingPrice;
+    private String description;
+    private String status;
+    private int studentId;
+    private int branchId;
+    private int subjectId;
+    private int shiftId;
+    private int classId;
 }

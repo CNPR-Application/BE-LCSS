@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudentRepository extends JpaRepository<Student, String> {
+public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     @Query("SELECT s.parentName FROM Student s WHERE s.account.username = :username")
     String findParentNameByStudentUsername(@Param("username") String studentUsername);
@@ -22,4 +22,6 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     String findBranchNameByStudentUsername(@Param("username") String studentUsername);
 
     Student findStudentByAccount_Username(String studentUsername);
+
+    Student findById(int studentId);
 }
