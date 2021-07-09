@@ -13,9 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -40,7 +39,8 @@ public class BookingService {
     //<editor-fold desc="Create New Booking">
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<?> createNewBooking(BookingRequestDto insBooking) throws Exception {
-        Date today = new Date(Calendar.getInstance().getTime().getTime());
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date today = calendar.getTime();
 
         try {
             Booking newBooking = new Booking();
@@ -155,6 +155,7 @@ public class BookingService {
                     throw new ValidationException(Constant.INVALID_CLASS_STATUS_NOT_WAITING);
                 }
             } else {
+                bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
                 throw new ValidationException(Constant.INVALID_CLASS_ID);
             }
 
@@ -171,10 +172,13 @@ public class BookingService {
             // Feedback
             newStdInClass.setFeedback(null);
 
+            HashMap mapObj = new LinkedHashMap();
+            mapObj.put("bookingId", bookingId);
+
             // Insert new Student In Class to DB
             try {
                 studentInClassRepository.save(newStdInClass);
-                return ResponseEntity.ok(true);
+                return ResponseEntity.ok(mapObj);
             } catch (Exception e) {
                 bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
