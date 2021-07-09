@@ -51,7 +51,8 @@ public class BookingService {
              */
 
             // Paying Price
-            if (insBooking.getPayingPrice() >= 0) {
+            // GREATER or EQUAL to Subject's Price
+            if (insBooking.getPayingPrice() >= subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId())) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
             } else {
                 throw new ValidationException(Constant.INVALID_BOOKING_PAYING_PRICE);
