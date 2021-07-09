@@ -52,7 +52,8 @@ public class BookingService {
 
             // Paying Price
             // GREATER or EQUAL to Subject's Price
-            if (insBooking.getPayingPrice() >= subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId())) {
+            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId());
+            if (insBooking.getPayingPrice() >= subjectPrice) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
             } else {
                 throw new ValidationException(Constant.INVALID_BOOKING_PAYING_PRICE);
