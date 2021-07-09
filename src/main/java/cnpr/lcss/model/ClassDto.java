@@ -25,4 +25,6 @@ public class ClassDto {
     private int teacherId;
     private String teacherName;
     private int roomNo;
+
+    private int numberOfStudent;
 }
