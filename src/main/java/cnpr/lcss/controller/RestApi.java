@@ -670,6 +670,8 @@ public class RestApi {
      * @apiNote 47.0-create-new-booking
      * @author LamHNT - 2021.07.08
      */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings", method = RequestMethod.POST)
     public ResponseEntity<?> createNewBooking(@RequestBody BookingRequestDto bookingRequestDto) throws Exception {
         return bookingService.createNewBooking(bookingRequestDto);
     }

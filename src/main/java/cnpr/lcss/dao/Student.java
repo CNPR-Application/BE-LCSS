@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class Student implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "student_id")
     private int id;
     @Column(name = "parent_phone")
     private String parentPhone;
@@ -32,6 +33,10 @@ public class Student implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Booking> bookingList;
+    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<StudentInClass> studentInClassList;
 }

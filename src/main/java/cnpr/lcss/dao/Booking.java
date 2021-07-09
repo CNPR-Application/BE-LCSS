@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class Booking implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
-    private Integer bookingId;
+    private int bookingId;
     @Column(name = "paying_price")
     private float payingPrice;
     @Column(name = "paying_date")
@@ -29,15 +31,39 @@ public class Booking implements Serializable {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "student_id")
+    @JsonIgnore
     private Student student;
     @ManyToOne
     @JoinColumn(name = "branch_id")
+    @JsonIgnore
     private Branch branch;
     @ManyToOne
     @JoinColumn(name = "subject_id")
+    @JsonIgnore
     private Subject subject;
     @ManyToOne
     @JoinColumn(name = "shift_id")
+    @JsonIgnore
     private Shift shift;
+
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<StudentInClass> studentInClassList;
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", payingPrice=" + payingPrice +
+                ", payingDate=" + payingDate +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", student=" + student +
+                ", branch=" + branch +
+                ", subject=" + subject +
+                ", shift=" + shift +
+                ", studentInClassList=" + studentInClassList +
+                '}';
+    }
 }
