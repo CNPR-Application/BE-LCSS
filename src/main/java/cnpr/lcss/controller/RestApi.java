@@ -675,10 +675,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", method = RequestMethod.GET)
-    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentId") int studentId,
+    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
                                                                  @RequestParam(value = "pageNo") int pageNo,
                                                                  @RequestParam(value = "pageSize") int pageSize) {
-        return bookingService.findBookingByStudentId(studentId, pageNo, pageSize);
+        return bookingService.findBookingByStudentUsername(studentUsername, pageNo, pageSize);
     }
     //</editor-fold>
 
