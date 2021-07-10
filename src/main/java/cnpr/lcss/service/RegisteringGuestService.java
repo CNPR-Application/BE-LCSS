@@ -1,9 +1,9 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Branch;
 import cnpr.lcss.dao.RegisteringGuest;
-import cnpr.lcss.dao.SubjectDetail;
-import cnpr.lcss.model.*;
+import cnpr.lcss.model.RegisteringGuestRequestDto;
+import cnpr.lcss.model.RegisteringGuestSearchPagingResponseDto;
+import cnpr.lcss.model.RegisteringGuestSearchResponseDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.RegisteringGuestRepository;
@@ -19,6 +19,7 @@ import javax.xml.bind.ValidationException;
 import java.text.Normalizer;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -129,21 +130,26 @@ public class RegisteringGuestService {
     //</editor-fold>
 
     //<editor-fold desc="Update Guest (status)">
-    public ResponseEntity<?> updateGuest(int guestId, String status) throws Exception {
+    public ResponseEntity<?> updateGuest(int guestId, Map<String, String> cussAtt) throws Exception {
         try {
+            String status = cussAtt.get("status");
+            String description = cussAtt.get("description");
+            RegisteringGuest updateGuest;
+
             if (registeringGuestRepository.existsById(guestId)) {
-                RegisteringGuest updateGuest = registeringGuestRepository.getById(guestId);
+                updateGuest = registeringGuestRepository.getById(guestId);
                 if (status.equalsIgnoreCase(STATUS_PENDING)
                         || status.equalsIgnoreCase(STATUS_CONTACTED)
                         || status.equalsIgnoreCase(STATUS_CANCELED)) {
                     updateGuest.setStatus(status);
-                    registeringGuestRepository.save(updateGuest);
                 } else {
                     throw new ValidationException(INVALID_GUEST_STATUS);
                 }
             } else {
                 throw new ValidationException(INVALID_GUEST_ID);
             }
+            updateGuest.setDescription(description);
+            registeringGuestRepository.save(updateGuest);
             return ResponseEntity.ok(true);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -152,34 +158,34 @@ public class RegisteringGuestService {
     //</editor-fold>
 
     //<editor-fold desc="Search Guest By BranchID And Name,Phone,CurName and Paging">
-    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName,String phone, String curriculumName, int pageNo,  int pageSize) {
+    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName, String phone, String curriculumName, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId,customerName,phone,curriculumName,pageable);
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId, customerName, phone, curriculumName, pageable);
         List<RegisteringGuest> registeringGuestList = page.getContent();
         List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
-        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo,pageSize,pageTotal,registeringGuestSearchResponseDtos);
+        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo, pageSize, pageTotal, registeringGuestSearchResponseDtos);
 
         return registeringGuestSearchPagingResponseDto;
     }
     //</editor-fold>
 
     //<editor-fold desc="Search Guest by Status">
-    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndStatus(int branchId, String status, int pageNo,  int pageSize) {
+    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndStatus(int branchId, String status, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndStatusContaining(branchId,status,pageable);
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndStatusContaining(branchId, status, pageable);
         List<RegisteringGuest> registeringGuestList = page.getContent();
         List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
-        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo,pageSize,pageTotal,registeringGuestSearchResponseDtos);
+        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo, pageSize, pageTotal, registeringGuestSearchResponseDtos);
 
         return registeringGuestSearchPagingResponseDto;
     }

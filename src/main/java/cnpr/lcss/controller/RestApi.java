@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 public class RestApi {
@@ -643,33 +644,34 @@ public class RestApi {
 
     /**
      * @param guestId
-     * @param status
+     * @param cusAtt
      * @return
      * @throws Exception
      * @apiNote 42.0-update-guest
-     * @author LamHNT - 2021.07.08
+     * @author LamHNT - 2021.07.08 / 2021.07.10
      */
     @CrossOrigin
     @RequestMapping(value = "/guests/{guestId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateGuest(@PathVariable int guestId, @RequestBody String status) throws Exception {
-        return registeringGuestService.updateGuest(guestId, status);
+    public ResponseEntity<?> updateGuest(@PathVariable int guestId, @RequestBody Map<String, String> cusAtt) throws Exception {
+        cusAtt.get("status");
+        cusAtt.get("description");
+        return registeringGuestService.updateGuest(guestId, cusAtt);
     }
     //</editor-fold>
-
 
     /**
      * -------------------------------BOOKING-------------------------------
      */
 
     //<editor-fold desc="44.0-Search Booking By StudentId">
+
     /**
-     *
      * @param studentId
      * @param pageNo
      * @param pageSize
+     * @return
      * @apiNote 44.0-search-booking-by-studentId
      * @author HuuNT - 2021.07.09
-     * @return
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", method = RequestMethod.GET)
@@ -778,6 +780,22 @@ public class RestApi {
     @RequestMapping(value = "/classes", method = RequestMethod.POST)
     public ResponseEntity<?> createNewClass(@RequestBody ClassRequestDto classRequestDto) throws Exception {
         return classService.createNewClass(classRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="55.1-get-classes-statistic">
+
+    /**
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 55.1-get-classes-statistic
+     * @author LamHNT - 2021.07.10
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes-status", method = RequestMethod.GET)
+    public ResponseEntity<?> getClassesStatistic(@RequestParam int branchId) throws Exception {
+        return classService.getClassesStatistic(branchId);
     }
     //</editor-fold>
 

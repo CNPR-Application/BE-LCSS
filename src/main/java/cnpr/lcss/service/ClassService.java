@@ -304,4 +304,35 @@ public class ClassService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="Get Classes Statistic">
+    public ResponseEntity<?> getClassesStatistic(int branchId) throws Exception {
+        /**
+         * if branch id = 0 => find all branches by status
+         * if branch id != 0 => check existence => find by branch id and status
+         */
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        try {
+            if (branchId == 0) {
+                mapObj.put("waitingClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_WAITING));
+                mapObj.put("studyingClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_STUDYING));
+                mapObj.put("finishedClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_FINISHED));
+                mapObj.put("canceledClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_CANCELED));
+            } else if (branchId != 0) {
+                if (branchRepository.existsBranchByBranchId(branchId) && branchRepository.findIsAvailableByBranchId(branchId)) {
+                    mapObj.put("waitingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_WAITING));
+                    mapObj.put("studyingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_STUDYING));
+                    mapObj.put("finishedClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_FINISHED));
+                    mapObj.put("canceledClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_CANCELED));
+                } else {
+                    throw new Exception(INVALID_BRANCH_ID);
+                }
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
