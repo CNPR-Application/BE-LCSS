@@ -539,16 +539,17 @@ public class AccountService {
             if (userRole.equalsIgnoreCase(ROLE_STUDENT)) {
                 Student student = new Student();
                 // Insert Parent's name
-                if (newAcc.getParentName() != null && !newAcc.getParentName().isEmpty() && stripAccents(newAcc.getName()).matches(NAME_PATTERN)) {
-                    student.setParentName(newAcc.getParentName());
-                } else {
-                    throw new Exception(INVALID_PARENT_NAME);
-                }
+                student.setParentName(newAcc.getParentName());
+
                 // Insert Parent's phone
-                if (newAcc.getParentPhone() != null && newAcc.getParentPhone().matches(PHONE_PATTERN)) {
-                    student.setParentPhone(newAcc.getParentPhone());
+                if (newAcc.getParentPhone() != null && !newAcc.getParentPhone().isEmpty()) {
+                    if (newAcc.getParentPhone().matches(PHONE_PATTERN)) {
+                        student.setParentPhone(newAcc.getParentPhone());
+                    } else {
+                        throw new Exception(INVALID_PHONE_PATTERN);
+                    }
                 } else {
-                    throw new Exception(INVALID_PHONE_PATTERN);
+                    student.setParentPhone(newAcc.getParentPhone());
                 }
                 Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
                 student.setAccount(accountStudent);
