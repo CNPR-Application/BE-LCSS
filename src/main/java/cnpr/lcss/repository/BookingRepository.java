@@ -14,4 +14,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findBookingByStudent_Id(int studentId,Pageable pageable);
 
     boolean existsBookingByBookingId(int bookingId);
+    
+    Page<Booking> findBookingByStudent_Account_Username(String studentUsername,Pageable pageable);
 }

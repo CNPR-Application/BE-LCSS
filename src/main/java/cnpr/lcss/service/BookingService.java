@@ -198,12 +198,12 @@ public class BookingService {
     //</editor-fold>
 
     //<editor-fold desc="Search Booking By  Student Id">
-    public BookingSearchResponsePagingDto findBookingByStudentId(int studentId, int pageNo, int pageSize) {
+    public BookingSearchResponsePagingDto findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Booking> page = bookingRepository.findBookingByStudent_Id(studentId, pageable);
+        Page<Booking> page = bookingRepository.findBookingByStudent_Account_Username(studentUsername,pageable) ;
         List<Booking> bookingList = page.getContent();
         List<BookingSearchResponseDto> bookingSearchResponseDtoList = bookingList.stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
