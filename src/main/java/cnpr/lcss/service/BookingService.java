@@ -92,12 +92,12 @@ public class BookingService {
                 throw new ValidationException(Constant.INVALID_BOOKING_STATUS);
             }
 
-            // Student ID
+            // Student Username
             // Check existence
-            if (studentRepository.existsById(insBooking.getStudentId())) {
-                newBooking.setStudent(studentRepository.findById(insBooking.getStudentId()));
+            if (studentRepository.existsByAccount_Username(insBooking.getStudentUsername())) {
+                newBooking.setStudent(studentRepository.findByStudent_StudentUsername(insBooking.getStudentUsername()));
             } else {
-                throw new ValidationException(Constant.INVALID_STUDENT_ID);
+                throw new ValidationException(Constant.INVALID_STUDENT_USERNAME);
             }
 
             // Branch ID
@@ -167,7 +167,7 @@ public class BookingService {
 
             // Student ID
             // Student is validated above
-            newStdInClass.setStudent(studentRepository.findById(insBooking.getStudentId()));
+            newStdInClass.setStudent(studentRepository.findStudentByAccount_Username(insBooking.getStudentUsername()));
 
             // Teacher Rating
             newStdInClass.setTeacherRating(0);
@@ -203,7 +203,7 @@ public class BookingService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Booking> page = bookingRepository.findBookingByStudent_Account_Username(studentUsername,pageable) ;
+        Page<Booking> page = bookingRepository.findBookingByStudent_Account_Username(studentUsername, pageable);
         List<Booking> bookingList = page.getContent();
         List<BookingSearchResponseDto> bookingSearchResponseDtoList = bookingList.stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();

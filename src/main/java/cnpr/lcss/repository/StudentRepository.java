@@ -23,5 +23,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     Student findStudentByAccount_Username(String studentUsername);
 
-    Student findById(int studentId);
+    @Query("SELECT s " +
+            "FROM Student AS s " +
+            "WHERE s.account.username = :studentUsername")
+    Student findByStudent_StudentUsername(@Param(value = "studentUsername") String studentUsername);
+
+    boolean existsByAccount_Username(String username);
 }
