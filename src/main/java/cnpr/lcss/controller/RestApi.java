@@ -766,6 +766,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="55.1-get-classes-statistic">
+
+    /**
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 55.1-get-classes-statistic
+     * @author LamHNT - 2021.07.10
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes-status", method = RequestMethod.GET)
+    public ResponseEntity<?> getClassesStatistic(@RequestParam int branchId) throws Exception {
+        return classService.getClassesStatistic(branchId);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------SHIFT--------------------------------
      */
