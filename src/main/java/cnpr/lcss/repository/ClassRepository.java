@@ -35,4 +35,16 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     Page<Class> findByBranch_BranchIdAndStatusContainingAllIgnoreCase(int branchId, String status, Pageable pageable);
 
     Page<Class> findByBranch_BranchId(int branchId, Pageable pageable);
+
+    @Query(value = "SELECT COUNT(c.classId) " +
+            "FROM Class AS c " +
+            "WHERE c.status = :status")
+    int countByStatusAllIgnoreCase(@Param(value = "status") String status);
+
+    @Query(value = "SELECT COUNT(c.classId) " +
+            "FROM Class AS c " +
+            "WHERE c.branch.branchId = :branchId " +
+            "AND c.status = :status")
+    int countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(@Param(value = "branchId") int branchId,
+                                                             @Param(value = "status") String status);
 }
