@@ -1,9 +1,10 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Booking;
-import cnpr.lcss.dao.RegisteringGuest;
 import cnpr.lcss.dao.StudentInClass;
-import cnpr.lcss.model.*;
+import cnpr.lcss.model.BookingRequestDto;
+import cnpr.lcss.model.BookingSearchResponseDto;
+import cnpr.lcss.model.BookingSearchResponsePagingDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,14 +203,26 @@ public class BookingService {
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        Page<Booking> page = bookingRepository.findBookingByStudent_Id(studentId,pageable) ;
+        Page<Booking> page = bookingRepository.findBookingByStudent_Id(studentId, pageable);
         List<Booking> bookingList = page.getContent();
         List<BookingSearchResponseDto> bookingSearchResponseDtoList = bookingList.stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
-        BookingSearchResponsePagingDto bookingSearchResponsePagingDto = new BookingSearchResponsePagingDto(pageNo,pageSize,pageTotal,bookingSearchResponseDtoList);
+        BookingSearchResponsePagingDto bookingSearchResponsePagingDto = new BookingSearchResponsePagingDto(pageNo, pageSize, pageTotal, bookingSearchResponseDtoList);
 
         return bookingSearchResponsePagingDto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Get Booking Detail By Id">
+    public BookingSearchResponseDto findBookingByBookingId(int bookingId) throws Exception {
+        if (bookingRepository.existsBookingByBookingId(bookingId)) {
+            Booking booking = bookingRepository.findBookingByBookingId(bookingId);
+            BookingSearchResponseDto bookingSearchResponseDto = booking.convertToSearchDto();
+            return bookingSearchResponseDto;
+        } else {
+            throw new ValidationException(Constant.INVALID_BOOKING_ID);
+        }
     }
     //</editor-fold>
 }

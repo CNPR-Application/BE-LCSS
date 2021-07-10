@@ -680,6 +680,23 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="45.0-Get Booking Detail By Id">
+    /**
+     *
+     * @param bookingId
+     * @return
+     * @apiNote 45.0-Get Booking Detail By Id
+     * @author HuuNT - 2021.07.10
+     * @throws Exception
+     *
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings",params = "bookingId", method = RequestMethod.GET)
+    public BookingSearchResponseDto findBookingByBookingId(@RequestParam(value = "bookingId") int bookingId) throws Exception {
+        return bookingService.findBookingByBookingId(bookingId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="47.0-create-new-booking">
 
     /**
