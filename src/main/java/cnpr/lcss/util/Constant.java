@@ -42,6 +42,7 @@ public class Constant {
      */
     // Error Message
     public static final String INVALID_STUDENT_ID = "Student ID not exist!";
+    public static final String INVALID_STUDENT_USERNAME = "Student Username not exist!";
 
     /**
      * -----STUDENT IN CLASS-----

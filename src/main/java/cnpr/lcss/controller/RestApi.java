@@ -666,7 +666,7 @@ public class RestApi {
     //<editor-fold desc="44.0-Search Booking By StudentId">
 
     /**
-     * @param studentId
+     * @param studentUsername
      * @param pageNo
      * @param pageSize
      * @return
@@ -683,17 +683,16 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="45.0-Get Booking Detail By Id">
+
     /**
-     *
      * @param bookingId
      * @return
+     * @throws Exception
      * @apiNote 45.0-Get Booking Detail By Id
      * @author HuuNT - 2021.07.10
-     * @throws Exception
-     *
      */
     @CrossOrigin
-    @RequestMapping(value = "/bookings",params = "bookingId", method = RequestMethod.GET)
+    @RequestMapping(value = "/bookings", params = "bookingId", method = RequestMethod.GET)
     public BookingSearchResponseDto findBookingByBookingId(@RequestParam(value = "bookingId") int bookingId) throws Exception {
         return bookingService.findBookingByBookingId(bookingId);
     }

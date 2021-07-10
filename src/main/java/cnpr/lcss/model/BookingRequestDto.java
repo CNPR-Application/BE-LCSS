@@ -1,6 +1,5 @@
 package cnpr.lcss.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ public class BookingRequestDto {
     private float payingPrice;
     private String description;
     private String status;
-    private int studentId;
+    private String studentUsername;
     private int branchId;
     private int subjectId;
     private int shiftId;
