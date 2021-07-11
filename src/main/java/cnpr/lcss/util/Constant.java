@@ -22,19 +22,19 @@ public class Constant {
     public static final String ERROR_GENERATE_PASSWORD = "Generate password failed!";
     public static final String ERROR_GENERATE_USERNAME = "Generate username failed!";
     public static final String INVALID_ADDRESS = "Null or empty address!";
-    public static final String INVALID_ADMIN_BIRTHDAY = "Admin must older or equal to 18!";
+    public static final String INVALID_ADMIN_BIRTHDAY = "Admin must OLDER or EQUAL to 18!";
     public static final String INVALID_BIRTHDAY = "Invalid birthday!";
     public static final String INVALID_CHANGE_ROLE = "Role must be manager/staff!";
     public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
     public static final String INVALID_IS_AVAILABLE = "Account no longer active!";
-    public static final String INVALID_MANAGER_BIRTHDAY = "Manager must older or equal to 18!";
+    public static final String INVALID_MANAGER_BIRTHDAY = "Manager must older or EQUAL to 18!";
     public static final String INVALID_NAME = "Null or empty or unreal name!";
     public static final String INVALID_NEW_ROLE = "New role must be manager/staff!";
     public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
     public static final String INVALID_ROLE = "Invalid role!";
-    public static final String INVALID_STAFF_BIRTHDAY = "Staff must older or equal to 18!";
-    public static final String INVALID_STUDENT_BIRTHDAY = "Student must older or equal to 3!";
-    public static final String INVALID_TEACHER_BIRTHDAY = "Teacher must older or equal to 15!";
+    public static final String INVALID_STAFF_BIRTHDAY = "Staff must OLDER or EQUAL to 18!";
+    public static final String INVALID_STUDENT_BIRTHDAY = "Student must OLDER or EQUAL to 3!";
+    public static final String INVALID_TEACHER_BIRTHDAY = "Teacher must OLDER or EQUAL to 15!";
     public static final String INVALID_TEACHER_EXP = "Null or empty experience!";
     public static final String PASSWORD_NOT_MATCH = "Password not match!";
     public static final String USERNAME_NOT_EXIST = "Username not exist!";
@@ -89,9 +89,13 @@ public class Constant {
     public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
     //</editor-fold>
 
+    //<editor-fold desc="Curriculum">
     /**
      * -----CURRICULUM-----
      */
+    // Error Message
+    public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
+    //</editor-fold>
 
     /**
      * -----REGISTERING GUEST-----
@@ -145,8 +149,13 @@ public class Constant {
      * -----SUBJECT-----
      */
     // Error Message
-    public static final String INVALID_SUBJECT_ID = "Subject ID not exist!";
+    public static final String DUPLICATE_SUBJECT_CODE = "Duplicate Subject Code!";
+    public static final String DUPLICATE_SUBJECT_NAME = "Duplicate Subject Name!";
     public static final String INVALID_SUBJECT_AVAILABLE = "Subject not available!";
+    public static final String INVALID_SUBJECT_ID = "Subject ID not exist!";
+    public static final String INVALID_SUBJECT_PRICE = "Subject Price must be GREATER or EQUAL to 0!";
+    public static final String INVALID_SUBJECT_SLOT = "Subject's Slot must be GREATER than 0!";
+    public static final String INVALID_SUBJECT_SLOT_PER_WEEK = "Subject's Slot Per Week must be GREATER than 0!";
     //</editor-fold>
 
     /**
@@ -169,13 +178,14 @@ public class Constant {
     /**
      * -----OTHERS-----
      */
-    public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
-    public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
-    public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
-    public static final String NAME_PATTERN = "[A-Za-z ]*";
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
     public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-    public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String NAME_PATTERN = "[A-Za-z ]*";
     public static final String NUMBERS = "1234567890";
+    public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
+    public static final String RATING_PATTERN = "#.#";
+    public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     //</editor-fold>
 }
