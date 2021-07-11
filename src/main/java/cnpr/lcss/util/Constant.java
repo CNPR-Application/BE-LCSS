@@ -105,9 +105,18 @@ public class Constant {
     /**
      * -----SHIFT-----
      */
+    // Pattern
+    public static final String DAY_OF_WEEK_PATTERN = "((\\d)[-])+(\\d|[C][N])";
+    public static final String TIME_END_PATTERN = "(09:30)|(11:00)|(15:30)|(17:00)|(19:30)|(21:00)";
+    public static final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
     // Error Message
-    public static final String INVALID_SHIFT_ID = "Shift ID not exist!";
+    public static final String DUPLICATE_SHIFT = "Duplicate Shift!";
+    public static final String INVALID_DAY_OF_WEEK = "DayOfWeek must be 2 days or more, separated by [-]! (2-4-6, 3-5, 7-CN)";
+    public static final String INVALID_DURATION = "Duration must be multiples of 90 and larger than 0!";
     public static final String INVALID_SHIFT_AVAILABLE = "Shift not available!";
+    public static final String INVALID_SHIFT_ID = "Shift ID not exist!";
+    public static final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
+    public static final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
     //</editor-fold>
 
     /**
