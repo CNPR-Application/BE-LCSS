@@ -25,13 +25,13 @@ public class AccountService {
     @Autowired
     AccountRepository accountRepository;
     @Autowired
+    BranchRepository branchRepository;
+    @Autowired
     StaffRepository staffRepository;
     @Autowired
     StudentRepository studentRepository;
     @Autowired
     TeacherRepository teacherRepository;
-    @Autowired
-    BranchRepository branchRepository;
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
@@ -356,7 +356,7 @@ public class AccountService {
                     account.setUsername(newUsername);
                 } while (accountRepository.existsByUsername(account.getUsername()));
             } catch (Exception e) {
-                throw new Exception(Constant.GENERATE_USERNAME_ERROR);
+                throw new Exception(Constant.ERROR_GENERATE_USERNAME);
             }
 
             // Password
@@ -364,7 +364,7 @@ public class AccountService {
                 newPassword = generatePassword(10).toString();
                 account.setPassword(newPassword);
             } catch (Exception e) {
-                throw new Exception(Constant.GENERATE_PASSWORD_ERROR);
+                throw new Exception(Constant.ERROR_GENERATE_PASSWORD);
             }
 
             // Name
@@ -378,7 +378,7 @@ public class AccountService {
             if (newAcc.getAddress() != null && !newAcc.getAddress().isEmpty()) {
                 account.setAddress(newAcc.getAddress().trim());
             } else {
-                throw new Exception(Constant.NULL_OR_EMPTY_ADDRESS);
+                throw new Exception(Constant.INVALID_ADDRESS);
             }
 
             // Phone
@@ -466,7 +466,7 @@ public class AccountService {
             if (checkGmail) {
                 accountRepository.save(accTmp);
             } else {
-                throw new Exception(Constant.EMAIL_SENDING_ERROR);
+                throw new Exception(Constant.ERROR_EMAIL_SENDING);
             }
 
             // Branch Id
@@ -476,7 +476,7 @@ public class AccountService {
                 // Find Branch by newAcc's branch id
                 branch = branchRepository.findByBranchId(newAcc.getBranchId());
             } else {
-                throw new IllegalArgumentException(Constant.BRANCH_ID_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
 
             // Role: ADMIN, MANAGER, STAFF
@@ -556,14 +556,14 @@ public class AccountService {
                 if (insAcc.getName() != null && !insAcc.getName().isEmpty()) {
                     updateAcc.setName(insAcc.getName().trim());
                 } else {
-                    throw new Exception(Constant.NULL_OR_EMPTY_NAME);
+                    throw new Exception(Constant.INVALID_NAME);
                 }
 
                 // Update Address
                 if (insAcc.getAddress() != null && !insAcc.getAddress().isEmpty()) {
                     updateAcc.setAddress(insAcc.getAddress().trim());
                 } else {
-                    throw new Exception(Constant.NULL_OR_EMPTY_ADDRESS);
+                    throw new Exception(Constant.INVALID_ADDRESS);
                 }
 
                 // Update Email
@@ -691,7 +691,7 @@ public class AccountService {
                     accountRepository.save(updateAcc);
                     return ResponseEntity.ok(true);
                 } else {
-                    throw new IllegalArgumentException(Constant.BRANCH_ID_NOT_EXIST);
+                    throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
                 }
             } else {
                 throw new IllegalArgumentException(Constant.USERNAME_NOT_EXIST);
