@@ -18,23 +18,23 @@ public class RestApi {
     @Autowired
     AccountService accountService;
     @Autowired
-    CurriculumService curriculumService;
+    BookingService bookingService;
     @Autowired
     BranchService branchService;
     @Autowired
-    SubjectService subjectService;
+    ClassService classService;
     @Autowired
-    SubjectDetailService subjectDetailService;
-    @Autowired
-    ShiftService shiftService;
+    CurriculumService curriculumService;
     @Autowired
     FirebaseService fireBaseService;
     @Autowired
-    ClassService classService;
-    @Autowired
     RegisteringGuestService registeringGuestService;
     @Autowired
-    BookingService bookingService;
+    ShiftService shiftService;
+    @Autowired
+    SubjectDetailService subjectDetailService;
+    @Autowired
+    SubjectService subjectService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -53,13 +53,13 @@ public class RestApi {
      * -------------------------------ACCOUNT--------------------------------
      */
 
-    //<editor-fold desc="1.0-check-login">
+    //<editor-fold desc="1.01-check-login">
 
     /**
      * @param loginRequestDto
      * @return
      * @throws Exception
-     * @apiNote 1.0-check-login
+     * @apiNote 1.01-check-login
      * @author LamHNT - 2021.06.03
      */
     @CrossOrigin
@@ -69,7 +69,18 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="2.0-search-account-like-username-paging">
+    //<editor-fold desc="1.02-search-account-like-username-paging">
+
+    /**
+     * @param role
+     * @param keyword
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.02-search-account-like-username-paging
+     */
     @CrossOrigin
     @RequestMapping(value = "/accounts", params = "role", method = RequestMethod.GET)
     public ResponseEntity<?> searchAccountLikeUsernamePaging(@RequestParam(value = "role") String role,
@@ -81,12 +92,12 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="3.1-search-info-by-username">
+    //<editor-fold desc="1.04-search-info-by-username">
 
     /**
      * @param username
      * @return
-     * @apiNote 3.1-search-info-by-username
+     * @apiNote 1.04-search-info-by-username
      * @author LamHNT - 2021.06.26
      */
     @CrossOrigin
@@ -96,13 +107,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="4.0-create-new-account">
+    //<editor-fold desc="1.05-create-new-account">
 
     /**
      * @param newAccount
      * @return
      * @throws Exception
-     * @apiNote 4.0 Create New Account
+     * @apiNote 1.05 Create New Account
      * @author LamHNT - 2021.06.30
      */
     @CrossOrigin
@@ -112,14 +123,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="5.0-update-account">
+    //<editor-fold desc="1.06-update-account">
 
     /**
      * @param username
      * @param insAcc
      * @return
      * @throws Exception
-     * @apiNote 5.0-update-account
+     * @apiNote 1.06-update-account
      * @author LamHNT - 2021.06.27
      */
     @CrossOrigin
@@ -130,14 +141,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="5.1-update-role">
+    //<editor-fold desc="1.07-update-role">
 
     /**
      * @param username
      * @param role
      * @return
      * @throws Exception
-     * @apiNote 5.1-update-role
+     * @apiNote 1.07-update-role
      * @author LamHNT - 2021.07.01
      */
     @CrossOrigin
@@ -148,13 +159,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="6.0 Delete Account">
+    //<editor-fold desc="1.08-delete-account">
 
     /**
      * @param keyword
      * @return
      * @throws Exception
-     * @apiNote 6.0 - Delete Account by User Name
+     * @apiNote 1.08-delete-account
      * @author HuuNT - 2021.06.30
      */
     @CrossOrigin
@@ -168,14 +179,14 @@ public class RestApi {
      * -------------------------------BRANCH--------------------------------
      */
 
-    //<editor-fold desc="8.0-search-branch-by-branch-name">
+    //<editor-fold desc="2.01-search-branch-by-branch-name">
 
     /**
      * @param keyword
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 8.0-search-branch-by-branch-name
+     * @apiNote 2.01-search-branch-by-branch-name
      * @author HuuNT - 2021.06.09
      */
     @CrossOrigin
@@ -189,13 +200,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="9.0 - Search Branch by Branch ID">
+    //<editor-fold desc="2.02-search-branch-by-branch-id">
 
     /**
      * @param branchId: int
      * @return branchdto
      * @throws Exception
-     * @apiNote 9.0 - Search Branch by Branch ID
+     * @apiNote 2.02-search-branch-by-branch-id
      * @author HuuNT - 08.June.2021
      */
     @CrossOrigin
@@ -205,13 +216,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="10.0-delete-branch-by-id">
+    //<editor-fold desc="2.03-delete-branch-by-id">
 
     /**
      * @param branchId
      * @return
      * @throws Exception
-     * @apiNote 10.0-delete-branch-by-id
+     * @apiNote 2.03-delete-branch-by-id
      * @author HuuNT- 2021.06.08
      */
     @CrossOrigin
@@ -221,13 +232,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="11.0 - Create new branch">
+    //<editor-fold desc="2.04-create-branch">
 
     /**
      * @param
      * @return true/false
      * @throws Exception
-     * @apiNote 11.0 - Create new branch
+     * @apiNote 2.04-create-branch
      * @author HuuNT - 12.06.2021
      * @body new Branch
      */
@@ -238,14 +249,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="12.0 - Update Branch by Branch Id">
+    //<editor-fold desc="2.05-edit-branch-by-branch-id">
 
     /**
      * @param branchId
      * @param insBranch
      * @return
      * @throws Exception
-     * @apiNote 12.0 - Update Branch by Branch Id
+     * @apiNote 2.05-edit-branch-by-branch-id
      * @author LamHNT - 2021.06.15
      */
     @CrossOrigin
@@ -260,14 +271,14 @@ public class RestApi {
      * -------------------------------CURRICULUM--------------------------------
      */
 
-    //<editor-fold desc="13.0-search-curriculum-by-curriculum-name">
+    //<editor-fold desc="3.01-search-curriculum-by-curriculum-name">
 
     /**
      * @param keyword
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 13.0-search-curriculum-by-curriculum-name
+     * @apiNote 3.01-search-curriculum-by-curriculum-name
      * @author LamHNT - 2021.06.08
      */
     @CrossOrigin
@@ -281,14 +292,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.0-search-curriculum-by-curriculum-code">
+    //<editor-fold desc="3.02-search-curriculum-by-curriculum-code">
 
     /**
      * @param keyword
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 14.0-search-curriculum-by-curriculum-code
+     * @apiNote 3.02-search-curriculum-by-curriculum-code
      * @author LamHNT - 2021.06.08
      */
     @CrossOrigin
@@ -302,13 +313,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="15.0-get-curriculum-details-by-curriculum-id">
+    //<editor-fold desc="3.03-get-curriculum-details-by-curriculum-id">
 
     /**
      * @param curriculumId
      * @return
      * @throws Exception
-     * @apiNote 15.0-get-curriculum-details-by-curriculum-id
+     * @apiNote 3.03-get-curriculum-details-by-curriculum-id
      * @author LamHNT - 2021.06.09
      */
     @CrossOrigin
@@ -318,13 +329,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="16.0-delete-curriculum-by-curriculum-id">
+    //<editor-fold desc="3.04-delete-curriculum-by-curriculum-id">
 
     /**
      * @param curriculumId
      * @return
      * @throws Exception
-     * @apiNote 16.0-delete-curriculum-by-curriculum-id
+     * @apiNote 3.04-delete-curriculum-by-curriculum-id
      * @author LamHNT - 2021.06.10
      */
     @CrossOrigin
@@ -334,13 +345,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="17.0-create-curriculum">
+    //<editor-fold desc="3.05-create-curriculum">
 
     /**
      * @param newCur
      * @return
      * @throws Exception
-     * @apiNote 17.0-create-curriculum
+     * @apiNote 3.05-create-curriculum
      * @author LamHNT - 2021.06.11
      */
     @CrossOrigin
@@ -350,14 +361,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="18.0-edit-curriculum-by-curriculum-id">
+    //<editor-fold desc="3.06-edit-curriculum-by-curriculum-id">
 
     /**
      * @param curriculumId
      * @param insCur
      * @return
      * @throws Exception
-     * @apiNote 18.0-edit-curriculum-by-curriculum-id
+     * @apiNote 3.06-edit-curriculum-by-curriculum-id
      * @author LamHNT - 2021.06.12
      */
     @CrossOrigin
@@ -372,14 +383,14 @@ public class RestApi {
      * -------------------------------SUBJECT--------------------------------
      */
 
-    //<editor-fold desc="19.0-search-subject-by-subject-name">
+    //<editor-fold desc="4.01-search-subject-by-subject-name">
 
     /**
      * @param keyword
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 19.0-search-subject-by-subject-name
+     * @apiNote 4.01-search-subject-by-subject-name
      * @author HuuNT - 2021.06.21
      */
     @CrossOrigin
@@ -393,7 +404,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="20.0-search-subject-by-subject-code">
+    //<editor-fold desc="4.02-search-subject-by-subject-code">
 
     /**
      * @param keyword
@@ -401,7 +412,7 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 20.0-search-subject-by-subject-code
+     * @apiNote 4.02-search-subject-by-subject-code
      * @author HuuNT - 2021.06.21
      */
     @CrossOrigin
@@ -415,14 +426,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="21.0-search-subject-by-curriculum-id">
+    //<editor-fold desc="4.03-search-subject-by-curriculum-id">
 
     /**
      * @param keyword
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 21.0-search-subject-by-curriculum-id
+     * @apiNote 4.03-search-subject-by-curriculum-id
      * @author HuuNT - 2021.06.17
      */
     @CrossOrigin
@@ -435,13 +446,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="22.0-search-subject-by-subject-id">
+    //<editor-fold desc="4.04-search-subject-by-subject-id">
 
     /**
      * @param subjectId
      * @return
      * @throws Exception
-     * @apiNote 22.0-search-subject-by-subject-id
+     * @apiNote 4.04-search-subject-by-subject-id
      * @author HuuNT - 2021.06.22 / LamHNT - 2021.06.23
      */
     @CrossOrigin
@@ -451,13 +462,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="23.0-delete-subject-included-subject-detail">
+    //<editor-fold desc="4.05-delete-subject-included-subject-detail">
 
     /**
      * @param subjectId
      * @return
      * @throws Exception
-     * @apiNote 23.0-delete-subject-included-subject-detail
+     * @apiNote 4.05-delete-subject-included-subject-detail
      * @author HuuNT - 2021.06.22
      */
     @CrossOrigin
@@ -467,15 +478,15 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="24.0-create-subject">
+    //<editor-fold desc="4.06-create-subject">
 
     /**
      * @param
      * @param
      * @param
      * @return
-     * @apiNote 24.0-create-subject
-     * @author HuuNT - 2021.06.17 / LamHNT - 2021.06.023
+     * @apiNote 4.06-create-subject
+     * @author HuuNT - 2021.06.17 / LamHNT - 2021.06.23
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", method = RequestMethod.POST)
@@ -484,14 +495,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="25.0-update-subject-by-subject-id">
+    //<editor-fold desc="4.07-update-subject-by-subject-id">
 
     /**
      * @param subjectId
      * @param subjectUpdateRequestDto
      * @return
      * @throws Exception
-     * @apiNote 25.0-update-subject-by-subject-id
+     * @apiNote 4.07-update-subject-by-subject-id
      * @author HuuNT - 2021.06.22
      */
     @CrossOrigin
@@ -506,14 +517,14 @@ public class RestApi {
      * -------------------------------SUBJECT DETAIL--------------------------------
      */
 
-    //<editor-fold desc="26.0-search-subject-detail-by-subject-id">
+    //<editor-fold desc="5.01-search-subject-detail-by-subject-id">
 
     /**
      * @param subjectId
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 26.0-search-subject-detail-by-subject-id
+     * @apiNote 5.01-search-subject-detail-by-subject-id
      * @author LamHNT - 2021.06.18
      */
     @CrossOrigin
@@ -526,13 +537,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="27.0-delete-subject-detail-by-subject-detail-id">
+    //<editor-fold desc="5.02-delete-subject-detail-by-subject-detail-id">
 
     /**
      * @param subjectDetailId
      * @return
      * @throws Exception
-     * @apiNote 27.0-delete-subject-detail-by-subject-detail-id
+     * @apiNote 5.02-delete-subject-detail-by-subject-detail-id
      * @author LamHNT - 2021.06.21
      */
     @CrossOrigin
@@ -542,13 +553,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="28.0-create-new-subject-detail">
+    //<editor-fold desc="5.03-create-new-subject-detail">
 
     /**
      * @param newSubjectDetail
      * @return
      * @throws Exception
-     * @apiNote 28.0-create-new-subject-detail
+     * @apiNote 5.03-create-new-subject-detail
      * @author LamHNT - 2021.06.20
      */
     @CrossOrigin
@@ -558,14 +569,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="29.0-update-subject-detail-by-subject-detail-id">
+    //<editor-fold desc="5.04-update-subject-detail-by-subject-detail-id">
 
     /**
      * @param subjectDetailId
      * @param subjectDetailUpdateRequestDto
      * @return
      * @throws Exception
-     * @apiNote 29.0-update-subject-detail-by-subject-detail-id
+     * @apiNote 5.04-update-subject-detail-by-subject-detail-id
      * @author LamHNT - 2021.06.20
      */
     @CrossOrigin
@@ -580,7 +591,7 @@ public class RestApi {
      * -------------------------------GUEST-------------------------------
      */
 
-    //<editor-fold desc="35.0-Search Guest by BranchId and NAME, PHONE, CURNAME and PAGING">
+    //<editor-fold desc="7.01-search-guest-by-branchid-and-name">
 
     /**
      * @param branchId
@@ -589,7 +600,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @author HuuNT 2021-07-08
-     * @apiNote 35.0-search guest by branchId and LIKE name, phone, curriculumName and Paging
+     * @apiNote 7.01-search-guest-by-branchid-and-name
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", method = RequestMethod.GET)
@@ -603,7 +614,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="39.0-search guest by status">
+    //<editor-fold desc="7.05-search guest by status">
 
     /**
      * @param branchId
@@ -611,7 +622,7 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 39.0-search Guest by Status
+     * @apiNote 7.05-search Guest by Status
      * @author HuuNT - 2021.07-09
      */
     @CrossOrigin
@@ -624,13 +635,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="41.0-register-guest">
+    //<editor-fold desc="7.07-register-guest">
 
     /**
      * @param insGuest
      * @return
      * @throws Exception
-     * @apiNote 41-register-guest
+     * @apiNote 7.07-register-guest
      * @author LamHNT - 2021.07.05
      */
     @CrossOrigin
@@ -640,14 +651,14 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="42.0-update-guest">
+    //<editor-fold desc="7.08-update-guest">
 
     /**
      * @param guestId
      * @param cusAtt
      * @return
      * @throws Exception
-     * @apiNote 42.0-update-guest
+     * @apiNote 7.08-update-guest
      * @author LamHNT - 2021.07.08 / 2021.07.10
      */
     @CrossOrigin
@@ -663,14 +674,14 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
-    //<editor-fold desc="44.0-Search Booking By StudentId">
+    //<editor-fold desc="8.02-search-booking-by-studentid">
 
     /**
      * @param studentUsername
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 44.0-search-booking-by-studentId
+     * @apiNote 8.02-search-booking-by-studentid
      * @author HuuNT - 2021.07.09
      */
     @CrossOrigin
@@ -682,13 +693,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="45.0-Get Booking Detail By Id">
+    //<editor-fold desc="8.03-get-booking-detail-by-id">
 
     /**
      * @param bookingId
      * @return
      * @throws Exception
-     * @apiNote 45.0-Get Booking Detail By Id
+     * @apiNote 8.03-get-booking-detail-by-id
      * @author HuuNT - 2021.07.10
      */
     @CrossOrigin
@@ -698,13 +709,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="47.0-create-new-booking">
+    //<editor-fold desc="8.05-create-new-booking">
 
     /**
      * @param bookingRequestDto
      * @return
      * @throws Exception
-     * @apiNote 47.0-create-new-booking
+     * @apiNote 8.05-create-new-booking
      * @author LamHNT - 2021.07.08
      */
     @CrossOrigin
@@ -718,7 +729,7 @@ public class RestApi {
      * -------------------------------CLASS-------------------------------
      */
 
-    //<editor-fold desc="49.0-search-class-by-subject-id-shift-id-status-paging">
+    //<editor-fold desc="9.01-search-class-by-subject-id-shift-id-status-paging">
 
     /**
      * @param branchId
@@ -729,7 +740,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
-     * @apiNote 49.0-search-class-by-subject-id-shift-id-status-paging
+     * @apiNote 9.01-search-class-by-subject-id-shift-id-status-paging
      * @author LamHNT - 2021.07.07
      */
     @CrossOrigin
@@ -744,7 +755,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="49.1-get-all-class-by-branchId-status">
+    //<editor-fold desc="9.02-get-all-class-by-branchId-status">
 
     /**
      * @param branchId
@@ -753,8 +764,8 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
-     * @apiNote 49.1-get-all-class-by-branchId-status
-     * @author LamHNT & HuuNT - 2021.07.07
+     * @apiNote 9.02-get-all-class-by-branchId-status
+     * @author HuuNT - 2021.07.07
      */
     @CrossOrigin
     @RequestMapping(value = "/classes", params = "branchId", method = RequestMethod.GET)
@@ -766,13 +777,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="53-create-new-class">
+    //<editor-fold desc="9.06-create-new-class">
 
     /**
      * @param classRequestDto
      * @return
      * @throws Exception
-     * @apiNote 53-create-new-class
+     * @apiNote 9.06-create-new-class
      * @author LamHNT - 2021.07.05
      */
     @CrossOrigin
@@ -782,13 +793,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="55.1-get-classes-statistic">
+    //<editor-fold desc="9.09-get-classes-statistic">
 
     /**
      * @param branchId
      * @return
      * @throws Exception
-     * @apiNote 55.1-get-classes-statistic
+     * @apiNote 9.09-get-classes-statistic
      * @author LamHNT - 2021.07.10
      */
     @CrossOrigin
@@ -802,13 +813,13 @@ public class RestApi {
      * -------------------------------SHIFT--------------------------------
      */
 
-    //<editor-fold desc="71.0-search-shift-by-shift-id">
+    //<editor-fold desc="13.01-search-shift-by-shift-id">
 
     /**
      * @param shiftId
      * @return
      * @throws Exception
-     * @apiNote 71.0-search-shift-by-shift-id
+     * @apiNote 13.01-search-shift-by-shift-id
      * @author HuuNT - 2021.06.26
      */
     @CrossOrigin
@@ -818,7 +829,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="72.0-search-shift-by-dow-and-by-time-start-containing">
+    //<editor-fold desc="13.02-search-shift-by-dow-and-by-time-start-containing">
 
     /**
      * @param dayOfWeek
@@ -826,7 +837,7 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 72.0-search-shift-by-dow-and-by-time-start-containing
+     * @apiNote 13.02-search-shift-by-dow-and-by-time-start-containing
      * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
      */
     @CrossOrigin
@@ -835,18 +846,17 @@ public class RestApi {
                                                                                         @RequestParam(value = "timeStart") String timeStart,
                                                                                         @RequestParam(value = "pageNo") int pageNo,
                                                                                         @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
         return shiftService.searchShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageNo, pageSize);
     }
     //</editor-fold>
 
-    //<editor-fold desc="73.0-create-new-shift">
+    //<editor-fold desc="13.03-create-new-shift">
 
     /**
      * @param shiftRequestDto
      * @return
      * @throws Exception
-     * @apiNote 73.0-create-new-shift
+     * @apiNote 13.03-create-new-shift
      * @author LamHNT - 2021.06.24
      */
     @CrossOrigin
@@ -857,13 +867,13 @@ public class RestApi {
 
     //</editor-fold>
 
-    //<editor-fold desc="74.0-delete-shift-by-id">
+    //<editor-fold desc="13.04-delete-shift-by-id">
 
     /**
      * @param shiftId
      * @return
      * @throws Exception
-     * @apiNote 74.0-Delete-Shift
+     * @apiNote 13.04-Delete-Shift
      * @author HuuNT - 2021.06.26
      */
     @CrossOrigin
@@ -873,8 +883,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="75.0-get-all-shift-by-isAvailable">
-
+    //<editor-fold desc="13.05-get-all-shift-by-isAvailable">
 
     /**
      * @param isAvailable
@@ -882,7 +891,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
-     * @apiNote 75.0-get-all-shift-by-isAvailable
+     * @apiNote 13.05-get-all-shift-by-isAvailable
      * @author HuuNT 2021-06-26
      */
     @CrossOrigin
@@ -894,13 +903,13 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="76.0-Revival Shift by Id">
+    //<editor-fold desc="13.06-Revival Shift by Id">
 
     /**
      * @param shiftId
      * @return
      * @throws Exception
-     * @apiNote 76.0-revival shift by id
+     * @apiNote 13.06-revival shift by id
      * @author HuuNT - 2021.06.26
      */
     @CrossOrigin
