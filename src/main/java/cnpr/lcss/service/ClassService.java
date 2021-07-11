@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Class;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
 import cnpr.lcss.repository.*;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,27 +23,6 @@ import java.util.stream.Collectors;
 @Service
 public class ClassService {
 
-    /**
-     * -----CLASS CONSTANT VARIABLE-----
-     */
-    private static final String CLASS_STATUS_WAITING = "waiting";
-    private static final String CLASS_STATUS_STUDYING = "studying";
-    private static final String CLASS_STATUS_FINISHED = "finished";
-    private static final String CLASS_STATUS_CANCELED = "canceled";
-    /**
-     * -----ERROR MSG-----
-     */
-    private static final String INVALID_CLASS_NAME = "Class Name is null or empty!";
-    private static final String INVALID_OPENING_DATE = "Class Opening Date is null or in the past!";
-    private static final String INVALID_BRANCH_ID = "Branch Id is non-exist or not available!";
-    private static final String INVALID_SUBJECT_ID = "Subject Id is non-exist or not available!";
-    private static final String INVALID_SHIFT_ID = "Shift Id is non-exist or not available!";
-    private static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
-    /**
-     * -----PATTERN-----
-     */
-    private static final String TWO_DAYS_OF_WEEK_PATTERN = "(((\\d)[-])+(\\d|[C][N])){1}";
-    private static final String THREE_DAYS_OF_WEEK_PATTERN = "(((\\d)[-]){2})+(\\d|[C][N]){1}";
     @Autowired
     ClassRepository classRepository;
     @Autowired
@@ -64,28 +44,28 @@ public class ClassService {
             if (insClass.getClassName() != null && !insClass.getClassName().isEmpty()) {
                 newClass.setClassName(insClass.getClassName());
             } else {
-                throw new ValidationException(INVALID_CLASS_NAME);
+                throw new ValidationException(Constant.INVALID_CLASS_NAME);
             }
 
             // Opening Date
             if (insClass.getOpeningDate() != null && insClass.getOpeningDate().getDate() >= today.getDate()) {
                 newClass.setOpeningDate(insClass.getOpeningDate());
             } else {
-                throw new ValidationException(INVALID_OPENING_DATE);
+                throw new ValidationException(Constant.INVALID_OPENING_DATE);
             }
 
             // Status
             /**
              * Default status is "waiting" for new Class
              */
-            newClass.setStatus(CLASS_STATUS_WAITING);
+            newClass.setStatus(Constant.CLASS_STATUS_WAITING);
 
             // Branch Id
             if (branchRepository.existsBranchByBranchId(insClass.getBranchId())
                     && branchRepository.findIsAvailableByBranchId(insClass.getBranchId())) {
                 newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
             } else {
-                throw new ValidationException(INVALID_BRANCH_ID);
+                throw new ValidationException(Constant.INVALID_BRANCH_ID);
             }
 
             // Subject Id
@@ -93,7 +73,7 @@ public class ClassService {
                     && subjectRepository.findIsAvailableBySubjectId(insClass.getSubjectId())) {
                 newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
             } else {
-                throw new ValidationException(INVALID_SUBJECT_ID);
+                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
             }
 
             // Slot
@@ -114,14 +94,14 @@ public class ClassService {
                  */
                 int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
                 String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
-                if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(TWO_DAYS_OF_WEEK_PATTERN))
-                        || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(THREE_DAYS_OF_WEEK_PATTERN)) {
+                if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
+                        || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
                     newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
                 } else {
-                    throw new ValidationException(INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
+                    throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
                 }
             } else {
-                throw new ValidationException(INVALID_SHIFT_ID);
+                throw new ValidationException(Constant.INVALID_SHIFT_ID);
             }
 
             classRepository.save(newClass);
@@ -149,7 +129,7 @@ public class ClassService {
                     + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
             aClass.setShiftDescription(description);
             // Teacher AND Room
-            if (aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_CANCELED)) {
+            if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
                 aClass.setRoomNo(0);
@@ -276,7 +256,7 @@ public class ClassService {
                             + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
                     aClass.setShiftDescription(description);
                     // Teacher AND Room
-                    if (aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(CLASS_STATUS_CANCELED)) {
+                    if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                         aClass.setRoomNo(0);
@@ -296,7 +276,7 @@ public class ClassService {
                 mapObj.put("classList", classDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
-                throw new ValidationException(INVALID_BRANCH_ID);
+                throw new ValidationException(Constant.INVALID_BRANCH_ID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -314,18 +294,18 @@ public class ClassService {
         HashMap<String, Object> mapObj = new LinkedHashMap<>();
         try {
             if (branchId == 0) {
-                mapObj.put("waitingClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_WAITING));
-                mapObj.put("studyingClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_STUDYING));
-                mapObj.put("finishedClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_FINISHED));
-                mapObj.put("canceledClass", classRepository.countByStatusAllIgnoreCase(CLASS_STATUS_CANCELED));
+                mapObj.put("waitingClass", classRepository.countByStatusAllIgnoreCase(Constant.CLASS_STATUS_WAITING));
+                mapObj.put("studyingClass", classRepository.countByStatusAllIgnoreCase(Constant.CLASS_STATUS_STUDYING));
+                mapObj.put("finishedClass", classRepository.countByStatusAllIgnoreCase(Constant.CLASS_STATUS_FINISHED));
+                mapObj.put("canceledClass", classRepository.countByStatusAllIgnoreCase(Constant.CLASS_STATUS_CANCELED));
             } else if (branchId != 0) {
                 if (branchRepository.existsBranchByBranchId(branchId) && branchRepository.findIsAvailableByBranchId(branchId)) {
-                    mapObj.put("waitingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_WAITING));
-                    mapObj.put("studyingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_STUDYING));
-                    mapObj.put("finishedClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_FINISHED));
-                    mapObj.put("canceledClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, CLASS_STATUS_CANCELED));
+                    mapObj.put("waitingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, Constant.CLASS_STATUS_WAITING));
+                    mapObj.put("studyingClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, Constant.CLASS_STATUS_STUDYING));
+                    mapObj.put("finishedClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, Constant.CLASS_STATUS_FINISHED));
+                    mapObj.put("canceledClass", classRepository.countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(branchId, Constant.CLASS_STATUS_CANCELED));
                 } else {
-                    throw new Exception(INVALID_BRANCH_ID);
+                    throw new Exception(Constant.INVALID_BRANCH_ID);
                 }
             }
             return ResponseEntity.ok(mapObj);
