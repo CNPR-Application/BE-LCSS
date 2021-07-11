@@ -1,18 +1,18 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.CurriculumDto;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "curriculum")
 public class Curriculum implements Serializable {
@@ -37,4 +37,23 @@ public class Curriculum implements Serializable {
     private String linkClip;
     @Column(name = "learning_outcome")
     private String learningOutcome;
+
+    @OneToMany(mappedBy = "curriculum")
+    private List<RegisteringGuest> registeringGuestList;
+
+    /**
+     * --- modify constructor, getter, setter ---
+     */
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public CurriculumDto convertToDto() {
+        CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
+        return curriculumDto;
+    }
 }
