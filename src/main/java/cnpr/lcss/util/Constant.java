@@ -97,7 +97,10 @@ public class Constant {
      * -----CURRICULUM-----
      */
     // Error Message
+    public static final String DUPLICATE_CURRICULUM_CODE = "Duplicate Curriculum Code!";
+    public static final String DUPLICATE_CURRICULUM_NAME = "Duplicate Curriculum Name!";
     public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
+    public static final String UNABLE_TO_DELETE_CURRICULUM_ = "Curriculum has available Subjects. Unable to delete!";
     //</editor-fold>
 
     //<editor-fold desc="Registering Guest">
