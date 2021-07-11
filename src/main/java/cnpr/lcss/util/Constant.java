@@ -36,8 +36,8 @@ public class Constant {
     public static final String INVALID_STUDENT_BIRTHDAY = "Student must OLDER or EQUAL to 3!";
     public static final String INVALID_TEACHER_BIRTHDAY = "Teacher must OLDER or EQUAL to 15!";
     public static final String INVALID_TEACHER_EXP = "Null or empty experience!";
+    public static final String INVALID_USERNAME = "Username not exist!";
     public static final String PASSWORD_NOT_MATCH = "Password not match!";
-    public static final String USERNAME_NOT_EXIST = "Username not exist!";
     //</editor-fold>
 
     //<editor-fold desc="Attendance">
@@ -101,6 +101,18 @@ public class Constant {
     public static final String DUPLICATE_CURRICULUM_NAME = "Duplicate Curriculum Name!";
     public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
     public static final String UNABLE_TO_DELETE_CURRICULUM_ = "Curriculum has available Subjects. Unable to delete!";
+    //</editor-fold>
+
+    //<editor-fold desc="Firebase">
+    /**
+     * -----FIREBASE-----
+     */
+    // Pattern
+    public static final String PROJECT_ID = "app-test-c1bfb";
+    public static final String BUCKET_NAME = "app-test-c1bfb.appspot.com";
+    public static final String CURRICULUM = "curriculum";
+    public static final String AVATAR = "avatar";
+    public static final String SUBJECT = "subject";
     //</editor-fold>
 
     //<editor-fold desc="Registering Guest">

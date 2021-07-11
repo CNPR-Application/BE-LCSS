@@ -176,7 +176,7 @@ public class AccountService {
                         throw new Exception(Constant.PASSWORD_NOT_MATCH);
                     }
                 } else {
-                    throw new Exception(Constant.USERNAME_NOT_EXIST);
+                    throw new Exception(Constant.INVALID_USERNAME);
                 }
             }
         } catch (Exception e) {
@@ -329,7 +329,7 @@ public class AccountService {
                 }
                 return ResponseEntity.ok(accDto);
             } else {
-                throw new Exception(Constant.USERNAME_NOT_EXIST);
+                throw new Exception(Constant.INVALID_USERNAME);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -694,7 +694,7 @@ public class AccountService {
                     throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
                 }
             } else {
-                throw new IllegalArgumentException(Constant.USERNAME_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }
         } catch (
                 Exception e) {
@@ -732,7 +732,7 @@ public class AccountService {
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {
         try {
             if (!accountRepository.existsByUsername(userName)) {
-                throw new IllegalArgumentException(Constant.USERNAME_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             } else {
                 Account delAccount = accountRepository.findOneByUsername(userName);
                 if (delAccount.getIsAvailable()) {
