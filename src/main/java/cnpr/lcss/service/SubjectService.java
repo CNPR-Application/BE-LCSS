@@ -1,12 +1,12 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.SubjectDetail;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,21 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectService {
 
-    /**
-     * -----PATTERN-----
-     */
-    private static final String RATING_PATTERN = "#.#";
-    /**
-     * -----ERROR MSG-----
-     */
-    private static final String SUBJECT_ID_DOES_NOT_EXIST = "Subject Id does not exist!";
-    private static final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private static final String DUPLICATE_CODE = "Duplicate Subject Code!";
-    private static final String DUPLICATE_NAME = "Duplicate Subject Name!";
-    private static final String INVALID_PRICE = "Price CAN NOT BE LOWER THAN ZERO!";
-    private static final String INVALID_SLOT = "SLOT CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-    private static final String INVALID_SLOT_PER_WEEK = "SLOT PER WEEK CAN NOT BE EQUAL OR LOWER THAN ZERO!";
-
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
@@ -50,7 +35,7 @@ public class SubjectService {
 
     //<editor-fold desc="Calculate Rating">
     private String calculateRating(String rating) {
-        DecimalFormat df = new DecimalFormat(RATING_PATTERN);
+        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
         String[] arrOfInpStr = rating.split("/");
         double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
         System.out.println(result);
@@ -62,11 +47,11 @@ public class SubjectService {
     //<editor-fold desc="Find by Subject Name Contains and Is Available">
     public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
-        try{
+        try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Map<String, Object> mapObj = new LinkedHashMap<>();
 
-            Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword,isAvailable,pageable);
+            Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
 
@@ -77,7 +62,7 @@ public class SubjectService {
 
             return ResponseEntity.ok(mapObj);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -144,7 +129,7 @@ public class SubjectService {
 
                 return ResponseEntity.ok(mapObj);
             } else {
-                throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,16 +142,16 @@ public class SubjectService {
     public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
         try {
             if (!subjectRepository.existsById(subId)) {
-                throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             }
             if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
-                throw new Exception(DUPLICATE_NAME);
+                throw new Exception(Constant.DUPLICATE_SUBJECT_NAME);
             }
             if (insSub.getPrice() < 0) {
-                throw new Exception(INVALID_PRICE);
+                throw new Exception(Constant.INVALID_SUBJECT_PRICE);
             }
             if (!curriculumRepository.existsById(insSub.getCurriculumId())) {
-                throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
             } else {
                 Subject updateSubject = subjectRepository.findBySubjectId(subId);
 
@@ -198,7 +183,7 @@ public class SubjectService {
 
         try {
             if (!subjectRepository.existsById(subjectId)) {
-                throw new IllegalArgumentException(SUBJECT_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             } else {
                 Subject deleteSubject = subjectRepository.findBySubjectId(subjectId);
                 if (deleteSubject.getIsAvailable()) {
@@ -228,23 +213,23 @@ public class SubjectService {
 
         try {
             if (subjectRepository.existsSubjectBySubjectCode(newSub.getSubjectCode()) == Boolean.TRUE) {
-                throw new Exception(DUPLICATE_CODE);
+                throw new Exception(Constant.DUPLICATE_SUBJECT_CODE);
             } else {
                 if (subjectRepository.existsSubjectBySubjectName(newSub.getSubjectName()) == Boolean.TRUE) {
-                    throw new Exception(DUPLICATE_NAME);
+                    throw new Exception(Constant.DUPLICATE_SUBJECT_NAME);
                 }
                 //NOT EXIST CURRICULUM then throw EXCEPTION
                 if (curriculumRepository.existsByCurriculumId(newSub.getCurriculumId()) == Boolean.FALSE) {
-                    throw new Exception(CURRICULUM_ID_DOES_NOT_EXIST);
+                    throw new Exception(Constant.INVALID_CURRICULUM_ID);
                 }
                 if (newSub.getPrice() < 0) {
-                    throw new Exception(INVALID_PRICE);
+                    throw new Exception(Constant.INVALID_SUBJECT_PRICE);
                 }
                 if (newSub.getSlot() <= 0) {
-                    throw new Exception(INVALID_SLOT);
+                    throw new Exception(Constant.INVALID_SUBJECT_SLOT);
                 }
                 if (newSub.getSlotPerWeek() <= 0) {
-                    throw new Exception(INVALID_SLOT_PER_WEEK);
+                    throw new Exception(Constant.INVALID_SUBJECT_SLOT_PER_WEEK);
                 } else {
                     Subject insSub = new Subject();
 

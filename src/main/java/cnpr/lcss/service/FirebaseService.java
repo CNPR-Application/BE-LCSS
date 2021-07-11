@@ -9,6 +9,7 @@ import cnpr.lcss.model.ImageResponseDTO;
 import cnpr.lcss.repository.AccountRepository;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectRepository;
+import cnpr.lcss.util.Constant;
 import com.google.api.client.util.Base64;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.BlobId;
@@ -32,14 +33,6 @@ import java.util.UUID;
 @Service
 public class FirebaseService {
 
-    private static final String PROJECT_ID = "app-test-c1bfb";
-    private static final String BUCKET_NAME = "app-test-c1bfb.appspot.com";
-    private static final String CURRICULUM = "curriculum";
-    private static final String AVATAR = "avatar";
-    private static final String SUBJECT = "subject";
-    private static final String CURRICULUM_ID_NOT_EXIST = "Curriculum ID doesn't exist";
-    private static final String USERNAME_NOT_EXIST = "User Name doesn't exist";
-    private static final String SUBJECT_ID_NOT_EXIST = "Subject ID doesn't exist";
     StorageOptions storageOptions;
     @Autowired
     CurriculumRepository curriculumRepository;
@@ -48,7 +41,8 @@ public class FirebaseService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public void enodeBase64toImageandSave(String image64) throws IOException {
+    //<editor-fold desc="Encode Base64 to Image and Save">
+    public void encodeBase64toImageandSave(String image64) throws IOException {
         byte[] data = Base64.decodeBase64(image64);
         //location of project resource
         Path currentRelativePath = Paths.get("");
@@ -56,12 +50,14 @@ public class FirebaseService {
         Path destinationFile = Paths.get(s, "myImage.jpg");
         Files.write(destinationFile, data);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Upload File">
     private String uploadFile(File file, String fileName) throws IOException, FirebaseAuthException {
-        BlobId blobId = BlobId.of(BUCKET_NAME, fileName);
+        BlobId blobId = BlobId.of(Constant.BUCKET_NAME, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         FileInputStream fileInputStream = new FileInputStream("./AccountService.json");
-        storageOptions = StorageOptions.newBuilder().setProjectId(PROJECT_ID).setCredentials(GoogleCredentials.fromStream(fileInputStream)).build();
+        storageOptions = StorageOptions.newBuilder().setProjectId(Constant.PROJECT_ID).setCredentials(GoogleCredentials.fromStream(fileInputStream)).build();
         Storage storage;
         if (storageOptions == null) {
             storage = StorageOptions.getDefaultInstance().getService();
@@ -77,16 +73,19 @@ public class FirebaseService {
         //System.out.println(" public "+ fileName);
         return dowloadURL;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Get Extension">
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
+    //</editor-fold>
 
-
+    //<editor-fold desc="Upload">
     public ImageResponseDTO upload(ImageRequestDto imageRequestDto, String id) throws IOException, FirebaseAuthException {
         boolean result = false;
         String base64 = imageRequestDto.getImage();
-        enodeBase64toImageandSave(base64);
+        encodeBase64toImageandSave(base64);
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
         File file = new File(s, "/myImage.jpg");//folder store image just encode, then delete the image
@@ -95,8 +94,7 @@ public class FirebaseService {
         String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
         file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
 
-
-        if (imageRequestDto.getKeyword().matches(CURRICULUM)) {
+        if (imageRequestDto.getKeyword().matches(Constant.CURRICULUM)) {
             int idCurInsert = Integer.parseInt(id);
             if (curriculumRepository.existsByCurriculumId(idCurInsert)) {
                 Curriculum insCur = curriculumRepository.findOneByCurriculumId(idCurInsert);
@@ -105,22 +103,22 @@ public class FirebaseService {
                 result = true;
 
             } else {
-                throw new IllegalArgumentException(CURRICULUM_ID_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
             }
         }
-        if (imageRequestDto.getKeyword().matches(AVATAR)) {
+
+        if (imageRequestDto.getKeyword().matches(Constant.AVATAR)) {
             if (accountRepository.existsByUsername(id)) {
                 Account account = accountRepository.findOneByUsername(id);
                 account.setImage(TEMP_URL);
                 accountRepository.save(account);
                 result = true;
-
-
             } else {
-                throw new IllegalArgumentException(USERNAME_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }
         }
-        if (imageRequestDto.getKeyword().matches(SUBJECT)) {
+
+        if (imageRequestDto.getKeyword().matches(Constant.SUBJECT)) {
             int idSubIns = Integer.parseInt(id);
             if (subjectRepository.existsSubjectBySubjectId(idSubIns)) {
                 Subject insSub = subjectRepository.findBySubjectId(idSubIns);
@@ -129,11 +127,11 @@ public class FirebaseService {
                 result = true;
 
             } else {
-                throw new IllegalArgumentException(SUBJECT_ID_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             }
         }
         ImageResponseDTO imageResponseDTO = new ImageResponseDTO(result, TEMP_URL);
         return imageResponseDTO;
-
     }
+    //</editor-fold>
 }

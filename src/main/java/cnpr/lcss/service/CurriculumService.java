@@ -7,6 +7,7 @@ import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,16 +24,12 @@ import java.util.stream.Collectors;
 @Service
 public class CurriculumService {
 
-    private final String CURRICULUM_ID_DOES_NOT_EXIST = "Curriculum Id does not exist!";
-    private final String DUPLICATE_CODE = "Duplicate Curriculum Code!";
-    private final String DUPLICATE_NAME = "Duplicate Curriculum Name!";
-    private final String CURRICULUM_UNABLE_TO_DELETE = "Curriculum has available Subjects. Unable to delete!";
     @Autowired
     CurriculumRepository curriculumRepository;
     @Autowired
     SubjectRepository subjectRepository;
 
-    // Find Curriculums by Curriculum Name LIKE keyword
+    //<editor-fold desc="Find Curriculums by Curriculum Name LIKE keyword">
     public CurriculumPagingResponseDto findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -47,8 +44,9 @@ public class CurriculumService {
 
         return curPgResDtos;
     }
+    //</editor-fold>
 
-    // Find Curriculums by Curriculum Code LIKE keyword
+    //<editor-fold desc="Find Curriculums by Curriculum Code LIKE keyword">
     public CurriculumPagingResponseDto findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -63,8 +61,9 @@ public class CurriculumService {
 
         return curPgResDtos;
     }
+    //</editor-fold>
 
-    // Get Curriculum Details by Curriculum Id
+    //<editor-fold desc="Get Curriculum Details by Curriculum Id">
     public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
         try {
             return ResponseEntity.ok(curriculumRepository.findOneByCurriculumId(curriculumId));
@@ -72,6 +71,9 @@ public class CurriculumService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Delete Curriculum by Curriculum ID">
 
     /**
      * Delete Curriculum by Curriculum Id.
@@ -83,14 +85,13 @@ public class CurriculumService {
      * <p>
      * DELETE = Change isAvailable from True to False.
      */
-
     public ResponseEntity<?> deleteByCurriculumId(int curriculumId) throws Exception {
 
         Boolean curriculumAbleToDelete = true;
 
         try {
             if (!curriculumRepository.existsById(curriculumId)) {
-                throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
             } else {
                 Curriculum delCur = curriculumRepository.findOneByCurriculumId(curriculumId);
                 if (delCur.getIsAvailable()) {
@@ -109,7 +110,7 @@ public class CurriculumService {
                         delCur.setIsAvailable(Boolean.FALSE);
                         curriculumRepository.save(delCur);
                     } else if (noOfSubjects > 0 && curriculumAbleToDelete == false) {
-                        throw new Exception(CURRICULUM_UNABLE_TO_DELETE);
+                        throw new Exception(Constant.UNABLE_TO_DELETE_CURRICULUM_);
                     } else {
                         throw new Exception();
                     }
@@ -124,8 +125,9 @@ public class CurriculumService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
-    // Create new Curriculum
+    //<editor-fold desc="Create new Curriculum">
     @Transactional
     public ResponseEntity<?> createNewCurriculum(CurriculumRequestDto newCur) throws Exception {
 
@@ -133,10 +135,10 @@ public class CurriculumService {
 
         try {
             if (curriculumRepository.existsCurriculumByCurriculumCode(newCur.getCurriculumCode()) == Boolean.TRUE) {
-                throw new Exception(DUPLICATE_CODE);
+                throw new Exception(Constant.DUPLICATE_CURRICULUM_CODE);
             } else {
                 if (curriculumRepository.existsCurriculumByCurriculumName(newCur.getCurriculumName()) == Boolean.TRUE) {
-                    throw new Exception(DUPLICATE_NAME);
+                    throw new Exception(Constant.DUPLICATE_CURRICULUM_NAME);
                 } else {
                     Curriculum insCur = new Curriculum();
 
@@ -158,13 +160,14 @@ public class CurriculumService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 
-    // Update Curriculum by Curriculum id
+    //<editor-fold desc="Update Curriculum by Curriculum id">
     public ResponseEntity<?> updateCurriculum(int curId, CurriculumRequestDto insCur) throws Exception {
 
         try {
             if (!curriculumRepository.existsById(curId)) {
-                throw new IllegalArgumentException(CURRICULUM_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
             } else {
                 Curriculum updateCur = curriculumRepository.findOneByCurriculumId(curId);
 
@@ -186,4 +189,5 @@ public class CurriculumService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 }
