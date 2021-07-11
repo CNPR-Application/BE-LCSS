@@ -74,10 +74,19 @@ public class Constant {
      * -----CLASS-----
      */
     // Class Status
+    public static final String CLASS_STATUS_CANCELED = "canceled";
+    public static final String CLASS_STATUS_FINISHED = "finished";
+    public static final String CLASS_STATUS_STUDYING = "studying";
     public static final String CLASS_STATUS_WAITING = "waiting";
+    // Pattern
+    public static final String TWO_DAYS_OF_WEEK_PATTERN = "(((\\d)[-])+(\\d|[C][N])){1}";
+    public static final String THREE_DAYS_OF_WEEK_PATTERN = "(((\\d)[-]){2})+(\\d|[C][N]){1}";
     // Error Message
     public static final String INVALID_CLASS_ID = "Class ID not exist!";
+    public static final String INVALID_CLASS_NAME = "Null or empty class name!";
     public static final String INVALID_CLASS_STATUS_NOT_WAITING = "Class Status must be waiting!";
+    public static final String INVALID_OPENING_DATE = "Null or over class opening day!";
+    public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
     //</editor-fold>
 
     /**
