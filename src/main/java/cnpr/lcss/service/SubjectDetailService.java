@@ -8,6 +8,7 @@ import cnpr.lcss.model.SubjectDetailRequestDto;
 import cnpr.lcss.model.SubjectDetailUpdateRequestDto;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,19 +24,12 @@ import java.util.stream.Collectors;
 @Service
 public class SubjectDetailService {
 
-    private final String WEEK_NUM_MUST_BE_POSITIVE = "Number of weeks must be larger than 0!";
-    private final String SUBJECT_DOES_NOT_EXIST = "Subject Id does not exist!";
-    private final String SUBJECT_UNAVAILABLE = "Subject is being disable!";
-    private final String SUBJECT_DETAIL_ID_NOT_EXIST = "Subject Detail Id does not exist!";
-    private final String SUBJECT_DETAIL_UNAVAILABLE = "Subject Detail is currently UNAVAILABLE!";
-    private final String WEEK_NUM_REACH_LIMIT = "Number of weeks for this Subject are at their limit!";
-
     @Autowired
     SubjectDetailRepository subjectDetailRepository;
     @Autowired
     SubjectRepository subjectRepository;
 
-    // Find Subject Detail by Subject Id
+    //<editor-fold desc="Find Subject Detail by Subject Id">
     public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -50,8 +44,9 @@ public class SubjectDetailService {
 
         return subDetailPgResDto;
     }
+    //</editor-fold>
 
-    // Create New Subject Detail
+    //<editor-fold desc="Create New Subject Detail">
     @Transactional
     public ResponseEntity<?> createNewSubjectDetail(SubjectDetailRequestDto insSubjectDetail) throws Exception {
 
@@ -75,16 +70,16 @@ public class SubjectDetailService {
 
                             subjectDetailRepository.save(newSubjectDetail);
                         } else {
-                            throw new Exception(WEEK_NUM_MUST_BE_POSITIVE);
+                            throw new Exception(Constant.INVALID_WEEK_NUM);
                         }
                     } else {
-                        throw new Exception(WEEK_NUM_REACH_LIMIT);
+                        throw new Exception(Constant.INVALID_WEEK_NUM_LIMIT);
                     }
                 } else {
-                    throw new Exception(SUBJECT_UNAVAILABLE);
+                    throw new Exception(Constant.INVALID_SUBJECT_AVAILABLE);
                 }
             } else {
-                throw new IllegalArgumentException(SUBJECT_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             }
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
@@ -92,8 +87,9 @@ public class SubjectDetailService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
-    // Update Subject Detail by Subject Detail Id
+    //<editor-fold desc="Update Subject Detail by Subject Detail Id">
     public ResponseEntity<?> updateSubjectDetail(int subjectDetailId, SubjectDetailUpdateRequestDto insSubjectDetail) throws Exception {
 
         try {
@@ -108,10 +104,10 @@ public class SubjectDetailService {
 
                     subjectDetailRepository.save(updateSubjectDetail);
                 } else {
-                    throw new Exception(WEEK_NUM_MUST_BE_POSITIVE);
+                    throw new Exception(Constant.INVALID_WEEK_NUM);
                 }
             } else {
-                throw new IllegalArgumentException(SUBJECT_DETAIL_ID_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_DETAIL_ID);
             }
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
@@ -119,8 +115,9 @@ public class SubjectDetailService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 
-    // Delete Subject Detail by Subject Detail Id
+    //<editor-fold desc="Delete Subject Detail by Subject Detail Id">
     public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(int subjectDetailId) throws Exception {
 
         try {
@@ -133,10 +130,10 @@ public class SubjectDetailService {
                     subjectDetail.setIsAvailable(false);
                     subjectDetailRepository.save(subjectDetail);
                 } else {
-                    throw new Exception(SUBJECT_DETAIL_UNAVAILABLE);
+                    throw new Exception(Constant.INVALID_SUBJECT_DETAIL_AVAILABLE);
                 }
             } else {
-                throw new IllegalArgumentException(SUBJECT_DETAIL_ID_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_DETAIL_ID);
             }
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
@@ -144,4 +141,5 @@ public class SubjectDetailService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 }

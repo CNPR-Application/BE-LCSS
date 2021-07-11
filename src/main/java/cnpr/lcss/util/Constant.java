@@ -40,9 +40,12 @@ public class Constant {
     public static final String USERNAME_NOT_EXIST = "Username not exist!";
     //</editor-fold>
 
+    //<editor-fold desc="Attendance">
     /**
      * -----ATTENDANCE-----
      */
+    // Error Message
+    //</editor-fold>
 
     //<editor-fold desc="Booking">
     /**
@@ -97,13 +100,19 @@ public class Constant {
     public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
     //</editor-fold>
 
+    //<editor-fold desc="Registering Guest">
     /**
      * -----REGISTERING GUEST-----
      */
+    // Error Message
+    //</editor-fold>
 
+    //<editor-fold desc="Session">
     /**
      * -----SESSION-----
      */
+    // Error Message
+    //</editor-fold>
 
     //<editor-fold desc="Shift">
     /**
@@ -123,9 +132,12 @@ public class Constant {
     public static final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
     //</editor-fold>
 
+    //<editor-fold desc="Staff">
     /**
      * -----STAFF-----
      */
+    // Error Message
+    //</editor-fold>
 
     //<editor-fold desc="Student">
     /**
@@ -158,21 +170,37 @@ public class Constant {
     public static final String INVALID_SUBJECT_SLOT_PER_WEEK = "Subject's Slot Per Week must be GREATER than 0!";
     //</editor-fold>
 
+    //<editor-fold desc="Subject Detail">
     /**
      * -----SUBJECT DETAIL-----
      */
+    // Error Message
+    public static final String INVALID_SUBJECT_DETAIL_AVAILABLE = "Subject Detail not available!";
+    public static final String INVALID_SUBJECT_DETAIL_ID = "Subject Detail ID not exist!";
+    public static final String INVALID_WEEK_NUM = "Number of weeks must be GREATER than 0!";
+    public static final String INVALID_WEEK_NUM_LIMIT = "Number of weeks for this Subject is at their limit!";
+    //</editor-fold>
 
+    //<editor-fold desc="Teacher">
     /**
      * -----TEACHER-----
      */
+    // Error Message
+    //</editor-fold>
 
+    //<editor-fold desc="Teaching Branch">
     /**
      * -----TEACHING BRANCH-----
      */
+    // Error Message
+    //</editor-fold>
 
+    //<editor-fold desc="Teaching Subject">
     /**
      * -----TEACHING SUBJECT-----
      */
+    // Error Message
+    //</editor-fold>
 
     //<editor-fold desc="Others">
     /**
