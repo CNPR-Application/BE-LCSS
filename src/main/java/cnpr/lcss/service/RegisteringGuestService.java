@@ -7,6 +7,7 @@ import cnpr.lcss.model.RegisteringGuestSearchResponseDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.RegisteringGuestRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,28 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RegisteringGuestService {
-
-    /**
-     * -----GUEST STATUS-----
-     **/
-    private static final String STATUS_PENDING = "pending";
-    private static final String STATUS_CONTACTED = "contacted";
-    private static final String STATUS_CANCELED = "canceled";
-    /**
-     * -----PATTERN-----
-     **/
-    private static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
-    private static final String NAME_PATTERN = "[A-Za-z ]*";
-    /**
-     * -----ERROR MSG-----
-     **/
-    private static final String INVALID_CUSTOMER_NAME = "Invalid customer name!";
-    private static final String INVALID_PHONE = "Invalid phone number!";
-    private static final String INVALID_CITY = "Invalid city!";
-    private static final String INVALID_CURRICULUM = "Curriculum is non-exist or not available!";
-    private static final String INVALID_BRANCH = "Branch is non-exist or not available!";
-    private static final String INVALID_GUEST_ID = "Guest ID is non-exist!";
-    private static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
 
     @Autowired
     CurriculumRepository curriculumRepository;
@@ -70,25 +49,25 @@ public class RegisteringGuestService {
 
             // Customer Name
             if (insGuest.getCustomerName() != null && !insGuest.getCustomerName().isEmpty()
-                    && stripAccents(insGuest.getCustomerName()).matches(NAME_PATTERN)) {
+                    && stripAccents(insGuest.getCustomerName()).matches(Constant.NAME_PATTERN)) {
                 newGuest.setCustomerName(insGuest.getCustomerName());
             } else {
-                throw new ValidationException(INVALID_CUSTOMER_NAME);
+                throw new ValidationException(Constant.INVALID_NAME);
             }
 
             // Phone
             if (insGuest.getPhone() != null && !insGuest.getPhone().isEmpty()
-                    && insGuest.getPhone().matches(PHONE_PATTERN)) {
+                    && insGuest.getPhone().matches(Constant.PHONE_PATTERN)) {
                 newGuest.setPhone(insGuest.getPhone());
             } else {
-                throw new ValidationException(INVALID_PHONE);
+                throw new ValidationException(Constant.INVALID_PHONE_PATTERN);
             }
 
             // City
             if (insGuest.getCity() != null && !insGuest.getCity().isEmpty()) {
                 newGuest.setCity(insGuest.getCity());
             } else {
-                throw new ValidationException(INVALID_CITY);
+                throw new ValidationException(Constant.INVALID_CITY);
             }
 
             // Booking Date
@@ -101,14 +80,14 @@ public class RegisteringGuestService {
             /**
              * Default status is "pending" for new Guest
              */
-            newGuest.setStatus(STATUS_PENDING);
+            newGuest.setStatus(Constant.STATUS_PENDING);
 
             // Curriculum Id
             if (curriculumRepository.existsByCurriculumId(insGuest.getCurriculumId())
                     && curriculumRepository.findIsAvailableByCurriculumId(insGuest.getCurriculumId())) {
                 newGuest.setCurriculum(curriculumRepository.findOneByCurriculumId(insGuest.getCurriculumId()));
             } else {
-                throw new ValidationException(INVALID_CURRICULUM);
+                throw new ValidationException(Constant.INVALID_CURRICULUM_ID);
             }
 
             // Branch Id
@@ -116,7 +95,7 @@ public class RegisteringGuestService {
                     && branchRepository.findIsAvailableByBranchId(insGuest.getBranchId())) {
                 newGuest.setBranch(branchRepository.findByBranchId(insGuest.getBranchId()));
             } else {
-                throw new ValidationException(INVALID_BRANCH);
+                throw new ValidationException(Constant.INVALID_BRANCH_ID);
             }
 
             registeringGuestRepository.save(newGuest);
@@ -138,15 +117,15 @@ public class RegisteringGuestService {
 
             if (registeringGuestRepository.existsById(guestId)) {
                 updateGuest = registeringGuestRepository.getById(guestId);
-                if (status.equalsIgnoreCase(STATUS_PENDING)
-                        || status.equalsIgnoreCase(STATUS_CONTACTED)
-                        || status.equalsIgnoreCase(STATUS_CANCELED)) {
+                if (status.equalsIgnoreCase(Constant.STATUS_PENDING)
+                        || status.equalsIgnoreCase(Constant.STATUS_CONTACTED)
+                        || status.equalsIgnoreCase(Constant.STATUS_CANCELED)) {
                     updateGuest.setStatus(status);
                 } else {
-                    throw new ValidationException(INVALID_GUEST_STATUS);
+                    throw new ValidationException(Constant.INVALID_GUEST_STATUS);
                 }
             } else {
-                throw new ValidationException(INVALID_GUEST_ID);
+                throw new ValidationException(Constant.INVALID_GUEST_ID);
             }
             updateGuest.setDescription(description);
             registeringGuestRepository.save(updateGuest);

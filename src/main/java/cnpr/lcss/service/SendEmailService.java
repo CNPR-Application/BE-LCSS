@@ -10,8 +10,7 @@ import java.util.Properties;
 @Service
 public class SendEmailService {
 
-
-    public boolean sendGmail(String userGmail, String acountName, String accountUsername, String accountPassword) throws AuthenticationFailedException {
+    public boolean sendGmail(String userGmail, String accountName, String accountUsername, String accountPassword) throws AuthenticationFailedException {
 
         final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
         final String username = "lcssfall2021";

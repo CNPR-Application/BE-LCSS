@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.BranchRequestDto;
 import cnpr.lcss.repository.BranchRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +19,10 @@ import java.util.List;
 @Service
 public class BranchService {
 
-    private final String regex = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
-    private final String DUPLICATE_NAME = "Duplicate Branch Name!";
-    private final String BRANCH_ID_DOES_NOT_EXIST = "Branch Id does not exist!";
-    private final String PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX = "Phone Number does not match syntax!";
     @Autowired
     BranchRepository branchRepository;
 
-    // Find Branch by Branch Name LIKE keyword And Is Available (true/false)
+    //<editor-fold desc="Find Branch by Branch Name LIKE keyword And Is Available (true/false)">
     public BranchPagingResponseDto findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -39,19 +36,21 @@ public class BranchService {
 
         return branchPagingResponseDto;
     }
+    //</editor-fold>
 
-    // Search Branch by BranchId
+    //<editor-fold desc="Search Branch by BranchId">
     public Branch findBranchByBranchId(int branchId) {
         return branchRepository.findByBranchId(branchId);
     }
+    //</editor-fold>
 
-    // Create new Curriculum
+    //<editor-fold desc="Create new Curriculum">
     @Transactional
     public ResponseEntity<?> createNewBranch(BranchRequestDto newBranch) throws Exception {
 
         try {
             if (branchRepository.existsBranchByBranchName(newBranch.getBranchName()) == Boolean.TRUE) {
-                throw new Exception(DUPLICATE_NAME);
+                throw new Exception(Constant.DUPLICATE_BRANCH_NAME);
             } else {
                 Branch createBranch = new Branch();
 
@@ -59,8 +58,8 @@ public class BranchService {
                 createBranch.setAddress(newBranch.getAddress().trim());
                 createBranch.setOpeningDate(newBranch.getOpeningDate());
                 createBranch.setIsAvailable(Boolean.TRUE);
-                if (!newBranch.getPhone().matches(regex)) {
-                    throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
+                if (!newBranch.getPhone().matches(Constant.PHONE_PATTERN)) {
+                    throw new Exception(Constant.INVALID_PHONE_PATTERN);
                 } else {
                     createBranch.setPhone(newBranch.getPhone().trim());
                 }
@@ -73,13 +72,13 @@ public class BranchService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 
-    // Delete Branch by Branch Id
-    // Change isAvailable from True to False
+    //<editor-fold desc="Delete Branch by Branch Id">
     public ResponseEntity<?> deleteByBranchId(int branchId) throws Exception {
         try {
             if (!branchRepository.existsBranchByBranchId(branchId)) {
-                throw new IllegalArgumentException(BRANCH_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             } else {
                 Branch delCur = branchRepository.findOneByBranchId(branchId);
                 if (delCur.getIsAvailable().equals(Boolean.TRUE)) {
@@ -95,12 +94,13 @@ public class BranchService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
-    // Update Branch by Branch id
+    //<editor-fold desc="Update Branch by Branch id">
     public ResponseEntity<?> updateBranch(int branchId, BranchRequestDto insBranch) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
-                throw new IllegalArgumentException(BRANCH_ID_DOES_NOT_EXIST);
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             } else {
                 Branch updateBranch = branchRepository.findOneByBranchId(branchId);
 
@@ -110,8 +110,8 @@ public class BranchService {
                 updateBranch.setOpeningDate(insBranch.getOpeningDate());
                 //ADMIN now can edit branch isAvailable
                 updateBranch.setIsAvailable(insBranch.getIsAvailable());
-                if (!insBranch.getPhone().matches(regex)) {
-                    throw new Exception(PHONE_NUMBER_DOES_NOT_MATCH_PATTERN_SYNTAX);
+                if (!insBranch.getPhone().matches(Constant.PHONE_PATTERN)) {
+                    throw new Exception(Constant.INVALID_PHONE_PATTERN);
                 } else {
                     updateBranch.setPhone(insBranch.getPhone().trim());
                 }
@@ -124,4 +124,5 @@ public class BranchService {
             return ResponseEntity.ok(Boolean.FALSE);
         }
     }
+    //</editor-fold>
 }
