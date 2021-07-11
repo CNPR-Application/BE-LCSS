@@ -21,16 +21,11 @@ public class Constant {
     public static final String ERROR_EMAIL_SENDING = "Sending email failed!";
     public static final String ERROR_GENERATE_PASSWORD = "Generate password failed!";
     public static final String ERROR_GENERATE_USERNAME = "Generate username failed!";
-    public static final String INVALID_ADDRESS = "Null or empty address!";
     public static final String INVALID_ADMIN_BIRTHDAY = "Admin must OLDER or EQUAL to 18!";
-    public static final String INVALID_BIRTHDAY = "Invalid birthday!";
     public static final String INVALID_CHANGE_ROLE = "Role must be manager/staff!";
-    public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
     public static final String INVALID_IS_AVAILABLE = "Account no longer active!";
     public static final String INVALID_MANAGER_BIRTHDAY = "Manager must older or EQUAL to 18!";
-    public static final String INVALID_NAME = "Null or empty or unreal name!";
     public static final String INVALID_NEW_ROLE = "New role must be manager/staff!";
-    public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
     public static final String INVALID_ROLE = "Invalid role!";
     public static final String INVALID_STAFF_BIRTHDAY = "Staff must OLDER or EQUAL to 18!";
     public static final String INVALID_STUDENT_BIRTHDAY = "Student must OLDER or EQUAL to 3!";
@@ -119,7 +114,14 @@ public class Constant {
     /**
      * -----REGISTERING GUEST-----
      */
+    // Guest Status
+    public static final String STATUS_PENDING = "pending";
+    public static final String STATUS_CONTACTED = "contacted";
+    public static final String STATUS_CANCELED = "canceled";
     // Error Message
+    public static final String INVALID_CITY = "Invalid city!";
+    public static final String INVALID_GUEST_ID = "Guest ID not exist!";
+    public static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
     //</editor-fold>
 
     //<editor-fold desc="Session">
@@ -223,6 +225,11 @@ public class Constant {
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
+    public static final String INVALID_ADDRESS = "Null or empty address!";
+    public static final String INVALID_BIRTHDAY = "Invalid birthday!";
+    public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
+    public static final String INVALID_NAME = "Null or empty or unreal name!";
+    public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
     public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     public static final String NAME_PATTERN = "[A-Za-z ]*";
     public static final String NUMBERS = "1234567890";
