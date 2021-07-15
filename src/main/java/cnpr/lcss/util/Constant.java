@@ -129,6 +129,7 @@ public class Constant {
      * -----SESSION-----
      */
     // Error Message
+    public static final String ERROR_GENERATE_SESSIONS = "Error at Generate Sessions!";
     //</editor-fold>
 
     //<editor-fold desc="Shift">
