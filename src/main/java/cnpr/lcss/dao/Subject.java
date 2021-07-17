@@ -85,4 +85,21 @@ public class Subject implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "subjectId=" + subjectId +
+                ", subjectCode='" + subjectCode + '\'' +
+                ", subjectName='" + subjectName + '\'' +
+                ", price=" + price +
+                ", creatingDate=" + creatingDate +
+                ", description='" + description + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", image='" + image + '\'' +
+                ", slot=" + slot +
+                ", slotPerWeek=" + slotPerWeek +
+                ", rating='" + rating + '\'' +
+                '}';
+    }
 }

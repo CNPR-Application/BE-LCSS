@@ -49,4 +49,15 @@ public class Shift implements Serializable {
         this.isAvailable = isAvailable;
     }
 
+    @Override
+    public String toString() {
+        return "Shift{" +
+                "shiftId=" + shiftId +
+                ", timeStart='" + timeStart + '\'' +
+                ", timeEnd='" + timeEnd + '\'' +
+                ", dayOfWeek='" + dayOfWeek + '\'' +
+                ", duration=" + duration +
+                ", isAvailable=" + isAvailable +
+                '}';
+    }
 }
