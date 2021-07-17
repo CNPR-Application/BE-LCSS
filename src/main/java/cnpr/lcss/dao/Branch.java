@@ -77,4 +77,16 @@ public class Branch implements Serializable {
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+
+    @Override
+    public String toString() {
+        return "Branch{" +
+                "branchId=" + branchId +
+                ", branchName='" + branchName + '\'' +
+                ", address='" + address + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", openingDate=" + openingDate +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }

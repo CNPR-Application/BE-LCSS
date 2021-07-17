@@ -23,10 +23,10 @@ public class Attendance implements Serializable {
     @Column(name = "creating_date")
     private Date creatingDate;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "student_class_id")
     private StudentInClass studentInClass;
 }

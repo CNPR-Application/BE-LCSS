@@ -1,8 +1,7 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
-import cnpr.lcss.dao.Session;
-import cnpr.lcss.dao.Shift;
+import cnpr.lcss.dao.*;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
 import cnpr.lcss.repository.*;
@@ -25,6 +24,8 @@ import java.util.stream.Collectors;
 public class ClassService {
 
     @Autowired
+    AttendanceRepository attendanceRepository;
+    @Autowired
     ClassRepository classRepository;
     @Autowired
     BranchRepository branchRepository;
@@ -40,8 +41,9 @@ public class ClassService {
     //<editor-fold desc="Create New Class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+            Date today = calendar.getTime();
             Class newClass = new Class();
-            Date today = new Date();
 
             // Class Name
             if (insClass.getClassName() != null && !insClass.getClassName().isEmpty()) {
@@ -379,8 +381,10 @@ public class ClassService {
                 calendar.add(Calendar.DATE, 1);
             }
 
+            // Insert information to Session
+            List<Session> sessionList;
             try {
-                List<Session> sessionList = new ArrayList<>();
+                sessionList = new ArrayList<>();
                 for (Date date : dateList) {
                     Session session = new Session();
                     session.setAClass(activateClass);
@@ -398,6 +402,31 @@ public class ClassService {
                 e.printStackTrace();
                 throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
             }
+
+            // Get Student List by Class ID in Student In Class
+            List<StudentInClass> studentInClassList = studentInClassRepository.findStudentsByClassId(activateClass.getClassId());
+
+            // Insert sessions to each student in student list in Attendance
+            try {
+                for (StudentInClass studentInClass : studentInClassList) {
+                    for (Session session : sessionList) {
+                        Attendance attendance = new Attendance();
+                        attendance.setSession(session);
+                        attendance.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
+                        attendance.setCreatingDate(new Date());
+                        attendance.setStudentInClass(studentInClass);
+                        attendanceRepository.save(attendance);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                sessionRepository.deleteAll(sessionList);
+                throw new Exception(Constant.ERROR_INSERT_TO_ATTENDANCE);
+            }
+
+            // Update Class information
+            activateClass.setStatus(Constant.CLASS_STATUS_STUDYING);
+            classRepository.save(activateClass);
 
             return ResponseEntity.ok(true);
         } catch (Exception e) {

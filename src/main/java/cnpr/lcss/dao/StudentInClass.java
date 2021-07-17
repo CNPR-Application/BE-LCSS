@@ -40,4 +40,21 @@ public class StudentInClass implements Serializable {
     @OneToMany(mappedBy = "studentInClass", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attendance> attendanceList;
+
+    public StudentInClass(Integer studentInClassId, int teacherRating, int subjectRating, String feedback) {
+        this.studentInClassId = studentInClassId;
+        this.teacherRating = teacherRating;
+        this.subjectRating = subjectRating;
+        this.feedback = feedback;
+    }
+
+    @Override
+    public String toString() {
+        return "StudentInClass{" +
+                "studentInClassId=" + studentInClassId +
+                ", teacherRating=" + teacherRating +
+                ", subjectRating=" + subjectRating +
+                ", feedback='" + feedback + '\'' +
+                '}';
+    }
 }

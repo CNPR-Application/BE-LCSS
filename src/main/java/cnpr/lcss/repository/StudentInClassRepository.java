@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StudentInClassRepository extends JpaRepository<StudentInClass, Integer> {
 
@@ -13,4 +15,9 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
             "FROM StudentInClass AS sic " +
             "WHERE sic.aClass.classId = :classId")
     int countStudentInClassByAClass_ClassId(@Param(value = "classId") int classId);
+
+    @Query(value = "SELECT new StudentInClass(sic.studentInClassId, sic.teacherRating, sic.subjectRating, sic.feedback) " +
+            "FROM StudentInClass AS sic " +
+            "WHERE sic.aClass.classId = :classId")
+    List<StudentInClass> findStudentsByClassId(@Param(value = "classId") int classId);
 }

@@ -63,4 +63,15 @@ public class Class implements Serializable {
         dto.setShiftId(shift.getShiftId());
         return dto;
     }
+
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
+    }
 }

@@ -39,7 +39,10 @@ public class Constant {
     /**
      * -----ATTENDANCE-----
      */
+    // Attendance Status
+    public static final String ATTENDANCE_STATUS_NOT_YET = "not yet";
     // Error Message
+    public static final String ERROR_INSERT_TO_ATTENDANCE = "Error at insert Student to Attendance!";
     //</editor-fold>
 
     //<editor-fold desc="Booking">

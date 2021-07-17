@@ -36,4 +36,23 @@ public class Session implements Serializable {
     @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attendance> attendanceList;
+
+    public Session(int sessionId, Date startTime, Date endTime, int roomNo, int teacherId) {
+        this.sessionId = sessionId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.roomNo = roomNo;
+        this.teacherId = teacherId;
+    }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", roomNo=" + roomNo +
+                ", teacherId=" + teacherId +
+                '}';
+    }
 }
