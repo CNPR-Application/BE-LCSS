@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -208,8 +205,8 @@ public class SubjectService {
     //<editor-fold desc="Create New Subject">
     @Transactional
     public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
-
-        Date creatingDate = new Date();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date creatingDate = calendar.getTime();
 
         try {
             if (subjectRepository.existsSubjectBySubjectCode(newSub.getSubjectCode()) == Boolean.TRUE) {
