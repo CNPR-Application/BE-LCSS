@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +42,7 @@ public class BookingService {
     JdbcTemplate jdbcTemplate;
 
     //<editor-fold desc="Create New Booking">
-    @Transactional(rollbackFor = SQLException.class)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> createNewBooking(BookingRequestDto insBooking) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
         Date today = calendar.getTime();

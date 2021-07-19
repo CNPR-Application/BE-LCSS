@@ -47,6 +47,10 @@ public class Class implements Serializable {
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 
+    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Session> sessionList;
+
     public ClassDto convertToDto() {
         ClassDto dto = new ClassDto();
         dto.setClassId(classId);
@@ -58,5 +62,16 @@ public class Class implements Serializable {
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
     }
 }

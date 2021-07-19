@@ -1,6 +1,7 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.*;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
 import cnpr.lcss.repository.*;
@@ -12,17 +13,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ClassService {
 
+    @Autowired
+    AttendanceRepository attendanceRepository;
     @Autowired
     ClassRepository classRepository;
     @Autowired
@@ -33,12 +35,15 @@ public class ClassService {
     ShiftRepository shiftRepository;
     @Autowired
     StudentInClassRepository studentInClassRepository;
+    @Autowired
+    SessionRepository sessionRepository;
 
     //<editor-fold desc="Create New Class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+            Date today = calendar.getTime();
             Class newClass = new Class();
-            Date today = new Date();
 
             // Class Name
             if (insClass.getClassName() != null && !insClass.getClassName().isEmpty()) {
@@ -309,6 +314,121 @@ public class ClassService {
                 }
             }
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert CN to 8">
+    private String[] convertDowToInteger(String[] daysOfWeek) {
+        String[] daysOfWeekCopy = new String[daysOfWeek.length];
+        // Copy the old one to the new one
+        System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
+        // Replace the last element from "CN" to "8"
+        daysOfWeekCopy[daysOfWeek.length - 1] = "1";
+        // Append
+        daysOfWeek = daysOfWeekCopy;
+        return daysOfWeek;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Is Day In Shift">
+    private boolean isDayInShift(String[] daysOfWeek, Calendar calendar) {
+        return Arrays.stream(convertDowToInteger(daysOfWeek))
+                .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Activate Class">
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> activateClass(Map<String, Integer> reqBody) throws Exception {
+        int roomId = reqBody.get("roomId");
+        int teacherId = reqBody.get("teacherId");
+        int classId = reqBody.get("classId");
+
+        try {
+            // Find Class by Class ID
+            Class activateClass;
+            if (classRepository.existsById(classId)) {
+                activateClass = classRepository.findClassByClassId(classId);
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
+            }
+
+            // Find Shift by Class ID in Class
+            Shift shift = activateClass.getShift();
+
+            // Create Session
+            int numberOfSlot = activateClass.getSlot();
+            String[] daysOfWeek = shift.getDayOfWeek().split("-");
+            daysOfWeek = convertDowToInteger(daysOfWeek);
+            String[] timeStart = shift.getTimeStart().split(":");
+            int totalSession = 0;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(activateClass.getOpeningDate());
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(timeStart[0]));
+            calendar.set(Calendar.MINUTE, Integer.valueOf(timeStart[1]));
+
+            List<Date> dateList = new ArrayList<>();
+
+            while (totalSession < numberOfSlot) {
+                if (isDayInShift(daysOfWeek, calendar)) {
+                    totalSession++;
+                    dateList.add(calendar.getTime());
+                }
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            // Insert information to Session
+            List<Session> sessionList;
+            try {
+                sessionList = new ArrayList<>();
+                for (Date date : dateList) {
+                    Session session = new Session();
+                    session.setAClass(activateClass);
+                    session.setTeacherId(teacherId);
+                    session.setStartTime(date);
+                    Date newDate = new Date();
+                    newDate.setDate(date.getDate());
+                    newDate.setTime(date.getTime() + activateClass.getShift().getDuration() * 60000);
+                    session.setEndTime(newDate);
+                    session.setRoomNo(roomId);
+                    sessionList.add(session);
+                }
+                sessionRepository.saveAll(sessionList);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
+            }
+
+            // Get Student List by Class ID in Student In Class
+            List<StudentInClass> studentInClassList = studentInClassRepository.findStudentsByClassId(activateClass.getClassId());
+
+            // Insert sessions to each student in student list in Attendance
+            try {
+                for (StudentInClass studentInClass : studentInClassList) {
+                    for (Session session : sessionList) {
+                        Attendance attendance = new Attendance();
+                        attendance.setSession(session);
+                        attendance.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
+                        attendance.setCreatingDate(new Date());
+                        attendance.setStudentInClass(studentInClass);
+                        attendanceRepository.save(attendance);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                sessionRepository.deleteAll(sessionList);
+                throw new Exception(Constant.ERROR_INSERT_TO_ATTENDANCE);
+            }
+
+            // Update Class information
+            activateClass.setStatus(Constant.CLASS_STATUS_STUDYING);
+            classRepository.save(activateClass);
+
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

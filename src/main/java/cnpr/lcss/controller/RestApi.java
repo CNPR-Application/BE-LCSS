@@ -811,6 +811,25 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.10-activate-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.10-activate-class
+     * @author LamHNT - 2021.07.14
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/activate-class", method = RequestMethod.POST)
+    public ResponseEntity<?> activateClass(@RequestBody Map<String, Integer> reqBody) throws Exception {
+        reqBody.get("roomNo");
+        reqBody.get("teacherId");
+        reqBody.get("classId");
+        return classService.activateClass(reqBody);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

@@ -39,4 +39,13 @@ public class Student implements Serializable {
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", parentPhone='" + parentPhone + '\'' +
+                ", parentName='" + parentName + '\'' +
+                '}';
+    }
 }
