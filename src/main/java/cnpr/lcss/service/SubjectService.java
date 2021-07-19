@@ -35,7 +35,6 @@ public class SubjectService {
         DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
         String[] arrOfInpStr = rating.split("/");
         double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
-        System.out.println(result);
         String finalResult = df.format(result);
         return finalResult;
     }
@@ -51,6 +50,10 @@ public class SubjectService {
             Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
+
+            for (SubjectSearchDto subject : subjectDtoList) {
+                subject.setRating(calculateRating(subject.getRating()));
+            }
 
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
@@ -100,9 +103,8 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find Subject and Curriculum by Subject Id">
+    //<editor-fold desc="4.04-find-subject-and-curriculum-by-subject-id">
     public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
-        DecimalFormat df = new DecimalFormat("#.#");
         try {
             if (subjectRepository.existsById(subjectId)) {
                 Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -240,7 +242,7 @@ public class SubjectService {
                     insSub.setCurriculum(curriculumRepository.findOneByCurriculumId(newSub.getCurriculumId()));
                     insSub.setSlot(newSub.getSlot());
                     insSub.setSlotPerWeek(newSub.getSlotPerWeek());
-                    insSub.setRating(null);
+                    insSub.setRating(Constant.DEFAULT_SUBJECT_RATING);
 
                     subjectRepository.save(insSub);
                     return ResponseEntity.ok(Boolean.TRUE);
