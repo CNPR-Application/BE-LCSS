@@ -52,13 +52,6 @@ public class ClassService {
                 throw new ValidationException(Constant.INVALID_CLASS_NAME);
             }
 
-            // Opening Date
-            if (insClass.getOpeningDate() != null && insClass.getOpeningDate().getDate() >= today.getDate()) {
-                newClass.setOpeningDate(insClass.getOpeningDate());
-            } else {
-                throw new ValidationException(Constant.INVALID_OPENING_DATE);
-            }
-
             // Status
             /**
              * Default status is "waiting" for new Class
@@ -107,6 +100,15 @@ public class ClassService {
                 }
             } else {
                 throw new ValidationException(Constant.INVALID_SHIFT_ID);
+            }
+
+            // Opening Date
+            if (insClass.getOpeningDate() != null && insClass.getOpeningDate().getDate() >= today.getDate()) {
+                Date openingDate = insClass.getOpeningDate();
+                openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
+                newClass.setOpeningDate(openingDate);
+            } else {
+                throw new ValidationException(Constant.INVALID_OPENING_DATE);
             }
 
             classRepository.save(newClass);
