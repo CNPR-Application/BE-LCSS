@@ -1,11 +1,14 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.StudentInClassSearchResponseDto;
+import cnpr.lcss.model.SubjectSearchDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,4 +37,16 @@ public class StudentInClass implements Serializable {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
+
+    public StudentInClassSearchResponseDto convertToSearchDto() {
+        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
+         aClass.getClassId(),
+        student.getId(),
+        student.getAccount().getUsername(),
+       student.getAccount().getName(),
+         student.getAccount().getImage(),
+         booking.getBookingId(),
+        booking.getPayingDate());
+                return studentInClassSearchResponseDto;
+    }
 }
