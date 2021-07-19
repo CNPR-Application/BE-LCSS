@@ -106,7 +106,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.0 Check login">
+    //<editor-fold desc="1.01 Check login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
@@ -186,7 +186,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="2.0 Search Account Like Username">
+    //<editor-fold desc="1.02 Search Account Like Username">
     public ResponseEntity<?> searchAccountLikeUsernamePaging(String role, String keyword, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         try {
             // Check Role existence
@@ -270,7 +270,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="3.1 Search Information by Username">
+    //<editor-fold desc="1.04 Search Information by Username">
     public ResponseEntity<?> searchInfoByUsername(String username) throws Exception {
         try {
             if (accountRepository.existsByUsername(username)) {
@@ -338,10 +338,11 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="4.0 Create New Account">
+    //<editor-fold desc="1.05 Create New Account">
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
-        Date today = new Date();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date today = calendar.getTime();
         HashMap<String, Object> mapObj = new LinkedHashMap<>();
 
         try {
@@ -539,7 +540,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="5.0 Update Account">
+    //<editor-fold desc="1.06 Update Account">
     public ResponseEntity<?> updateAccount(String username, AccountRequestDto insAcc) throws Exception {
         try {
             Date today = new Date();
@@ -704,7 +705,7 @@ public class AccountService {
     }
 //</editor-fold>
 
-    //<editor-fold desc="5.1 Update Role">
+    //<editor-fold desc="1.07 Update Role">
     public ResponseEntity<?> updateRole(String username, String role) throws Exception {
         try {
             String userRole = accountRepository.findRoleByUsername(username);
@@ -728,7 +729,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="6.0 Delete Account by UserName">
+    //<editor-fold desc="1.08 Delete Account by UserName">
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {
         try {
             if (!accountRepository.existsByUsername(userName)) {
