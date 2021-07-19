@@ -38,7 +38,7 @@ public class ClassService {
     @Autowired
     SessionRepository sessionRepository;
 
-    //<editor-fold desc="Create New Class">
+    //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
@@ -104,7 +104,23 @@ public class ClassService {
 
             // Opening Date
             if (insClass.getOpeningDate() != null && insClass.getOpeningDate().getDate() >= today.getDate()) {
+                // Check whether Opening Date is a day in Shift
                 Date openingDate = insClass.getOpeningDate();
+                // Sunday = 0
+                int openingDayOfWeek = openingDate.getDay() - 1;
+                Shift shift = shiftRepository.findShiftByShiftId(insClass.getShiftId());
+                String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+                shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
+                boolean coincidence = false;
+                for (String day : shiftDaysOfWeek) {
+                    if (day.equalsIgnoreCase(Integer.toString(openingDayOfWeek))) {
+                        coincidence = true;
+                    }
+                }
+                if (!coincidence) {
+                    throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
+                }
+                // Set time start same as time start of shift
                 openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
                 newClass.setOpeningDate(openingDate);
             } else {
@@ -336,8 +352,8 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Is Day In Shift">
-    private boolean isDayInShift(String[] daysOfWeek, Calendar calendar) {
+    //<editor-fold desc="Is Days In Shift">
+    private boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
         return Arrays.stream(convertDowToInteger(daysOfWeek))
                 .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
     }
@@ -376,7 +392,7 @@ public class ClassService {
             List<Date> dateList = new ArrayList<>();
 
             while (totalSession < numberOfSlot) {
-                if (isDayInShift(daysOfWeek, calendar)) {
+                if (isDaysInShift(daysOfWeek, calendar)) {
                     totalSession++;
                     dateList.add(calendar.getTime());
                 }
