@@ -393,7 +393,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 4.01-search-subject-by-subject-name
-     * @author HuuNT - 2021.06.21
+     * @author HuuNT - 2021.06.21 / LamHNT - 2021.07.19
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
@@ -415,7 +415,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 4.02-search-subject-by-subject-code
-     * @author HuuNT - 2021.06.21
+     * @author HuuNT - 2021.06.21 / LamHNT - 2021.07.19
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
