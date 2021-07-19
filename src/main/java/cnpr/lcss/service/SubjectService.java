@@ -69,9 +69,8 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find Subject by Curriculum Id and Is Available">
+    //<editor-fold desc="4.03-search-subject-by-curriculum-id">
     public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
-
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         Page<Subject> page = subjectRepository.findByCurriculum_CurriculumIdAndIsAvailable(keyword, isAvailable, pageable);
@@ -79,6 +78,9 @@ public class SubjectService {
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
+        for (SubjectDto subject : subjectDtoList) {
+            subject.setRating(calculateRating(subject.getRating()));
+        }
 
         SubjectPagingResponseDto subjectPagingResponseDto = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
 
