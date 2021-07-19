@@ -15,10 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class StudentInClassService {
+
     @Autowired
     StudentInClassRepository studentInClassRepository;
 
-    public StudentInClassSearchPagingResponseDto findStudentInClassbyClassId(int classId, int pageNo, int pageSize) {
+    //<editor-fold desc="10.04-get-student-in-class-by-class-id">
+    public StudentInClassSearchPagingResponseDto findStudentInClassByClassId(int classId, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
@@ -32,4 +34,5 @@ public class StudentInClassService {
 
         return studentInClassSearchPagingResponseDto;
     }
+    //</editor-fold>
 }

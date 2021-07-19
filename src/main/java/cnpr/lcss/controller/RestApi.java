@@ -833,14 +833,26 @@ public class RestApi {
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
+
+    //<editor-fold desc="10.04-get-student-in-class-by-class-id">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 10.04-get-student-in-class-by-class-id
+     * @author HuuNT - 2021.07.19
+     */
     @CrossOrigin
     @RequestMapping(value = "/student-in-class", method = RequestMethod.GET)
     public StudentInClassSearchPagingResponseDto getStudentInClass(@RequestParam(value = "classId") int classId,
-                                               @RequestParam(value = "pageNo") int pageNo,
-                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
-        return studentInClassService.findStudentInClassbyClassId(classId,pageNo,pageSize);
+                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
     }
-
+    //</editor-fold>
 
     /**
      * -------------------------------SHIFT--------------------------------
