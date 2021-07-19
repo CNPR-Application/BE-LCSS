@@ -48,8 +48,7 @@ public class RegisteringGuestService {
             Date today = new Date();
 
             // Customer Name
-            if (insGuest.getCustomerName() != null && !insGuest.getCustomerName().isEmpty()
-                    && stripAccents(insGuest.getCustomerName()).matches(Constant.NAME_PATTERN)) {
+            if (insGuest.getCustomerName() != null && !insGuest.getCustomerName().isEmpty()) {
                 newGuest.setCustomerName(insGuest.getCustomerName());
             } else {
                 throw new ValidationException(Constant.INVALID_NAME);
