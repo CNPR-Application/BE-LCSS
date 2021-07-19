@@ -415,7 +415,7 @@ public class ClassService {
                         Attendance attendance = new Attendance();
                         attendance.setSession(session);
                         attendance.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
-                        attendance.setCreatingDate(new Date());
+                        attendance.setCheckingDate(session.getStartTime());
                         attendance.setStudentInClass(studentInClass);
                         attendanceRepository.save(attendance);
                     }
