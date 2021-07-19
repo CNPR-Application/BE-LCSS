@@ -35,6 +35,8 @@ public class RestApi {
     SubjectDetailService subjectDetailService;
     @Autowired
     SubjectService subjectService;
+    @Autowired
+    StudentInClassService studentInClassService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -827,6 +829,18 @@ public class RestApi {
         return classService.activateClass(reqBody);
     }
     //</editor-fold>
+
+    /**
+     * -------------------------------STUDENT IN CLASS--------------------------------
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/student-in-class", method = RequestMethod.GET)
+    public StudentInClassSearchPagingResponseDto getStudentInClass(@RequestParam(value = "classId") int classId,
+                                               @RequestParam(value = "pageNo") int pageNo,
+                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentInClassService.findStudentInClassbyClassId(classId,pageNo,pageSize);
+    }
+
 
     /**
      * -------------------------------SHIFT--------------------------------
