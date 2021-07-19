@@ -20,8 +20,8 @@ public class Attendance implements Serializable {
     private int attendanceId;
     @Column(name = "status")
     private String status;
-    @Column(name = "creating_date")
-    private Date creatingDate;
+    @Column(name = "checking_date")
+    private Date checkingDate;
 
     @ManyToOne
     @JoinColumn(name = "session_id")
