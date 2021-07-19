@@ -40,7 +40,7 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find by Subject Name Contains and Is Available">
+    //<editor-fold desc="4.01-search-subject-by-subject-name">
     public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         try {
@@ -86,16 +86,18 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find by Subject Code and Is Available">
+    //<editor-fold desc="4.02-search-subject-by-subject-code">
     public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
-
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
         List<Subject> subjectList = page.getContent();
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
-
         int pageTotal = page.getTotalPages();
+
+        for (SubjectDto subject : subjectDtoList) {
+            subject.setRating(calculateRating(subject.getRating()));
+        }
 
         SubjectPagingResponseDto subPgResDtos = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
 
