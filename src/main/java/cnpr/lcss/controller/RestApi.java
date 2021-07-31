@@ -676,7 +676,7 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
-    //<editor-fold desc="8.02-search-booking-by-studentid">
+    //<editor-fold desc="8.02-search-booking-by-student-id">
 
     /**
      * @param studentUsername
