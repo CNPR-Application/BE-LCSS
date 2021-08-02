@@ -55,22 +55,10 @@ public class BookingService {
              * Insert data to Booking
              */
 
-            // Subject ID
-            // Check existence
-            if (subjectRepository.existsSubjectBySubjectId(insBooking.getSubjectId())) {
-                // Check is available
-                if (subjectRepository.findIsAvailableBySubjectId(insBooking.getSubjectId())) {
-                    newBooking.setSubject(subjectRepository.findBySubjectId(insBooking.getSubjectId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SUBJECT_AVAILABLE);
-                }
-            } else {
-                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
-            }
-
             // Paying Price
             // GREATER or EQUAL to Subject's Price
-            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId());
+            int classId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
+            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(classId);
             if (insBooking.getPayingPrice() >= subjectPrice) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
             } else {
@@ -110,19 +98,6 @@ public class BookingService {
                 }
             } else {
                 throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-
-            // Shift ID
-            // Check existence
-            if (shiftRepository.existsById(insBooking.getShiftId())) {
-                // Check is available
-                if (shiftRepository.findIsAvailableByShiftId(insBooking.getShiftId())) {
-                    newBooking.setShift(shiftRepository.findShiftByShiftId(insBooking.getShiftId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SHIFT_AVAILABLE);
-                }
-            } else {
-                throw new ValidationException(Constant.INVALID_SHIFT_ID);
             }
 
             // Insert new Booking to DB
