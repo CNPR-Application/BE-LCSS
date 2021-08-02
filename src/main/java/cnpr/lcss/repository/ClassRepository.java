@@ -47,4 +47,9 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "AND c.status = :status")
     int countDistinctByBranch_BranchIdAndStatusAllIgnoreCase(@Param(value = "branchId") int branchId,
                                                              @Param(value = "status") String status);
+
+    @Query(value = "SELECT c.subject.subjectId " +
+            "FROM Class AS c " +
+            "WHERE c.classId = :classId")
+    int findSubjectIdByClassId(@Param(value = "classId") int classId);
 }
