@@ -63,9 +63,12 @@ public class BookingService {
                 throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
             }
 
+            // Subject ID
+            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
+            newBooking.setSubjectId(subjectId);
+
             // Paying Price
             // GREATER or EQUAL to Subject's Price
-            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
             Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(subjectId);
             if (insBooking.getPayingPrice() >= subjectPrice) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
