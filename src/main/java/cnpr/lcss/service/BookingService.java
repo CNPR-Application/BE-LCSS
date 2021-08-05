@@ -55,10 +55,18 @@ public class BookingService {
              * Insert data to Booking
              */
 
+            // Class ID
+            // Check existence
+            if (classRepository.existsById(insBooking.getClassId())) {
+                newBooking.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
+            }
+
             // Paying Price
             // GREATER or EQUAL to Subject's Price
-            int classId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
-            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(classId);
+            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
+            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(subjectId);
             if (insBooking.getPayingPrice() >= subjectPrice) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
             } else {
@@ -171,7 +179,7 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search Booking By  Student Id">
+    //<editor-fold desc="Search Booking By Student Id">
     public BookingSearchResponsePagingDto findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1

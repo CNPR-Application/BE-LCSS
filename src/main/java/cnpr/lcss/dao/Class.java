@@ -34,11 +34,9 @@ public class Class implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private Subject subject;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "shift_id")
     private Shift shift;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Branch branch;
@@ -46,10 +44,12 @@ public class Class implements Serializable {
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
-
     @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Session> sessionList;
+    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Booking> bookingList;
 
     public ClassDto convertToDto() {
         ClassDto dto = new ClassDto();

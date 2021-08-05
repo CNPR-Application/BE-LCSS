@@ -33,8 +33,6 @@ public class Shift implements Serializable {
 
     @OneToMany(mappedBy = "shift")
     private List<Class> classList;
-    @OneToMany(mappedBy = "shift")
-    private List<Booking> bookingList;
 
     public ShiftDto convertToDto() {
         ShiftDto shiftDto = new ShiftDto(shiftId, timeStart, timeEnd, dayOfWeek, duration, isAvailable);
