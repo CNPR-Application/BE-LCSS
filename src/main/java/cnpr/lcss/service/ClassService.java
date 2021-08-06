@@ -144,6 +144,8 @@ public class ClassService {
         for (ClassDto aClass : classDtoList) {
             // Subject Name
             aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+            // Subject Price
+            aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
             // Branch Name
             aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
             // Shift Description

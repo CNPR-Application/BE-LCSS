@@ -18,6 +18,7 @@ public class ClassDto {
 
     private int subjectId;
     private String subjectName;
+    private float subjectPrice;
     private int branchId;
     private String branchName;
     private int shiftId;
