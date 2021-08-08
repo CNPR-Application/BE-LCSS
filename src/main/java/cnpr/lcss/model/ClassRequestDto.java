@@ -15,4 +15,5 @@ public class ClassRequestDto {
     private int branchId;
     private int subjectId;
     private int shiftId;
+    private String creator;
 }
