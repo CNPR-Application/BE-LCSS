@@ -109,7 +109,7 @@ public class ClassService {
                 // Check whether Opening Date is a day in Shift
                 Date openingDate = insClass.getOpeningDate();
                 // Sunday = 0
-                int openingDayOfWeek = openingDate.getDay() - 1;
+                int openingDayOfWeek = openingDate.getDay() + 1;
                 Shift shift = shiftRepository.findShiftByShiftId(insClass.getShiftId());
                 String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
                 shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
@@ -352,13 +352,15 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Convert CN to 8">
+    //<editor-fold desc="Convert CN to 1">
     private String[] convertDowToInteger(String[] daysOfWeek) {
         String[] daysOfWeekCopy = new String[daysOfWeek.length];
         // Copy the old one to the new one
         System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
-        // Replace the last element from "CN" to "8"
-        daysOfWeekCopy[daysOfWeek.length - 1] = "1";
+        // Replace the last element from "CN" to "1"
+        if (daysOfWeekCopy[daysOfWeek.length - 1] == "CN") {
+            daysOfWeekCopy[daysOfWeek.length - 1] = "1";
+        }
         // Append
         daysOfWeek = daysOfWeekCopy;
         return daysOfWeek;
