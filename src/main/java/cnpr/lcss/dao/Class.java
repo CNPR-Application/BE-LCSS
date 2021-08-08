@@ -30,6 +30,8 @@ public class Class implements Serializable {
     private String status;
     @Column(name = "slot")
     private int slot;
+    @Column(name = "creator")
+    private String creator;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")

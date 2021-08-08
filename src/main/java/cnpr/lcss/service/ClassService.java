@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class ClassService {
 
     @Autowired
+    AccountRepository accountRepository;
+    @Autowired
     AttendanceRepository attendanceRepository;
     @Autowired
     ClassRepository classRepository;
@@ -66,7 +68,7 @@ public class ClassService {
                 throw new ValidationException(Constant.INVALID_BRANCH_ID);
             }
 
-            // Subject Id
+            // Subject ID
             if (subjectRepository.existsSubjectBySubjectId(insClass.getSubjectId())
                     && subjectRepository.findIsAvailableBySubjectId(insClass.getSubjectId())) {
                 newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
@@ -80,7 +82,7 @@ public class ClassService {
              */
             newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
 
-            // Shift Id
+            // Shift ID
             // Check existence & is available
             if (shiftRepository.existsById(insClass.getShiftId())
                     && shiftRepository.findIsAvailableByShiftId(insClass.getShiftId())) {
@@ -125,6 +127,15 @@ public class ClassService {
                 newClass.setOpeningDate(openingDate);
             } else {
                 throw new ValidationException(Constant.INVALID_OPENING_DATE);
+            }
+
+            // Creator
+            // aka Username
+            // Check existence
+            if (accountRepository.existsByUsername(insClass.getCreator())) {
+                newClass.setCreator(insClass.getCreator());
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }
 
             classRepository.save(newClass);
