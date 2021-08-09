@@ -1,11 +1,13 @@
 package cnpr.lcss.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +28,10 @@ public class Staff implements Serializable {
     @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
+
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Class> classList;
 
     public Staff(Account account, Branch branch) {
         this.account = account;
