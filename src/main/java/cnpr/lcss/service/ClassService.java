@@ -36,6 +36,8 @@ public class ClassService {
     @Autowired
     ShiftRepository shiftRepository;
     @Autowired
+    StaffRepository staffRepository;
+    @Autowired
     StudentInClassRepository studentInClassRepository;
     @Autowired
     SessionRepository sessionRepository;
@@ -133,7 +135,8 @@ public class ClassService {
             // aka Username
             // Check existence
             if (accountRepository.existsByUsername(insClass.getCreator())) {
-                newClass.setCreator(insClass.getCreator());
+                // Find Staff ID by Username
+                newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
             } else {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }

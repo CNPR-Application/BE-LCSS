@@ -28,4 +28,7 @@ public class ClassDto {
     private int roomNo;
 
     private int numberOfStudent;
+
+    private int managerId;
+    private String managerUsername;
 }

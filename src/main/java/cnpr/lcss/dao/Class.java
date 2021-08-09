@@ -30,8 +30,6 @@ public class Class implements Serializable {
     private String status;
     @Column(name = "slot")
     private int slot;
-    @Column(name = "creator")
-    private String creator;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
@@ -42,6 +40,9 @@ public class Class implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Branch branch;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator")
+    private Staff staff;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -64,6 +65,8 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
+        dto.setManagerId(staff.getId());
+        dto.setManagerUsername(staff.getAccount().getUsername());
         return dto;
     }
 
