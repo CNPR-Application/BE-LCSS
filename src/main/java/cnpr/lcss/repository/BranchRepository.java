@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
     @Query(value = "SELECT new Branch(b.branchId, b.branchName,b.address,b.isAvailable,b.openingDate,b.phone) " +
             "FROM Branch b " +

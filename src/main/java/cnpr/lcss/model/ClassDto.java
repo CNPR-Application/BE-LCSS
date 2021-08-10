@@ -18,6 +18,7 @@ public class ClassDto {
 
     private int subjectId;
     private String subjectName;
+    private float subjectPrice;
     private int branchId;
     private String branchName;
     private int shiftId;
@@ -27,4 +28,7 @@ public class ClassDto {
     private int roomNo;
 
     private int numberOfStudent;
+
+    private int managerId;
+    private String managerUsername;
 }

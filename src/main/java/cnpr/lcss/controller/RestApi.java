@@ -35,6 +35,8 @@ public class RestApi {
     SubjectDetailService subjectDetailService;
     @Autowired
     SubjectService subjectService;
+    @Autowired
+    StudentInClassService studentInClassService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -391,7 +393,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 4.01-search-subject-by-subject-name
-     * @author HuuNT - 2021.06.21
+     * @author HuuNT - 2021.06.21 / LamHNT - 2021.07.19
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "name", method = RequestMethod.GET)
@@ -413,7 +415,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 4.02-search-subject-by-subject-code
-     * @author HuuNT - 2021.06.21
+     * @author HuuNT - 2021.06.21 / LamHNT - 2021.07.19
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
@@ -674,7 +676,7 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
-    //<editor-fold desc="8.02-search-booking-by-studentid">
+    //<editor-fold desc="8.02-search-booking-by-student-id">
 
     /**
      * @param studentUsername
@@ -806,6 +808,49 @@ public class RestApi {
     @RequestMapping(value = "/classes-status", method = RequestMethod.GET)
     public ResponseEntity<?> getClassesStatistic(@RequestParam int branchId) throws Exception {
         return classService.getClassesStatistic(branchId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.10-activate-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.10-activate-class
+     * @author LamHNT - 2021.07.14
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/activate-class", method = RequestMethod.POST)
+    public ResponseEntity<?> activateClass(@RequestBody Map<String, Integer> reqBody) throws Exception {
+        reqBody.get("roomNo");
+        reqBody.get("teacherId");
+        reqBody.get("classId");
+        return classService.activateClass(reqBody);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------STUDENT IN CLASS--------------------------------
+     */
+
+    //<editor-fold desc="10.04-get-student-in-class-by-class-id">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 10.04-get-student-in-class-by-class-id
+     * @author HuuNT - 2021.07.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/student-in-class", method = RequestMethod.GET)
+    public StudentInClassSearchPagingResponseDto getStudentInClass(@RequestParam(value = "classId") int classId,
+                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
     }
     //</editor-fold>
 

@@ -17,8 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,8 +132,8 @@ public class CurriculumService {
     //<editor-fold desc="Create new Curriculum">
     @Transactional
     public ResponseEntity<?> createNewCurriculum(CurriculumRequestDto newCur) throws Exception {
-
-        Date creatingDate = new Date();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date creatingDate = calendar.getTime();
 
         try {
             if (curriculumRepository.existsCurriculumByCurriculumCode(newCur.getCurriculumCode()) == Boolean.TRUE) {

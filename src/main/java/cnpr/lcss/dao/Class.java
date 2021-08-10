@@ -34,18 +34,25 @@ public class Class implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private Subject subject;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "shift_id")
     private Shift shift;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Branch branch;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator")
+    private Staff staff;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
+    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Session> sessionList;
+    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Booking> bookingList;
 
     public ClassDto convertToDto() {
         ClassDto dto = new ClassDto();
@@ -55,8 +62,27 @@ public class Class implements Serializable {
         dto.setStatus(status);
         dto.setSlot(slot);
         dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
+        if (staff != null) {
+            dto.setManagerId(staff.getId());
+            dto.setManagerUsername(staff.getAccount().getUsername());
+        } else {
+            dto.setManagerId(0);
+            dto.setManagerUsername(null);
+        }
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
     }
 }

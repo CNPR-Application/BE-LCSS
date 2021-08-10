@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +42,7 @@ public class BookingService {
     JdbcTemplate jdbcTemplate;
 
     //<editor-fold desc="Create New Booking">
-    @Transactional(rollbackFor = SQLException.class)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> createNewBooking(BookingRequestDto insBooking) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
         Date today = calendar.getTime();
@@ -56,22 +55,21 @@ public class BookingService {
              * Insert data to Booking
              */
 
-            // Subject ID
+            // Class ID
             // Check existence
-            if (subjectRepository.existsSubjectBySubjectId(insBooking.getSubjectId())) {
-                // Check is available
-                if (subjectRepository.findIsAvailableBySubjectId(insBooking.getSubjectId())) {
-                    newBooking.setSubject(subjectRepository.findBySubjectId(insBooking.getSubjectId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SUBJECT_AVAILABLE);
-                }
+            if (classRepository.existsById(insBooking.getClassId())) {
+                newBooking.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
             } else {
-                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
+                throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
             }
+
+            // Subject ID
+            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
+            newBooking.setSubjectId(subjectId);
 
             // Paying Price
             // GREATER or EQUAL to Subject's Price
-            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(insBooking.getSubjectId());
+            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(subjectId);
             if (insBooking.getPayingPrice() >= subjectPrice) {
                 newBooking.setPayingPrice(insBooking.getPayingPrice());
             } else {
@@ -111,19 +109,6 @@ public class BookingService {
                 }
             } else {
                 throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-
-            // Shift ID
-            // Check existence
-            if (shiftRepository.existsById(insBooking.getShiftId())) {
-                // Check is available
-                if (shiftRepository.findIsAvailableByShiftId(insBooking.getShiftId())) {
-                    newBooking.setShift(shiftRepository.findShiftByShiftId(insBooking.getShiftId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SHIFT_AVAILABLE);
-                }
-            } else {
-                throw new ValidationException(Constant.INVALID_SHIFT_ID);
             }
 
             // Insert new Booking to DB
@@ -197,7 +182,7 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search Booking By  Student Id">
+    //<editor-fold desc="Search Booking By Student Id">
     public BookingSearchResponsePagingDto findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1

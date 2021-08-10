@@ -6,6 +6,37 @@ public class Constant {
     /**
      * -----ACCOUNT-----
      */
+    // Vietnamese Characters
+    // Lower Case
+    public static final String aLower = "à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ";
+    public static final String aLowerAscii = "a";
+    public static final String eLower = "è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ";
+    public static final String eLowerAscii = "e";
+    public static final String iLower = "ì|í|ị|ỉ|ĩ";
+    public static final String iLowerAscii = "i";
+    public static final String oLower = "ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ";
+    public static final String oLowerAscii = "o";
+    public static final String uLower = "ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ";
+    public static final String uLowerAscii = "u";
+    public static final String yLower = "ỳ|ý|ỵ|ỷ|ỹ";
+    public static final String yLowerAscii = "y";
+    public static final String dLower = "đ";
+    public static final String dLowerAscii = "d";
+    // Upper Case
+    public static final String aUpper = "À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ";
+    public static final String aUpperAscii = "A";
+    public static final String eUpper = "È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ";
+    public static final String eUpperAscii = "E";
+    public static final String iUpper = "Ì|Í|Ị|Ỉ|Ĩ";
+    public static final String iUpperAscii = "I";
+    public static final String oUpper = "Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ";
+    public static final String oUpperAscii = "O";
+    public static final String uUpper = "Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ";
+    public static final String uUpperAscii = "U";
+    public static final String yUpper = "Ỳ|Ý|Ỵ|Ỷ|Ỹ";
+    public static final String yUpperAscii = "Y";
+    public static final String dUpper = "Đ";
+    public static final String dUpperAscii = "D";
     // User Role
     public static final String ROLE_ADMIN = "admin";
     public static final String ROLE_ADMIN_CODE = "ad";
@@ -39,7 +70,10 @@ public class Constant {
     /**
      * -----ATTENDANCE-----
      */
+    // Attendance Status
+    public static final String ATTENDANCE_STATUS_NOT_YET = "not yet";
     // Error Message
+    public static final String ERROR_INSERT_TO_ATTENDANCE = "Error at insert Student to Attendance!";
     //</editor-fold>
 
     //<editor-fold desc="Booking">
@@ -85,6 +119,7 @@ public class Constant {
     public static final String INVALID_CLASS_STATUS_NOT_WAITING = "Class Status must be waiting!";
     public static final String INVALID_OPENING_DATE = "Null or over class opening day!";
     public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
+    public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";
     //</editor-fold>
 
     //<editor-fold desc="Curriculum">
@@ -129,6 +164,7 @@ public class Constant {
      * -----SESSION-----
      */
     // Error Message
+    public static final String ERROR_GENERATE_SESSIONS = "Error at Generate Sessions!";
     //</editor-fold>
 
     //<editor-fold desc="Shift">
@@ -177,6 +213,8 @@ public class Constant {
     /**
      * -----SUBJECT-----
      */
+    // Constant Value
+    public static final String DEFAULT_SUBJECT_RATING = "0/5";
     // Error Message
     public static final String DUPLICATE_SUBJECT_CODE = "Duplicate Subject Code!";
     public static final String DUPLICATE_SUBJECT_NAME = "Duplicate Subject Name!";

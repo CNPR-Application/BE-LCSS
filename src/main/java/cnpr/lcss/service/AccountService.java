@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,18 +35,31 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
-    //<editor-fold desc="Convert from Unicode to normal string">
-    public static String stripAccents(String s) {
-        s = Normalizer.normalize(s, Normalizer.Form.NFD);
-        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-        return s;
+    //<editor-fold desc="Convert Vietnamese characters to ASCII">
+    public static String convertToASCII(String str) throws UnsupportedEncodingException {
+        str = str.replaceAll(Constant.aLower, Constant.aLowerAscii);
+        str = str.replaceAll(Constant.eLower, Constant.eLowerAscii);
+        str = str.replaceAll(Constant.iLower, Constant.iLowerAscii);
+        str = str.replaceAll(Constant.oLower, Constant.oLowerAscii);
+        str = str.replaceAll(Constant.uLower, Constant.uLowerAscii);
+        str = str.replaceAll(Constant.yLower, Constant.yLowerAscii);
+        str = str.replaceAll(Constant.dLower, Constant.dLowerAscii);
+
+        str = str.replaceAll(Constant.aUpper, Constant.aUpperAscii);
+        str = str.replaceAll(Constant.eUpper, Constant.eUpperAscii);
+        str = str.replaceAll(Constant.iUpper, Constant.iUpperAscii);
+        str = str.replaceAll(Constant.oUpper, Constant.oUpperAscii);
+        str = str.replaceAll(Constant.uUpper, Constant.uUpperAscii);
+        str = str.replaceAll(Constant.yUpper, Constant.yUpperAscii);
+        str = str.replaceAll(Constant.dUpper, Constant.dUpperAscii);
+        return str;
     }
     //</editor-fold>
 
     //<editor-fold desc="Generate Username">
     private String generateUsername(String name, String role) throws Exception {
         String username;
-        name = stripAccents(name);
+        name = convertToASCII(name);
 
         if (name != null && !name.isEmpty() && name.matches(Constant.NAME_PATTERN)) {
             String[] parts = name.split("\\s+");
@@ -106,7 +119,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.0 Check login">
+    //<editor-fold desc="1.01 Check login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
 
@@ -186,7 +199,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="2.0 Search Account Like Username">
+    //<editor-fold desc="1.02 Search Account Like Username">
     public ResponseEntity<?> searchAccountLikeUsernamePaging(String role, String keyword, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         try {
             // Check Role existence
@@ -270,7 +283,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="3.1 Search Information by Username">
+    //<editor-fold desc="1.04 Search Information by Username">
     public ResponseEntity<?> searchInfoByUsername(String username) throws Exception {
         try {
             if (accountRepository.existsByUsername(username)) {
@@ -338,10 +351,11 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="4.0 Create New Account">
+    //<editor-fold desc="1.05 Create New Account">
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
-        Date today = new Date();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date today = calendar.getTime();
         HashMap<String, Object> mapObj = new LinkedHashMap<>();
 
         try {
@@ -368,8 +382,8 @@ public class AccountService {
             }
 
             // Name
-            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && stripAccents(newAcc.getName()).matches(Constant.NAME_PATTERN)) {
-                account.setName(newAcc.getName());
+            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && convertToASCII(newAcc.getName()).matches(Constant.NAME_PATTERN)) {
+                account.setName(newAcc.getName().trim());
             } else {
                 throw new Exception(Constant.INVALID_NAME);
             }
@@ -404,8 +418,11 @@ public class AccountService {
 
             // Role
             String userRole = newAcc.getRole();
-            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN) || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER) || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_TEACHER) || userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                 account.setRole(newAcc.getRole());
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
@@ -469,8 +486,8 @@ public class AccountService {
                 throw new Exception(Constant.ERROR_EMAIL_SENDING);
             }
 
-            // Branch Id
-            // Check Branch Id existence
+            // Branch ID
+            // Check Branch ID existence
             Branch branch = new Branch();
             if (branchRepository.existsById(newAcc.getBranchId())) {
                 // Find Branch by newAcc's branch id
@@ -539,7 +556,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="5.0 Update Account">
+    //<editor-fold desc="1.06 Update Account">
     public ResponseEntity<?> updateAccount(String username, AccountRequestDto insAcc) throws Exception {
         try {
             Date today = new Date();
@@ -704,7 +721,7 @@ public class AccountService {
     }
 //</editor-fold>
 
-    //<editor-fold desc="5.1 Update Role">
+    //<editor-fold desc="1.07 Update Role">
     public ResponseEntity<?> updateRole(String username, String role) throws Exception {
         try {
             String userRole = accountRepository.findRoleByUsername(username);
@@ -728,7 +745,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="6.0 Delete Account by UserName">
+    //<editor-fold desc="1.08 Delete Account by UserName">
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {
         try {
             if (!accountRepository.existsByUsername(userName)) {

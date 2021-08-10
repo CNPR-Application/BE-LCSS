@@ -12,7 +12,5 @@ public class BookingRequestDto {
     private String status;
     private String studentUsername;
     private int branchId;
-    private int subjectId;
-    private int shiftId;
     private int classId;
 }

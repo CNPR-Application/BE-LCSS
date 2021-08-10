@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,13 +35,12 @@ public class SubjectService {
         DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
         String[] arrOfInpStr = rating.split("/");
         double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
-        System.out.println(result);
         String finalResult = df.format(result);
         return finalResult;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find by Subject Name Contains and Is Available">
+    //<editor-fold desc="4.01-search-subject-by-subject-name">
     public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
 
         try {
@@ -54,6 +50,10 @@ public class SubjectService {
             Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
+
+            for (SubjectSearchDto subject : subjectDtoList) {
+                subject.setRating(calculateRating(subject.getRating()));
+            }
 
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
@@ -69,9 +69,8 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find Subject by Curriculum Id and Is Available">
+    //<editor-fold desc="4.03-search-subject-by-curriculum-id">
     public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
-
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         Page<Subject> page = subjectRepository.findByCurriculum_CurriculumIdAndIsAvailable(keyword, isAvailable, pageable);
@@ -79,6 +78,9 @@ public class SubjectService {
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
         int pageTotal = page.getTotalPages();
 
+        for (SubjectDto subject : subjectDtoList) {
+            subject.setRating(calculateRating(subject.getRating()));
+        }
 
         SubjectPagingResponseDto subjectPagingResponseDto = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
 
@@ -86,16 +88,18 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find by Subject Code and Is Available">
+    //<editor-fold desc="4.02-search-subject-by-subject-code">
     public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
-
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
         List<Subject> subjectList = page.getContent();
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
-
         int pageTotal = page.getTotalPages();
+
+        for (SubjectDto subject : subjectDtoList) {
+            subject.setRating(calculateRating(subject.getRating()));
+        }
 
         SubjectPagingResponseDto subPgResDtos = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
 
@@ -103,9 +107,8 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find Subject and Curriculum by Subject Id">
+    //<editor-fold desc="4.04-find-subject-and-curriculum-by-subject-id">
     public ResponseEntity<?> findSubjectAndCurriculumBySubjectId(int subjectId) throws Exception {
-        DecimalFormat df = new DecimalFormat("#.#");
         try {
             if (subjectRepository.existsById(subjectId)) {
                 Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -208,8 +211,8 @@ public class SubjectService {
     //<editor-fold desc="Create New Subject">
     @Transactional
     public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
-
-        Date creatingDate = new Date();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        Date creatingDate = calendar.getTime();
 
         try {
             if (subjectRepository.existsSubjectBySubjectCode(newSub.getSubjectCode()) == Boolean.TRUE) {
@@ -243,7 +246,7 @@ public class SubjectService {
                     insSub.setCurriculum(curriculumRepository.findOneByCurriculumId(newSub.getCurriculumId()));
                     insSub.setSlot(newSub.getSlot());
                     insSub.setSlotPerWeek(newSub.getSlotPerWeek());
-                    insSub.setRating(null);
+                    insSub.setRating(Constant.DEFAULT_SUBJECT_RATING);
 
                     subjectRepository.save(insSub);
                     return ResponseEntity.ok(Boolean.TRUE);

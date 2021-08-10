@@ -30,6 +30,8 @@ public class Booking implements Serializable {
     private String description;
     @Column(name = "status")
     private String status;
+    @Column(name = "subject_id")
+    private int subjectId;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -40,13 +42,9 @@ public class Booking implements Serializable {
     @JsonIgnore
     private Branch branch;
     @ManyToOne
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name = "class_id")
     @JsonIgnore
-    private Subject subject;
-    @ManyToOne
-    @JoinColumn(name = "shift_id")
-    @JsonIgnore
-    private Shift shift;
+    private Class aClass;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
     @JsonIgnore
@@ -62,27 +60,26 @@ public class Booking implements Serializable {
                 ", status='" + status + '\'' +
                 ", student=" + student +
                 ", branch=" + branch +
-                ", subject=" + subject +
-                ", shift=" + shift +
                 ", studentInClassList=" + studentInClassList +
                 '}';
     }
-    public BookingSearchResponseDto convertToSearchDto(){
-        BookingSearchResponseDto bookingSearchResponseDto=new BookingSearchResponseDto(
-        bookingId,
-        payingDate,
-        subject.getSubjectId(),
-        subject.getSubjectName(),
-        shift.getShiftId(),
-        shift.getDayOfWeek()+"-"+"("+shift.getTimeStart()+"-"+shift.getTimeEnd()+")",
-        student.getId(),
-        student.getAccount().getName(),
-        student.getAccount().getImage(),
-        status,
-        branch.getBranchId(),
-        branch.getBranchName(),
-        payingPrice,
-        description
+
+    public BookingSearchResponseDto convertToSearchDto() {
+        BookingSearchResponseDto bookingSearchResponseDto = new BookingSearchResponseDto(
+                bookingId,
+                payingDate,
+//        subject.getSubjectId(),
+//        subject.getSubjectName(),
+//        shift.getShiftId(),
+//        shift.getDayOfWeek()+"-"+"("+shift.getTimeStart()+"-"+shift.getTimeEnd()+")",
+                student.getId(),
+                student.getAccount().getName(),
+                student.getAccount().getImage(),
+                status,
+                branch.getBranchId(),
+                branch.getBranchName(),
+                payingPrice,
+                description
         );
         return bookingSearchResponseDto;
     }
