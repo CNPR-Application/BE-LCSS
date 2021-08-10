@@ -65,8 +65,13 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        dto.setManagerId(staff.getId());
-        dto.setManagerUsername(staff.getAccount().getUsername());
+        if (staff != null) {
+            dto.setManagerId(staff.getId());
+            dto.setManagerUsername(staff.getAccount().getUsername());
+        } else {
+            dto.setManagerId(0);
+            dto.setManagerUsername(null);
+        }
         return dto;
     }
 

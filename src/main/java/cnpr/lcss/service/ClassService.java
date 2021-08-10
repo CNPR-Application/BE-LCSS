@@ -182,12 +182,16 @@ public class ClassService {
             }
             // Count Student In Class by Class ID
             aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
+            // Manager ID
+            aClass.setManagerId(aClass.getManagerId());
+            // Manager Username
+            aClass.setManagerUsername(aClass.getManagerUsername());
         }
         return classDtoList;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search all Class by Branch Id / Subject Id / Shift Id / Status - Paging">
+    //<editor-fold desc="9.01-Search all Class by Branch Id / Subject Id / Shift Id / Status - Paging">
     public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
         HashMap<String, Object> mapObj = new LinkedHashMap();
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
