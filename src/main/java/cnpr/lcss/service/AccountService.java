@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,18 +35,31 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
 
-    //<editor-fold desc="Convert from Unicode to normal string">
-    public static String stripAccents(String s) {
-        s = Normalizer.normalize(s, Normalizer.Form.NFD);
-        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-        return s;
+    //<editor-fold desc="Convert Vietnamese characters to ASCII">
+    public static String convertToASCII(String str) throws UnsupportedEncodingException {
+        str = str.replaceAll(Constant.aLower, Constant.aLowerAscii);
+        str = str.replaceAll(Constant.eLower, Constant.eLowerAscii);
+        str = str.replaceAll(Constant.iLower, Constant.iLowerAscii);
+        str = str.replaceAll(Constant.oLower, Constant.oLowerAscii);
+        str = str.replaceAll(Constant.uLower, Constant.uLowerAscii);
+        str = str.replaceAll(Constant.yLower, Constant.yLowerAscii);
+        str = str.replaceAll(Constant.dLower, Constant.dLowerAscii);
+
+        str = str.replaceAll(Constant.aUpper, Constant.aUpperAscii);
+        str = str.replaceAll(Constant.eUpper, Constant.eUpperAscii);
+        str = str.replaceAll(Constant.iUpper, Constant.iUpperAscii);
+        str = str.replaceAll(Constant.oUpper, Constant.oUpperAscii);
+        str = str.replaceAll(Constant.uUpper, Constant.uUpperAscii);
+        str = str.replaceAll(Constant.yUpper, Constant.yUpperAscii);
+        str = str.replaceAll(Constant.dUpper, Constant.dUpperAscii);
+        return str;
     }
     //</editor-fold>
 
     //<editor-fold desc="Generate Username">
     private String generateUsername(String name, String role) throws Exception {
         String username;
-        name = stripAccents(name);
+        name = convertToASCII(name);
 
         if (name != null && !name.isEmpty() && name.matches(Constant.NAME_PATTERN)) {
             String[] parts = name.split("\\s+");
@@ -369,8 +382,8 @@ public class AccountService {
             }
 
             // Name
-            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && stripAccents(newAcc.getName()).matches(Constant.NAME_PATTERN)) {
-                account.setName(newAcc.getName());
+            if (newAcc.getName() != null && !newAcc.getName().isEmpty() && convertToASCII(newAcc.getName()).matches(Constant.NAME_PATTERN)) {
+                account.setName(newAcc.getName().trim());
             } else {
                 throw new Exception(Constant.INVALID_NAME);
             }
@@ -405,8 +418,11 @@ public class AccountService {
 
             // Role
             String userRole = newAcc.getRole();
-            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN) || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER) || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_TEACHER) || userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)
+                    || userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                 account.setRole(newAcc.getRole());
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
@@ -470,8 +486,8 @@ public class AccountService {
                 throw new Exception(Constant.ERROR_EMAIL_SENDING);
             }
 
-            // Branch Id
-            // Check Branch Id existence
+            // Branch ID
+            // Check Branch ID existence
             Branch branch = new Branch();
             if (branchRepository.existsById(newAcc.getBranchId())) {
                 // Find Branch by newAcc's branch id
