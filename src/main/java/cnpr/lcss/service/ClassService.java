@@ -381,12 +381,13 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Activate Class">
+    //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<?> activateClass(Map<String, Integer> reqBody) throws Exception {
-        int roomId = reqBody.get("roomId");
-        int teacherId = reqBody.get("teacherId");
-        int classId = reqBody.get("classId");
+    public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
+        int roomId = (int) reqBody.get("roomId");
+        int teacherId = (int) reqBody.get("teacherId");
+        int classId = (int) reqBody.get("classId");
+        String creator = (String) reqBody.get("creator");
 
         try {
             // Find Class by Class ID
@@ -395,6 +396,20 @@ public class ClassService {
                 activateClass = classRepository.findClassByClassId(classId);
             } else {
                 throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
+            }
+
+            // Creator (aka Staff)
+            // Check whether “creator” (request body) matches creator (tbl Class).
+            // If not → update “creator” to the latest value.
+            String classCreator = activateClass.getStaff().getAccount().getUsername();
+            try {
+                if (!creator.equals(classCreator)) {
+                    classCreator = creator;
+                }
+                activateClass.setStaff(staffRepository.findByAccount_Username(classCreator));
+                classRepository.save(activateClass);
+            } catch (Exception e) {
+                throw new Exception(Constant.INVALID_CLASS_CREATOR);
             }
 
             // Find Shift by Class ID in Class

@@ -822,10 +822,11 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/activate-class", method = RequestMethod.POST)
-    public ResponseEntity<?> activateClass(@RequestBody Map<String, Integer> reqBody) throws Exception {
+    public ResponseEntity<?> activateClass(@RequestBody Map<String, Object> reqBody) throws Exception {
         reqBody.get("roomNo");
         reqBody.get("teacherId");
         reqBody.get("classId");
+        reqBody.get("creator");
         return classService.activateClass(reqBody);
     }
     //</editor-fold>
