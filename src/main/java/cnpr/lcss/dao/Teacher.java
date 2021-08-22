@@ -30,10 +30,24 @@ public class Teacher implements Serializable {
 
     @OneToMany(mappedBy = "teacher")
     private List<TeachingBranch> teachingBranchList;
+    @OneToMany(mappedBy = "teacher")
+    private List<Session> sessionList;
 
     public Teacher(String experience, String rating, Account account) {
         this.experience = experience;
         this.rating = rating;
         this.account = account;
+    }
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "teacherId=" + teacherId +
+                ", experience='" + experience + '\'' +
+                ", rating='" + rating + '\'' +
+                ", account=" + account +
+                ", teachingBranchList=" + teachingBranchList +
+                ", sessionList=" + sessionList +
+                '}';
     }
 }

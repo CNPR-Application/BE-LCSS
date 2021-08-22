@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.SessionResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,24 +27,17 @@ public class Session implements Serializable {
     private Date endTime;
     @Column(name = "room_no")
     private int roomNo;
-    @Column(name = "teacher_id")
-    private int teacherId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id")
     private Class aClass;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
     @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attendance> attendanceList;
-
-    public Session(int sessionId, Date startTime, Date endTime, int roomNo, int teacherId) {
-        this.sessionId = sessionId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.roomNo = roomNo;
-        this.teacherId = teacherId;
-    }
 
     @Override
     public String toString() {
@@ -52,7 +46,26 @@ public class Session implements Serializable {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", roomNo=" + roomNo +
-                ", teacherId=" + teacherId +
+                ", aClass=" + aClass +
+                ", teacher=" + teacher +
+                ", attendanceList=" + attendanceList +
                 '}';
+    }
+
+    public SessionResponseDto convertToSessionResponseDto() {
+        SessionResponseDto sessionResponseDto = new SessionResponseDto(
+                sessionId,
+                aClass.getClassId(),
+                aClass.getClassName(),
+                aClass.getSubject().getSubjectId(),
+                aClass.getSubject().getSubjectName(),
+                teacher.getTeacherId(),
+                teacher.getAccount().getName(),
+                teacher.getAccount().getImage(),
+                roomNo,
+                startTime,
+                endTime
+        );
+        return sessionResponseDto;
     }
 }

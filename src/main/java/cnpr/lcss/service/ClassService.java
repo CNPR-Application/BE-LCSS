@@ -41,6 +41,8 @@ public class ClassService {
     StudentInClassRepository studentInClassRepository;
     @Autowired
     SessionRepository sessionRepository;
+    @Autowired
+    TeacherRepository teacherRepository;
 
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
@@ -390,6 +392,9 @@ public class ClassService {
         String creator = (String) reqBody.get("creator");
 
         try {
+            // Find Teacher by Teacher ID
+            Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+
             // Find Class by Class ID
             Class activateClass;
             if (classRepository.existsById(classId)) {
@@ -443,7 +448,7 @@ public class ClassService {
                 for (Date date : dateList) {
                     Session session = new Session();
                     session.setAClass(activateClass);
-                    session.setTeacherId(teacherId);
+                    session.setTeacher(teacher);
                     session.setStartTime(date);
                     Date newDate = new Date();
                     newDate.setDate(date.getDate());
