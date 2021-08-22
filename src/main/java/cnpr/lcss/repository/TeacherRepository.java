@@ -29,4 +29,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     String findBranchNameByTeacherUsername(@Param("username") String teacherUsername);
 
     Teacher findTeacherByAccount_Username(String teacherUsername);
+
+    Teacher findByTeacherId(int teacherId);
 }

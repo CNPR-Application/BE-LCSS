@@ -5,11 +5,13 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -29,6 +31,8 @@ public class RestApi {
     FirebaseService fireBaseService;
     @Autowired
     RegisteringGuestService registeringGuestService;
+    @Autowired
+    SessionService sessionService;
     @Autowired
     ShiftService shiftService;
     @Autowired
@@ -852,6 +856,30 @@ public class RestApi {
                                                                    @RequestParam(value = "pageNo") int pageNo,
                                                                    @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SESSION--------------------------------
+     */
+
+    //<editor-fold desc="11.03-view-schedule">
+
+    /**
+     * @param date
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 11.03-view-schedule
+     * @author LamHNT - 2021.08.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/schedules", method = RequestMethod.GET)
+    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+                                          @RequestParam int pageNo,
+                                          @RequestParam int pageSize) throws Exception {
+        return sessionService.viewSchedule(date, pageNo, pageSize);
     }
     //</editor-fold>
 
