@@ -375,7 +375,7 @@ public class AccountService {
 
             // Password
             try {
-                newPassword = generatePassword(10).toString();
+                newPassword = generatePassword(10);
                 account.setPassword(newPassword);
             } catch (Exception e) {
                 throw new Exception(Constant.ERROR_GENERATE_PASSWORD);

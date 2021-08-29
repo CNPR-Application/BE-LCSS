@@ -1,12 +1,10 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
-import cnpr.lcss.dao.Student;
 import cnpr.lcss.dao.StudentInClass;
-import cnpr.lcss.model.BookingSearchResponseDto;
-import cnpr.lcss.model.StudentDto;
 import cnpr.lcss.model.StudentInClassSearchPagingResponseDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
+import cnpr.lcss.repository.BookingRepository;
 import cnpr.lcss.repository.ClassRepository;
 import cnpr.lcss.repository.StudentInClassRepository;
 import cnpr.lcss.repository.StudentRepository;
@@ -29,6 +27,9 @@ public class StudentInClassService {
     StudentRepository studentRepository;
     @Autowired
     ClassRepository classRepository;
+    @Autowired
+    BookingRepository bookingRepository;
+
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
     public StudentInClassSearchPagingResponseDto findStudentInClassByClassId(int classId, int pageNo, int pageSize) {
         // pageNo starts at 0
@@ -47,26 +48,20 @@ public class StudentInClassService {
     //</editor-fold>
 
     //<editor-fold desc="10.01-move-student-to-opening-class">
-    public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<BookingSearchResponseDto> bookingSearchResponseDto){
+    public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<Integer> bookingId) {
 
         try {
-            //check each booking
-            for (BookingSearchResponseDto bookingSearchResponseDto1 : bookingSearchResponseDto) {
-                List<StudentInClass> studentInClass = studentInClassRepository.findStudentInClassByStudent_Id(bookingSearchResponseDto1.getStudentId());
-
-                //because a student can book two booking
-                //so a student can be in two class
-                //check each student's class
-                for (StudentInClass studentInClass1 : studentInClass) {
-                    //find class by classId(in param)
-                    Class aClass = classRepository.findClassByClassId(classId);
-                    studentInClass1.setAClass(aClass);
-                    //update new class field in student in class
-                    studentInClassRepository.save(studentInClass1);
-                }
+            for (int bookingIdCheck : bookingId) {
+                StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingIdCheck);
+                //find class by classId(in param)
+                Class aClass = classRepository.findClassByClassId(classId);
+                studentInClass.setAClass(aClass);
+                // update new class field in student in class
+                studentInClassRepository.save(studentInClass);
 
             }
-        }catch (Exception ex){
+
+        } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.ok(Boolean.FALSE);
         }

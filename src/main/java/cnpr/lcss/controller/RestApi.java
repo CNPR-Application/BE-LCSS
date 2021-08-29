@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -866,7 +867,7 @@ public class RestApi {
     /**
      *
      * @param classId
-     * @param bookingSearchResponseDtoList
+     * @param
      * @return
      * @throws Exception
      * @apiNote 10.01-move-student-in-class-by-class-id
@@ -875,8 +876,8 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/move-student-in-class", method = RequestMethod.PUT)
     public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
-                                                @RequestBody List<BookingSearchResponseDto> bookingSearchResponseDtoList) throws Exception {
-        return studentInClassService.moveStudentToOpeningClass(classId,bookingSearchResponseDtoList);
+                                                @RequestBody List<Integer> bookingId) throws Exception {
+        return studentInClassService.moveStudentToOpeningClass(classId,bookingId);
     }
     //</editor-fold>
 

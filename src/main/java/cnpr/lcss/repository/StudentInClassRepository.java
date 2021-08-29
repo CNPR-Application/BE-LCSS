@@ -23,7 +23,9 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
             "WHERE sic.aClass.classId = :classId")
     List<StudentInClass> findStudentsByClassId(@Param(value = "classId") int classId);
 
-    List<StudentInClass> findStudentInClassByStudent_Id(int studentId);
+    //List<StudentInClass> findStudentInClassByStudent_Id(int studentId);
+
+    StudentInClass findStudentInClassByBooking_BookingId(int bookingId);
 
     Page<StudentInClass> findStudentInClassByaClass_ClassId(int classId, Pageable pageable);
 }
