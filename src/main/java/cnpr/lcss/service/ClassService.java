@@ -109,7 +109,7 @@ public class ClassService {
             }
 
             // Opening Date
-            if (insClass.getOpeningDate() != null && insClass.getOpeningDate().getDate() >= today.getDate()) {
+            if (insClass.getOpeningDate() != null && insClass.getOpeningDate().compareTo(today) >= 0) {
                 // Check whether Opening Date is a day in Shift
                 Date openingDate = insClass.getOpeningDate();
                 // Sunday = 0
