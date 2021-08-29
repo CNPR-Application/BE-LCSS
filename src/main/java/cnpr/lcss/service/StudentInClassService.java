@@ -30,6 +30,25 @@ public class StudentInClassService {
     @Autowired
     BookingRepository bookingRepository;
 
+    //<editor-fold desc="10.01-move-student-to-opening-class">
+    public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<Integer> bookingIdList) {
+        try {
+            for (int bookingId : bookingIdList) {
+                StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
+                // find class by classId (in param)
+                Class aClass = classRepository.findClassByClassId(classId);
+                studentInClass.setAClass(aClass);
+                // update new class field in student in class
+                studentInClassRepository.save(studentInClass);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+        return ResponseEntity.ok(Boolean.TRUE);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
     public StudentInClassSearchPagingResponseDto findStudentInClassByClassId(int classId, int pageNo, int pageSize) {
         // pageNo starts at 0
@@ -44,29 +63,6 @@ public class StudentInClassService {
         StudentInClassSearchPagingResponseDto studentInClassSearchPagingResponseDto = new StudentInClassSearchPagingResponseDto(pageNo, pageSize, pageTotal, studentInClassSearchResponseDtos);
 
         return studentInClassSearchPagingResponseDto;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="10.01-move-student-to-opening-class">
-    public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<Integer> bookingId) {
-
-        try {
-            for (int bookingIdCheck : bookingId) {
-                StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingIdCheck);
-                //find class by classId(in param)
-                Class aClass = classRepository.findClassByClassId(classId);
-                studentInClass.setAClass(aClass);
-                // update new class field in student in class
-                studentInClassRepository.save(studentInClass);
-
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
-        }
-        return ResponseEntity.ok(Boolean.TRUE);
-
     }
     //</editor-fold>
 }

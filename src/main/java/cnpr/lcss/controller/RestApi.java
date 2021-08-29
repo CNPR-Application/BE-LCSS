@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -864,8 +863,8 @@ public class RestApi {
      */
 
     //<editor-fold desc="10.01-move-student-in-class-by-class-id">
+
     /**
-     *
      * @param classId
      * @param
      * @return
@@ -877,7 +876,7 @@ public class RestApi {
     @RequestMapping(value = "/move-student-in-class", method = RequestMethod.PUT)
     public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
                                                 @RequestBody List<Integer> bookingId) throws Exception {
-        return studentInClassService.moveStudentToOpeningClass(classId,bookingId);
+        return studentInClassService.moveStudentToOpeningClass(classId, bookingId);
     }
     //</editor-fold>
 
