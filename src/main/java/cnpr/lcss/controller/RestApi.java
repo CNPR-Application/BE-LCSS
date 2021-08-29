@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -860,6 +861,24 @@ public class RestApi {
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
+
+    //<editor-fold desc="10.01-move-student-in-class-by-class-id">
+
+    /**
+     * @param classId
+     * @param
+     * @return
+     * @throws Exception
+     * @apiNote 10.01-move-student-in-class-by-class-id
+     * @author HuuNT - 2021.08.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/move-student-in-class", method = RequestMethod.PUT)
+    public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
+                                                @RequestBody List<Integer> bookingId) throws Exception {
+        return studentInClassService.moveStudentToOpeningClass(classId, bookingId);
+    }
+    //</editor-fold>
 
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
 
