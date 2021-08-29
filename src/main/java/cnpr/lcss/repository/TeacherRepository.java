@@ -35,4 +35,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     Teacher findByTeacherId(int teacherId);
 
     Page<Teacher> findByTeachingBranchList_Branch_BranchIdAndTeachingSubjectList_Subject_SubjectId(int branchId, int subjectId, Pageable pageable);
+
+    Page<Teacher> findByTeachingSubjectList_Subject_SubjectId(int subjectId, Pageable pageable);
+
+    Page<Teacher> findByTeachingBranchList_Branch_BranchId(int branchId, Pageable pageable);
+
+    @Query(value = "SELECT t " +
+            "FROM Teacher AS t ")
+    Page<Teacher> findAllTeacher(Pageable pageable);
 }
