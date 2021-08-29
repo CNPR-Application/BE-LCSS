@@ -48,20 +48,6 @@ public class Account implements Serializable {
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
 
-    public Account(String username, String password, String name, Date birthday, String address, String phone, String email, String image, String role, boolean isAvailable, Date creatingDate) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.birthday = birthday;
-        this.address = address;
-        this.phone = phone;
-        this.email = email;
-        this.image = image;
-        this.role = role;
-        this.isAvailable = isAvailable;
-        this.creatingDate = creatingDate;
-    }
-
     public boolean getIsAvailable() {
         return isAvailable;
     }

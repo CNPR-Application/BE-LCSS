@@ -41,6 +41,8 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     StudentInClassService studentInClassService;
+    @Autowired
+    TeacherService teacherService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -50,6 +52,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/")
+
     public String welcome() {
         return "Welcome to LCSS - Language Center Support System!";
     }
@@ -178,6 +181,25 @@ public class RestApi {
     @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
         return accountService.deleteByUserName(keyword);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.11-search-teachers-by-branch-id-and-by-subject-id">
+
+    /**
+     * @param branchId
+     * @param subjectId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.11-search-teachers-by-branch-id-and-by-subject-id
+     * @author LamHNT - 2021.08.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers", method = RequestMethod.GET)
+    public ResponseEntity<?> findTeachersByBranchIdAndSubjectId(int branchId, int subjectId, int pageNo, int pageSize) throws Exception {
+        return teacherService.findTeachersByBranchIdAndSubjectId(branchId, subjectId, pageNo, pageSize);
     }
     //</editor-fold>
 
