@@ -47,6 +47,8 @@ public class Subject implements Serializable {
     private List<SubjectDetail> subjectDetailList;
     @OneToMany(mappedBy = "subject")
     private List<Class> classList;
+    @OneToMany(mappedBy = "subject")
+    private List<TeachingSubject> teachingSubjectList;
 
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
@@ -65,16 +67,19 @@ public class Subject implements Serializable {
         this.rating = rating;
     }
 
+    //<editor-fold desc="Convert to SubjectDto">
     public SubjectDto convertToDto() {
         SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
         return subjectDto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Convert to SearchDto">
     public SubjectSearchDto convertToSearchDto() {
         SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
         return subjectSearchDto;
     }
-    // Modify Getter & Setter
+    //</editor-fold>
 
     public boolean getIsAvailable() {
         return isAvailable;
@@ -82,22 +87,5 @@ public class Subject implements Serializable {
 
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
-    }
-
-    @Override
-    public String toString() {
-        return "Subject{" +
-                "subjectId=" + subjectId +
-                ", subjectCode='" + subjectCode + '\'' +
-                ", subjectName='" + subjectName + '\'' +
-                ", price=" + price +
-                ", creatingDate=" + creatingDate +
-                ", description='" + description + '\'' +
-                ", isAvailable=" + isAvailable +
-                ", image='" + image + '\'' +
-                ", slot=" + slot +
-                ", slotPerWeek=" + slotPerWeek +
-                ", rating='" + rating + '\'' +
-                '}';
     }
 }
