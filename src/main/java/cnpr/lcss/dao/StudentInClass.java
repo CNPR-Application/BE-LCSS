@@ -37,19 +37,6 @@ public class StudentInClass implements Serializable {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-
-    public StudentInClassSearchResponseDto convertToSearchDto() {
-        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
-         aClass.getClassId(),
-        student.getId(),
-        student.getAccount().getUsername(),
-       student.getAccount().getName(),
-         student.getAccount().getImage(),
-         booking.getBookingId(),
-        booking.getPayingDate());
-                return studentInClassSearchResponseDto;
-    }
-
     @OneToMany(mappedBy = "studentInClass", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attendance> attendanceList;
@@ -61,6 +48,21 @@ public class StudentInClass implements Serializable {
         this.feedback = feedback;
     }
 
+    //<editor-fold desc="Convert to SearchDto">
+    public StudentInClassSearchResponseDto convertToSearchDto() {
+        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
+                aClass.getClassId(),
+                student.getId(),
+                student.getAccount().getUsername(),
+                student.getAccount().getName(),
+                student.getAccount().getImage(),
+                booking.getBookingId(),
+                booking.getPayingDate());
+        return studentInClassSearchResponseDto;
+    }
+
+    //</editor-fold>
+    
     @Override
     public String toString() {
         return "StudentInClass{" +
