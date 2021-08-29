@@ -42,13 +42,13 @@ public class TeacherService {
                 List<TeachingBranchBasicInfoDto> teachingBranchBasicInfoDtoList
                         = teachingBranchRepository.findByTeacher_TeacherId(aTeacher.getTeacherId())
                         .stream().map(teachingBranch -> teachingBranch.convertToTeachingBranchBasicInfoDto()).collect(Collectors.toList());
-                aTeacher.setTeachingBranchBasicInfoDtoList(teachingBranchBasicInfoDtoList);
+                aTeacher.setTeachingBranchList(teachingBranchBasicInfoDtoList);
 
                 // Mapping one by one Teaching Subject to aTeacher
                 List<TeachingSubjectBasicInfoDto> teachingSubjectBasicInfoDtoList
                         = teachingSubjectRepository.findByTeacher_TeacherId(aTeacher.getTeacherId())
                         .stream().map(teachingSubject -> teachingSubject.convertToTeachingBranchBasicInfoDto()).collect(Collectors.toList());
-                aTeacher.setTeachingSubjectBasicInfoDtoList(teachingSubjectBasicInfoDtoList);
+                aTeacher.setTeachingSubjectList(teachingSubjectBasicInfoDtoList);
             }
             int totalPage = teacherPage.getTotalPages();
 

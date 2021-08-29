@@ -23,6 +23,6 @@ public class TeacherDto {
     private String image;
     private String role;
     private Date creatingDate;
-    private List<TeachingBranchBasicInfoDto> teachingBranchBasicInfoDtoList;
-    private List<TeachingSubjectBasicInfoDto> teachingSubjectBasicInfoDtoList;
+    private List<TeachingBranchBasicInfoDto> teachingBranchList;
+    private List<TeachingSubjectBasicInfoDto> teachingSubjectList;
 }
