@@ -114,6 +114,7 @@ public class Constant {
     public static final String TWO_DAYS_OF_WEEK_PATTERN = "(((\\d)[-])+(\\d|[C][N])){1}";
     public static final String THREE_DAYS_OF_WEEK_PATTERN = "(((\\d)[-]){2})+(\\d|[C][N]){1}";
     // Error Message
+    public static final String ERROR_GET_CLASS_ID = "Unable to get Class ID!";
     public static final String INVALID_CLASS_CREATOR = "Invalid Class Creator!";
     public static final String INVALID_CLASS_ID = "Class ID not exist!";
     public static final String INVALID_CLASS_NAME = "Null or empty class name!";

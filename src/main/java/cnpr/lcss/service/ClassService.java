@@ -143,9 +143,20 @@ public class ClassService {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }
 
-            classRepository.save(newClass);
+            // Get Booking ID
+            int classId;
+            try {
+                Class aClass = classRepository.save(newClass);
+                classId = aClass.getClassId();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GET_CLASS_ID);
+            }
 
-            return ResponseEntity.ok(true);
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("classId", classId);
+
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
