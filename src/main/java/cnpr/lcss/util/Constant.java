@@ -161,6 +161,14 @@ public class Constant {
     public static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
     //</editor-fold>
 
+    //<editor-fold desc="Room">
+    /**
+     * -----ROOM-----
+     */
+    // Error Message
+    public static final String ERROR_GET_ROOM_ID = "Unable to get Room ID!";
+    //</editor-fold>
+
     //<editor-fold desc="Session">
     /**
      * -----SESSION-----
