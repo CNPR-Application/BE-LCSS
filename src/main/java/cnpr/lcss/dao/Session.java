@@ -34,24 +34,15 @@ public class Session implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Attendance> attendanceList;
 
-    @Override
-    public String toString() {
-        return "Session{" +
-                "sessionId=" + sessionId +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", roomNo=" + roomNo +
-                ", aClass=" + aClass +
-                ", teacher=" + teacher +
-                ", attendanceList=" + attendanceList +
-                '}';
-    }
-
+    //<editor-fold desc="Convert to SessionResponseDto">
     public SessionResponseDto convertToSessionResponseDto() {
         SessionResponseDto sessionResponseDto = new SessionResponseDto(
                 sessionId,
@@ -68,4 +59,5 @@ public class Session implements Serializable {
         );
         return sessionResponseDto;
     }
+    //</editor-fold>
 }

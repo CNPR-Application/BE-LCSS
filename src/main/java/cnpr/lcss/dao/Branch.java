@@ -50,6 +50,9 @@ public class Branch implements Serializable {
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Booking> bookingList;
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Room> roomList;
 
     public Branch(int branchId, String branchName) {
         this.branchId = branchId;

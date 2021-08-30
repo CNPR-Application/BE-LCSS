@@ -43,6 +43,9 @@ public class Class implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "creator")
     private Staff staff;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     @JsonIgnore
