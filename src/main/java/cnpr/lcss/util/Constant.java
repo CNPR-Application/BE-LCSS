@@ -216,6 +216,7 @@ public class Constant {
      * -----STUDENT IN CLASS-----
      */
     // Error Message
+    public static final String ERROR_MOVE_STUDENT = "Move Student to Opening Class FAILED!";
     public static final String ERROR_SAVE_STUDENT_IN_CLASS = "Save student in class FAILED!";
     //</editor-fold>
 

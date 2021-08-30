@@ -854,6 +854,7 @@ public class RestApi {
         reqBody.get("teacherId");
         reqBody.get("classId");
         reqBody.get("creator");
+        reqBody.get("bookingIdList");
         return classService.activateClass(reqBody);
     }
     //</editor-fold>

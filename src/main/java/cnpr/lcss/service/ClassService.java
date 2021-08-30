@@ -86,6 +86,28 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Convert CN to 1">
+    private String[] convertDowToInteger(String[] daysOfWeek) {
+        String[] daysOfWeekCopy = new String[daysOfWeek.length];
+        // Copy the old one to the new one
+        System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
+        // Replace the last element from "CN" to "1"
+        if (daysOfWeekCopy[daysOfWeek.length - 1] == "CN") {
+            daysOfWeekCopy[daysOfWeek.length - 1] = "1";
+        }
+        // Append
+        daysOfWeek = daysOfWeekCopy;
+        return daysOfWeek;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Is Days In Shift">
+    private boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
+        return Arrays.stream(convertDowToInteger(daysOfWeek))
+                .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.01-search-class-by-subject-id-shift-id-status-paging">
     public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
         HashMap<String, Object> mapObj = new LinkedHashMap();
@@ -306,58 +328,7 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Class By BranchId and Status">
-    public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(int branchId, String status, int pageNo, int pageSize) throws Exception {
-        try {
-            if (branchRepository.existsBranchByBranchId(branchId)) {
-                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-                HashMap<String, Object> mapObj = new LinkedHashMap();
-                Page<Class> classList = classRepository.findClassByBranch_BranchIdAndStatus(branchId, status, pageable);
-                List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
-                int pageTotal = classList.getTotalPages();
-
-                for (ClassDto aClass : classDtoList) {
-                    // Subject Name
-                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-                    // Branch Name
-                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-                    // Shift Description
-                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
-                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                            + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
-                    aClass.setShiftDescription(description);
-                    // Teacher AND Room
-                    if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
-                        aClass.setTeacherId(0);
-                        aClass.setTeacherName(null);
-                        aClass.setRoomNo(0);
-                    } else {
-                        // TODO: create connection between Session and Teacher
-                        // TODO: check validation of Status
-                        // Temporary set to 0 or null
-                        aClass.setTeacherId(0);
-                        aClass.setTeacherName(null);
-                        aClass.setRoomNo(0);
-                    }
-                }
-
-                mapObj.put("pageNo", pageNo);
-                mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", classDtoList);
-                return ResponseEntity.ok(mapObj);
-            } else {
-                throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Get Classes Statistic">
+    //<editor-fold desc="9.09-get-classes-statistic">
     public ResponseEntity<?> getClassesStatistic(int branchId) throws Exception {
         /**
          * if branch id = 0 => find all branches by status
@@ -388,39 +359,21 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Convert CN to 1">
-    private String[] convertDowToInteger(String[] daysOfWeek) {
-        String[] daysOfWeekCopy = new String[daysOfWeek.length];
-        // Copy the old one to the new one
-        System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
-        // Replace the last element from "CN" to "1"
-        if (daysOfWeekCopy[daysOfWeek.length - 1] == "CN") {
-            daysOfWeekCopy[daysOfWeek.length - 1] = "1";
-        }
-        // Append
-        daysOfWeek = daysOfWeekCopy;
-        return daysOfWeek;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Is Days In Shift">
-    private boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
-        return Arrays.stream(convertDowToInteger(daysOfWeek))
-                .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
-    }
-    //</editor-fold>
-
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomId = (int) reqBody.get("roomId");
+        int roomNo = (int) reqBody.get("roomNo");
         int teacherId = (int) reqBody.get("teacherId");
         int classId = (int) reqBody.get("classId");
         String creator = (String) reqBody.get("creator");
+        List<Integer> bookingIdList = (List<Integer>) reqBody.get("bookingIdList");
 
         try {
             // Find Teacher by Teacher ID
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+
+            // Find Room by Room ID
+            Room room = roomRepository.findByRoomNo(roomNo);
 
             // Find Class by Class ID
             Class activateClass;
@@ -428,6 +381,19 @@ public class ClassService {
                 activateClass = classRepository.findClassByClassId(classId);
             } else {
                 throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
+            }
+
+            // Move Student to Opening Class
+            try {
+                for (int bookingId : bookingIdList) {
+                    StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
+                    studentInClass.setAClass(activateClass);
+                    // update new class field in student in class
+                    studentInClassRepository.save(studentInClass);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_MOVE_STUDENT);
             }
 
             // Creator (aka Staff)
@@ -481,7 +447,7 @@ public class ClassService {
                     newDate.setDate(date.getDate());
                     newDate.setTime(date.getTime() + activateClass.getShift().getDuration() * 60000);
                     session.setEndTime(newDate);
-                    session.setRoomNo(roomId);
+                    session.setRoom(room);
                     sessionList.add(session);
                 }
                 sessionRepository.saveAll(sessionList);

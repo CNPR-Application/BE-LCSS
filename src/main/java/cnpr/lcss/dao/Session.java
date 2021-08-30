@@ -25,8 +25,6 @@ public class Session implements Serializable {
     private Date startTime;
     @Column(name = "end_time")
     private Date endTime;
-    @Column(name = "room_no")
-    private int roomNo;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "class_id")
@@ -53,7 +51,7 @@ public class Session implements Serializable {
                 teacher.getTeacherId(),
                 teacher.getAccount().getName(),
                 teacher.getAccount().getImage(),
-                roomNo,
+                room.getRoomId(),
                 startTime,
                 endTime
         );
