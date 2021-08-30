@@ -43,6 +43,134 @@ public class ClassService {
     SessionRepository sessionRepository;
     @Autowired
     TeacherRepository teacherRepository;
+    @Autowired
+    RoomRepository roomRepository;
+
+    //<editor-fold desc="Auto Mapping">
+    public List<ClassDto> autoMapping(Page<Class> classList) {
+        List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
+
+        for (ClassDto aClass : classDtoList) {
+            // Subject Name
+            aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+            // Subject Price
+            aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
+            // Branch Name
+            aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+            // Shift Description
+            String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                    + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+            aClass.setShiftDescription(description);
+            // Teacher AND Room
+            if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                aClass.setTeacherId(0);
+                aClass.setTeacherName(null);
+                aClass.setRoomNo(0);
+            } else {
+                // TODO: create connection between Session and Teacher
+                // TODO: check validation of Status
+                // Temporary set to 0 or null
+                aClass.setTeacherId(0);
+                aClass.setTeacherName(null);
+                aClass.setRoomNo(0);
+            }
+            // Count Student In Class by Class ID
+            aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
+            // Manager ID
+            aClass.setManagerId(aClass.getManagerId());
+            // Manager Username
+            aClass.setManagerUsername(aClass.getManagerUsername());
+        }
+        return classDtoList;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.01-search-class-by-subject-id-shift-id-status-paging">
+    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
+        HashMap<String, Object> mapObj = new LinkedHashMap();
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        /**
+         * 8 CASES:
+         * (Branch ID is MUST EXIST)
+         * CASE 1: Subject ID != 0
+         * CASE 2: Subject ID != 0 && Shift ID != 0
+         * CASE 3: Subject ID != 0 && Shift ID != 0 && Status != null/empty
+         * CASE 4: Subject ID != 0 && Status != null/empty
+         * CASE 5: Shift ID != 0
+         * CASE 6: Shift ID != 0 && Status != 0
+         * CASE 7: Status != 0
+         * CASE 8: All = 0
+         */
+        try {
+            Page<Class> classList;
+            int pageTotal;
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+
+            // CASE 1
+            if (branchId != 0 && subjectId != 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
+                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectId(branchId, subjectId, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 2
+            if (branchId != 0 && subjectId != 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
+                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftId(branchId, subjectId, shiftId, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 3
+            if (branchId != 0 && subjectId != 0 && shiftId != 0 && !status.isEmpty() && status != null) {
+                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(branchId, subjectId, shiftId, status, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 4
+            if (branchId != 0 && subjectId != 0 && shiftId == 0 && !status.isEmpty() && status != null) {
+                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndStatusContainingAllIgnoreCase(branchId, subjectId, status, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 5
+            if (branchId != 0 && subjectId == 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
+                classList = classRepository.findByBranch_BranchIdAndShift_ShiftId(branchId, shiftId, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 6
+            if (branchId != 0 && subjectId == 0 && shiftId != 0 && !status.isEmpty() && status != null) {
+                classList = classRepository.findByBranch_BranchIdAndShift_ShiftIdAndStatusContainingAllIgnoreCase(branchId, shiftId, status, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 7
+            if (branchId != 0 && subjectId == 0 && shiftId == 0 && !status.isEmpty() && status != null) {
+                classList = classRepository.findByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            // CASE 8
+            if (branchId != 0 && subjectId == 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
+                classList = classRepository.findByBranch_BranchId(branchId, pageable);
+                pageTotal = classList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(classList));
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
@@ -143,6 +271,20 @@ public class ClassService {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             }
 
+            // Room
+            try {
+                // Find Room based on Room No
+                Room room = roomRepository.findByRoomNo(insClass.getRoomNo());
+                // Insert Room to new Class
+                newClass.setRoom(room);
+                // Update Room - isAvailable to false
+                room.setIsAvailable(false);
+                roomRepository.save(room);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GET_ROOM_ID);
+            }
+
             // Get Booking ID
             int classId;
             try {
@@ -156,132 +298,6 @@ public class ClassService {
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("classId", classId);
 
-            return ResponseEntity.ok(mapObj);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Auto Mapping">
-    public List<ClassDto> autoMapping(Page<Class> classList) {
-        List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
-
-        for (ClassDto aClass : classDtoList) {
-            // Subject Name
-            aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-            // Subject Price
-            aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
-            // Branch Name
-            aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-            // Shift Description
-            String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
-                    + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
-            aClass.setShiftDescription(description);
-            // Teacher AND Room
-            if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
-                aClass.setTeacherId(0);
-                aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
-            } else {
-                // TODO: create connection between Session and Teacher
-                // TODO: check validation of Status
-                // Temporary set to 0 or null
-                aClass.setTeacherId(0);
-                aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
-            }
-            // Count Student In Class by Class ID
-            aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
-            // Manager ID
-            aClass.setManagerId(aClass.getManagerId());
-            // Manager Username
-            aClass.setManagerUsername(aClass.getManagerUsername());
-        }
-        return classDtoList;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="9.01-Search all Class by Branch Id / Subject Id / Shift Id / Status - Paging">
-    public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
-        HashMap<String, Object> mapObj = new LinkedHashMap();
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        /**
-         * 8 CASES:
-         * (Branch ID is MUST EXIST)
-         * CASE 1: Subject ID != 0
-         * CASE 2: Subject ID != 0 && Shift ID != 0
-         * CASE 3: Subject ID != 0 && Shift ID != 0 && Status != null/empty
-         * CASE 4: Subject ID != 0 && Status != null/empty
-         * CASE 5: Shift ID != 0
-         * CASE 6: Shift ID != 0 && Status != 0
-         * CASE 7: Status != 0
-         * CASE 8: All = 0
-         */
-        try {
-            Page<Class> classList;
-            int pageTotal;
-            mapObj.put("pageNo", pageNo);
-            mapObj.put("pageSize", pageSize);
-
-            // CASE 1
-            if (branchId != 0 && subjectId != 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
-                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectId(branchId, subjectId, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 2
-            if (branchId != 0 && subjectId != 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
-                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftId(branchId, subjectId, shiftId, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 3
-            if (branchId != 0 && subjectId != 0 && shiftId != 0 && !status.isEmpty() && status != null) {
-                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(branchId, subjectId, shiftId, status, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 4
-            if (branchId != 0 && subjectId != 0 && shiftId == 0 && !status.isEmpty() && status != null) {
-                classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndStatusContainingAllIgnoreCase(branchId, subjectId, status, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 5
-            if (branchId != 0 && subjectId == 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
-                classList = classRepository.findByBranch_BranchIdAndShift_ShiftId(branchId, shiftId, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 6
-            if (branchId != 0 && subjectId == 0 && shiftId != 0 && !status.isEmpty() && status != null) {
-                classList = classRepository.findByBranch_BranchIdAndShift_ShiftIdAndStatusContainingAllIgnoreCase(branchId, shiftId, status, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 7
-            if (branchId != 0 && subjectId == 0 && shiftId == 0 && !status.isEmpty() && status != null) {
-                classList = classRepository.findByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
-            // CASE 8
-            if (branchId != 0 && subjectId == 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
-                classList = classRepository.findByBranch_BranchId(branchId, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", autoMapping(classList));
-            }
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
