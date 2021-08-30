@@ -41,13 +41,12 @@ public class Account implements Serializable {
 
     @OneToOne(mappedBy = "account")
     private Staff staff;
-
     @OneToOne(mappedBy = "account")
     private Student student;
-
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
 
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -55,4 +54,5 @@ public class Account implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }
