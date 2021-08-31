@@ -194,7 +194,7 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Class By BranchId and Status">
+    //<editor-fold desc="9.02-Get-all-class-by-branchId-status">
     public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(int branchId, String status, int pageNo, int pageSize) throws Exception {
         try {
             if (branchRepository.existsBranchByBranchId(branchId)) {
@@ -220,13 +220,18 @@ public class ClassService {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                         aClass.setRoomNo(0);
+                        aClass.setRoomId(0);
                     } else {
-                        // TODO: create connection between Session and Teacher
-                        // TODO: check validation of Status
-                        // Temporary set to 0 or null
-                        aClass.setTeacherId(0);
-                        aClass.setTeacherName(null);
-                        aClass.setRoomNo(0);
+                        //find room by ID
+                        Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                        //get list session
+                        List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        //get teacher
+                        Teacher teacher = sessionList.get(0).getTeacher();
+                        aClass.setTeacherId(teacher.getTeacherId());
+                        aClass.setTeacherName(teacher.getAccount().getName());
+                        aClass.setRoomNo(room.getRoomNo());
+                        aClass.setRoomId(room.getRoomId());
                     }
                 }
                 mapObj.put("pageNo", pageNo);
