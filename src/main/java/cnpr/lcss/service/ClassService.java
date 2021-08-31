@@ -353,8 +353,6 @@ public class ClassService {
                 Room room = roomRepository.findByRoomNo(insClass.getRoomNo());
                 // Insert Room to new Class
                 newClass.setRoom(room);
-                // Update Room - isAvailable to false
-                room.setIsAvailable(false);
                 roomRepository.save(room);
             } catch (Exception e) {
                 e.printStackTrace();
