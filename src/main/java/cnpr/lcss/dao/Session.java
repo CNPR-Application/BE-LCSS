@@ -42,20 +42,18 @@ public class Session implements Serializable {
 
     //<editor-fold desc="Convert to SessionResponseDto">
     public SessionResponseDto convertToSessionResponseDto() {
-        SessionResponseDto sessionResponseDto = new SessionResponseDto(
-                sessionId,
-                aClass.getClassId(),
-                aClass.getClassName(),
-                aClass.getSubject().getSubjectId(),
-                aClass.getSubject().getSubjectName(),
-                teacher.getTeacherId(),
-                teacher.getAccount().getName(),
-                teacher.getAccount().getImage(),
-                room.getRoomId(),
-                startTime,
-                endTime
-        );
-        return sessionResponseDto;
+        SessionResponseDto dto = new SessionResponseDto();
+        dto.setSessionId(sessionId);
+        dto.setClassId(aClass.getClassId());
+        dto.setClassName(aClass.getClassName());
+        dto.setSubjectId(aClass.getSubject().getSubjectId());
+        dto.setSubjectName(aClass.getSubject().getSubjectName());
+        dto.setTeacherId(teacher.getTeacherId());
+        dto.setTeacherImage(teacher.getAccount().getImage());
+        dto.setRoomNo(room.getRoomNo());
+        dto.setStartTime(startTime);
+        dto.setEndTime(endTime);
+        return dto;
     }
     //</editor-fold>
 }
