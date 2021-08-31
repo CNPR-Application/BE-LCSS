@@ -49,6 +49,7 @@ public class Session implements Serializable {
         dto.setSubjectId(aClass.getSubject().getSubjectId());
         dto.setSubjectName(aClass.getSubject().getSubjectName());
         dto.setTeacherId(teacher.getTeacherId());
+        dto.setTeacherName(teacher.getAccount().getName());
         dto.setTeacherImage(teacher.getAccount().getImage());
         dto.setRoomNo(room.getRoomNo());
         dto.setStartTime(startTime);
