@@ -213,7 +213,7 @@ public class ClassService {
                     // Shift Description
                     String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
                             + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                            + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
                     aClass.setShiftDescription(description);
                     // Teacher is no need to query if status are WAITING OR CANCELED
                     if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
