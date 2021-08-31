@@ -75,6 +75,8 @@ public class Class implements Serializable {
             dto.setManagerId(0);
             dto.setManagerUsername(null);
         }
+        dto.setRoomId(room.getRoomId());
+        dto.setTeacherId(sessionList.get(0).getTeacher().getTeacherId());
         return dto;
     }
 

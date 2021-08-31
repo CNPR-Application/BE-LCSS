@@ -221,12 +221,16 @@ public class ClassService {
                         aClass.setTeacherName(null);
                         aClass.setRoomNo(0);
                     } else {
-                        // TODO: create connection between Session and Teacher
-                        // TODO: check validation of Status
-                        // Temporary set to 0 or null
-                        aClass.setTeacherId(0);
-                        aClass.setTeacherName(null);
-                        aClass.setRoomNo(0);
+                        //find room by ID
+                        Room room=roomRepository.findByRoomId(aClass.getRoomId());
+                        //get list session
+                        List<Session>sessionList=sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        //get teacher
+                        Teacher teacher=sessionList.get(0).getTeacher();
+                        aClass.setTeacherId(teacher.getTeacherId());
+                        aClass.setTeacherName(teacher.getAccount().getName());
+                        aClass.setRoomNo(room.getRoomNo());
+                        aClass.setRoomId(room.getRoomId());
                     }
                 }
                 mapObj.put("pageNo", pageNo);
