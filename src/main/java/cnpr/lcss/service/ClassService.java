@@ -219,7 +219,6 @@ public class ClassService {
                     if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
-
                     } else {
                         //get list session
                         List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
@@ -227,14 +226,13 @@ public class ClassService {
                         Teacher teacher = sessionList.get(0).getTeacher();
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
-
                     }
                     //ROOM
                     //find room by ID
-                    Room room=roomRepository.findByRoomId(aClass.getRoomId());
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
                     aClass.setRoomNo(room.getRoomNo());
                     aClass.setRoomId(room.getRoomId());
-                    int numberOfStudent=studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                    int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                     aClass.setNumberOfStudent(numberOfStudent);
                 }
                 mapObj.put("pageNo", pageNo);
