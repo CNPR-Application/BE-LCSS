@@ -24,7 +24,7 @@ public class Teacher implements Serializable {
     @Column(name = "rating")
     private String rating;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "teacher_username", referencedColumnName = "username")
     private Account account;
 
@@ -35,23 +35,13 @@ public class Teacher implements Serializable {
     @OneToMany(mappedBy = "teacher")
     private List<TeachingSubject> teachingSubjectList;
 
+    //<editor-fold desc="Modify Constructor">
     public Teacher(String experience, String rating, Account account) {
         this.experience = experience;
         this.rating = rating;
         this.account = account;
     }
-
-    @Override
-    public String toString() {
-        return "Teacher{" +
-                "teacherId=" + teacherId +
-                ", experience='" + experience + '\'' +
-                ", rating='" + rating + '\'' +
-                ", account=" + account +
-                ", teachingBranchList=" + teachingBranchList +
-                ", sessionList=" + sessionList +
-                '}';
-    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert to TeacherDto">
     public TeacherDto convertToTeacherDto() {

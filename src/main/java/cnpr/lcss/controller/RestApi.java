@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 public class RestApi {
-
     @Autowired
     AccountService accountService;
     @Autowired

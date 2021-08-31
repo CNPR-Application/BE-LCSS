@@ -26,17 +26,17 @@ public class Session implements Serializable {
     @Column(name = "end_time")
     private Date endTime;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "class_id")
     private Class aClass;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "session")
     @JsonIgnore
     private List<Attendance> attendanceList;
 
