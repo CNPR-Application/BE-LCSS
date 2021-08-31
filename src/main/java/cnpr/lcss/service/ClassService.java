@@ -215,24 +215,25 @@ public class ClassService {
                             + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
                             + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
                     aClass.setShiftDescription(description);
-                    // Teacher AND Room
+                    // Teacher is no need to query if status are WAITING OR CANCELED
                     if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
-                        aClass.setRoomNo(0);
-                        aClass.setRoomId(0);
+
                     } else {
-                        //find room by ID
-                        Room room=roomRepository.findByRoomId(aClass.getRoomId());
                         //get list session
                         List<Session>sessionList=sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                         //get teacher
                         Teacher teacher=sessionList.get(0).getTeacher();
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
-                        aClass.setRoomNo(room.getRoomNo());
-                        aClass.setRoomId(room.getRoomId());
+
                     }
+                    //ROOM
+                    //find room by ID
+                    Room room=roomRepository.findByRoomId(aClass.getRoomId());
+                    aClass.setRoomNo(room.getRoomNo());
+                    aClass.setRoomId(room.getRoomId());
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
