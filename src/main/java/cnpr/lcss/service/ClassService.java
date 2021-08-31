@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -375,6 +376,85 @@ public class ClassService {
             mapObj.put("classId", classId);
 
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.07-edit-class">
+    public ResponseEntity<?> editClass(int classId, Map<String, Object> reqBody) throws Exception {
+        try {
+            // Get RequestBody
+            String className = (String) reqBody.get("className");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String reqDate = (String) reqBody.get("openingDate");
+            Date openingDate = sdf.parse(reqDate);
+            Integer roomId = (Integer) reqBody.get("roomId");
+            Integer shiftId = (Integer) reqBody.get("shiftId");
+            String status = (String) reqBody.get("status");
+
+            // Find Class by Class ID
+            Class editClass = classRepository.findClassByClassId(classId);
+
+            /**
+             * If status = waiting
+             * ➞ Edit: className, openingDate, status, shiftId, roomNo
+             * If status != waiting
+             * ➞ Edit: status
+             */
+            // Status = waiting
+            if (editClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
+                // Class Name
+                if (className != null && !className.isEmpty() && !className.equals(editClass.getClassName())) {
+                    editClass.setClassName(className);
+                }
+                // Opening Date
+                try {
+                    if (openingDate != null && openingDate.compareTo(editClass.getOpeningDate()) >= 0) {
+                        // Check whether Opening Date is a day in Shift
+                        // Sunday = 0
+                        int openingDayOfWeek = openingDate.getDay() + 1;
+                        Shift shift = shiftRepository.findShiftByShiftId(editClass.getShift().getShiftId());
+                        String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+                        shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
+                        boolean coincidence = false;
+                        for (String day : shiftDaysOfWeek) {
+                            if (day.equalsIgnoreCase(Integer.toString(openingDayOfWeek))) {
+                                coincidence = true;
+                            }
+                        }
+                        if (!coincidence) {
+                            throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
+                        }
+                        // Set time start same as time start of shift
+                        openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(editClass.getShift().getShiftId()).substring(0, 1)));
+                        editClass.setOpeningDate(openingDate);
+                    }
+                } catch (Exception e) {
+                    throw new ValidationException(Constant.INVALID_OPENING_DATE);
+                }
+                // Status
+                if (status != null && !status.isEmpty() && !status.equals(editClass.getStatus())) {
+                    editClass.setStatus(status);
+                }
+                // Shift ID
+                if (shiftId != null && !shiftId.equals(editClass.getShift().getShiftId())) {
+                    editClass.setShift(shiftRepository.findShiftByShiftId(shiftId));
+                }
+                // Room ID
+                if (roomId != null && roomId != 0 && roomId != editClass.getRoom().getRoomId()) {
+                    editClass.setRoom(roomRepository.findByRoomId(roomId));
+                }
+            } else {
+                // Status
+                if (status != null && !status.isEmpty() && !status.equals(editClass.getStatus())) {
+                    editClass.setStatus(status);
+                }
+            }
+
+            return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
