@@ -220,6 +220,7 @@ public class ClassService {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                         aClass.setRoomNo(0);
+                        aClass.setRoomId(0);
                     } else {
                         //find room by ID
                         Room room=roomRepository.findByRoomId(aClass.getRoomId());
