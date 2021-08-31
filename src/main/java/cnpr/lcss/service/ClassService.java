@@ -234,6 +234,8 @@ public class ClassService {
                     Room room=roomRepository.findByRoomId(aClass.getRoomId());
                     aClass.setRoomNo(room.getRoomNo());
                     aClass.setRoomId(room.getRoomId());
+                    int numberOfStudent=studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                    aClass.setNumberOfStudent(numberOfStudent);
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
