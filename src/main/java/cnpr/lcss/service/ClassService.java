@@ -194,7 +194,7 @@ public class ClassService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Class By BranchId and Status">
+    //<editor-fold desc="9.02-Get-all-class-by-branchId-status">
     public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(int branchId, String status, int pageNo, int pageSize) throws Exception {
         try {
             if (branchRepository.existsBranchByBranchId(branchId)) {
@@ -222,9 +222,9 @@ public class ClassService {
 
                     } else {
                         //get list session
-                        List<Session>sessionList=sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                         //get teacher
-                        Teacher teacher=sessionList.get(0).getTeacher();
+                        Teacher teacher = sessionList.get(0).getTeacher();
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
 
