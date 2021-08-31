@@ -46,24 +46,11 @@ public class Booking implements Serializable {
     @JsonIgnore
     private Class aClass;
 
-    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "booking")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 
-    @Override
-    public String toString() {
-        return "Booking{" +
-                "bookingId=" + bookingId +
-                ", payingPrice=" + payingPrice +
-                ", payingDate=" + payingDate +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                ", student=" + student +
-                ", branch=" + branch +
-                ", studentInClassList=" + studentInClassList +
-                '}';
-    }
-
+    //<editor-fold desc="Convert to SearchDto">
     public BookingSearchResponseDto convertToSearchDto() {
         BookingSearchResponseDto bookingSearchResponseDto = new BookingSearchResponseDto(
                 bookingId,
@@ -83,4 +70,5 @@ public class Booking implements Serializable {
         );
         return bookingSearchResponseDto;
     }
+    //</editor-fold>
 }

@@ -19,25 +19,21 @@ public class TeachingBranch implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-
     @Column(name = "starting_date")
     private Date startingDate;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
     //<editor-fold desc="Convert to TeachingBranchBasicInfoDto">
     public TeachingBranchBasicInfoDto convertToTeachingBranchBasicInfoDto() {
         TeachingBranchBasicInfoDto dto = new TeachingBranchBasicInfoDto();
-
         dto.setBranchId(branch.getBranchId());
         dto.setStartingDate(startingDate);
-
         return dto;
     }
     //</editor-fold>

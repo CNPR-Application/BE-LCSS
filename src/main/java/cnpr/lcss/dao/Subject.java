@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "subject")
 public class Subject implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subject_id")
@@ -54,6 +53,7 @@ public class Subject implements Serializable {
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
+    //<editor-fold desc="Modify Constructor">
     public Subject(String subjectCode, String subjectName, float price, Date creatingDate, String description, boolean isAvailable, String image, int slot, int slotPerWeek, String rating) {
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -66,6 +66,17 @@ public class Subject implements Serializable {
         this.slotPerWeek = slotPerWeek;
         this.rating = rating;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify isAvailable">
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert to SubjectDto">
     public SubjectDto convertToDto() {
@@ -80,12 +91,4 @@ public class Subject implements Serializable {
         return subjectSearchDto;
     }
     //</editor-fold>
-
-    public boolean getIsAvailable() {
-        return isAvailable;
-    }
-
-    public void setIsAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
 }
