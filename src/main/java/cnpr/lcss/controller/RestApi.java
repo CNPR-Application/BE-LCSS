@@ -822,6 +822,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.07-edit-class">
+
+    /**
+     * @param classId
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.07-edit-class
+     * @author LamHNT - 2021.08.31
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editClass(@PathVariable int classId,
+                                       @RequestBody Map<String, Object> reqBody) throws Exception {
+        return classService.editClass(classId, reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.09-get-classes-statistic">
 
     /**
