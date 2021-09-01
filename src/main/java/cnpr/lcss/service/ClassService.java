@@ -258,66 +258,29 @@ public class ClassService {
             Date today = calendar.getTime();
             Class newClass = new Class();
 
-            // Class Name
-            if (insClass.getClassName() != null && !insClass.getClassName().isEmpty()) {
-                newClass.setClassName(insClass.getClassName());
-            } else {
-                throw new ValidationException(Constant.INVALID_CLASS_NAME);
-            }
-
-            // Status
-            /**
-             * Default status is "waiting" for new Class
-             */
+            newClass.setClassName(insClass.getClassName());
+            // Default Status for new Class - "waiting"
             newClass.setStatus(Constant.CLASS_STATUS_WAITING);
-
-            // Branch Id
-            if (branchRepository.existsBranchByBranchId(insClass.getBranchId())
-                    && branchRepository.findIsAvailableByBranchId(insClass.getBranchId())) {
-                newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
-            } else {
-                throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-
-            // Subject ID
-            if (subjectRepository.existsSubjectBySubjectId(insClass.getSubjectId())
-                    && subjectRepository.findIsAvailableBySubjectId(insClass.getSubjectId())) {
-                newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
-            } else {
-                throw new ValidationException(Constant.INVALID_SUBJECT_ID);
-            }
-
-            // Slot
-            /**
-             * Slot of Class = Slot of inserted Subject
-             */
+            newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
+            newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
+            // Slot of Class = Slot of inserted Subject
             newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
-
-            // Shift ID
-            // Check existence & is available
-            if (shiftRepository.existsById(insClass.getShiftId())
-                    && shiftRepository.findIsAvailableByShiftId(insClass.getShiftId())) {
-                // Check compatibility of subject's slot per week & shift's day of week
-                /**
-                 * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
-                 * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
-                 * Else throw new Exception
-                 */
-                int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
-                String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
-                if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
-                        || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
-                    newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
-                }
+            /**
+             * Check compatibility of subject's slot per week & shift's day of week
+             * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+             * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+             * Else throw new Exception
+             */
+            int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
+            String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
+            if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
+                    || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
+                newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
             } else {
-                throw new ValidationException(Constant.INVALID_SHIFT_ID);
+                throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
             }
-
-            // Opening Date
+            // Check whether Opening Date is a day in Shift
             if (insClass.getOpeningDate() != null && insClass.getOpeningDate().compareTo(today) >= 0) {
-                // Check whether Opening Date is a day in Shift
                 Date openingDate = insClass.getOpeningDate();
                 // Sunday = 0
                 int openingDayOfWeek = openingDate.getDay() + 1;
@@ -333,34 +296,15 @@ public class ClassService {
                 if (!coincidence) {
                     throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
                 }
-                // Set time start same as time start of shift
+                // Set time start as same as time start of shift
                 openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
                 newClass.setOpeningDate(openingDate);
             } else {
                 throw new ValidationException(Constant.INVALID_OPENING_DATE);
             }
-
-            // Creator
-            // aka Username
-            // Check existence
-            if (accountRepository.existsByUsername(insClass.getCreator())) {
-                // Find Staff ID by Username
-                newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
-            }
-
-            // Room
-            try {
-                // Find Room based on Room No
-                Room room = roomRepository.findByRoomNo(insClass.getRoomNo());
-                // Insert Room to new Class
-                newClass.setRoom(room);
-                roomRepository.save(room);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception(Constant.ERROR_GET_ROOM_ID);
-            }
+            // Creator is Account-Username
+            newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
+            newClass.setRoom(roomRepository.findByRoomNo(insClass.getRoomNo()));
 
             // Get Booking ID
             int classId;
