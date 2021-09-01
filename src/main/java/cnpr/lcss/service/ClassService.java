@@ -447,19 +447,9 @@ public class ClassService {
         List<Integer> bookingIdList = (List<Integer>) reqBody.get("bookingIdList");
 
         try {
-            // Find Teacher by Teacher ID
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-
-            // Find Room by Room ID
             Room room = roomRepository.findByRoomNo(roomNo);
-
-            // Find Class by Class ID
-            Class activateClass;
-            if (classRepository.existsById(classId)) {
-                activateClass = classRepository.findClassByClassId(classId);
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
-            }
+            Class activateClass = classRepository.findClassByClassId(classId);
 
             // Move Student to Opening Class
             try {
