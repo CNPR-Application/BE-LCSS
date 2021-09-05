@@ -1,4 +1,5 @@
 runtime: java
+instance_class: F4_1G
 env: flex
 
 handlers:
