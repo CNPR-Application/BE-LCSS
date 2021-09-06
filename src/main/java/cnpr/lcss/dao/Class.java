@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "class")
 public class Class implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id")
@@ -31,29 +30,33 @@ public class Class implements Serializable {
     @Column(name = "slot")
     private int slot;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "shift_id")
     private Shift shift;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "creator")
     private Staff staff;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "booking")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
-    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<Session> sessionList;
-    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<Booking> bookingList;
 
+    //<editor-fold desc="Convert to ClassDto">
     public ClassDto convertToDto() {
         ClassDto dto = new ClassDto();
         dto.setClassId(classId);
@@ -72,17 +75,8 @@ public class Class implements Serializable {
             dto.setManagerId(0);
             dto.setManagerUsername(null);
         }
+        dto.setRoomId(room.getRoomId());
         return dto;
     }
-
-    @Override
-    public String toString() {
-        return "Class{" +
-                "classId=" + classId +
-                ", className='" + className + '\'' +
-                ", openingDate=" + openingDate +
-                ", status='" + status + '\'' +
-                ", slot=" + slot +
-                '}';
-    }
+    //</editor-fold>
 }

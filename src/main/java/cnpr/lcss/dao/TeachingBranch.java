@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.TeachingBranchBasicInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,26 +15,26 @@ import java.util.Date;
 @Entity
 @Table(name = "teaching_branch")
 public class TeachingBranch implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-
     @Column(name = "starting_date")
     private Date startingDate;
 
-    public TeachingBranch(Branch branch, Teacher teacher, Date startingDate) {
-        this.branch = branch;
-        this.teacher = teacher;
-        this.startingDate = startingDate;
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
+    //<editor-fold desc="Convert to TeachingBranchBasicInfoDto">
+    public TeachingBranchBasicInfoDto convertToTeachingBranchBasicInfoDto() {
+        TeachingBranchBasicInfoDto dto = new TeachingBranchBasicInfoDto();
+        dto.setBranchId(branch.getBranchId());
+        dto.setStartingDate(startingDate);
+        return dto;
     }
+    //</editor-fold>
 }

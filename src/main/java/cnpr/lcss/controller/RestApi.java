@@ -5,16 +5,18 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class RestApi {
-
     @Autowired
     AccountService accountService;
     @Autowired
@@ -30,6 +32,8 @@ public class RestApi {
     @Autowired
     RegisteringGuestService registeringGuestService;
     @Autowired
+    SessionService sessionService;
+    @Autowired
     ShiftService shiftService;
     @Autowired
     SubjectDetailService subjectDetailService;
@@ -37,6 +41,8 @@ public class RestApi {
     SubjectService subjectService;
     @Autowired
     StudentInClassService studentInClassService;
+    @Autowired
+    TeacherService teacherService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -46,6 +52,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/")
+
     public String welcome() {
         return "Welcome to LCSS - Language Center Support System!";
     }
@@ -174,6 +181,25 @@ public class RestApi {
     @RequestMapping(value = "/accounts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAccountByUserName(@RequestParam(value = "username") String keyword) throws Exception {
         return accountService.deleteByUserName(keyword);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.11-search-teachers-by-branch-id-and-by-subject-id">
+
+    /**
+     * @param branchId
+     * @param subjectId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.11-search-teachers-by-branch-id-and-by-subject-id
+     * @author LamHNT - 2021.08.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers", method = RequestMethod.GET)
+    public ResponseEntity<?> findTeachersByBranchIdAndSubjectId(int branchId, int subjectId, int pageNo, int pageSize) throws Exception {
+        return teacherService.findTeachersByBranchIdAndSubjectId(branchId, subjectId, pageNo, pageSize);
     }
     //</editor-fold>
 
@@ -795,6 +821,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.07-edit-class">
+
+    /**
+     * @param classId
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.07-edit-class
+     * @author LamHNT - 2021.08.31
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editClass(@PathVariable int classId,
+                                       @RequestBody Map<String, Object> reqBody) throws Exception {
+        return classService.editClass(classId, reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.09-get-classes-statistic">
 
     /**
@@ -822,10 +866,12 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/activate-class", method = RequestMethod.POST)
-    public ResponseEntity<?> activateClass(@RequestBody Map<String, Integer> reqBody) throws Exception {
+    public ResponseEntity<?> activateClass(@RequestBody Map<String, Object> reqBody) throws Exception {
         reqBody.get("roomNo");
         reqBody.get("teacherId");
         reqBody.get("classId");
+        reqBody.get("creator");
+        reqBody.get("bookingIdList");
         return classService.activateClass(reqBody);
     }
     //</editor-fold>
@@ -833,6 +879,24 @@ public class RestApi {
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
+
+    //<editor-fold desc="10.01-move-student-in-class-by-class-id">
+
+    /**
+     * @param classId
+     * @param
+     * @return
+     * @throws Exception
+     * @apiNote 10.01-move-student-in-class-by-class-id
+     * @author HuuNT - 2021.08.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/move-student-in-class", method = RequestMethod.PUT)
+    public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
+                                                @RequestBody List<Integer> bookingId) throws Exception {
+        return studentInClassService.moveStudentToOpeningClass(classId, bookingId);
+    }
+    //</editor-fold>
 
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
 
@@ -851,6 +915,30 @@ public class RestApi {
                                                                    @RequestParam(value = "pageNo") int pageNo,
                                                                    @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------SESSION--------------------------------
+     */
+
+    //<editor-fold desc="11.03-view-schedule">
+
+    /**
+     * @param date
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 11.03-view-schedule
+     * @author LamHNT - 2021.08.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/schedules", method = RequestMethod.GET)
+    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+                                          @RequestParam int pageNo,
+                                          @RequestParam int pageSize) throws Exception {
+        return sessionService.viewSchedule(date, pageNo, pageSize);
     }
     //</editor-fold>
 

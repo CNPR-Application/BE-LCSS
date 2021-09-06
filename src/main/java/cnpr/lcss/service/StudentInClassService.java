@@ -1,13 +1,18 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.model.StudentInClassSearchPagingResponseDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
+import cnpr.lcss.repository.BookingRepository;
+import cnpr.lcss.repository.ClassRepository;
 import cnpr.lcss.repository.StudentInClassRepository;
+import cnpr.lcss.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +23,31 @@ public class StudentInClassService {
 
     @Autowired
     StudentInClassRepository studentInClassRepository;
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    ClassRepository classRepository;
+    @Autowired
+    BookingRepository bookingRepository;
+
+    //<editor-fold desc="10.01-move-student-to-opening-class">
+    public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<Integer> bookingIdList) {
+        try {
+            for (int bookingId : bookingIdList) {
+                StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
+                // find class by classId (in param)
+                Class aClass = classRepository.findClassByClassId(classId);
+                studentInClass.setAClass(aClass);
+                // update new class field in student in class
+                studentInClassRepository.save(studentInClass);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+        return ResponseEntity.ok(Boolean.TRUE);
+    }
+    //</editor-fold>
 
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
     public StudentInClassSearchPagingResponseDto findStudentInClassByClassId(int classId, int pageNo, int pageSize) {

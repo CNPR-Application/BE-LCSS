@@ -9,12 +9,16 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ClassRequestDto {
+public class SessionResponseDto {
+    private int sessionId;
+    private int classId;
     private String className;
-    private Date openingDate;
-    private int branchId;
     private int subjectId;
-    private int shiftId;
-    private String creator;
+    private String subjectName;
+    private int teacherId;
+    private String teacherName;
+    private String teacherImage;
     private int roomNo;
+    private Date startTime;
+    private Date endTime;
 }

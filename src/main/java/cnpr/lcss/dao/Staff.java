@@ -15,13 +15,12 @@ import java.util.List;
 @Entity
 @Table(name = "staff")
 public class Staff implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "staff_username", referencedColumnName = "username")
     private Account account;
 
@@ -29,12 +28,14 @@ public class Staff implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "staff")
     @JsonIgnore
     private List<Class> classList;
 
+    //<editor-fold desc="Modify Constructor">
     public Staff(Account account, Branch branch) {
         this.account = account;
         this.branch = branch;
     }
+    //</editor-fold>
 }

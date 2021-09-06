@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "subject")
 public class Subject implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subject_id")
@@ -47,11 +46,14 @@ public class Subject implements Serializable {
     private List<SubjectDetail> subjectDetailList;
     @OneToMany(mappedBy = "subject")
     private List<Class> classList;
+    @OneToMany(mappedBy = "subject")
+    private List<TeachingSubject> teachingSubjectList;
 
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
+    //<editor-fold desc="Modify Constructor">
     public Subject(String subjectCode, String subjectName, float price, Date creatingDate, String description, boolean isAvailable, String image, int slot, int slotPerWeek, String rating) {
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -64,18 +66,9 @@ public class Subject implements Serializable {
         this.slotPerWeek = slotPerWeek;
         this.rating = rating;
     }
+    //</editor-fold>
 
-    public SubjectDto convertToDto() {
-        SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
-        return subjectDto;
-    }
-
-    public SubjectSearchDto convertToSearchDto() {
-        SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
-        return subjectSearchDto;
-    }
-    // Modify Getter & Setter
-
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -83,21 +76,19 @@ public class Subject implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 
-    @Override
-    public String toString() {
-        return "Subject{" +
-                "subjectId=" + subjectId +
-                ", subjectCode='" + subjectCode + '\'' +
-                ", subjectName='" + subjectName + '\'' +
-                ", price=" + price +
-                ", creatingDate=" + creatingDate +
-                ", description='" + description + '\'' +
-                ", isAvailable=" + isAvailable +
-                ", image='" + image + '\'' +
-                ", slot=" + slot +
-                ", slotPerWeek=" + slotPerWeek +
-                ", rating='" + rating + '\'' +
-                '}';
+    //<editor-fold desc="Convert to SubjectDto">
+    public SubjectDto convertToDto() {
+        SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);
+        return subjectDto;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to SearchDto">
+    public SubjectSearchDto convertToSearchDto() {
+        SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
+        return subjectSearchDto;
+    }
+    //</editor-fold>
 }

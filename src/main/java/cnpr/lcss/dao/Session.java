@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.SessionResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,35 +25,36 @@ public class Session implements Serializable {
     private Date startTime;
     @Column(name = "end_time")
     private Date endTime;
-    @Column(name = "room_no")
-    private int roomNo;
-    @Column(name = "teacher_id")
-    private int teacherId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "class_id")
     private Class aClass;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
-    @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "session")
     @JsonIgnore
     private List<Attendance> attendanceList;
 
-    public Session(int sessionId, Date startTime, Date endTime, int roomNo, int teacherId) {
-        this.sessionId = sessionId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.roomNo = roomNo;
-        this.teacherId = teacherId;
+    //<editor-fold desc="Convert to SessionResponseDto">
+    public SessionResponseDto convertToSessionResponseDto() {
+        SessionResponseDto dto = new SessionResponseDto();
+        dto.setSessionId(sessionId);
+        dto.setClassId(aClass.getClassId());
+        dto.setClassName(aClass.getClassName());
+        dto.setSubjectId(aClass.getSubject().getSubjectId());
+        dto.setSubjectName(aClass.getSubject().getSubjectName());
+        dto.setTeacherId(teacher.getTeacherId());
+        dto.setTeacherName(teacher.getAccount().getName());
+        dto.setTeacherImage(teacher.getAccount().getImage());
+        dto.setRoomNo(room.getRoomNo());
+        dto.setStartTime(startTime);
+        dto.setEndTime(endTime);
+        return dto;
     }
-
-    @Override
-    public String toString() {
-        return "Session{" +
-                "sessionId=" + sessionId +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", roomNo=" + roomNo +
-                ", teacherId=" + teacherId +
-                '}';
-    }
+    //</editor-fold>
 }

@@ -34,28 +34,26 @@ public class Shift implements Serializable {
     @OneToMany(mappedBy = "shift")
     private List<Class> classList;
 
-    public ShiftDto convertToDto() {
-        ShiftDto shiftDto = new ShiftDto(shiftId, timeStart, timeEnd, dayOfWeek, duration, isAvailable);
-        return shiftDto;
-    }
-
-    public boolean getIsAvailable() {
+    //<editor-fold desc="Modify isAvailable">
+    public Boolean getIsAvailable() {
         return isAvailable;
     }
 
-    public void setIsAvailable(boolean isAvailable) {
+    public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 
-    @Override
-    public String toString() {
-        return "Shift{" +
-                "shiftId=" + shiftId +
-                ", timeStart='" + timeStart + '\'' +
-                ", timeEnd='" + timeEnd + '\'' +
-                ", dayOfWeek='" + dayOfWeek + '\'' +
-                ", duration=" + duration +
-                ", isAvailable=" + isAvailable +
-                '}';
+    //<editor-fold desc="Convert to ShiftDto">
+    public ShiftDto convertToDto() {
+        ShiftDto dto = new ShiftDto();
+        dto.setShiftId(shiftId);
+        dto.setTimeStart(timeStart);
+        dto.setTimeEnd(timeEnd);
+        dto.setDayOfWeek(dayOfWeek);
+        dto.setDuration(duration);
+        dto.setAvailable(isAvailable);
+        return dto;
     }
+    //</editor-fold>
 }

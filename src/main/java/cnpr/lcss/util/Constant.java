@@ -114,12 +114,14 @@ public class Constant {
     public static final String TWO_DAYS_OF_WEEK_PATTERN = "(((\\d)[-])+(\\d|[C][N])){1}";
     public static final String THREE_DAYS_OF_WEEK_PATTERN = "(((\\d)[-]){2})+(\\d|[C][N]){1}";
     // Error Message
+    public static final String ERROR_GET_CLASS_ID = "Unable to get Class ID!";
+    public static final String INVALID_CLASS_CREATOR = "Invalid Class Creator!";
     public static final String INVALID_CLASS_ID = "Class ID not exist!";
     public static final String INVALID_CLASS_NAME = "Null or empty class name!";
     public static final String INVALID_CLASS_STATUS_NOT_WAITING = "Class Status must be waiting!";
-    public static final String INVALID_OPENING_DATE = "Null or over class opening day!";
-    public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
+    public static final String INVALID_OPENING_DATE = "Null or invalid opening day!";
     public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";
+    public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
     //</editor-fold>
 
     //<editor-fold desc="Curriculum">
@@ -157,6 +159,14 @@ public class Constant {
     public static final String INVALID_CITY = "Invalid city!";
     public static final String INVALID_GUEST_ID = "Guest ID not exist!";
     public static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
+    //</editor-fold>
+
+    //<editor-fold desc="Room">
+    /**
+     * -----ROOM-----
+     */
+    // Error Message
+    public static final String ERROR_GET_ROOM_ID = "Unable to get Room ID!";
     //</editor-fold>
 
     //<editor-fold desc="Session">
@@ -206,6 +216,7 @@ public class Constant {
      * -----STUDENT IN CLASS-----
      */
     // Error Message
+    public static final String ERROR_MOVE_STUDENT = "Move Student to Opening Class FAILED!";
     public static final String ERROR_SAVE_STUDENT_IN_CLASS = "Save student in class FAILED!";
     //</editor-fold>
 

@@ -16,7 +16,6 @@ import java.util.List;
 @Entity
 @Table(name = "student_in_class")
 public class StudentInClass implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_class_id")
@@ -38,28 +37,33 @@ public class StudentInClass implements Serializable {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    public StudentInClassSearchResponseDto convertToSearchDto() {
-        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
-         aClass.getClassId(),
-        student.getId(),
-        student.getAccount().getUsername(),
-       student.getAccount().getName(),
-         student.getAccount().getImage(),
-         booking.getBookingId(),
-        booking.getPayingDate());
-                return studentInClassSearchResponseDto;
-    }
-
-    @OneToMany(mappedBy = "studentInClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "studentInClass")
     @JsonIgnore
     private List<Attendance> attendanceList;
 
+    //<editor-fold desc="Modify Constructor">
     public StudentInClass(Integer studentInClassId, int teacherRating, int subjectRating, String feedback) {
         this.studentInClassId = studentInClassId;
         this.teacherRating = teacherRating;
         this.subjectRating = subjectRating;
         this.feedback = feedback;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to SearchDto">
+    public StudentInClassSearchResponseDto convertToSearchDto() {
+        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
+                aClass.getClassId(),
+                student.getId(),
+                student.getAccount().getUsername(),
+                student.getAccount().getName(),
+                student.getAccount().getImage(),
+                booking.getBookingId(),
+                booking.getPayingDate());
+        return studentInClassSearchResponseDto;
+    }
+
+    //</editor-fold>
 
     @Override
     public String toString() {

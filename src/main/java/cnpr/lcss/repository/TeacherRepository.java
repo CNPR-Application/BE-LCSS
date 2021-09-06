@@ -1,6 +1,8 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Teacher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,16 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     String findBranchNameByTeacherUsername(@Param("username") String teacherUsername);
 
     Teacher findTeacherByAccount_Username(String teacherUsername);
+
+    Teacher findByTeacherId(int teacherId);
+
+    Page<Teacher> findByTeachingBranchList_Branch_BranchIdAndTeachingSubjectList_Subject_SubjectId(int branchId, int subjectId, Pageable pageable);
+
+    Page<Teacher> findByTeachingSubjectList_Subject_SubjectId(int subjectId, Pageable pageable);
+
+    Page<Teacher> findByTeachingBranchList_Branch_BranchId(int branchId, Pageable pageable);
+
+    @Query(value = "SELECT t " +
+            "FROM Teacher AS t ")
+    Page<Teacher> findAllTeacher(Pageable pageable);
 }

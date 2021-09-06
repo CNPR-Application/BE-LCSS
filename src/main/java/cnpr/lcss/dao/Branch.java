@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "branch")
 public class Branch implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "branch_id")
@@ -33,24 +32,28 @@ public class Branch implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     private List<Class> classList;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     @JsonIgnore
     private List<Staff> staffs;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     @JsonIgnore
     private List<TeachingBranch> teachingBranches;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     @JsonIgnore
     private List<Student> students;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     @JsonIgnore
     private List<RegisteringGuest> registeringGuestList;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch")
     @JsonIgnore
     private List<Booking> bookingList;
+    @OneToMany(mappedBy = "branch")
+    @JsonIgnore
+    private List<Room> roomList;
 
+    //<editor-fold desc="Modify Constructor">
     public Branch(int branchId, String branchName) {
         this.branchId = branchId;
         this.branchName = branchName;
@@ -64,12 +67,18 @@ public class Branch implements Serializable {
         this.openingDate = openingDate;
         this.phone = phone;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Convert to BranchResponseDto">
     public BranchResponseDto convertToBranchResponseDto() {
-        BranchResponseDto dto = new BranchResponseDto(branchId, branchName);
+        BranchResponseDto dto = new BranchResponseDto();
+        dto.setBranchId(branchId);
+        dto.setBranchName(branchName);
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Modify isAvailable">
     public Boolean getIsAvailable() {
         return isAvailable;
     }
@@ -77,16 +86,5 @@ public class Branch implements Serializable {
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-
-    @Override
-    public String toString() {
-        return "Branch{" +
-                "branchId=" + branchId +
-                ", branchName='" + branchName + '\'' +
-                ", address='" + address + '\'' +
-                ", isAvailable=" + isAvailable +
-                ", openingDate=" + openingDate +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
+    //</editor-fold>
 }
