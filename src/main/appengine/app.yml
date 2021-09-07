@@ -1,6 +1,7 @@
 runtime: java
 instance_class: F4_1G
 env: flex
+entrypoint: java -XX:MaxRAM=200m -Xmx200m -jar BE-LCSS 0.0.1-SNAPSHOT.jar
 
 handlers:
   - url: /.*
