@@ -15,5 +15,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Page<Booking> findBookingByStudent_Account_Username(String studentUsername, Pageable pageable);
 
-    int countBookingByAClass_ClassId(int classId);
+    int countBookingByaClass_ClassId(int classId);
 }

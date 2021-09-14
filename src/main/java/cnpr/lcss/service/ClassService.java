@@ -69,14 +69,14 @@ public class ClassService {
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                aClass.setRoomName(0);
             } else {
                 // TODO: create connection between Session and Teacher
                 // TODO: check validation of Status
                 // Temporary set to 0 or null
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                aClass.setRoomName(0);
             }
             // Count Student In Class by Class ID
             aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
@@ -224,7 +224,7 @@ public class ClassService {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                         //number of student
-                        int numberOfStudent= bookingRepository.countBookingByAClass_ClassId(aClass.getClassId());
+                        int numberOfStudent= bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
                        // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                         aClass.setNumberOfStudent(numberOfStudent);
                     } else {
@@ -243,7 +243,7 @@ public class ClassService {
                     //find room by ID
                     Room room = roomRepository.findByRoomId(aClass.getRoomId());
                     //room name and ID
-                    aClass.setRoomNo(room.getRoomName());
+                    aClass.setRoomName(room.getRoomName());
                     aClass.setRoomId(room.getRoomId());
 
                 }
