@@ -315,7 +315,7 @@ public class ClassService {
             }
             // Creator is Account-Username
             newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            newClass.setRoom(roomRepository.findByRoomNo(insClass.getRoomNo()));
+            newClass.setRoom(roomRepository.findByRoomName(insClass.getRoomName()));
 
             // Get Booking ID
             int classId;
@@ -451,7 +451,7 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomNo = (int) reqBody.get("roomNo");
+        int roomName = (int) reqBody.get("roomName");
         int teacherId = (int) reqBody.get("teacherId");
         int classId = (int) reqBody.get("classId");
         String creator = (String) reqBody.get("creator");
@@ -459,7 +459,7 @@ public class ClassService {
 
         try {
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomNo(roomNo);
+            Room room = roomRepository.findByRoomName(roomName);
             Class activateClass = classRepository.findClassByClassId(classId);
 
             // Move Student to Opening Class

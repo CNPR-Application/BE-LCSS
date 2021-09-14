@@ -16,5 +16,5 @@ public class ClassRequestDto {
     private int subjectId;
     private int shiftId;
     private String creator;
-    private int roomNo;
+    private int roomName;
 }
