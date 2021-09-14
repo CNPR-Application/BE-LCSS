@@ -37,7 +37,7 @@ public class StudentInClass implements Serializable {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-    @OneToMany(mappedBy = "studentInClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "studentInClass")
     @JsonIgnore
     private List<Attendance> attendanceList;
 

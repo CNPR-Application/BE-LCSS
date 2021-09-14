@@ -23,14 +23,14 @@ public class Room implements Serializable {
     @Column(name = "is_available")
     private boolean isAvailable;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Class> classList;
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Session> sessionList;
 

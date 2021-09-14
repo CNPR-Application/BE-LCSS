@@ -235,7 +235,7 @@ public class ClassService {
                     aClass.setRoomNo(room.getRoomNo());
                     aClass.setRoomId(room.getRoomId());
                     int numberOfStudent=studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
-                    aClass.setNumberOfStudent(numberOfStudent);
+                    aClass.setNumberOfStudent(numberOfStudent) ;
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
@@ -430,7 +430,6 @@ public class ClassService {
 
             // Find Room by Room ID
             Room room = roomRepository.findByRoomNo(roomNo);
-
             // Find Class by Class ID
             Class activateClass;
             if (classRepository.existsById(classId)) {

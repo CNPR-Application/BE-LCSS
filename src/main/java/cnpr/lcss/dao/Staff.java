@@ -21,7 +21,7 @@ public class Staff implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "staff_username", referencedColumnName = "username")
     private Account account;
 
@@ -29,7 +29,7 @@ public class Staff implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "staff")
     @JsonIgnore
     private List<Class> classList;
 

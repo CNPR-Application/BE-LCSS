@@ -24,7 +24,7 @@ public class Teacher implements Serializable {
     @Column(name = "rating")
     private String rating;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "teacher_username", referencedColumnName = "username")
     private Account account;
 

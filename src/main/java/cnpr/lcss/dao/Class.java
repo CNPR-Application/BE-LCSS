@@ -31,29 +31,29 @@ public class Class implements Serializable {
     @Column(name = "slot")
     private int slot;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "shift_id")
     private Shift shift;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "creator")
     private Staff staff;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "booking")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
-    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<Session> sessionList;
-    @OneToMany(mappedBy = "aClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<Booking> bookingList;
 

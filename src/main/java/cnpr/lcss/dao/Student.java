@@ -25,7 +25,7 @@ public class Student implements Serializable {
     @Column(name = "parent_name")
     private String parentName;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "student_username", referencedColumnName = "username")
     private Account account;
 
@@ -33,10 +33,10 @@ public class Student implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<Booking> bookingList;
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "booking")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 

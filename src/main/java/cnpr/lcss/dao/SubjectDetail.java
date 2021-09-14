@@ -28,7 +28,7 @@ public class SubjectDetail implements Serializable {
     @Column(name = "learning_outcome")
     private String learningOutcome;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
 

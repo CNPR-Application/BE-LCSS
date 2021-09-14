@@ -33,11 +33,11 @@ public class RegisteringGuest implements Serializable {
     @Column(name = "status")
     private String status;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
