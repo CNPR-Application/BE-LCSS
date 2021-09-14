@@ -18,7 +18,7 @@ public class SessionResponseDto {
     private int teacherId;
     private String teacherName;
     private String teacherImage;
-    private int roomNo;
+    private int roomName;
     private Date startTime;
     private Date endTime;
 }
