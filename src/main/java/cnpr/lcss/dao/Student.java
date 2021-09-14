@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "student")
 public class Student implements Serializable {
-
     @Id
     @GeneratedValue
     @Column(name = "student_id")

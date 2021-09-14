@@ -35,23 +35,13 @@ public class Teacher implements Serializable {
     @OneToMany(mappedBy = "teacher")
     private List<TeachingSubject> teachingSubjectList;
 
+    //<editor-fold desc="Modify Constructor">
     public Teacher(String experience, String rating, Account account) {
         this.experience = experience;
         this.rating = rating;
         this.account = account;
     }
-
-    @Override
-    public String toString() {
-        return "Teacher{" +
-                "teacherId=" + teacherId +
-                ", experience='" + experience + '\'' +
-                ", rating='" + rating + '\'' +
-                ", account=" + account +
-                ", teachingBranchList=" + teachingBranchList +
-                ", sessionList=" + sessionList +
-                '}';
-    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert to TeacherDto">
     public TeacherDto convertToTeacherDto() {
@@ -67,7 +57,7 @@ public class Teacher implements Serializable {
         dto.setBirthday(account.getBirthday());
         dto.setPhone(account.getPhone());
         dto.setImage(account.getImage());
-        dto.setRole(account.getRole());
+        dto.setRole(account.getRole().getRoleId());
         dto.setCreatingDate(account.getCreatingDate());
 
         return dto;

@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "class")
 public class Class implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id")
@@ -57,6 +56,7 @@ public class Class implements Serializable {
     @JsonIgnore
     private List<Booking> bookingList;
 
+    //<editor-fold desc="Convert to ClassDto">
     public ClassDto convertToDto() {
         ClassDto dto = new ClassDto();
         dto.setClassId(classId);
@@ -78,15 +78,5 @@ public class Class implements Serializable {
         dto.setRoomId(room.getRoomId());
         return dto;
     }
-
-    @Override
-    public String toString() {
-        return "Class{" +
-                "classId=" + classId +
-                ", className='" + className + '\'' +
-                ", openingDate=" + openingDate +
-                ", status='" + status + '\'' +
-                ", slot=" + slot +
-                '}';
-    }
+    //</editor-fold>
 }

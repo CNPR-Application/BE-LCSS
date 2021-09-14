@@ -16,7 +16,6 @@ import java.util.List;
 @Entity
 @Table(name = "curriculum")
 public class Curriculum implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "curriculum_id")
@@ -41,9 +40,7 @@ public class Curriculum implements Serializable {
     @OneToMany(mappedBy = "curriculum")
     private List<RegisteringGuest> registeringGuestList;
 
-    /**
-     * --- modify constructor, getter, setter ---
-     */
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -51,9 +48,12 @@ public class Curriculum implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Convert to CurriculumDto">
     public CurriculumDto convertToDto() {
         CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
         return curriculumDto;
     }
+    //</editor-fold>
 }

@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "staff")
 public class Staff implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,8 +32,10 @@ public class Staff implements Serializable {
     @JsonIgnore
     private List<Class> classList;
 
+    //<editor-fold desc="Modify Constructor">
     public Staff(Account account, Branch branch) {
         this.account = account;
         this.branch = branch;
     }
+    //</editor-fold>
 }

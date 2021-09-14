@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 public class RestApi {
-
     @Autowired
     AccountService accountService;
     @Autowired
@@ -819,6 +818,24 @@ public class RestApi {
     @RequestMapping(value = "/classes", method = RequestMethod.POST)
     public ResponseEntity<?> createNewClass(@RequestBody ClassRequestDto classRequestDto) throws Exception {
         return classService.createNewClass(classRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.07-edit-class">
+
+    /**
+     * @param classId
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.07-edit-class
+     * @author LamHNT - 2021.08.31
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editClass(@PathVariable int classId,
+                                       @RequestBody Map<String, Object> reqBody) throws Exception {
+        return classService.editClass(classId, reqBody);
     }
     //</editor-fold>
 

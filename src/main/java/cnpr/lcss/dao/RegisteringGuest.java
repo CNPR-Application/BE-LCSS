@@ -15,7 +15,6 @@ import java.util.Date;
 @Entity
 @Table(name = "registering_guest")
 public class RegisteringGuest implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -41,8 +40,10 @@ public class RegisteringGuest implements Serializable {
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
+    //<editor-fold desc="Convert to RegisteringGuestSearchResponseDto">
     public RegisteringGuestSearchResponseDto convertToDto() {
-        RegisteringGuestSearchResponseDto registeringGuestSearchResponseDto = new RegisteringGuestSearchResponseDto(id, customerName, phone, city, bookingDate, curriculum.getCurriculumId(),curriculum.getCurriculumName(), description, branch.getBranchId(), status);
+        RegisteringGuestSearchResponseDto registeringGuestSearchResponseDto = new RegisteringGuestSearchResponseDto(id, customerName, phone, city, bookingDate, curriculum.getCurriculumId(), curriculum.getCurriculumName(), description, branch.getBranchId(), status);
         return registeringGuestSearchResponseDto;
     }
+    //</editor-fold>
 }

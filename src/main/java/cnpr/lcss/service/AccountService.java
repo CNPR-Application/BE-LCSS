@@ -34,6 +34,8 @@ public class AccountService {
     TeacherRepository teacherRepository;
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     //<editor-fold desc="Convert Vietnamese characters to ASCII">
     public static String convertToASCII(String str) throws UnsupportedEncodingException {
@@ -144,21 +146,21 @@ public class AccountService {
                         loginResponseDto.setBirthday(acc.getBirthday());
                         loginResponseDto.setPhone(acc.getPhone());
                         loginResponseDto.setImage(acc.getImage());
-                        loginResponseDto.setRole(acc.getRole());
+                        loginResponseDto.setRole(acc.getRole().getRoleId());
                         loginResponseDto.setCreatingDate(acc.getCreatingDate());
 
                         // Return Branch Id, Branch Name
                         // Role: Admin, Manager, Staff
-                        if (acc.getRole().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().equalsIgnoreCase(Constant.ROLE_STAFF)
-                                || acc.getRole().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
+                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
+                                || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
                             loginResponseDto.setBranchId(staffRepository.findBranchIdByStaffUsername(accUsername));
                             loginResponseDto.setBranchName(staffRepository.findBranchNameByStaffUsername(accUsername));
                         } // Role: Teacher
-                        else if (acc.getRole().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                             loginResponseDto.setBranchId(teacherRepository.findBranchIdByTeacherUsername(accUsername));
                             loginResponseDto.setBranchName(teacherRepository.findBranchNameByTeacherUsername(accUsername));
                         } // Role: Student
-                        else if (acc.getRole().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                             loginResponseDto.setBranchId(studentRepository.findBranchIdByStudentUsername(accUsername));
                             loginResponseDto.setBranchName(studentRepository.findBranchNameByStudentUsername(accUsername));
                         } else {
@@ -167,7 +169,7 @@ public class AccountService {
 
                         // Return Parent's information
                         // Role: Student
-                        if (acc.getRole().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                             loginResponseDto.setParentName(studentRepository.findParentNameByStudentUsername(accUsername));
                             loginResponseDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(accUsername));
                         } else {
@@ -177,7 +179,7 @@ public class AccountService {
 
                         // Return Experience, Rating
                         // Role: Teacher
-                        if (acc.getRole().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                             loginResponseDto.setExperience(teacherRepository.findExperienceByTeacherUsername(accUsername));
                             loginResponseDto.setRating(teacherRepository.findRatingByTeacherUsername(accUsername));
                         } else {
@@ -225,7 +227,7 @@ public class AccountService {
                     accDto.setBirthday(acc.getBirthday());
                     accDto.setPhone(acc.getPhone());
                     accDto.setImage(acc.getImage());
-                    accDto.setRole(acc.getRole());
+                    accDto.setRole(acc.getRole().getRoleId());
                     accDto.setCreatingDate(acc.getCreatingDate());
                     accDto.setIsAvailable(acc.getIsAvailable());
                     // Branch
@@ -297,24 +299,24 @@ public class AccountService {
                 accDto.setBirthday(acc.getBirthday());
                 accDto.setPhone(acc.getPhone());
                 accDto.setImage(acc.getImage());
-                accDto.setRole(acc.getRole());
+                accDto.setRole(acc.getRole().getRoleId());
                 accDto.setCreatingDate(acc.getCreatingDate());
                 accDto.setIsAvailable(acc.getIsAvailable());
                 // Role: Admin, Manager, Staff
-                if (acc.getRole().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().equalsIgnoreCase(Constant.ROLE_STAFF)
-                        || acc.getRole().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
+                        || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
                     List<Branch> branchList = branchRepository.findStaffBranchByAccountUsername(acc.getUsername());
                     List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
                     accDto.setBranchResponseDtoList(branchResponseDtoList);
                 } // Role: Teacher
-                else if (acc.getRole().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
 
                     List<Branch> branchList = branchRepository.findTeacherBranchByAccountUsername(acc.getUsername());
                     List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
                     accDto.setBranchResponseDtoList(branchResponseDtoList);
 
                 } // Role: Student
-                else if (acc.getRole().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                     List<Branch> branchList = branchRepository.findStudentBranchByAccountUsername(acc.getUsername());
                     List<BranchResponseDto> branchResponseDtoList = branchList.stream().map(branch -> branch.convertToBranchResponseDto()).collect(Collectors.toList());
                     accDto.setBranchResponseDtoList(branchResponseDtoList);
@@ -323,7 +325,7 @@ public class AccountService {
                     throw new Exception();
                 }
                 // Role: Student
-                if (acc.getRole().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                     accDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(acc.getUsername()));
                     accDto.setParentName(studentRepository.findParentNameByStudentUsername(acc.getUsername()));
                 } else {
@@ -332,7 +334,7 @@ public class AccountService {
 
                 }
                 // Role: Teacher
-                if (acc.getRole().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                     accDto.setExperience(teacherRepository.findExperienceByTeacherUsername(acc.getUsername()));
                     accDto.setRating(teacherRepository.findRatingByTeacherUsername(acc.getUsername()));
 
@@ -417,13 +419,14 @@ public class AccountService {
             }
 
             // Role
-            String userRole = newAcc.getRole();
-            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                account.setRole(newAcc.getRole());
+            String insRole = newAcc.getRole();
+            Role userRole = roleRepository.findByRoleIdAllIgnoreCase(insRole);
+            if (insRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_STAFF)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_TEACHER)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                account.setRole(userRole);
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
             }
@@ -434,23 +437,23 @@ public class AccountService {
                 int yo = today.getYear() - newAcc.getBirthday().getYear();
                 // Role: ADMIN, MANAGER, STAFF
                 // OLDER OR EQUAL 18
-                if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN) && yo < 18) {
+                if (insRole.equalsIgnoreCase(Constant.ROLE_ADMIN) && yo < 18) {
                     throw new Exception(Constant.INVALID_ADMIN_BIRTHDAY);
                 }
-                if (userRole.equalsIgnoreCase(Constant.ROLE_MANAGER) && yo < 18) {
+                if (insRole.equalsIgnoreCase(Constant.ROLE_MANAGER) && yo < 18) {
                     throw new Exception(Constant.INVALID_MANAGER_BIRTHDAY);
                 }
-                if (userRole.equalsIgnoreCase(Constant.ROLE_STAFF) && yo < 18) {
+                if (insRole.equalsIgnoreCase(Constant.ROLE_STAFF) && yo < 18) {
                     throw new Exception(Constant.INVALID_STAFF_BIRTHDAY);
                 }
                 // Role: TEACHER
                 // OLDER OR EQUAL 18
-                if (userRole.equalsIgnoreCase(Constant.ROLE_TEACHER) && yo < 18) {
+                if (insRole.equalsIgnoreCase(Constant.ROLE_TEACHER) && yo < 18) {
                     throw new Exception(Constant.INVALID_TEACHER_BIRTHDAY);
                 }
                 // Role: STUDENT
                 // OLDER OR EQUAL 3
-                if (userRole.equalsIgnoreCase(Constant.ROLE_STUDENT) && yo < 3) {
+                if (insRole.equalsIgnoreCase(Constant.ROLE_STUDENT) && yo < 3) {
                     throw new Exception(Constant.INVALID_STUDENT_BIRTHDAY);
                 }
                 account.setBirthday(newAcc.getBirthday());
@@ -497,16 +500,16 @@ public class AccountService {
             }
 
             // Role: ADMIN, MANAGER, STAFF
-            if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
-                    || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)) {
+            if (insRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || insRole.equalsIgnoreCase(Constant.ROLE_STAFF)) {
                 Account accountStaff = accountRepository.findOneByUsername(accTmp.getUsername());
                 Staff staff = new Staff(accountStaff, branch);
                 staffRepository.save(staff);
             }
 
             // Role: STUDENT
-            if (userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+            if (insRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                 Student student = new Student();
                 // Insert Parent's name
                 student.setParentName(newAcc.getParentName());
@@ -528,7 +531,7 @@ public class AccountService {
             }
 
             // Role: TEACHER
-            if (userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+            if (insRole.equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                 Teacher teacher = new Teacher();
                 TeachingBranch teachingBranch = new TeachingBranch();
                 Account accountTeacher = accountRepository.findOneByUsername(accTmp.getUsername());
@@ -724,12 +727,12 @@ public class AccountService {
     //<editor-fold desc="1.07 Update Role">
     public ResponseEntity<?> updateRole(String username, String role) throws Exception {
         try {
-            String userRole = accountRepository.findRoleByUsername(username);
+            Role userRole = roleRepository.findByRoleIdAllIgnoreCase(role);
             Account account = accountRepository.findOneByUsername(username);
 
-            if (userRole.equalsIgnoreCase(Constant.ROLE_MANAGER) || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)) {
+            if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)) {
                 if (role.equalsIgnoreCase(Constant.ROLE_MANAGER) || role.equalsIgnoreCase(Constant.ROLE_STAFF)) {
-                    account.setRole(role);
+                    account.setRole(userRole);
                     accountRepository.save(account);
                     return ResponseEntity.ok(true);
                 } else {

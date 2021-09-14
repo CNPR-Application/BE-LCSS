@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "subject_detail")
 public class SubjectDetail implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subject_detail_id")
@@ -32,10 +31,7 @@ public class SubjectDetail implements Serializable {
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    /**
-     * --- modify constructor, getter, setter ---
-     */
-
+    //<editor-fold desc="Modify Constructor">
     public SubjectDetail(int subjectDetailId, int weekNum, String weekDescription, boolean isAvailable, String learningOutcome) {
         this.subjectDetailId = subjectDetailId;
         this.weekNum = weekNum;
@@ -48,7 +44,9 @@ public class SubjectDetail implements Serializable {
         SubjectDetailDto subjectDetailDto = new SubjectDetailDto(subjectDetailId, weekNum, weekDescription, isAvailable, learningOutcome);
         return subjectDetailDto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -56,4 +54,5 @@ public class SubjectDetail implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }

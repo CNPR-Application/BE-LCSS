@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class SubjectDetailPagingResponseDto {
-
     private int pageNo;
     private int pageSize;
     private int pageTotal;

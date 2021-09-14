@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import java.util.List;
 
 @NoArgsConstructor
@@ -12,8 +11,8 @@ import java.util.List;
 @Data
 public class ClassSearchPagingResponseDto {
 
-        List<ClassSearchByIdDto> classSearchByIdDtos;
-        private int roomNo;
-        private int pageNo;
-        private int totalPage;
+    List<ClassSearchByIdDto> classSearchByIdDtos;
+    private int roomNo;
+    private int pageNo;
+    private int totalPage;
 }
