@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "role")
-public class Role implements Serializable {
+public class    Role implements Serializable {
     @Id
     @Column(name = "role_id")
     private String roleId;
