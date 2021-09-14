@@ -231,7 +231,7 @@ public class ClassService {
                     //ROOM
                     //find room by ID
                     Room room = roomRepository.findByRoomId(aClass.getRoomId());
-                    aClass.setRoomNo(room.getRoomNo());
+                    aClass.setRoomNo(room.getRoomName());
                     aClass.setRoomId(room.getRoomId());
                     int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                     aClass.setNumberOfStudent(numberOfStudent);

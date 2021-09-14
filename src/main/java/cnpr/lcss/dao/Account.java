@@ -32,8 +32,6 @@ public class Account implements Serializable {
     private String email;
     @Column(name = "image")
     private String image;
-    @Column(name = "role")
-    private String role;
     @Column(name = "is_available")
     private boolean isAvailable;
     @Column(name = "creating_date")
@@ -45,6 +43,10 @@ public class Account implements Serializable {
     private Student student;
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "role")
+    private Role role;
 
     //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {

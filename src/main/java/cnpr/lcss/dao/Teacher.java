@@ -57,7 +57,7 @@ public class Teacher implements Serializable {
         dto.setBirthday(account.getBirthday());
         dto.setPhone(account.getPhone());
         dto.setImage(account.getImage());
-        dto.setRole(account.getRole());
+        dto.setRole(account.getRole().getRoleId());
         dto.setCreatingDate(account.getCreatingDate());
 
         return dto;
