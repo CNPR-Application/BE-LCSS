@@ -54,48 +54,31 @@ public class ClassService {
         List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
 
         for (ClassDto aClass : classDtoList) {
-            // Subject Name
             aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-            // Subject Price
             aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
-            // Branch Name
             aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-            // Shift Description
             String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
                     + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
             aClass.setShiftDescription(description);
-            // Teacher AND Room
-            //STATUS: waiting and canceled
-            // Teacher is no need to query if status are WAITING OR CANCELED
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                //number of student
-                int numberOfStudent= bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
-                // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
             } else {
-                //STATUS: studying và finished
-                //get list session
+                // CLASS_STATUS: STUDYING || FINISHED
                 List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
-                //get teacher
                 Teacher teacher = sessionList.get(0).getTeacher();
                 aClass.setTeacherId(teacher.getTeacherId());
                 aClass.setTeacherName(teacher.getAccount().getName());
-                //number of student
                 int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
             }
-            //ROOM
-            //find room by ID
             Room room = roomRepository.findByRoomId(aClass.getRoomId());
-            //room name and ID
             aClass.setRoomName(room.getRoomName());
             aClass.setRoomId(room.getRoomId());
-            // Manager ID
             aClass.setManagerId(aClass.getManagerId());
-            // Manager Username
             aClass.setManagerUsername(aClass.getManagerUsername());
         }
         return classDtoList;
@@ -238,8 +221,8 @@ public class ClassService {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                         //number of student
-                        int numberOfStudent= bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
-                       // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                        int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                        // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                         aClass.setNumberOfStudent(numberOfStudent);
                     } else {
                         //STATUS: studying và finished
