@@ -79,4 +79,27 @@ public class Class implements Serializable {
         return dto;
     }
     //</editor-fold>
+    public ClassDto convertToSearchDto() {
+        ClassDto dto = new ClassDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setOpeningDate(openingDate);
+        dto.setStatus(status);
+        dto.setSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectPrice(subject.getPrice());
+        dto.setBranchId(branch.getBranchId());
+        dto.setShiftId(shift.getShiftId());
+        if (staff != null) {
+            dto.setManagerId(staff.getId());
+            dto.setManagerUsername(staff.getAccount().getUsername());
+        } else {
+            dto.setManagerId(0);
+            dto.setManagerUsername(null);
+        }
+        dto.setRoomId(room.getRoomId());
+
+        return dto;
+
+    }
 }

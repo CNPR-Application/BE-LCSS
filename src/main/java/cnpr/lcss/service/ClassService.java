@@ -66,20 +66,33 @@ public class ClassService {
                     + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
             aClass.setShiftDescription(description);
             // Teacher AND Room
+            //STATUS: waiting and canceled
+            // Teacher is no need to query if status are WAITING OR CANCELED
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                aClass.setRoomName(0);
+                //number of student
+                int numberOfStudent= bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             } else {
-                // TODO: create connection between Session and Teacher
-                // TODO: check validation of Status
-                // Temporary set to 0 or null
-                aClass.setTeacherId(0);
-                aClass.setTeacherName(null);
-                aClass.setRoomName(0);
+                //STATUS: studying và finished
+                //get list session
+                List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                //get teacher
+                Teacher teacher = sessionList.get(0).getTeacher();
+                aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherName(teacher.getAccount().getName());
+                //number of student
+                int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             }
-            // Count Student In Class by Class ID
-            aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
+            //ROOM
+            //find room by ID
+            Room room = roomRepository.findByRoomId(aClass.getRoomId());
+            //room name and ID
+            aClass.setRoomName(room.getRoomName());
+            aClass.setRoomId(room.getRoomId());
             // Manager ID
             aClass.setManagerId(aClass.getManagerId());
             // Manager Username
@@ -189,6 +202,7 @@ public class ClassService {
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
+
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,7 +259,6 @@ public class ClassService {
                     //room name and ID
                     aClass.setRoomName(room.getRoomName());
                     aClass.setRoomId(room.getRoomId());
-
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
