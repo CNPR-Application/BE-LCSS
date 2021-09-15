@@ -18,19 +18,19 @@ public class Room implements Serializable {
     @Id
     @Column(name = "room_id")
     private Integer roomId;
-    @Column(name = "room_no")
-    private int roomNo;
+    @Column(name = "room_name")
+    private int roomName;
     @Column(name = "is_available")
     private boolean isAvailable;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany
     @JsonIgnore
     private List<Class> classList;
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany
     @JsonIgnore
     private List<Session> sessionList;
 

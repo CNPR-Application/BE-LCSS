@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +15,6 @@ import java.util.Date;
 @Entity
 @Table(name = "account")
 public class Account implements Serializable {
-
     @Id
     @Column(name = "username")
     private String username;
@@ -32,8 +32,6 @@ public class Account implements Serializable {
     private String email;
     @Column(name = "image")
     private String image;
-    @Column(name = "role")
-    private String role;
     @Column(name = "is_available")
     private boolean isAvailable;
     @Column(name = "creating_date")
@@ -45,6 +43,13 @@ public class Account implements Serializable {
     private Student student;
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
+
+    @OneToMany(mappedBy = "senderUsername")
+    private List<Notification> notificationList;
+
+    @ManyToOne
+    @JoinColumn(name = "role")
+    private Role role;
 
     //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
