@@ -46,41 +46,39 @@ public class ClassService {
     TeacherRepository teacherRepository;
     @Autowired
     RoomRepository roomRepository;
+    @Autowired
+    BookingRepository bookingRepository;
 
     //<editor-fold desc="Auto Mapping">
     public List<ClassDto> autoMapping(Page<Class> classList) {
         List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
 
         for (ClassDto aClass : classDtoList) {
-            // Subject Name
             aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-            // Subject Price
             aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
-            // Branch Name
             aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-            // Shift Description
             String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
                     + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
             aClass.setShiftDescription(description);
-            // Teacher AND Room
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             } else {
-                // TODO: create connection between Session and Teacher
-                // TODO: check validation of Status
-                // Temporary set to 0 or null
-                aClass.setTeacherId(0);
-                aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                // CLASS_STATUS: STUDYING || FINISHED
+                List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                Teacher teacher = sessionList.get(0).getTeacher();
+                aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherName(teacher.getAccount().getName());
+                int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             }
-            // Count Student In Class by Class ID
-            aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
-            // Manager ID
+            Room room = roomRepository.findByRoomId(aClass.getRoomId());
+            aClass.setRoomName(room.getRoomName());
+            aClass.setRoomId(room.getRoomId());
             aClass.setManagerId(aClass.getManagerId());
-            // Manager Username
             aClass.setManagerUsername(aClass.getManagerUsername());
         }
         return classDtoList;
@@ -187,6 +185,7 @@ public class ClassService {
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
+
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,25 +215,33 @@ public class ClassService {
                             + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
                             + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
                     aClass.setShiftDescription(description);
+                    //STATUS: waiting and canceled
                     // Teacher is no need to query if status are WAITING OR CANCELED
                     if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
+                        //number of student
+                        int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                        // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                        aClass.setNumberOfStudent(numberOfStudent);
                     } else {
+                        //STATUS: studying và finished
                         //get list session
                         List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                         //get teacher
                         Teacher teacher = sessionList.get(0).getTeacher();
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
+                        //number of student
+                        int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                        aClass.setNumberOfStudent(numberOfStudent);
                     }
                     //ROOM
                     //find room by ID
                     Room room = roomRepository.findByRoomId(aClass.getRoomId());
-                    aClass.setRoomNo(room.getRoomName());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
                     aClass.setRoomId(room.getRoomId());
-                    int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
-                    aClass.setNumberOfStudent(numberOfStudent);
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);

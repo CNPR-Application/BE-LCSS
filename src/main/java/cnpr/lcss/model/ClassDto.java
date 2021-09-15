@@ -25,10 +25,9 @@ public class ClassDto {
     private String shiftDescription;
     private int teacherId;
     private String teacherName;
-    private int roomNo;
+    private int roomName;
     private Integer roomId;
     private int numberOfStudent;
-
     private int managerId;
     private String managerUsername;
 }
