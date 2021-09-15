@@ -5,9 +5,6 @@ import cnpr.lcss.model.SessionResponseDto;
 import cnpr.lcss.repository.SessionRepository;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,18 +21,13 @@ public class SessionService {
     SessionRepository sessionRepository;
 
     //<editor-fold desc="11.03-view-schedule">
-    public ResponseEntity<?> viewSchedule(Date date, int pageNo, int pageSize) throws Exception {
+    public ResponseEntity<?> viewSchedule(Date date) throws Exception {
         try {
-            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Page<Session> page = sessionRepository.findByStartTimeAndAClass_Status(date, Constant.CLASS_STATUS_STUDYING, pageable);
-            int totalPage = page.getTotalPages();
-            List<Session> sessionList = page.getContent();
-            List<SessionResponseDto> sessionResponseDtoList = sessionList.stream().map(Session::convertToSessionResponseDto).collect(Collectors.toList());
+            List<Session> sessions = sessionRepository.findByStartTimeAndAClass_Status(date, Constant.CLASS_STATUS_STUDYING);
+            List<SessionResponseDto> sessionList = sessions.stream().map(Session::convertToSessionResponseDto).collect(Collectors.toList());
 
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
-            mapObj.put("pageNo", pageNo);
-            mapObj.put("totalPage", totalPage);
-            mapObj.put("sessionList", sessionResponseDtoList);
+            mapObj.put("sessionList", sessionList);
 
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

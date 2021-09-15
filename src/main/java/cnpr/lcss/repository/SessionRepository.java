@@ -1,8 +1,6 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Session;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,9 +19,8 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
             "AND DATEPART(mm, s.start_time) = 09 " +
             "AND DATEPART(dd, s.start_time) = 01)",
             nativeQuery = true)
-    Page<Session> findByStartTimeAndAClass_Status(@Param("startTime") Date startTime,
-                                                  @Param("status") String status,
-                                                  Pageable pageable);
+    List<Session> findByStartTimeAndAClass_Status(@Param("startTime") Date startTime,
+                                                  @Param("status") String status);
 
     List<Session> findSessionByaClass_ClassId(int classId);
 }
