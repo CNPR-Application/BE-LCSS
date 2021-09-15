@@ -769,7 +769,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 9.01-search-class-by-subject-id-shift-id-status-paging
-     * @author LamHNT - 2021.07.07
+     * @author LamHNT - 2021.07.07 / HuuNT - 2021.09.15
      */
     @CrossOrigin
     @RequestMapping(value = "/classes/{branchId}/filter", params = "subjectId", method = RequestMethod.GET)
