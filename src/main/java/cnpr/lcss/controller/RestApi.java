@@ -926,8 +926,6 @@ public class RestApi {
 
     /**
      * @param date
-     * @param pageNo
-     * @param pageSize
      * @return
      * @throws Exception
      * @apiNote 11.03-view-schedule
@@ -935,10 +933,8 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
-    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-                                          @RequestParam int pageNo,
-                                          @RequestParam int pageSize) throws Exception {
-        return sessionService.viewSchedule(date, pageNo, pageSize);
+    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) throws Exception {
+        return sessionService.viewSchedule(date);
     }
     //</editor-fold>
 
