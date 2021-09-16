@@ -311,7 +311,7 @@ public class ClassService {
             }
             // Creator is Account-Username
             newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            newClass.setRoom(roomRepository.findByRoomName(insClass.getRoomName()));
+            newClass.setRoom(null);
 
             // Get Booking ID
             int classId;
