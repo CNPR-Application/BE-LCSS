@@ -343,7 +343,6 @@ public class ClassService {
             String reqDate = (String) reqBody.get("openingDate");
             Date openingDate = sdf.parse(reqDate);
             Integer roomId = (Integer) reqBody.get("roomId");
-            Integer shiftId = (Integer) reqBody.get("shiftId");
             String status = (String) reqBody.get("status");
 
             // Find Class by Class ID
@@ -389,10 +388,6 @@ public class ClassService {
                 // Status
                 if (status != null && !status.isEmpty() && !status.equals(editClass.getStatus())) {
                     editClass.setStatus(status);
-                }
-                // Shift ID
-                if (shiftId != null && !shiftId.equals(editClass.getShift().getShiftId())) {
-                    editClass.setShift(shiftRepository.findShiftByShiftId(shiftId));
                 }
                 // Room ID
                 if (roomId != null && roomId != 0 && roomId != editClass.getRoom().getRoomId()) {
