@@ -71,4 +71,18 @@ public class Booking implements Serializable {
         return bookingSearchResponseDto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", payingPrice=" + payingPrice +
+                ", payingDate=" + payingDate +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", subjectId=" + subjectId +
+                '}';
+    }
+    //</editor-fold>
 }

@@ -43,4 +43,15 @@ public class Room implements Serializable {
         this.isAvailable = isAvailable;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", roomName=" + roomName +
+                ", isAvailable=" + isAvailable +
+                '}';
+    }
+    //</editor-fold>
 }

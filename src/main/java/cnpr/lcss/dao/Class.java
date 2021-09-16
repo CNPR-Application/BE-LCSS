@@ -79,4 +79,17 @@ public class Class implements Serializable {
         return dto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
+    }
+    //</editor-fold>
 }
