@@ -64,14 +64,4 @@ public class StudentInClass implements Serializable {
     }
 
     //</editor-fold>
-
-    @Override
-    public String toString() {
-        return "StudentInClass{" +
-                "studentInClassId=" + studentInClassId +
-                ", teacherRating=" + teacherRating +
-                ", subjectRating=" + subjectRating +
-                ", feedback='" + feedback + '\'' +
-                '}';
-    }
 }

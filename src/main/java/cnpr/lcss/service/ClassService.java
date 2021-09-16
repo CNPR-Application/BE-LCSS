@@ -447,7 +447,7 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomName = (int) reqBody.get("roomName");
+        int roomId = (int) reqBody.get("roomId");
         int teacherId = (int) reqBody.get("teacherId");
         int classId = (int) reqBody.get("classId");
         String creator = (String) reqBody.get("creator");
@@ -455,7 +455,7 @@ public class ClassService {
 
         try {
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomName(roomName);
+            Room room = roomRepository.findByRoomId(roomId);
             Class activateClass = classRepository.findClassByClassId(classId);
 
             try {
