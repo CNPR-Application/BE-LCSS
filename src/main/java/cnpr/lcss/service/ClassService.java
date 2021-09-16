@@ -458,17 +458,23 @@ public class ClassService {
             Room room = roomRepository.findByRoomName(roomName);
             Class activateClass = classRepository.findClassByClassId(classId);
 
-            // Move Student to Opening Class
             try {
                 for (int bookingId : bookingIdList) {
-                    StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
-                    studentInClass.setAClass(activateClass);
-                    // update new class field in student in class
-                    studentInClassRepository.save(studentInClass);
+                    // Change Booking Status: PAID → PROCESSED
+                    Booking currentBooking = bookingRepository.findBookingByBookingId(bookingId);
+                    currentBooking.setStatus(Constant.BOOKING_STATUS_PROCESSED);
+                    // Insert Student to Student In Class
+                    Student currentStudent = currentBooking.getStudent();
+                    StudentInClass newStudentInClass = new StudentInClass();
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setTeacherRating(0);
+                    newStudentInClass.setSubjectRating(0);
+                    newStudentInClass.setFeedback(null);
+                    studentInClassRepository.save(newStudentInClass);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new Exception(Constant.ERROR_MOVE_STUDENT);
+                throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
             }
 
             // Creator (aka Staff)
