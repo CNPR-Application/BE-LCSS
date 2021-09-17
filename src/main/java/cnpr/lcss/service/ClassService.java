@@ -266,23 +266,14 @@ public class ClassService {
         try {
             if (accountRepository.existsByUsername(username)) {
                 Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
                 HashMap<String, Object> mapObj = new LinkedHashMap();
-
                 Student student=studentRepository.findByStudent_StudentUsername(username);
                 List<StudentInClass> studentInClassList=studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
-//                List<Integer> integers = null;
-//                for (StudentInClass studentInClass:  studentInClassList) {
-//                    integers.add(studentInClass.getAClass().getClassId());
-//
-//                }
-//                Page<Class> classList=classRepository.findClassByStudentInClassListAndStatusContainingAllIgnoreCase(studentInClassList,status,pageable);
-                List<Integer> integers=null;
-                for (StudentInClass studentInClass: studentInClassList) {
-                    integers.add(studentInClass.getAClass().getClassId());
+                List<Integer> list =new ArrayList();
+                for (StudentInClass studentInClass : studentInClassList){
+                list.add(studentInClass.getAClass().getClassId());
                 }
-                Page<Class> classList=classRepository.findClassByClassIdListAAndStatusContainingAllIgnoreCase(integers,status,pageable);
-
+                Page<Class> classList=classRepository.findClassByClassIdIsInAndStatus(list,status,pageable);
                 List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
                 int pageTotal = classList.getTotalPages();
 
