@@ -35,7 +35,7 @@ public class Student implements Serializable {
     @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<Booking> bookingList;
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 

@@ -465,6 +465,8 @@ public class ClassService {
                     newStudentInClass.setTeacherRating(0);
                     newStudentInClass.setSubjectRating(0);
                     newStudentInClass.setFeedback(null);
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setStudent(currentStudent);
                     studentInClassRepository.save(newStudentInClass);
                 }
             } catch (Exception e) {
