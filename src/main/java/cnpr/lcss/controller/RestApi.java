@@ -805,6 +805,19 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.03-search-class-of-student-and-teacher">
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/student-class/{username}", params = "status", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassByUsernameAndStatusPaging(@PathVariable(value = "username") String username,
+                                                                  @RequestParam(value = "status") String status,
+                                                                  @RequestParam(value = "pageNo") int pageNo,
+                                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchClassByUsernameAndStatusPaging(username, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.06-create-new-class">
 
     /**
