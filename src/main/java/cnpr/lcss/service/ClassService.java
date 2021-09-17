@@ -415,7 +415,7 @@ public class ClassService {
 
             /**
              * If status = waiting
-             * ➞ Edit: className, openingDate, status, shiftId, roomNo
+             * ➞ Edit: className, openingDate, status, roomNo
              * If status != waiting
              * ➞ Edit: status
              */
@@ -464,7 +464,7 @@ public class ClassService {
                     editClass.setStatus(status);
                 }
             }
-
+            classRepository.save(editClass);
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
