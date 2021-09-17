@@ -26,4 +26,7 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
     StudentInClass findStudentInClassByBooking_BookingId(int bookingId);
 
     Page<StudentInClass> findStudentInClassByaClass_ClassId(int classId, Pageable pageable);
+
+    List<StudentInClass> findStudentInClassByStudent_Id(int studentId);
+
 }

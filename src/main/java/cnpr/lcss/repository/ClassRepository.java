@@ -1,12 +1,17 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.StudentInClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+
+import java.util.List;
 
 @Repository
 public interface ClassRepository extends JpaRepository<Class, Integer> {
@@ -52,4 +57,10 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "FROM Class AS c " +
             "WHERE c.classId = :classId")
     int findSubjectIdByClassId(@Param(value = "classId") int classId);
+
+    @Query("select s.studentInClassId,s.aClass.classId,s.student.id,s.teacherRating,s.subjectRating,s.feedback from StudentInClass AS s")
+    Page<Class> findClassByStudentInClassListAndStatusContainingAllIgnoreCase(@Param(value = "arrayList") List<StudentInClass> arrayList, String status, Pageable pageable);
+
+    @Query(value="SELECT new Class (c.classId,c.className,c.openingDate,c.status,c.slot,c.subject,c.shift,c.branch,c.staff,c.room,c.studentInClassList,c.sessionList,c.bookingList) from Class AS c where c.classId=:classId")
+    Page<Class> findClassByClassIdListAAndStatusContainingAllIgnoreCase(@Param("classId") List<Integer> integers,String status, Pageable pageable);
 }

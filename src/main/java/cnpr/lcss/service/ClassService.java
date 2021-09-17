@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
+import cnpr.lcss.model.ClassSearchDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class ClassService {
     RoomRepository roomRepository;
     @Autowired
     BookingRepository bookingRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
     //<editor-fold desc="Auto Mapping">
     public List<ClassDto> autoMapping(Page<Class> classList) {
@@ -250,6 +253,77 @@ public class ClassService {
                 return ResponseEntity.ok(mapObj);
             } else {
                 throw new ValidationException(Constant.INVALID_BRANCH_ID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.03-search-class-of-student-and-teacher-by-username-and-status">
+    public ResponseEntity<?> searchClassByUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            if (accountRepository.existsByUsername(username)) {
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+                HashMap<String, Object> mapObj = new LinkedHashMap();
+
+                Student student=studentRepository.findByStudent_StudentUsername(username);
+                List<StudentInClass> studentInClassList=studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
+//                List<Integer> integers = null;
+//                for (StudentInClass studentInClass:  studentInClassList) {
+//                    integers.add(studentInClass.getAClass().getClassId());
+//
+//                }
+//                Page<Class> classList=classRepository.findClassByStudentInClassListAndStatusContainingAllIgnoreCase(studentInClassList,status,pageable);
+                List<Integer> integers=null;
+                for (StudentInClass studentInClass: studentInClassList) {
+                    integers.add(studentInClass.getAClass().getClassId());
+                }
+                Page<Class> classList=classRepository.findClassByClassIdListAAndStatusContainingAllIgnoreCase(integers,status,pageable);
+
+                List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
+                int pageTotal = classList.getTotalPages();
+
+                for (ClassSearchDto aClass : classSearchDtoList) {
+                    // Subject Name
+                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                    // Branch Name
+                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                    // Shift Description
+                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    aClass.setShiftDescription(description);
+                    //STATUS: waiting and canceled
+                    // Teacher is no need to query if status are WAITING OR CANCELED
+                    if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                        aClass.setTeacherId(0);
+                        aClass.setTeacherName(null);
+                    } else {
+                        //STATUS: studying và finished
+                        //get list session
+                        List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        //get teacher
+                        Teacher teacher = sessionList.get(0).getTeacher();
+                        aClass.setTeacherId(teacher.getTeacherId());
+                        aClass.setTeacherName(teacher.getAccount().getName());
+                    }
+                    //ROOM
+                    //find room by ID
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
+                    aClass.setRoomId(room.getRoomId());
+                }
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", classSearchDtoList);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new ValidationException(Constant.INVALID_USERNAME);
             }
         } catch (Exception e) {
             e.printStackTrace();

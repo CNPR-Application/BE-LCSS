@@ -9,7 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ClassSearchByIdDto {
+public class ClassSearchDto {
     private int classId;
     private String className;
     private Date openingDate;
@@ -17,13 +17,13 @@ public class ClassSearchByIdDto {
     private int slot;
     private int subjectId;
     private String subjectName;
-    private int shiftId;
-    private String dayOfWeek;
-    private int duration;
-    private boolean isAvailable;
-    private String timeStart;
-    private String timeEnd;
+    private float subjectPrice;
     private int branchId;
     private String branchName;
-///
+    private int shiftId;
+    private String shiftDescription;
+    private int teacherId;
+    private String teacherName;
+    private int roomName;
+    private Integer roomId;
 }
