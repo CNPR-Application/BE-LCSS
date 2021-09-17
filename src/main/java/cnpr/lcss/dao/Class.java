@@ -47,7 +47,7 @@ public class Class implements Serializable {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
     @OneToMany(mappedBy = "aClass")
