@@ -399,7 +399,7 @@ public class ClassService {
                     editClass.setStatus(status);
                 }
             }
-
+            classRepository.save(editClass);
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
