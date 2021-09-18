@@ -15,9 +15,9 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     @Query(value = "SELECT * " +
             "FROM [Language Center].dbo.session AS s " +
             "JOIN [Language Center].dbo.class c ON c.class_id = s.class_id " +
-            "WHERE (DATEPART(yy, s.start_time) = 2021 " +
-            "AND DATEPART(mm, s.start_time) = 09 " +
-            "AND DATEPART(dd, s.start_time) = 01)",
+            "WHERE (DATEPART(yy, s.start_time) " +
+            "AND DATEPART(mm, s.start_time) " +
+            "AND DATEPART(dd, s.start_time))",
             nativeQuery = true)
     List<Session> findByStartTimeAndAClass_Status(@Param("startTime") Date startTime,
                                                   @Param("status") String status);

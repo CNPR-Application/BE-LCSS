@@ -43,6 +43,8 @@ public class RestApi {
     StudentInClassService studentInClassService;
     @Autowired
     TeacherService teacherService;
+    @Autowired
+    RoomService roomService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -1053,6 +1055,30 @@ public class RestApi {
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
     public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.revivalShiftbyShiftId(shiftId);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------ROOM--------------------------------
+     */
+
+    //<editor-fold desc="14.01-get-available-rooms-for-opening-class">
+
+    /**
+     * @param branchId
+     * @param shiftId
+     * @param openingDate
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.09.18
+     * @apiNote 14.01-get-available-rooms-for-opening-class
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms/{branchId}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableRoomsForOpeningClass(@PathVariable int branchId,
+                                                              @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam String openingDate) throws Exception {
+        return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
     }
     //</editor-fold>
 

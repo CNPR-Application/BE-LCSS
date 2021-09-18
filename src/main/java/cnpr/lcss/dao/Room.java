@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.RoomAndBranchDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,14 +45,13 @@ public class Room implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Modify toString()">
-    @Override
-    public String toString() {
-        return "Room{" +
-                "roomId=" + roomId +
-                ", roomName=" + roomName +
-                ", isAvailable=" + isAvailable +
-                '}';
+    //<editor-fold desc="Convert to RoomAndBranchDto">
+    public RoomAndBranchDto convertToRoomAndBranchDto() {
+        RoomAndBranchDto dto = new RoomAndBranchDto();
+        dto.setRoomId(roomId);
+        dto.setRoomName(roomName);
+        dto.setBranchId(branch.getBranchId());
+        return dto;
     }
     //</editor-fold>
 }
