@@ -810,7 +810,6 @@ public class RestApi {
     //<editor-fold desc="9.03-search-class-of-student-and-teacher">
 
     /**
-     *
      * @param username
      * @param status
      * @param pageNo
@@ -818,7 +817,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 9.03-search-class-by-username-status
-     * @author HuuNT - 2021.18.09
+     * @author HuuNT - 2021.09.18
      */
     @CrossOrigin
     @RequestMapping(value = "/student-class/{username}", params = "status", method = RequestMethod.GET)
