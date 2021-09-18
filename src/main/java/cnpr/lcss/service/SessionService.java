@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,9 +22,12 @@ public class SessionService {
     SessionRepository sessionRepository;
 
     //<editor-fold desc="11.03-view-schedule">
-    public ResponseEntity<?> viewSchedule(Date date) throws Exception {
+    public ResponseEntity<?> viewSchedule(String date) throws Exception {
         try {
-            List<Session> sessions = sessionRepository.findByStartTimeAndAClass_Status(date, Constant.CLASS_STATUS_STUDYING);
+            SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
+            Date datetimeStart = sdf.parse(date + Constant.DAY_START);
+            Date datetimeEnd = sdf.parse(date + Constant.DAY_END);
+            List<Session> sessions = sessionRepository.findByStartTimeAndAClass_Status(datetimeStart, datetimeEnd, Constant.CLASS_STATUS_STUDYING);
             List<SessionResponseDto> sessionList = sessions.stream().map(Session::convertToSessionResponseDto).collect(Collectors.toList());
 
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
