@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
@@ -21,4 +23,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findBookingByStudent_Account_Username(String studentUsername, Pageable pageable);
 
     int countBookingByaClass_ClassId(int classId);
+
+    List<Booking> findBookingByStudent_Id(int studentId);
 }
