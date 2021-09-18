@@ -267,16 +267,32 @@ public class ClassService {
             if (accountRepository.existsByUsername(username)) {
                 Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
                 HashMap<String, Object> mapObj = new LinkedHashMap();
-                Student student = studentRepository.findByStudent_StudentUsername(username);
-                List<StudentInClass> studentInClassList = studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
-                List<Integer> list = new ArrayList();
-                for (StudentInClass studentInClass : studentInClassList) {
-                    list.add(studentInClass.getAClass().getClassId());
+                //get a student by username
+                Student student=studentRepository.findByStudent_StudentUsername(username);
+                //initial a arraylist to store classIDs
+                List<Integer> list =new ArrayList();
+                //with status: studying and finished
+                if(status.matches("studying")||status.matches("finished")){
+                    //get a list student in class by student Id
+                    List<StudentInClass> studentInClassList=studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
+                    //get a classIDList by Student In Class list
+                    for (StudentInClass studentInClass : studentInClassList){
+                        list.add(studentInClass.getAClass().getClassId());
+                    }
                 }
-                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatus(list, status, pageable);
+                //with status: waiting and canceled
+                if(status.matches("waiting")||status.matches("canceled")){
+                    //get booking list by student ID
+                    List<Booking> bookingList=bookingRepository.findBookingByStudent_Id(student.getId());
+                    //get a class ID list by booking list
+                    for (Booking booking : bookingList){
+                        list.add(booking.getAClass().getClassId());
+                    }
+                }
+                //Get classes with CLASSID LIST and STATUS
+                Page<Class> classList=classRepository.findClassByClassIdIsInAndStatus(list,status,pageable);
                 List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
                 int pageTotal = classList.getTotalPages();
-
                 for (ClassSearchDto aClass : classSearchDtoList) {
                     // Subject Name
                     aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
@@ -415,7 +431,7 @@ public class ClassService {
 
             /**
              * If status = waiting
-             * ➞ Edit: className, openingDate, status, roomId
+             * ➞ Edit: className, openingDate, status, roomNo
              * If status != waiting
              * ➞ Edit: status
              */
