@@ -23,9 +23,7 @@ public class AccountDto {
     private boolean isAvailable;
     private Date creatingDate;
 
-    /**
-     * --- modify getter & setter ---
-     */
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -33,4 +31,5 @@ public class AccountDto {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }
