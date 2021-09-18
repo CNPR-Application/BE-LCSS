@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
+import cnpr.lcss.model.ClassSearchDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class ClassService {
     RoomRepository roomRepository;
     @Autowired
     BookingRepository bookingRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
     //<editor-fold desc="Auto Mapping">
     public List<ClassDto> autoMapping(Page<Class> classList) {
@@ -258,6 +261,68 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.03-search-class-of-student-and-teacher-by-username-and-status">
+    public ResponseEntity<?> searchClassByUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            if (accountRepository.existsByUsername(username)) {
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+                HashMap<String, Object> mapObj = new LinkedHashMap();
+                Student student = studentRepository.findByStudent_StudentUsername(username);
+                List<StudentInClass> studentInClassList = studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
+                List<Integer> list = new ArrayList();
+                for (StudentInClass studentInClass : studentInClassList) {
+                    list.add(studentInClass.getAClass().getClassId());
+                }
+                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatus(list, status, pageable);
+                List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
+                int pageTotal = classList.getTotalPages();
+
+                for (ClassSearchDto aClass : classSearchDtoList) {
+                    // Subject Name
+                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                    // Branch Name
+                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                    // Shift Description
+                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    aClass.setShiftDescription(description);
+                    //STATUS: waiting and canceled
+                    // Teacher is no need to query if status are WAITING OR CANCELED
+                    if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                        aClass.setTeacherId(0);
+                        aClass.setTeacherName(null);
+                    } else {
+                        //STATUS: studying và finished
+                        //get list session
+                        List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        //get teacher
+                        Teacher teacher = sessionList.get(0).getTeacher();
+                        aClass.setTeacherId(teacher.getTeacherId());
+                        aClass.setTeacherName(teacher.getAccount().getName());
+                    }
+                    //ROOM
+                    //find room by ID
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
+                    aClass.setRoomId(room.getRoomId());
+                }
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", classSearchDtoList);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new ValidationException(Constant.INVALID_USERNAME);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
@@ -311,7 +376,7 @@ public class ClassService {
             }
             // Creator is Account-Username
             newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            newClass.setRoom(roomRepository.findByRoomName(insClass.getRoomName()));
+            newClass.setRoom(null);
 
             // Get Booking ID
             int classId;
@@ -343,7 +408,6 @@ public class ClassService {
             String reqDate = (String) reqBody.get("openingDate");
             Date openingDate = sdf.parse(reqDate);
             Integer roomId = (Integer) reqBody.get("roomId");
-            Integer shiftId = (Integer) reqBody.get("shiftId");
             String status = (String) reqBody.get("status");
 
             // Find Class by Class ID
@@ -351,7 +415,7 @@ public class ClassService {
 
             /**
              * If status = waiting
-             * ➞ Edit: className, openingDate, status, shiftId, roomNo
+             * ➞ Edit: className, openingDate, status, roomId
              * If status != waiting
              * ➞ Edit: status
              */
@@ -390,10 +454,6 @@ public class ClassService {
                 if (status != null && !status.isEmpty() && !status.equals(editClass.getStatus())) {
                     editClass.setStatus(status);
                 }
-                // Shift ID
-                if (shiftId != null && !shiftId.equals(editClass.getShift().getShiftId())) {
-                    editClass.setShift(shiftRepository.findShiftByShiftId(shiftId));
-                }
                 // Room ID
                 if (roomId != null && roomId != 0 && roomId != editClass.getRoom().getRoomId()) {
                     editClass.setRoom(roomRepository.findByRoomId(roomId));
@@ -404,7 +464,7 @@ public class ClassService {
                     editClass.setStatus(status);
                 }
             }
-
+            classRepository.save(editClass);
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -447,7 +507,7 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomName = (int) reqBody.get("roomName");
+        int roomId = (int) reqBody.get("roomId");
         int teacherId = (int) reqBody.get("teacherId");
         int classId = (int) reqBody.get("classId");
         String creator = (String) reqBody.get("creator");
@@ -455,20 +515,28 @@ public class ClassService {
 
         try {
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomName(roomName);
+            Room room = roomRepository.findByRoomId(roomId);
             Class activateClass = classRepository.findClassByClassId(classId);
 
-            // Move Student to Opening Class
             try {
                 for (int bookingId : bookingIdList) {
-                    StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
-                    studentInClass.setAClass(activateClass);
-                    // update new class field in student in class
-                    studentInClassRepository.save(studentInClass);
+                    // Change Booking Status: PAID → PROCESSED
+                    Booking currentBooking = bookingRepository.findBookingByBookingId(bookingId);
+                    currentBooking.setStatus(Constant.BOOKING_STATUS_PROCESSED);
+                    // Insert Student to Student In Class
+                    Student currentStudent = currentBooking.getStudent();
+                    StudentInClass newStudentInClass = new StudentInClass();
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setTeacherRating(0);
+                    newStudentInClass.setSubjectRating(0);
+                    newStudentInClass.setFeedback(null);
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setStudent(currentStudent);
+                    studentInClassRepository.save(newStudentInClass);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new Exception(Constant.ERROR_MOVE_STUDENT);
+                throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
             }
 
             // Creator (aka Staff)

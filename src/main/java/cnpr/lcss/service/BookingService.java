@@ -1,7 +1,6 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Booking;
-import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.model.BookingRequestDto;
 import cnpr.lcss.model.BookingSearchResponseDto;
 import cnpr.lcss.model.BookingSearchResponsePagingDto;
@@ -122,59 +121,9 @@ public class BookingService {
             }
             //</editor-fold>
 
-            //<editor-fold desc="Insert data to Student In Class">
-
-            /**
-             * Insert data to Student In Class
-             */
-            StudentInClass newStdInClass = new StudentInClass();
-
-            // Set Booking ID into New Student In Class
-            try {
-                newStdInClass.setBooking(bookingRepository.findBookingByBookingId(bookingId));
-            } catch (Exception e) {
-                throw new Exception(Constant.INVALID_BOOKING_ID);
-            }
-
-            // Class ID
-            // Check existence
-            if (classRepository.existsById(insBooking.getClassId())) {
-                // Class Status must be waiting
-                if (classRepository.findStatusByClassId(insBooking.getClassId()).equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
-                    newStdInClass.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_CLASS_STATUS_NOT_WAITING);
-                }
-            } else {
-                bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
-                throw new ValidationException(Constant.INVALID_CLASS_ID);
-            }
-
-            // Student ID
-            // Student is validated above
-            newStdInClass.setStudent(studentRepository.findStudentByAccount_Username(insBooking.getStudentUsername()));
-
-            // Teacher Rating
-            newStdInClass.setTeacherRating(0);
-
-            // Subject Rating
-            newStdInClass.setSubjectRating(0);
-
-            // Feedback
-            newStdInClass.setFeedback(null);
-
             HashMap mapObj = new LinkedHashMap();
             mapObj.put("bookingId", bookingId);
-
-            // Insert new Student In Class to DB
-            try {
-                studentInClassRepository.save(newStdInClass);
-                return ResponseEntity.ok(mapObj);
-            } catch (Exception e) {
-                bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
-            }
-            //</editor-fold>
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

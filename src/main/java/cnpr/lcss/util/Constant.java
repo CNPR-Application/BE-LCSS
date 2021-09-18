@@ -81,8 +81,9 @@ public class Constant {
      * -----BOOKING-----
      */
     // Booking Status
-    public static final String BOOKING_STATUS_PAID = "paid";
     public static final String BOOKING_STATUS_CANCELED = "canceled";
+    public static final String BOOKING_STATUS_PAID = "paid";
+    public static final String BOOKING_STATUS_PROCESSED = "processed";
     // Error Message
     public static final String INVALID_BOOKING_ID = "Invalid Booking ID!";
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
@@ -216,7 +217,6 @@ public class Constant {
      * -----STUDENT IN CLASS-----
      */
     // Error Message
-    public static final String ERROR_MOVE_STUDENT = "Move Student to Opening Class FAILED!";
     public static final String ERROR_SAVE_STUDENT_IN_CLASS = "Save student in class FAILED!";
     //</editor-fold>
 

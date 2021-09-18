@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,10 +45,6 @@ public class Booking implements Serializable {
     @JsonIgnore
     private Class aClass;
 
-    @OneToMany(mappedBy = "booking")
-    @JsonIgnore
-    private List<StudentInClass> studentInClassList;
-
     //<editor-fold desc="Convert to SearchDto">
     public BookingSearchResponseDto convertToSearchDto() {
         BookingSearchResponseDto bookingSearchResponseDto = new BookingSearchResponseDto(
@@ -69,6 +64,20 @@ public class Booking implements Serializable {
                 description
         );
         return bookingSearchResponseDto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", payingPrice=" + payingPrice +
+                ", payingDate=" + payingDate +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", subjectId=" + subjectId +
+                '}';
     }
     //</editor-fold>
 }

@@ -43,6 +43,8 @@ public class RestApi {
     StudentInClassService studentInClassService;
     @Autowired
     TeacherService teacherService;
+    @Autowired
+    RoomService roomService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -805,6 +807,19 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.03-search-class-of-student-and-teacher">
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/student-class/{username}", params = "status", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassByUsernameAndStatusPaging(@PathVariable(value = "username") String username,
+                                                                  @RequestParam(value = "status") String status,
+                                                                  @RequestParam(value = "pageNo") int pageNo,
+                                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchClassByUsernameAndStatusPaging(username, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.06-create-new-class">
 
     /**
@@ -867,11 +882,6 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/activate-class", method = RequestMethod.POST)
     public ResponseEntity<?> activateClass(@RequestBody Map<String, Object> reqBody) throws Exception {
-        reqBody.get("roomNo");
-        reqBody.get("teacherId");
-        reqBody.get("classId");
-        reqBody.get("creator");
-        reqBody.get("bookingIdList");
         return classService.activateClass(reqBody);
     }
     //</editor-fold>
@@ -1045,6 +1055,30 @@ public class RestApi {
     @RequestMapping(value = "/shifts/{shiftId}", method = RequestMethod.PUT)
     public ResponseEntity<?> revivalShiftByShiftId(@PathVariable int shiftId) throws Exception {
         return shiftService.revivalShiftbyShiftId(shiftId);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------ROOM--------------------------------
+     */
+
+    //<editor-fold desc="14.01-get-available-rooms-for-opening-class">
+
+    /**
+     * @param branchId
+     * @param shiftId
+     * @param openingDate
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.09.18
+     * @apiNote 14.01-get-available-rooms-for-opening-class
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms/{branchId}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableRoomsForOpeningClass(@PathVariable int branchId,
+                                                              @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam String openingDate) throws Exception {
+        return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
     }
     //</editor-fold>
 

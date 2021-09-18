@@ -63,4 +63,15 @@ public class Teacher implements Serializable {
         return dto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "teacherId=" + teacherId +
+                ", experience='" + experience + '\'' +
+                ", rating='" + rating + '\'' +
+                '}';
+    }
+    //</editor-fold>
 }

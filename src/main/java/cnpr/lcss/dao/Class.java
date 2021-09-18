@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.ClassDto;
+import cnpr.lcss.model.ClassSearchDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,7 +47,7 @@ public class Class implements Serializable {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
     @OneToMany(mappedBy = "aClass")
@@ -79,4 +80,32 @@ public class Class implements Serializable {
         return dto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
+    }
+    //</editor-fold>
+
+    public ClassSearchDto convertToSearchDto() {
+        ClassSearchDto dto = new ClassSearchDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setOpeningDate(openingDate);
+        dto.setStatus(status);
+        dto.setSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectPrice(subject.getPrice());
+        dto.setBranchId(branch.getBranchId());
+        dto.setShiftId(shift.getShiftId());
+        dto.setRoomId(room.getRoomId());
+        return dto;
+    }
 }

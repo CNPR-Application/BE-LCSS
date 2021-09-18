@@ -28,9 +28,6 @@ public class StudentInClass implements Serializable {
     private String feedback;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
-    @ManyToOne
     @JoinColumn(name = "class_id")
     private Class aClass;
     @ManyToOne
@@ -52,26 +49,14 @@ public class StudentInClass implements Serializable {
 
     //<editor-fold desc="Convert to SearchDto">
     public StudentInClassSearchResponseDto convertToSearchDto() {
-        StudentInClassSearchResponseDto studentInClassSearchResponseDto = new StudentInClassSearchResponseDto(
-                aClass.getClassId(),
-                student.getId(),
-                student.getAccount().getUsername(),
-                student.getAccount().getName(),
-                student.getAccount().getImage(),
-                booking.getBookingId(),
-                booking.getPayingDate());
-        return studentInClassSearchResponseDto;
+        StudentInClassSearchResponseDto dto = new StudentInClassSearchResponseDto();
+        dto.setClassId(aClass.getClassId());
+        dto.setStudentId(student.getId());
+        dto.setStudentUserName(student.getAccount().getUsername());
+        dto.setStudentName(student.getAccount().getName());
+        dto.setImage(student.getAccount().getImage());
+        return dto;
     }
 
     //</editor-fold>
-
-    @Override
-    public String toString() {
-        return "StudentInClass{" +
-                "studentInClassId=" + studentInClassId +
-                ", teacherRating=" + teacherRating +
-                ", subjectRating=" + subjectRating +
-                ", feedback='" + feedback + '\'' +
-                '}';
-    }
 }

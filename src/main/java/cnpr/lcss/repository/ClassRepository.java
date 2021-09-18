@@ -1,12 +1,17 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.StudentInClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+
+import java.util.List;
 
 @Repository
 public interface ClassRepository extends JpaRepository<Class, Integer> {
@@ -52,4 +57,8 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "FROM Class AS c " +
             "WHERE c.classId = :classId")
     int findSubjectIdByClassId(@Param(value = "classId") int classId);
+
+   Page<Class> findClassByClassIdIsInAndStatus(List<Integer> list,String status, Pageable pageable);
+
+
 }

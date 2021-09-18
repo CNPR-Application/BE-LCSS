@@ -1,6 +1,5 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.model.StudentInClassSearchPagingResponseDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
@@ -33,14 +32,14 @@ public class StudentInClassService {
     //<editor-fold desc="10.01-move-student-to-opening-class">
     public ResponseEntity<?> moveStudentToOpeningClass(int classId, List<Integer> bookingIdList) {
         try {
-            for (int bookingId : bookingIdList) {
+/*            for (int bookingId : bookingIdList) {
                 StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
                 // find class by classId (in param)
                 Class aClass = classRepository.findClassByClassId(classId);
                 studentInClass.setAClass(aClass);
                 // update new class field in student in class
                 studentInClassRepository.save(studentInClass);
-            }
+            }*/
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.ok(Boolean.FALSE);

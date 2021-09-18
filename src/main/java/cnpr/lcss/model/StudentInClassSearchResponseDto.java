@@ -15,7 +15,5 @@ public class StudentInClassSearchResponseDto {
     private String studentUserName;
     private String studentName;
     private String image;
-    private int bookingId;
     private Date payingDate;
-
 }
