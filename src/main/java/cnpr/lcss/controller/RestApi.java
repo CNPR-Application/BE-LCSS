@@ -702,6 +702,29 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
+    //<editor-fold desc="8.01-search booking by classID and status in a branch">
+
+    /**
+     * @param branchId
+     * @param classId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.01 search booking by Class ID And Status in A Branch
+     * @author HuuNT - 2021.19.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings/{branchId}", params = "classId", method = RequestMethod.GET)
+    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(@PathVariable(value = "branchId") int branchId,
+                                                                   @RequestParam(value = "classId") int classId,
+                                                                   @RequestParam(value = "status") String status,
+                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                   @RequestParam(value = "pageSize") int pageSize) {
+        return bookingService.findBookingByClassIdandPhoneAndStatus(branchId, classId, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="8.02-search-booking-by-student-id">
 
     /**
@@ -709,14 +732,14 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 8.02-search-booking-by-studentid
-     * @author HuuNT - 2021.07.09
+     * @apiNote 8.02-search-booking-by-studentUserName
+     * @author HuuNT - 2021.07.09/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", method = RequestMethod.GET)
-    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
-                                                                 @RequestParam(value = "pageNo") int pageNo,
-                                                                 @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return bookingService.findBookingByStudentUsername(studentUsername, pageNo, pageSize);
     }
     //</editor-fold>
@@ -728,7 +751,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 8.03-get-booking-detail-by-id
-     * @author HuuNT - 2021.07.10
+     * @author HuuNT - 2021.07.10/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", params = "bookingId", method = RequestMethod.GET)

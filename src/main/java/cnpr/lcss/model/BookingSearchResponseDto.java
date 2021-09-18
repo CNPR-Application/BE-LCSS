@@ -12,6 +12,12 @@ import java.util.Date;
 public class BookingSearchResponseDto {
     private int bookingId;
     private Date payingDate;
+    private int classId;
+    private String className;
+    private int shiftId;
+    private String shiftDescription;
+    private int subjectId;
+    private String subjectName;
     private int studentId;
     private String studentName;
     private String image;
