@@ -23,4 +23,6 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
                                                   @Param("status") String status);
 
     List<Session> findSessionByaClass_ClassId(int classId);
+
+    List<Session> findSessionByTeacher_TeacherId(int teacherId);
 }
