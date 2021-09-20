@@ -352,7 +352,7 @@ public class ClassService {
                 //with status: studying and finished
                 if (status.matches("studying") || status.matches("finished")) {
                     //get a list student in class by student Id
-                    List<Session>  sessionList= sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
+                    List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
                     //get a classIDList by Student In Class list
                     for (Session session : sessionList) {
                         list.add(session.getAClass().getClassId());

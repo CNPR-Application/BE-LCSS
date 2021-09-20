@@ -850,6 +850,7 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.05-search-class-of-teacher-by-username">
     /**
      *
      * @param username
@@ -869,6 +870,7 @@ public class RestApi {
                                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return classService.searchClassByTeacherUsernameAndStatusPaging(username, status, pageNo, pageSize);
     }
+    //</editor-fold>
 
 
     //<editor-fold desc="9.06-create-new-class">
