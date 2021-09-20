@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class ClassService {
-
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -340,6 +339,7 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.05_search_class_of_teacher_by_username">
     public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
         try {
             if (accountRepository.existsByUsername(username)) {
@@ -393,6 +393,7 @@ public class ClassService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
