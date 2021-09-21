@@ -1017,8 +1017,8 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/session", method = RequestMethod.GET)
     public ResponseEntity<?> viewSessionOfaClass(@RequestParam int classId,
-                                                     @RequestParam int pageNo,
-                                                     @RequestParam int pageSize) throws Exception {
+                                                 @RequestParam int pageNo,
+                                                 @RequestParam int pageSize) throws Exception {
         return sessionService.viewSessionOfaClass(classId, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1045,6 +1045,26 @@ public class RestApi {
                                                            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
                                                            @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return attendanceService.viewStudentAttendanceInAClass(studentUsername, classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.02-view-all-student-attendance-in-a-session">
+
+    /**
+     * @param sessionId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 12.02-view-all-student-attendance-in-a-session
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance/teacher/{sessionId}/", method = RequestMethod.GET)
+    public ResponseEntity<?> viewAllStudentAttendanceInASession(@PathVariable(value = "sessionId") int sessionId,
+                                                                @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                                @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return attendanceService.viewAllStudentAttendanceInASession(sessionId, pageNo, pageSize);
     }
     //</editor-fold>
 

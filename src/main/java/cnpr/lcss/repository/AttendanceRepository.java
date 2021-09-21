@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
+    //<editor-fold desc="Page<Attendance> findStudentAttendanceInAClass">
     @Query(
             nativeQuery = true,
             value = "SELECT a.attendance_id, a.session_id, a.status, a.checking_date, sic.student_class_id " +
@@ -22,4 +23,23 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     Page<Attendance> findStudentAttendanceInAClass(@Param(value = "studentUsername") String studentUsername,
                                                    @Param(value = "classId") int classId,
                                                    Pageable pageable);
+    //</editor-fold>
+
+    //<editor-fold desc="Page<Attendance> findAllStudentAttendanceInASession">
+    @Query(
+            nativeQuery = true,
+            value = "SELECT a.attendance_id, a.checking_date, a.status, a.session_id, a.student_class_id, " +
+                    "sic.student_id, " +
+                    "s.student_username, " +
+                    "acc.name, acc.image " +
+                    "FROM attendance AS a " +
+                    "JOIN student_in_class AS sic ON a.student_class_id = sic.student_class_id " +
+                    "JOIN student AS s ON sic.student_id = s.student_id " +
+                    "JOIN account AS acc on s.student_username = acc.username " +
+                    "WHERE a.session_id = :sessionId " +
+                    "ORDER BY s.student_username"
+    )
+    Page<Attendance> findAllStudentAttendanceInASession(@Param(value = "sessionId") int sessionId,
+                                                        Pageable pageable);
+    //</editor-fold>
 }

@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.AllStudentAttendanceInASessionDto;
 import cnpr.lcss.model.StudentAttendanceInAClassDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,6 +51,21 @@ public class Attendance implements Serializable {
         dto.setStatus(status);
         dto.setCheckingDate(checkingDate);
         dto.setStudentInClassId(studentInClass.getStudentInClassId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to AllStudentAttendanceInASessionDto">
+    public AllStudentAttendanceInASessionDto convertToAllStudentAttendanceInASessionDto() {
+        AllStudentAttendanceInASessionDto dto = new AllStudentAttendanceInASessionDto();
+        dto.setAttendanceId(attendanceId);
+        dto.setCheckingDate(checkingDate);
+        dto.setStatus(status);
+        dto.setSessionId(session.getSessionId());
+        dto.setStudentInClassId(studentInClass.getStudentInClassId());
+        dto.setStudentUsername(studentInClass.getStudent().getAccount().getUsername());
+        dto.setStudentName(studentInClass.getStudent().getAccount().getName());
+        dto.setStudentImage(studentInClass.getStudent().getAccount().getImage());
         return dto;
     }
     //</editor-fold>
