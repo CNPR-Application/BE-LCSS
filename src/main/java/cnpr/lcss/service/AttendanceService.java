@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Attendance;
 import cnpr.lcss.model.AllStudentAttendanceInASessionDto;
 import cnpr.lcss.model.StudentAttendanceInAClassDto;
 import cnpr.lcss.repository.AttendanceRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,6 +61,35 @@ public class AttendanceService {
             mapObj.put("totalPage", attendancePage.getTotalPages());
             mapObj.put("attendanceList", attendanceList);
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.03-update-attendance">
+    public ResponseEntity<?> updateAttendance(HashMap<String, Object> reqBody) throws Exception {
+        /**
+         * Update Attendance info by Request Body
+         * Update Attendance_CheckingDate to the latest request time
+         */
+        try {
+            int attendanceId = (int) reqBody.get("attendanceId");
+            String status = (String) reqBody.get("status");
+            Attendance updateAttendance = attendanceRepository.getById(attendanceId);
+            if (!status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_NOT_YET)
+                    && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_ABSENT)
+                    && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_PRESENT)) {
+                throw new Exception(Constant.INVALID_ATTENDANCE_STATUS);
+            } else {
+                updateAttendance.setStatus(status.toLowerCase());
+            }
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+            Date currentTime = calendar.getTime();
+            updateAttendance.setCheckingDate(currentTime);
+            attendanceRepository.save(updateAttendance);
+            return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

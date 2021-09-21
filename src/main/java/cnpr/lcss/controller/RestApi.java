@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1064,6 +1065,22 @@ public class RestApi {
                                                                 @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
                                                                 @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return attendanceService.viewAllStudentAttendanceInASession(sessionId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.03-update-attendance">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 12.03-update-attendance
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAttendance(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return attendanceService.updateAttendance(reqBody);
     }
     //</editor-fold>
 

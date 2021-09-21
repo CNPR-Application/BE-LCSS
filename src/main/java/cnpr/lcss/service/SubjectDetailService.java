@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubjectDetailService {
-
     @Autowired
     SubjectDetailRepository subjectDetailRepository;
     @Autowired
@@ -91,7 +90,6 @@ public class SubjectDetailService {
 
     //<editor-fold desc="Update Subject Detail by Subject Detail Id">
     public ResponseEntity<?> updateSubjectDetail(int subjectDetailId, SubjectDetailUpdateRequestDto insSubjectDetail) throws Exception {
-
         try {
             if (subjectDetailRepository.existsById(subjectDetailId)) {
                 if (insSubjectDetail.getWeekNum() > 0) {

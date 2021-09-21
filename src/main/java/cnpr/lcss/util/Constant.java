@@ -1,7 +1,6 @@
 package cnpr.lcss.util;
 
 public class Constant {
-
     //<editor-fold desc="Account">
     /**
      * -----ACCOUNT-----
@@ -71,9 +70,12 @@ public class Constant {
      * -----ATTENDANCE-----
      */
     // Attendance Status
+    public static final String ATTENDANCE_STATUS_ABSENT = "absent";
     public static final String ATTENDANCE_STATUS_NOT_YET = "not yet";
+    public static final String ATTENDANCE_STATUS_PRESENT = "present";
     // Error Message
     public static final String ERROR_INSERT_TO_ATTENDANCE = "Error at insert Student to Attendance!";
+    public static final String INVALID_ATTENDANCE_STATUS = "Invalid Attendance Status [absent | not yet | present]!";
     //</editor-fold>
 
     //<editor-fold desc="Booking">
