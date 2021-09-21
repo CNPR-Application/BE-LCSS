@@ -58,7 +58,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "WHERE c.classId = :classId")
     int findSubjectIdByClassId(@Param(value = "classId") int classId);
 
-   Page<Class> findClassByClassIdIsInAndStatus(List<Integer> list,String status, Pageable pageable);
+   Page<Class> findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(List<Integer> list,String status, Pageable pageable);
 
 
 }
