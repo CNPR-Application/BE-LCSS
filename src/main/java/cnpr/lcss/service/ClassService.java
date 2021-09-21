@@ -361,7 +361,7 @@ public class ClassService {
                 }
 
                 //Get classes with CLASSID LIST and STATUS
-                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatus(list, status, pageable);
+                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
                 List<ClassTeacherSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToTeacherSearchDto()).collect(Collectors.toList());
                 int pageTotal = classList.getTotalPages();
                 for (ClassTeacherSearchDto aClass : classSearchDtoList) {
