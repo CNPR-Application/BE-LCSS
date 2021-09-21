@@ -28,16 +28,22 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     //<editor-fold desc="Page<Attendance> findAllStudentAttendanceInASession">
     @Query(
             nativeQuery = true,
+            countQuery = "SELECT count(a.attendance_id) " +
+                    "FROM attendance AS a " +
+                    "INNER JOIN student_in_class AS sic ON a.student_class_id = sic.student_class_id " +
+                    "INNER JOIN student AS s ON sic.student_id = s.student_id " +
+                    "INNER JOIN account AS acc on s.student_username = acc.username " +
+                    "WHERE a.session_id = :sessionId ",
             value = "SELECT a.attendance_id, a.checking_date, a.status, a.session_id, a.student_class_id, " +
                     "sic.student_id, " +
                     "s.student_username, " +
                     "acc.name, acc.image " +
                     "FROM attendance AS a " +
-                    "JOIN student_in_class AS sic ON a.student_class_id = sic.student_class_id " +
-                    "JOIN student AS s ON sic.student_id = s.student_id " +
-                    "JOIN account AS acc on s.student_username = acc.username " +
+                    "INNER JOIN student_in_class AS sic ON a.student_class_id = sic.student_class_id " +
+                    "INNER JOIN student AS s ON sic.student_id = s.student_id " +
+                    "INNER JOIN account AS acc on s.student_username = acc.username " +
                     "WHERE a.session_id = :sessionId " +
-                    "ORDER BY s.student_username"
+                    "ORDER BY s.student_username ASC"
     )
     Page<Attendance> findAllStudentAttendanceInASession(@Param(value = "sessionId") int sessionId,
                                                         Pageable pageable);
