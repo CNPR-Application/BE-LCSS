@@ -874,7 +874,6 @@ public class RestApi {
     }
     //</editor-fold>
 
-
     //<editor-fold desc="9.06-create-new-class">
 
     /**
@@ -1039,7 +1038,7 @@ public class RestApi {
      * @author LamHNT - 2021.09.21
      */
     @CrossOrigin
-    @RequestMapping(value = "/attendance/{studentUsername}/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/attendance/{studentUsername}/", method = RequestMethod.GET)
     public ResponseEntity<?> viewStudentAttendanceInAClass(@PathVariable(value = "studentUsername") String studentUsername,
                                                            @RequestParam(value = "classId") int classId,
                                                            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,

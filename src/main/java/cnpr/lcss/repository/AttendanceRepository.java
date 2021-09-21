@@ -13,6 +13,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     //<editor-fold desc="Page<Attendance> findStudentAttendanceInAClass">
     @Query(
             nativeQuery = true,
+            countQuery = "SELECT count(a.attendance_id) " +
+                    "FROM attendance AS a " +
+                    "INNER JOIN student_in_class AS sic on a.student_class_id = sic.student_class_id " +
+                    "INNER JOIN student s on sic.student_id = s.student_id " +
+                    "WHERE s.student_username = :studentUsername AND sic.class_id = :classId ",
             value = "SELECT a.attendance_id, a.session_id, a.status, a.checking_date, sic.student_class_id " +
                     "FROM attendance AS a " +
                     "JOIN student_in_class AS sic on a.student_class_id = sic.student_class_id " +
