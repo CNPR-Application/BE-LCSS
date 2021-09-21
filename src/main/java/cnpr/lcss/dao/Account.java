@@ -44,7 +44,7 @@ public class Account implements Serializable {
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
 
-    @OneToMany(mappedBy = "senderUsername")
+    @OneToMany(mappedBy = "receiverUsername")
     private List<Notification> notificationList;
 
     @ManyToOne

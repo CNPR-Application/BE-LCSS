@@ -5,13 +5,11 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +17,8 @@ import java.util.Map;
 public class RestApi {
     @Autowired
     AccountService accountService;
+    @Autowired
+    AttendanceService attendanceService;
     @Autowired
     BookingService bookingService;
     @Autowired
@@ -704,6 +704,29 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
+    //<editor-fold desc="8.01-search booking by classID and status in a branch">
+
+    /**
+     * @param branchId
+     * @param classId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.01 search booking by Class ID And Status in A Branch
+     * @author HuuNT - 2021.19.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings/{branchId}", params = "classId", method = RequestMethod.GET)
+    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(@PathVariable(value = "branchId") int branchId,
+                                                                   @RequestParam(value = "classId") int classId,
+                                                                   @RequestParam(value = "status") String status,
+                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                   @RequestParam(value = "pageSize") int pageSize) {
+        return bookingService.findBookingByClassIdandPhoneAndStatus(branchId, classId, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="8.02-search-booking-by-student-id">
 
     /**
@@ -711,14 +734,14 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 8.02-search-booking-by-studentid
-     * @author HuuNT - 2021.07.09
+     * @apiNote 8.02-search-booking-by-studentUserName
+     * @author HuuNT - 2021.07.09/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", method = RequestMethod.GET)
-    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
-                                                                 @RequestParam(value = "pageNo") int pageNo,
-                                                                 @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return bookingService.findBookingByStudentUsername(studentUsername, pageNo, pageSize);
     }
     //</editor-fold>
@@ -730,7 +753,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 8.03-get-booking-detail-by-id
-     * @author HuuNT - 2021.07.10
+     * @author HuuNT - 2021.07.10/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", params = "bookingId", method = RequestMethod.GET)
@@ -810,7 +833,6 @@ public class RestApi {
     //<editor-fold desc="9.03-search-class-of-student-and-teacher">
 
     /**
-     *
      * @param username
      * @param status
      * @param pageNo
@@ -818,7 +840,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 9.03-search-class-by-username-status
-     * @author HuuNT - 2021.18.09
+     * @author HuuNT - 2021.09.18
      */
     @CrossOrigin
     @RequestMapping(value = "/student-class/{username}", params = "status", method = RequestMethod.GET)
@@ -829,6 +851,29 @@ public class RestApi {
         return classService.searchClassByUsernameAndStatusPaging(username, status, pageNo, pageSize);
     }
     //</editor-fold>
+
+    //<editor-fold desc="9.05-search-class-of-teacher-by-username">
+
+    /**
+     * @param username
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 9.05-search class of teacher by username
+     * @author HuuNT - 2021.09.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teacher-class/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(@PathVariable(value = "username") String username,
+                                                                         @RequestParam(value = "status") String status,
+                                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchClassByTeacherUsernameAndStatusPaging(username, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
 
     //<editor-fold desc="9.06-create-new-class">
 
@@ -953,8 +998,53 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
-    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) throws Exception {
+    public ResponseEntity<?> viewSchedule(@RequestParam String date) throws Exception {
         return sessionService.viewSchedule(date);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.04-View Sesion Of a Class">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 11.04 - View Session Of a Class
+     * @author HuuNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/session", method = RequestMethod.GET)
+    public ResponseEntity<?> viewSessionOfaClass(@RequestParam int classId,
+                                                     @RequestParam int pageNo,
+                                                     @RequestParam int pageSize) throws Exception {
+        return sessionService.viewSessionOfaClass(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------ATTENDANCE--------------------------------
+     */
+
+    //<editor-fold desc="12.01-view-student-attendance-in-a-class">
+
+    /**
+     * @param studentUsername
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 12.01-view-student-attendance-in-a-class
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance/{studentUsername}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> viewStudentAttendanceInAClass(@PathVariable(value = "studentUsername") String studentUsername,
+                                                           @RequestParam(value = "classId") int classId,
+                                                           @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return attendanceService.viewStudentAttendanceInAClass(studentUsername, classId, pageNo, pageSize);
     }
     //</editor-fold>
 

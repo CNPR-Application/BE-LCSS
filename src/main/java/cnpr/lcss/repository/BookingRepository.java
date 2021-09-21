@@ -25,4 +25,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     int countBookingByaClass_ClassId(int classId);
 
     List<Booking> findBookingByStudent_Id(int studentId);
+
+    Page<Booking> findBookingByaClass_ClassIdAndBranch_BranchIdAndStatusContainingAllIgnoreCase(int classId, int branchId, String status, Pageable pageable);
+
+    Page<Booking> findBookingByBranch_BranchIdAndStatusContainingAllIgnoreCase(int branchId, String status, Pageable pageable);
 }

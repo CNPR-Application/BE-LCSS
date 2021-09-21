@@ -18,8 +18,8 @@ public class Notification implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "receiver_username")
-    private String receiverUsername;
+    @Column(name = "sender_username")
+    private String senderUsername;
     @Column(name = "title")
     private String title;
     @Column(name = "body")
@@ -33,5 +33,5 @@ public class Notification implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "username")
-    private Account senderUsername;
+    private Account receiverUsername;
 }

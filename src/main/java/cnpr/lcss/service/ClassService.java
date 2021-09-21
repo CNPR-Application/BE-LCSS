@@ -5,6 +5,7 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.ClassDto;
 import cnpr.lcss.model.ClassRequestDto;
 import cnpr.lcss.model.ClassSearchDto;
+import cnpr.lcss.model.ClassTeacherSearchDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,24 +269,24 @@ public class ClassService {
                 Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
                 HashMap<String, Object> mapObj = new LinkedHashMap();
                 //get a student by username
-                Student student=studentRepository.findByStudent_StudentUsername(username);
+                Student student = studentRepository.findByStudent_StudentUsername(username);
                 //initial a arraylist to store classIDs
-                List<Integer> list =new ArrayList();
+                List<Integer> list = new ArrayList();
                 //with status: studying and finished
-                if(status.matches("studying")||status.matches("finished")){
+                if (status.matches("studying") || status.matches("finished")) {
                     //get a list student in class by student Id
-                    List<StudentInClass> studentInClassList=studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
+                    List<StudentInClass> studentInClassList = studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
                     //get a classIDList by Student In Class list
-                    for (StudentInClass studentInClass : studentInClassList){
+                    for (StudentInClass studentInClass : studentInClassList) {
                         list.add(studentInClass.getAClass().getClassId());
                     }
                 }
                 //with status: waiting and canceled
-                if(status.matches("waiting")||status.matches("canceled")){
+                if (status.matches("waiting") || status.matches("canceled")) {
                     //get booking list by student ID
-                    List<Booking> bookingList=bookingRepository.findBookingByStudent_Id(student.getId());
+                    List<Booking> bookingList = bookingRepository.findBookingByStudent_Id(student.getId());
                     //get a class ID list by booking list
-                    for (Booking booking : bookingList){
+                    for (Booking booking : bookingList) {
                         list.add(booking.getAClass().getClassId());
                     }
                 }
@@ -317,6 +318,62 @@ public class ClassService {
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
                     }
+                    //ROOM
+                    //find room by ID
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
+                    aClass.setRoomId(room.getRoomId());
+                }
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", classSearchDtoList);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new ValidationException(Constant.INVALID_USERNAME);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.05_search_class_of_teacher_by_username">
+    public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            if (accountRepository.existsByUsername(username)) {
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+                HashMap<String, Object> mapObj = new LinkedHashMap();
+                //get a teacher by username
+                Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
+                //initial a arraylist to store classIDs
+                List<Integer> list = new ArrayList();
+                //with status: studying and finished
+                if (status.matches("studying") || status.matches("finished")) {
+                    //get a list student in class by student Id
+                    List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
+                    //get a classIDList by Student In Class list
+                    for (Session session : sessionList) {
+                        list.add(session.getAClass().getClassId());
+                    }
+                }
+
+                //Get classes with CLASSID LIST and STATUS
+                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatus(list, status, pageable);
+                List<ClassTeacherSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToTeacherSearchDto()).collect(Collectors.toList());
+                int pageTotal = classList.getTotalPages();
+                for (ClassTeacherSearchDto aClass : classSearchDtoList) {
+                    // Subject Name
+                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                    // Branch Name
+                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                    // Shift Description
+                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    aClass.setShiftDescription(description);
                     //ROOM
                     //find room by ID
                     Room room = roomRepository.findByRoomId(aClass.getRoomId());
