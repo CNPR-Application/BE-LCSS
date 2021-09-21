@@ -18,6 +18,8 @@ public class RestApi {
     @Autowired
     AccountService accountService;
     @Autowired
+    AttendanceService attendanceService;
+    @Autowired
     BookingService bookingService;
     @Autowired
     BranchService branchService;
@@ -851,23 +853,23 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="9.05-search-class-of-teacher-by-username">
+
     /**
-     *
      * @param username
      * @param status
      * @param pageNo
      * @param pageSize
      * @return
+     * @throws Exception
      * @apiNote 9.05-search class of teacher by username
      * @author HuuNT - 2021.09.20
-     * @throws Exception
      */
     @CrossOrigin
     @RequestMapping(value = "/teacher-class/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(@PathVariable(value = "username") String username,
-                                                                  @RequestParam(value = "status") String status,
-                                                                  @RequestParam(value = "pageNo") int pageNo,
-                                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
+                                                                         @RequestParam(value = "status") String status,
+                                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return classService.searchClassByTeacherUsernameAndStatusPaging(username, status, pageNo, pageSize);
     }
     //</editor-fold>
@@ -998,6 +1000,31 @@ public class RestApi {
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
     public ResponseEntity<?> viewSchedule(@RequestParam String date) throws Exception {
         return sessionService.viewSchedule(date);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------ATTENDANCE--------------------------------
+     */
+
+    //<editor-fold desc="12.01-view-student-attendance-in-a-class">
+
+    /**
+     * @param studentUsername
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 12.01-view-student-attendance-in-a-class
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance/{studentUsername}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> viewStudentAttendanceInAClass(@PathVariable(value = "studentUsername") String studentUsername,
+                                                           @RequestParam(value = "classId") int classId,
+                                                           @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return attendanceService.viewStudentAttendanceInAClass(studentUsername, classId, pageNo, pageSize);
     }
     //</editor-fold>
 

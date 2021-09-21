@@ -58,4 +58,15 @@ public class Session implements Serializable {
         return dto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString">
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
+    //</editor-fold>
 }
