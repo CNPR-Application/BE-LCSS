@@ -1014,7 +1014,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/session", method = RequestMethod.GET)
-    public SessionClassPagingDto viewSessionOfaClass(@RequestParam int classId,
+    public ResponseEntity<?> viewSessionOfaClass(@RequestParam int classId,
                                                      @RequestParam int pageNo,
                                                      @RequestParam int pageSize) throws Exception {
         return sessionService.viewSessionOfaClass(classId, pageNo, pageSize);
