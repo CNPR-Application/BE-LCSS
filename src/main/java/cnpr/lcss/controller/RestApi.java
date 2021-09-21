@@ -1003,6 +1003,26 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="11.04-View Sesion Of a Class">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 11.04 - View Session Of a Class
+     * @author HuuNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/session", method = RequestMethod.GET)
+    public ResponseEntity<?> viewSessionOfaClass(@RequestParam int classId,
+                                                     @RequestParam int pageNo,
+                                                     @RequestParam int pageSize) throws Exception {
+        return sessionService.viewSessionOfaClass(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------ATTENDANCE--------------------------------
      */
