@@ -60,6 +60,17 @@ public class Session implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Modify toString">
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="convertToSessionClassDto">
     public SessionClassDto convertToSessionClassDto() {
         SessionClassDto dto = new SessionClassDto();
