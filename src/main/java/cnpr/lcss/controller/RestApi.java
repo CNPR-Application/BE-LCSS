@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1071,7 +1070,7 @@ public class RestApi {
     //<editor-fold desc="12.03-update-attendance">
 
     /**
-     * @param reqBody
+     * @param updateAttendanceList
      * @return
      * @throws Exception
      * @apiNote 12.03-update-attendance
@@ -1079,8 +1078,8 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/attendance", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateAttendance(@RequestBody HashMap<String, Object> reqBody) throws Exception {
-        return attendanceService.updateAttendance(reqBody);
+    public ResponseEntity<?> updateAttendance(@RequestBody List<UpdateAttendanceDto> updateAttendanceList) throws Exception {
+        return attendanceService.updateAttendance(updateAttendanceList);
     }
     //</editor-fold>
 
