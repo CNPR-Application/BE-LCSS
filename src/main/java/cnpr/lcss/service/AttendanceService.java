@@ -3,6 +3,7 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.Attendance;
 import cnpr.lcss.model.AllStudentAttendanceInASessionDto;
 import cnpr.lcss.model.StudentAttendanceInAClassDto;
+import cnpr.lcss.model.UpdateAttendanceDto;
 import cnpr.lcss.repository.AttendanceRepository;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,26 +75,28 @@ public class AttendanceService {
     //</editor-fold>
 
     //<editor-fold desc="12.03-update-attendance">
-    public ResponseEntity<?> updateAttendance(HashMap<String, Object> reqBody) throws Exception {
+    public ResponseEntity<?> updateAttendance(List<UpdateAttendanceDto> updateAttendanceList) throws Exception {
         /**
-         * Update Attendance info by Request Body
+         * Update Attendance info by List<UpdateAttendanceDto>
          * Update Attendance_CheckingDate to the latest request time
          */
         try {
-            int attendanceId = (int) reqBody.get("attendanceId");
-            String status = (String) reqBody.get("status");
-            Attendance updateAttendance = attendanceRepository.getById(attendanceId);
-            if (!status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_NOT_YET)
-                    && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_ABSENT)
-                    && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_PRESENT)) {
-                throw new Exception(Constant.INVALID_ATTENDANCE_STATUS);
-            } else {
-                updateAttendance.setStatus(status.toLowerCase());
-            }
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
-            updateAttendance.setCheckingDate(Date.from(currentTime.toInstant()));
-            attendanceRepository.save(updateAttendance);
+            for (UpdateAttendanceDto dto : updateAttendanceList) {
+                int attendanceId = dto.getAttendanceId();
+                String status = dto.getStatus();
+                Attendance updateAttendance = attendanceRepository.getById(attendanceId);
+                if (!status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_NOT_YET)
+                        && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_ABSENT)
+                        && !status.equalsIgnoreCase(Constant.ATTENDANCE_STATUS_PRESENT)) {
+                    throw new Exception(Constant.INVALID_ATTENDANCE_STATUS);
+                } else {
+                    updateAttendance.setStatus(status.toLowerCase());
+                }
+                updateAttendance.setCheckingDate(Date.from(currentTime.toInstant()));
+                attendanceRepository.save(updateAttendance);
+            }
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
