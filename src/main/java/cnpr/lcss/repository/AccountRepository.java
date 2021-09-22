@@ -23,11 +23,12 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     String findRoleByUsername(@Param(value = "username") String username);
 
     Page<Account> findByRole_RoleIdAndUsernameContainingAndIsAvailable(@Param(value = "role") String role,
-                                                                      @Param(value = "username") String keyword,
-                                                                      @Param(value = "isAvailable") boolean isAvailable,
-                                                                      Pageable pageable);
-    Page<Account> findByRole_RoleIdAndNameContainingIgnoreCase( String role,
-                                                                      String keyword,
-                                                                      Pageable pageable);
+                                                                       @Param(value = "username") String keyword,
+                                                                       @Param(value = "isAvailable") boolean isAvailable,
+                                                                       Pageable pageable);
+
+    Page<Account> findByRole_RoleIdAndNameContainingIgnoreCase(String role,
+                                                               String keyword,
+                                                               Pageable pageable);
 
 }

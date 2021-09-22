@@ -104,8 +104,30 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.03 - Search Account By Name and Paging">
+
+    /**
+     * @param name
+     * @param role
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.03-search account by name
+     * @author HuuNT - 2021.09.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/account", params = "name", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAccountLikeNamePaging(@RequestParam(value = "role") String role,
+                                                         @RequestParam(value = "name") String name,
+                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchAccountLikeNamePaging(role, name, pageNo, pageSize);
+    }
+    //</editor-fold>
 
     //<editor-fold desc="1.04-search-info-by-username">
+
     /**
      * @param username
      * @return
@@ -118,25 +140,7 @@ public class RestApi {
         return accountService.searchInfoByUsername(username);
     }
 
-    /**
-     *
-     * @param name
-     * @param role
-     * @param pageNo
-     * @param pageSize
-     * @return
-     * @apiNote 1.03-search account by name
-     * @author HuuNT - 2021.09.22
-     * @throws Exception
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/account", params = "name", method = RequestMethod.GET)
-    public ResponseEntity<?> searchAccountLikeNamePaging(@RequestParam(value = "role") String role,
-                                                         @RequestParam(value = "name") String name,
-                                                         @RequestParam(value = "pageNo") int pageNo,
-                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
-        return accountService.searchAccountLikeNamePaging(role, name, pageNo, pageSize);
-    }
+
     //</editor-fold>
 
     //<editor-fold desc="1.05-create-new-account">
