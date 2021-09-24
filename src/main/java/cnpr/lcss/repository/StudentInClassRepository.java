@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface StudentInClassRepository extends JpaRepository<StudentInClass, Integer> {
-
     @Query(value = "SELECT COUNT(sic.studentInClassId) " +
             "FROM StudentInClass AS sic " +
             "WHERE sic.aClass.classId = :classId")
@@ -27,4 +26,6 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
 
     List<StudentInClass> findStudentInClassByStudent_Id(int studentId);
 
+    @Query("select distinct s from StudentInClass s where s.student.id = ?1 and s.aClass.classId = ?2")
+    StudentInClass findByStudent_IdAndAClass_ClassId(Integer id, int classId);
 }

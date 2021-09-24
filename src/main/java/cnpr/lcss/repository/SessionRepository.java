@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Integer> {
-
     @Query(value = "SELECT s " +
             "FROM Session AS s " +
             "JOIN Class AS c ON c.classId = s.aClass.classId " +

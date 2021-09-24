@@ -2,10 +2,7 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
-import cnpr.lcss.model.ClassDto;
-import cnpr.lcss.model.ClassRequestDto;
-import cnpr.lcss.model.ClassSearchDto;
-import cnpr.lcss.model.ClassTeacherSearchDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -697,6 +694,29 @@ public class ClassService {
             classRepository.save(activateClass);
 
             return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username">
+    public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(String studentUsername) throws Exception {
+        /**
+         * Find Classes that need Student feedback
+         * Class Status = finished
+         * Session - Teacher Rating = 0
+         */
+        try {
+            int studentId = studentRepository.findStudentByAccount_Username(studentUsername).getId();
+            List<ClassNeedsFeedbackDto> classList = classRepository.findClassesNeedFeedback(studentId, Constant.CLASS_STATUS_FINISHED)
+                    .stream().map(aClass -> aClass.convertToClassNeedsFeedbackDto()).collect(Collectors.toList());
+            for (ClassNeedsFeedbackDto dto : classList) {
+                dto.setTeacherId(sessionRepository.findSessionByaClass_ClassId(dto.getClassId()).get(classList.size()).getTeacher().getTeacherId());
+                dto.setStudentInClassId(studentInClassRepository.findByStudent_IdAndAClass_ClassId(studentId, dto.getClassId()).getStudentInClassId());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(classList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

@@ -964,6 +964,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username">
+
+    /**
+     * @param studentUsername
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.09.24
+     * @apiNote 9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/student-feedback-class/{studentUsername}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(@PathVariable(value = "studentUsername") String studentUsername) throws Exception {
+        return classService.getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(studentUsername);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

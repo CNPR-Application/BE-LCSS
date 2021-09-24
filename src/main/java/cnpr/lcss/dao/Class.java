@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.ClassDto;
+import cnpr.lcss.model.ClassNeedsFeedbackDto;
 import cnpr.lcss.model.ClassSearchDto;
 import cnpr.lcss.model.ClassTeacherSearchDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -91,11 +92,19 @@ public class Class implements Serializable {
                 ", openingDate=" + openingDate +
                 ", status='" + status + '\'' +
                 ", slot=" + slot +
+                ", subject=" + subject +
+                ", shift=" + shift +
+                ", branch=" + branch +
+                ", staff=" + staff +
+                ", room=" + room +
+                ", studentInClassList=" + studentInClassList +
+                ", sessionList=" + sessionList +
+                ", bookingList=" + bookingList +
                 '}';
     }
     //</editor-fold>
 
-    //<editor-fold desc="convertoSearchDto">
+    //<editor-fold desc="Convert to ClassSearchDto">
     public ClassSearchDto convertToSearchDto() {
         ClassSearchDto dto = new ClassSearchDto();
         dto.setClassId(classId);
@@ -112,7 +121,7 @@ public class Class implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="converToTeacherSearchDto">
+    //<editor-fold desc="Convert to TeacherSearchDto">
     public ClassTeacherSearchDto convertToTeacherSearchDto() {
         ClassTeacherSearchDto dto = new ClassTeacherSearchDto();
         dto.setClassId(classId);
@@ -125,6 +134,20 @@ public class Class implements Serializable {
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
         dto.setRoomId(room.getRoomId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to ClassNeedsFeedbackDto">
+    public ClassNeedsFeedbackDto convertToClassNeedsFeedbackDto() {
+        ClassNeedsFeedbackDto dto = new ClassNeedsFeedbackDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setClassOpeningDate(openingDate);
+        dto.setClassStatus(status);
+        dto.setClassSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setBranchId(branch.getBranchId());
         return dto;
     }
     //</editor-fold>

@@ -28,10 +28,10 @@ public class Room implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Class> classList;
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Session> sessionList;
 
