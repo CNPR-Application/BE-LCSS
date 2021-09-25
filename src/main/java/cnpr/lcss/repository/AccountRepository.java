@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
-
-    int countByRole(String role);
+    @Query("select count(a) from Account a where a.role.roleId = ?1")
+    long countByRole_RoleId(String roleId);
 
     Account findOneByUsername(String username);
 

@@ -70,27 +70,27 @@ public class AccountService {
 
             // ADMIN
             if (role.equalsIgnoreCase(Constant.ROLE_ADMIN)) {
-                username += Constant.ROLE_ADMIN_CODE + String.format("%06d", (accountRepository.countByRole(Constant.ROLE_ADMIN) + 1));
+                username += Constant.ROLE_ADMIN_CODE + String.format("%06d", (accountRepository.countByRole_RoleId(Constant.ROLE_ADMIN) + 1));
             }
 
             // MANAGER
             if (role.equalsIgnoreCase(Constant.ROLE_MANAGER)) {
-                username += Constant.ROLE_MANAGER_CODE + String.format("%06d", (accountRepository.countByRole(Constant.ROLE_MANAGER) + 1));
+                username += Constant.ROLE_MANAGER_CODE + String.format("%06d", (accountRepository.countByRole_RoleId(Constant.ROLE_MANAGER) + 1));
             }
 
             // STAFF
             if (role.equalsIgnoreCase(Constant.ROLE_STAFF)) {
-                username += Constant.ROLE_STAFF_CODE + String.format("%06d", (accountRepository.countByRole(Constant.ROLE_STAFF) + 1));
+                username += Constant.ROLE_STAFF_CODE + String.format("%06d", (accountRepository.countByRole_RoleId(Constant.ROLE_STAFF) + 1));
             }
 
             // TEACHER
             if (role.equalsIgnoreCase(Constant.ROLE_TEACHER)) {
-                username += Constant.ROLE_TEACHER_CODE + String.format("%06d", (accountRepository.countByRole(Constant.ROLE_TEACHER) + 1));
+                username += Constant.ROLE_TEACHER_CODE + String.format("%06d", (accountRepository.countByRole_RoleId(Constant.ROLE_TEACHER) + 1));
             }
 
             // STUDENT
             if (role.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                username += Constant.ROLE_STUDENT_CODE + String.format("%06d", (accountRepository.countByRole(Constant.ROLE_STUDENT) + 1));
+                username += Constant.ROLE_STUDENT_CODE + String.format("%06d", (accountRepository.countByRole_RoleId(Constant.ROLE_STUDENT) + 1));
             }
         } else {
             throw new Exception(Constant.INVALID_NAME);
