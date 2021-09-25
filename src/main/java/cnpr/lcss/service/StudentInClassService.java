@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,11 +37,12 @@ public class StudentInClassService {
     TeacherRepository teacherRepository;
 
     //<editor-fold desc="Generate Rating">
-    public Double generateRating(int newRating, String currentRating) {
-        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
-        Double.parseDouble(currentRating);
-        // Rating = (current_rating + new_rating) / 2
-        Double finalResult = (Double.parseDouble(currentRating) + newRating) / Constant.NO_OF_RATING_PPL;
+    public String generateRating(int newRating, String currentRating) {
+        String[] arrOfInpStr = currentRating.split(Constant.SYMBOL_SLASH);
+        // Rating = number of rating / number of people
+        String finalResult = (Double.parseDouble(arrOfInpStr[0]) + newRating)
+                + Constant.SYMBOL_SLASH
+                + (Double.parseDouble(arrOfInpStr[1]) + Constant.NO_OF_RATING_PPL_ADD_ON);
         return finalResult;
     }
     //</editor-fold>
@@ -84,7 +84,7 @@ public class StudentInClassService {
 
             try {
                 Subject ratingSubject = subjectRepository.getById(subjectId);
-                String updateRatingSubject = generateRating(subjectRating, ratingSubject.getRating()).toString();
+                String updateRatingSubject = generateRating(subjectRating, ratingSubject.getRating());
                 ratingSubject.setRating(updateRatingSubject);
                 subjectRepository.save(ratingSubject);
             } catch (Exception e) {
@@ -94,7 +94,7 @@ public class StudentInClassService {
 
             try {
                 Teacher ratingTeacher = teacherRepository.findByTeacherId(teacherId);
-                String updateRatingTeacher = generateRating(teacherRating, ratingTeacher.getRating()).toString();
+                String updateRatingTeacher = generateRating(teacherRating, ratingTeacher.getRating());
                 ratingTeacher.setRating(updateRatingTeacher);
                 teacherRepository.save(ratingTeacher);
             } catch (Exception e) {
