@@ -294,6 +294,6 @@ public class Constant {
     public static final String SPECIAL_CHARACTERS = "!@#$";
     public static final String SYMBOL_SLASH = "/";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
-    public static final int NO_OF_RATING_PPL_ADD_ON = 1;
+    public static final int NO_OF_RATING_PPL = 2;
     //</editor-fold>
 }
