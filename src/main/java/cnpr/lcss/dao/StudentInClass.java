@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.FeedbackDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -58,5 +59,20 @@ public class StudentInClass implements Serializable {
         return dto;
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to FeedbackDto">
+    public FeedbackDto convertToFeedbackDto() {
+        FeedbackDto dto = new FeedbackDto();
+        dto.setStudentInClassId(studentInClassId);
+        dto.setStudentId(student.getId());
+        dto.setStudentUsername(student.getAccount().getUsername());
+        dto.setStudentName(student.getAccount().getName());
+        dto.setStudentImage(student.getAccount().getImage());
+        dto.setTeacherRating(teacherRating);
+        dto.setSubjectRating(subjectRating);
+        dto.setFeedback(feedback);
+        return dto;
+    }
     //</editor-fold>
 }

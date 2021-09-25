@@ -3,6 +3,7 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.Teacher;
+import cnpr.lcss.model.FeedbackDto;
 import cnpr.lcss.model.StudentInClassSearchPagingResponseDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
 import cnpr.lcss.repository.*;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,6 +124,26 @@ public class StudentInClassService {
         StudentInClassSearchPagingResponseDto studentInClassSearchPagingResponseDto = new StudentInClassSearchPagingResponseDto(pageNo, pageSize, pageTotal, studentInClassSearchResponseDtos);
 
         return studentInClassSearchPagingResponseDto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="10.06-manager-view-feedback">
+    public ResponseEntity<?> getFeedbackForManager(int classId, int pageNo, int pageSize) throws Exception {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Page<StudentInClass> studentInClassPage = studentInClassRepository.findFeedbackForManager(classId, pageable);
+            List<FeedbackDto> feedbackList = studentInClassPage.getContent()
+                    .stream().map(studentInClass -> studentInClass.convertToFeedbackDto()).collect(Collectors.toList());
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("totalPage", studentInClassPage.getTotalPages());
+            mapObj.put("feedbackList", feedbackList);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     //</editor-fold>
 }

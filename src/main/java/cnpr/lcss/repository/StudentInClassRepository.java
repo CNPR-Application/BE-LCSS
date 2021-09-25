@@ -28,4 +28,7 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
 
     @Query("select distinct s from StudentInClass s where s.student.id = ?1 and s.aClass.classId = ?2")
     StudentInClass findByStudent_IdAndAClass_ClassId(Integer id, int classId);
+
+    @Query("select s from StudentInClass s where s.aClass.classId = ?1")
+    Page<StudentInClass> findFeedbackForManager(int classId, Pageable pageable);
 }

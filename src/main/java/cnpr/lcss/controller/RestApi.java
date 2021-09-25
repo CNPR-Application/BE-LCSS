@@ -1039,6 +1039,26 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="10.06-manager-view-feedback">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 10.06-manager-view-feedback
+     * @author LamHNT - 2021.09.25
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/feedback/{classId}/", params = "pageNo", method = RequestMethod.GET)
+    public ResponseEntity<?> getFeedbackForManager(@PathVariable(value = "classId") int classId,
+                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentInClassService.getFeedbackForManager(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------SESSION--------------------------------
      */
