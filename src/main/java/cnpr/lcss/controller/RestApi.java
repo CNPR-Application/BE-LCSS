@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -999,6 +1000,22 @@ public class RestApi {
     public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
                                                 @RequestBody List<Integer> bookingId) throws Exception {
         return studentInClassService.moveStudentToOpeningClass(classId, bookingId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="10.02-student-gives-feedback">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 10.02-student-gives-feedback
+     * @author LamHNT - 2021.09.25
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/feedback", method = RequestMethod.PUT)
+    public ResponseEntity<?> studentGivesFeedback(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return studentInClassService.studentGivesFeedback(reqBody);
     }
     //</editor-fold>
 
