@@ -25,9 +25,7 @@ public class SubjectSearchDto {
     private String curriculumCode;
     private String curriculumName;
 
-    /**
-     * --- modify getter & setter ---
-     */
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -35,4 +33,5 @@ public class SubjectSearchDto {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }
