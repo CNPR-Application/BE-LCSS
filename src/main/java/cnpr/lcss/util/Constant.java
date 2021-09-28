@@ -237,7 +237,7 @@ public class Constant {
      * -----SUBJECT-----
      */
     // Constant Value
-    public static final String DEFAULT_SUBJECT_RATING = "0";
+    public static final String DEFAULT_SUBJECT_RATING = "0/0";
     // Error Message
     public static final String DUPLICATE_SUBJECT_CODE = "Duplicate Subject Code!";
     public static final String DUPLICATE_SUBJECT_NAME = "Duplicate Subject Name!";
@@ -264,6 +264,8 @@ public class Constant {
     /**
      * -----TEACHER-----
      */
+    // Constant Value
+    public static final String DEFAULT_TEACHER_RATING = "0/0";
     // Error Message
     public static final String ERROR_GENERATE_TEACHER_RATING = "Generate teacher rating FAILED!";
     //</editor-fold>
