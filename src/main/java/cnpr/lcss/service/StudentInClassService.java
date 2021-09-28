@@ -131,7 +131,7 @@ public class StudentInClassService {
     public ResponseEntity<?> getFeedbackForManager(int classId, int pageNo, int pageSize) throws Exception {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Page<StudentInClass> studentInClassPage = studentInClassRepository.findFeedbackForManager(classId, pageable);
+            Page<StudentInClass> studentInClassPage = studentInClassRepository.findStudentInClassByaClass_ClassId(classId, pageable);
             List<FeedbackDto> feedbackList = studentInClassPage.getContent()
                     .stream().map(studentInClass -> studentInClass.convertToFeedbackDto()).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();

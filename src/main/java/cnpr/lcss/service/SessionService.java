@@ -33,10 +33,8 @@ public class SessionService {
             Date datetimeEnd = sdf.parse(date + Constant.DAY_END);
             List<Session> sessions = sessionRepository.findByStartTimeAndAClass_Status(datetimeStart, datetimeEnd, Constant.CLASS_STATUS_STUDYING);
             List<SessionResponseDto> sessionList = sessions.stream().map(Session::convertToSessionResponseDto).collect(Collectors.toList());
-
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("sessionList", sessionList);
-
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,7 +43,7 @@ public class SessionService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="View Session Of a Class">
+    //<editor-fold desc="11.04-view-session-of-class">
     public ResponseEntity<?> viewSessionOfaClass(int classId, int pageNo, int pageSize) throws Exception {
         try {
             HashMap<String, Object> mapObj = new LinkedHashMap<>();

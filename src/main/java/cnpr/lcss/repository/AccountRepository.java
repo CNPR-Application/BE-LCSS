@@ -27,8 +27,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
                                                                        @Param(value = "isAvailable") boolean isAvailable,
                                                                        Pageable pageable);
 
-    Page<Account> findByRole_RoleIdAndNameContainingIgnoreCase(String role,
-                                                               String keyword,
-                                                               Pageable pageable);
-
+    Page<Account> findByRole_RoleIdAndNameContainingIgnoreCase(String role, String keyword, Pageable pageable);
 }

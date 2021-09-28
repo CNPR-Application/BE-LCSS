@@ -22,9 +22,9 @@ public class StudentInClass implements Serializable {
     @Column(name = "student_class_id")
     private Integer studentInClassId;
     @Column(name = "teacher_rating")
-    private int teacherRating;
+    private double teacherRating;
     @Column(name = "subject_rating")
-    private int subjectRating;
+    private double subjectRating;
     @Column(name = "feedback")
     private String feedback;
 
@@ -40,11 +40,23 @@ public class StudentInClass implements Serializable {
     private List<Attendance> attendanceList;
 
     //<editor-fold desc="Modify Constructor">
-    public StudentInClass(Integer studentInClassId, int teacherRating, int subjectRating, String feedback) {
+    public StudentInClass(Integer studentInClassId, double teacherRating, double subjectRating, String feedback) {
         this.studentInClassId = studentInClassId;
         this.teacherRating = teacherRating;
         this.subjectRating = subjectRating;
         this.feedback = feedback;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "StudentInClass{" +
+                "studentInClassId=" + studentInClassId +
+                ", teacherRating=" + teacherRating +
+                ", subjectRating=" + subjectRating +
+                ", feedback='" + feedback + '\'' +
+                '}';
     }
     //</editor-fold>
 

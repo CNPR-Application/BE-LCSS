@@ -60,4 +60,22 @@ public class Account implements Serializable {
         this.isAvailable = isAvailable;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", image='" + image + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", creatingDate=" + creatingDate +
+                '}';
+    }
+    //</editor-fold>
 }

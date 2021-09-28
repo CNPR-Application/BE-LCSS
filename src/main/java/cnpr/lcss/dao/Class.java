@@ -92,14 +92,6 @@ public class Class implements Serializable {
                 ", openingDate=" + openingDate +
                 ", status='" + status + '\'' +
                 ", slot=" + slot +
-                ", subject=" + subject +
-                ", shift=" + shift +
-                ", branch=" + branch +
-                ", staff=" + staff +
-                ", room=" + room +
-                ", studentInClassList=" + studentInClassList +
-                ", sessionList=" + sessionList +
-                ", bookingList=" + bookingList +
                 '}';
     }
     //</editor-fold>
