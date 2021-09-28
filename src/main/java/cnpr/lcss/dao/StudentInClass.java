@@ -48,6 +48,18 @@ public class StudentInClass implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "StudentInClass{" +
+                "studentInClassId=" + studentInClassId +
+                ", teacherRating=" + teacherRating +
+                ", subjectRating=" + subjectRating +
+                ", feedback='" + feedback + '\'' +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to SearchDto">
     public StudentInClassSearchResponseDto convertToSearchDto() {
         StudentInClassSearchResponseDto dto = new StudentInClassSearchResponseDto();

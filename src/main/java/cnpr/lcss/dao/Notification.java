@@ -32,6 +32,6 @@ public class Notification implements Serializable {
     private Date lastModified;
 
     @ManyToOne
-    @JoinColumn(name = "username")
+    @JoinColumn(name = "receiver_username")
     private Account receiverUsername;
 }

@@ -46,6 +46,8 @@ public class RestApi {
     TeacherService teacherService;
     @Autowired
     RoomService roomService;
+    @Autowired
+    NotificationService notificationService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -1079,7 +1081,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="11.04-View Sesion Of a Class">
+    //<editor-fold desc="11.04-view-session-of-class">
 
     /**
      * @param classId
@@ -1291,6 +1293,26 @@ public class RestApi {
                                                               @RequestParam(value = "shiftId") int shiftId,
                                                               @RequestParam String openingDate) throws Exception {
         return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------NOTIFICATION--------------------------------
+     */
+
+    //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.02-create-notification-for-student-and-teacher-in-a-class
+     * @author LamHNT - 2021.09.27
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-in-class", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInClass(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInClass(reqBody);
     }
     //</editor-fold>
 

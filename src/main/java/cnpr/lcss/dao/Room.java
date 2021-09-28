@@ -45,6 +45,17 @@ public class Room implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", roomName=" + roomName +
+                ", isAvailable=" + isAvailable +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to RoomAndBranchDto">
     public RoomAndBranchDto convertToRoomAndBranchDto() {
         RoomAndBranchDto dto = new RoomAndBranchDto();

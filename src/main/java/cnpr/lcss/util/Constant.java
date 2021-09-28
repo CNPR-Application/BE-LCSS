@@ -138,6 +138,16 @@ public class Constant {
     public static final String UNABLE_TO_DELETE_CURRICULUM_ = "Curriculum has available Subjects. Unable to delete!";
     //</editor-fold>
 
+    //<editor-fold desc="Notification">
+    /**
+     * Notification
+     */
+    // Constant value
+    public static final String ACCOUNT_SYSTEM = "system";
+    // Error Message
+    public static final String ERROR_GENERATE_NOTIFICATION = "Error at Generate Notifications!";
+    //</editor-fold>
+
     //<editor-fold desc="Firebase">
     /**
      * -----FIREBASE-----
