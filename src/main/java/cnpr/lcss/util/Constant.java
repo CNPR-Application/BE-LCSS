@@ -237,7 +237,7 @@ public class Constant {
      * -----SUBJECT-----
      */
     // Constant Value
-    public static final String DEFAULT_SUBJECT_RATING = "0/5";
+    public static final String DEFAULT_SUBJECT_RATING = "0";
     // Error Message
     public static final String DUPLICATE_SUBJECT_CODE = "Duplicate Subject Code!";
     public static final String DUPLICATE_SUBJECT_NAME = "Duplicate Subject Name!";

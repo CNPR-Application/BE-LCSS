@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubjectService {
-
     @Autowired
     SubjectRepository subjectRepository;
     @Autowired
@@ -141,47 +140,7 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Update Subject">
-    public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
-        try {
-            if (!subjectRepository.existsById(subId)) {
-                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
-            }
-            if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
-                throw new Exception(Constant.DUPLICATE_SUBJECT_NAME);
-            }
-            if (insSub.getPrice() < 0) {
-                throw new Exception(Constant.INVALID_SUBJECT_PRICE);
-            }
-            if (!curriculumRepository.existsById(insSub.getCurriculumId())) {
-                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
-            } else {
-                Subject updateSubject = subjectRepository.findBySubjectId(subId);
-
-                updateSubject.setSubjectName(insSub.getSubjectName().trim());
-                updateSubject.setPrice(insSub.getPrice());
-                updateSubject.setDescription(insSub.getDescription().trim());
-                // KEEP THE CREATING DATE
-                updateSubject.setCreatingDate(updateSubject.getCreatingDate());
-                updateSubject.setIsAvailable(insSub.getIsAvailable());
-                updateSubject.setImage(insSub.getImage().trim());
-                updateSubject.setSlot(insSub.getSlot());
-                updateSubject.setSlotPerWeek(insSub.getSlotPerWeek());
-                updateSubject.setRating(insSub.getRating());
-                updateSubject.setCurriculum(curriculumRepository.findOneByCurriculumId(insSub.getCurriculumId()));
-
-                subjectRepository.save(updateSubject);
-
-                return ResponseEntity.ok(Boolean.TRUE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Delete Subject by Subject Id">
+    //<editor-fold desc="4.05-delete-subject">
     public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
 
         try {
@@ -208,7 +167,7 @@ public class SubjectService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Create New Subject">
+    //<editor-fold desc="4.06-create-subject">
     @Transactional
     public ResponseEntity<?> createNewSubject(SubjectCreateRequestDto newSub) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
@@ -251,6 +210,46 @@ public class SubjectService {
                     subjectRepository.save(insSub);
                     return ResponseEntity.ok(Boolean.TRUE);
                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="4.07-update-subject-by-subject-id">
+    public ResponseEntity<?> updateSubject(int subId, SubjectUpdateRequestDto insSub) throws Exception {
+        try {
+            if (!subjectRepository.existsById(subId)) {
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
+            }
+            if (subjectRepository.existsSubjectBySubjectNameAndSubjectIdIsNot(insSub.getSubjectName(), subId) == Boolean.TRUE) {
+                throw new Exception(Constant.DUPLICATE_SUBJECT_NAME);
+            }
+            if (insSub.getPrice() < 0) {
+                throw new Exception(Constant.INVALID_SUBJECT_PRICE);
+            }
+            if (!curriculumRepository.existsById(insSub.getCurriculumId())) {
+                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
+            } else {
+                Subject updateSubject = subjectRepository.findBySubjectId(subId);
+
+                updateSubject.setSubjectName(insSub.getSubjectName().trim());
+                updateSubject.setPrice(insSub.getPrice());
+                updateSubject.setDescription(insSub.getDescription().trim());
+                // KEEP THE CREATING DATE
+                updateSubject.setCreatingDate(updateSubject.getCreatingDate());
+                updateSubject.setIsAvailable(insSub.getIsAvailable());
+                updateSubject.setImage(insSub.getImage().trim());
+                updateSubject.setSlot(insSub.getSlot());
+                updateSubject.setSlotPerWeek(insSub.getSlotPerWeek());
+                updateSubject.setRating(insSub.getRating());
+                updateSubject.setCurriculum(curriculumRepository.findOneByCurriculumId(insSub.getCurriculumId()));
+
+                subjectRepository.save(updateSubject);
+
+                return ResponseEntity.ok(Boolean.TRUE);
             }
         } catch (Exception e) {
             e.printStackTrace();
