@@ -8,12 +8,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 @Table(name = "notification")
-public class Notification implements Serializable {
+public class Notification  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,4 +34,8 @@ public class Notification implements Serializable {
     @ManyToOne
     @JoinColumn(name = "username")
     private Account receiverUsername;
+
+
+
+
 }

@@ -46,6 +46,8 @@ public class RestApi {
     TeacherService teacherService;
     @Autowired
     RoomService roomService;
+    @Autowired
+    NotificationService notificationService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -1306,4 +1308,22 @@ public class RestApi {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
+
+    @PostMapping("/token")
+    public String sendPnsToDevice(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToDevice(notificationRequestDto);
+    }
+    @PostMapping("/subscribe")
+    public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.subscribeToTopic(subscriptionRequestDto);
+    }
+
+    @PostMapping("/unsu bscribe")
+    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.unsubscribeFromTopic(subscriptionRequestDto);
+    }
+    @PostMapping("/topic")
+    public String sendPnsToTopic(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToTopic(notificationRequestDto);
+    }
 }
