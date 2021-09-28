@@ -49,9 +49,9 @@ public class NotificationService {
 
             List<String> usernameList = new ArrayList<>();
             /**
-             * Class with Status: WAITING OR CANCELED
+             * Class with Status: WAITING or CANCELED
              * Find Student in Student In Class; Non-Teacher
-             * Class with Status: STUDYING OR FINISHED
+             * Class with Status: STUDYING or FINISHED
              * Find Teacher in Session
              */
             List<StudentInClass> studentInClassList = studentInClassRepository.findStudentInClassIsAvailableByClassId(classId);
@@ -74,7 +74,7 @@ public class NotificationService {
                     newNoti.setReceiverUsername(accountRepository.findOneByUsername(user));
                     newNoti.setTitle(title.trim());
                     newNoti.setBody(body.trim());
-                    newNoti.setRead(Boolean.FALSE);
+                    newNoti.setIsRead(Boolean.FALSE);
                     newNoti.setCreatingDate(Date.from(today.toInstant()));
                     newNoti.setLastModified(Date.from(today.toInstant()));
                     notificationRepository.save(newNoti);
@@ -84,6 +84,24 @@ public class NotificationService {
                 throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
             }
             return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.06-update-notification">
+    public ResponseEntity<?> updateNotification(int notificationId, HashMap<String, Object> reqBody) throws Exception {
+        try {
+            Boolean isRead = (Boolean) reqBody.get("isRead");
+            Notification updateNotification = notificationRepository.getById(notificationId);
+            updateNotification.setIsRead(isRead);
+            ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
+            ZonedDateTime modifyTime = ZonedDateTime.now(zoneId);
+            updateNotification.setLastModified(Date.from(modifyTime.toInstant()));
+            notificationRepository.save(updateNotification);
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

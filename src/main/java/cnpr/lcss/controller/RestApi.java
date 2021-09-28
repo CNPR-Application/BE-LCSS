@@ -1316,6 +1316,23 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.06-update-notification">
+
+    /**
+     * @param notificationId
+     * @param reqBody
+     * @return
+     * @apiNote 15.06-update-notification
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification/{notificationId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateNotification(@PathVariable(value = "notificationId") int notificationId,
+                                                @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.updateNotification(notificationId, reqBody);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
@@ -1323,6 +1340,7 @@ public class RestApi {
     //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
+
     public ImageResponseDTO upload(@RequestParam(value = "id") String id,
                                    @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);

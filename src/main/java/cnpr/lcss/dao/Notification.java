@@ -34,4 +34,14 @@ public class Notification implements Serializable {
     @ManyToOne
     @JoinColumn(name = "receiver_username")
     private Account receiverUsername;
+
+    //<editor-fold desc="Modify isRead">
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+    //</editor-fold>
 }
