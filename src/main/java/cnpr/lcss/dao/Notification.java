@@ -46,8 +46,11 @@ public class Notification implements Serializable {
     }
 
     //</editor-fold>
-    public NotificationDto convertToDto() {
+
+    //<editor-fold desc="Convert to NotificationDto">
+    public NotificationDto convertToNotificationDto() {
         NotificationDto notificationDto = new NotificationDto(id, senderUsername, receiverUsername.getUsername(), title, body, isRead, creatingDate, lastModified);
         return notificationDto;
     }
+    //</editor-fold>
 }

@@ -61,10 +61,10 @@ public class NotificationService {
             try {
                 for (Account receiver : receiverList) {
                     Notification newNotification = new Notification();
-                    newNotification.setSenderUsername(senderUsername);
+                    newNotification.setSenderUsername(senderUsername.toLowerCase());
                     newNotification.setReceiverUsername(receiver);
-                    newNotification.setTitle(title);
-                    newNotification.setBody(body);
+                    newNotification.setTitle(title.trim());
+                    newNotification.setBody(body.trim());
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
@@ -81,11 +81,6 @@ public class NotificationService {
         }
     }
     //</editor-fold>
-
-    public List<NotificationDto> autoMapping(Page<Notification> notificationList) {
-        List<NotificationDto> notificationDtoList = notificationList.getContent().stream().map(notification -> notification.convertToDto()).collect(Collectors.toList());
-        return notificationDtoList;
-    }
 
     //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
     @Transactional(rollbackFor = Exception.class)
@@ -147,20 +142,61 @@ public class NotificationService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Notification">
+    //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> createNotificationToStaff(HashMap<String, Object> reqBody) throws Exception {
+        try {
+            int branchId = (int) reqBody.get("branchId");
+            String senderUsername = (String) reqBody.get("senderUsername");
+            if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                try {
+                    accountRepository.existsByUsername(senderUsername);
+                } catch (IllegalArgumentException iae) {
+                    throw new Exception(Constant.INVALID_USERNAME);
+                }
+            }
+            String title = (String) reqBody.get("title");
+            String body = (String) reqBody.get("body");
+            List<Account> staffList = accountRepository.findAvailableStaffAndManagerByBranchId(Constant.ROLE_ADMIN, branchId);
+            ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
+            ZonedDateTime today = ZonedDateTime.now(zoneId);
+            try {
+                for (Account staff : staffList) {
+                    Notification newNotification = new Notification();
+                    newNotification.setSenderUsername(senderUsername.toLowerCase());
+                    newNotification.setReceiverUsername(staff);
+                    newNotification.setTitle(title.trim());
+                    newNotification.setBody(body.trim());
+                    newNotification.setIsRead(Boolean.FALSE);
+                    newNotification.setCreatingDate(Date.from(today.toInstant()));
+                    newNotification.setLastModified(Date.from(today.toInstant()));
+                    notificationRepository.save(newNotification);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.05-get-all-notification">
     public ResponseEntity<?> getAllNotificationByUserName(String userName, int pageNo, int pageSize) {
         try {
-            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Page<Notification> notificationPage;
-            int totalPage;
-            mapObj.put("pageNo", pageNo);
-            mapObj.put("pageSize", pageSize);
-            if (accountRepository.existsByUsername(userName) == Boolean.TRUE || userName.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
-                notificationPage = notificationRepository.getAllByReceiverUsername_UsernameContainingIgnoreCaseOrderByCreatingDateDesc(userName, pageable);
-                totalPage = notificationPage.getTotalPages();
-                mapObj.put("totalPage", totalPage);
-                mapObj.put("notificationList", autoMapping(notificationPage));
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            if (accountRepository.existsByUsername(userName) || userName.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                Page<Notification> notificationPage = notificationRepository.getAllByReceiverUsername_UsernameContainingIgnoreCaseOrderByCreatingDateDesc(userName, pageable);
+                List<NotificationDto> notificationDtoList = notificationPage.getContent().stream()
+                        .map(notification -> notification.convertToNotificationDto()).collect(Collectors.toList());
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("totalPage", notificationPage.getTotalPages());
+                mapObj.put("notificationList", notificationDtoList);
             }
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

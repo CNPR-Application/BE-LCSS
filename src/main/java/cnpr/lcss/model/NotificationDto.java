@@ -11,12 +11,21 @@ import java.util.Date;
 @Data
 public class NotificationDto {
     private int notificationId;
-    private String senderUserName;
-    private String receiverUserName;
+    private String senderUsername;
+    private String receiverUsername;
     private String title;
     private String body;
     private boolean isRead;
     private Date creatingDate;
     private Date lastModified;
 
+    //<editor-fold desc="Modify isRead">
+    public boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+    //</editor-fold>
 }
