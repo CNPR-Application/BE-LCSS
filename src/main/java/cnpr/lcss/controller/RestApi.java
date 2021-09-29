@@ -1300,6 +1300,22 @@ public class RestApi {
      * -------------------------------NOTIFICATION--------------------------------
      */
 
+    //<editor-fold desc="15.01-create-notification-for-all-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.01-create-notification-for-all-in-a-branch
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-all", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInBranch(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInBranch(reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
 
     /**
