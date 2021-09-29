@@ -59,10 +59,10 @@ public class NotificationService {
             try {
                 for (Account receiver : receiverList) {
                     Notification newNotification = new Notification();
-                    newNotification.setSenderUsername(senderUsername);
+                    newNotification.setSenderUsername(senderUsername.toLowerCase());
                     newNotification.setReceiverUsername(receiver);
-                    newNotification.setTitle(title);
-                    newNotification.setBody(body);
+                    newNotification.setTitle(title.trim());
+                    newNotification.setBody(body.trim());
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
@@ -133,6 +133,48 @@ public class NotificationService {
                 throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
             }
             return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> createNotificationToStaff(HashMap<String, Object> reqBody) throws Exception {
+        try {
+            int branchId = (int) reqBody.get("branchId");
+            String senderUsername = (String) reqBody.get("senderUsername");
+            if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                try {
+                    accountRepository.existsByUsername(senderUsername);
+                } catch (IllegalArgumentException iae) {
+                    throw new Exception(Constant.INVALID_USERNAME);
+                }
+            }
+            String title = (String) reqBody.get("title");
+            String body = (String) reqBody.get("body");
+            List<Account> staffList = accountRepository.findAvailableStaffAndManagerByBranchId(Constant.ROLE_ADMIN, branchId);
+            ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
+            ZonedDateTime today = ZonedDateTime.now(zoneId);
+            try {
+                for (Account staff : staffList) {
+                    Notification newNotification = new Notification();
+                    newNotification.setSenderUsername(senderUsername.toLowerCase());
+                    newNotification.setReceiverUsername(staff);
+                    newNotification.setTitle(title.trim());
+                    newNotification.setBody(body.trim());
+                    newNotification.setIsRead(Boolean.FALSE);
+                    newNotification.setCreatingDate(Date.from(today.toInstant()));
+                    newNotification.setLastModified(Date.from(today.toInstant()));
+                    notificationRepository.save(newNotification);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

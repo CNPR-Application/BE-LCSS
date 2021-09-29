@@ -1332,6 +1332,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.04-create-notification-for-staff-and-manager-in-a-branch
+     * @author LamHNT - 2021.09.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-staff", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationToStaff(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationToStaff(reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="15.06-update-notification">
 
     /**
