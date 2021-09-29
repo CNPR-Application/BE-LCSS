@@ -3,9 +3,13 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.Notification;
 import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.dao.Teacher;
+import cnpr.lcss.model.NotificationDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,10 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -30,6 +32,11 @@ public class NotificationService {
     StudentInClassRepository studentInClassRepository;
     @Autowired
     TeacherRepository teacherRepository;
+
+    public List<NotificationDto> autoMapping(Page<Notification> notificationList) {
+        List<NotificationDto> notificationDtoList = notificationList.getContent().stream().map(notification -> notification.convertToDto()).collect(Collectors.toList());
+        return notificationDtoList;
+    }
 
     //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
     @Transactional(rollbackFor = Exception.class)
@@ -88,6 +95,30 @@ public class NotificationService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Get All Notification">
+    public ResponseEntity<?> getAllNotificationByUserName(String userName, int pageNo, int pageSize) {
+        try {
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Page<Notification> notificationPage;
+            int totalPage;
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            if (accountRepository.existsByUsername(userName) == Boolean.TRUE || userName.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                notificationPage = notificationRepository.getAllByReceiverUsername_UsernameContainingIgnoreCaseOrderByCreatingDateDesc(userName, pageable);
+                totalPage = notificationPage.getTotalPages();
+                mapObj.put("totalPage", totalPage);
+                mapObj.put("notificationList", autoMapping(notificationPage));
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
     //</editor-fold>
 
