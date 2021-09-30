@@ -213,6 +213,13 @@ public class RestApi {
     }
     //</editor-fold>
 
+    @CrossOrigin
+    @RequestMapping(value = "/accounts", method = RequestMethod.PUT)
+    public ResponseEntity<?> changePassword(@RequestParam(value = "username") String username,
+                                            @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return accountService.changePassword(username, reqBody);
+    }
+
     //<editor-fold desc="1.11-search-teachers-by-branch-id-and-by-subject-id">
 
     /**
