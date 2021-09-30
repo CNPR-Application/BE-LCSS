@@ -41,9 +41,7 @@ public class NotificationService {
             int branchId = (int) reqBody.get("branchId");
             String senderUsername = (String) reqBody.get("senderUsername");
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
-                try {
-                    accountRepository.existsByUsername(senderUsername);
-                } catch (IllegalArgumentException iae) {
+                if (!accountRepository.existsByUsername(senderUsername)) {
                     throw new Exception(Constant.INVALID_USERNAME);
                 }
             }
@@ -89,9 +87,7 @@ public class NotificationService {
             int classId = (int) reqBody.get("classId");
             String senderUsername = (String) reqBody.get("senderUsername");
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
-                try {
-                    accountRepository.existsByUsername(senderUsername);
-                } catch (IllegalArgumentException iae) {
+                if (!accountRepository.existsByUsername(senderUsername)) {
                     throw new Exception(Constant.INVALID_USERNAME);
                 }
             }
@@ -184,9 +180,7 @@ public class NotificationService {
             int branchId = (int) reqBody.get("branchId");
             String senderUsername = (String) reqBody.get("senderUsername");
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
-                try {
-                    accountRepository.existsByUsername(senderUsername);
-                } catch (IllegalArgumentException iae) {
+                if (!accountRepository.existsByUsername(senderUsername)) {
                     throw new Exception(Constant.INVALID_USERNAME);
                 }
             }
