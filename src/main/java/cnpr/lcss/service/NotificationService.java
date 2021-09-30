@@ -151,7 +151,7 @@ public class NotificationService {
         try {
             String senderUsername = (String) reqBody.get("senderUsername");
             String receiverUsername = (String) reqBody.get("receiverUsername");
-            String token = (String) reqBody.get("token");
+
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
                 if (!accountRepository.existsByUsername(senderUsername))
                     throw new Exception(Constant.INVALID_USERNAME);
@@ -164,11 +164,11 @@ public class NotificationService {
             if (!accountRepository.existsByUsername(receiverUsername)) {
                 throw new Exception((Constant.INVALID_USERNAME));
             }
-            Account receiver = accountRepository.findOneByUsername(receiverUsername);
-            String targetToken = "";
+            Account receiverAcc = accountRepository.findOneByUsername(receiverUsername);
+
             Notification newNoti = new Notification();
             newNoti.setSenderUsername(senderUsername.toLowerCase());
-            newNoti.setReceiverUsername(receiver);
+            newNoti.setReceiverUsername(receiverAcc);
             newNoti.setTitle(title.trim());
             newNoti.setBody(body.trim());
             newNoti.setIsRead(Boolean.FALSE);
@@ -176,7 +176,7 @@ public class NotificationService {
             newNoti.setLastModified(Date.from(today.toInstant()));
             //Send notification to token's device
             Message message = com.google.firebase.messaging.Message.builder()
-                    .setToken(token)
+                    .setToken(title)
                     .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
                     .putData("content", newNoti.getTitle())
                     .putData("body", newNoti.getBody())
