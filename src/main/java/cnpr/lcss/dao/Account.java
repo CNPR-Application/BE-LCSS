@@ -36,6 +36,8 @@ public class Account implements Serializable {
     private boolean isAvailable;
     @Column(name = "creating_date")
     private Date creatingDate;
+    @Column(name = "token")
+    private String token;
 
     @OneToOne(mappedBy = "account")
     private Staff staff;
@@ -44,7 +46,7 @@ public class Account implements Serializable {
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
 
-    @OneToMany(mappedBy = "senderUsername")
+    @OneToMany(mappedBy = "receiverUsername")
     private List<Notification> notificationList;
 
     @ManyToOne
@@ -58,6 +60,25 @@ public class Account implements Serializable {
 
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", image='" + image + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", creatingDate=" + creatingDate +
+                ", token='" + token + '\'' +
+                '}';
     }
     //</editor-fold>
 }

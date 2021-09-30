@@ -1,7 +1,6 @@
 package cnpr.lcss.util;
 
 public class Constant {
-
     //<editor-fold desc="Account">
     /**
      * -----ACCOUNT-----
@@ -71,9 +70,12 @@ public class Constant {
      * -----ATTENDANCE-----
      */
     // Attendance Status
+    public static final String ATTENDANCE_STATUS_ABSENT = "absent";
     public static final String ATTENDANCE_STATUS_NOT_YET = "not yet";
+    public static final String ATTENDANCE_STATUS_PRESENT = "present";
     // Error Message
     public static final String ERROR_INSERT_TO_ATTENDANCE = "Error at insert Student to Attendance!";
+    public static final String INVALID_ATTENDANCE_STATUS = "Invalid Attendance Status [absent | not yet | present]!";
     //</editor-fold>
 
     //<editor-fold desc="Booking">
@@ -134,6 +136,16 @@ public class Constant {
     public static final String DUPLICATE_CURRICULUM_NAME = "Duplicate Curriculum Name!";
     public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
     public static final String UNABLE_TO_DELETE_CURRICULUM_ = "Curriculum has available Subjects. Unable to delete!";
+    //</editor-fold>
+
+    //<editor-fold desc="Notification">
+    /**
+     * Notification
+     */
+    // Constant value
+    public static final String ACCOUNT_SYSTEM = "system";
+    // Error Message
+    public static final String ERROR_GENERATE_NOTIFICATION = "Error at Generate Notifications!";
     //</editor-fold>
 
     //<editor-fold desc="Firebase">
@@ -225,10 +237,11 @@ public class Constant {
      * -----SUBJECT-----
      */
     // Constant Value
-    public static final String DEFAULT_SUBJECT_RATING = "0/5";
+    public static final String DEFAULT_SUBJECT_RATING = "0/0";
     // Error Message
     public static final String DUPLICATE_SUBJECT_CODE = "Duplicate Subject Code!";
     public static final String DUPLICATE_SUBJECT_NAME = "Duplicate Subject Name!";
+    public static final String ERROR_GENERATE_SUBJECT_RATING = "Generate subject rating FAILED!";
     public static final String INVALID_SUBJECT_AVAILABLE = "Subject not available!";
     public static final String INVALID_SUBJECT_ID = "Subject ID not exist!";
     public static final String INVALID_SUBJECT_PRICE = "Subject Price must be GREATER or EQUAL to 0!";
@@ -251,7 +264,10 @@ public class Constant {
     /**
      * -----TEACHER-----
      */
+    // Constant Value
+    public static final String DEFAULT_TEACHER_RATING = "0/0";
     // Error Message
+    public static final String ERROR_GENERATE_TEACHER_RATING = "Generate teacher rating FAILED!";
     //</editor-fold>
 
     //<editor-fold desc="Teaching Branch">
@@ -273,6 +289,9 @@ public class Constant {
      * -----OTHERS-----
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final String DAY_END = " 11:59:59";
+    public static final String DAY_START = " 00:00:00";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
     public static final String INVALID_ADDRESS = "Null or empty address!";
     public static final String INVALID_BIRTHDAY = "Invalid birthday!";
@@ -285,6 +304,8 @@ public class Constant {
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
     public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String SYMBOL_SLASH = "/";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
+    public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     //</editor-fold>
 }

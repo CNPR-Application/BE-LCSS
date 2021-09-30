@@ -1,12 +1,14 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.TeacherDto;
+import cnpr.lcss.util.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 
 @NoArgsConstructor
@@ -43,6 +45,16 @@ public class Teacher implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Calculate Rating">
+    private String calculateRating(String rating) {
+        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
+        String[] arrOfInpStr = rating.split("/");
+        double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
+        String finalResult = df.format(result);
+        return finalResult;
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to TeacherDto">
     public TeacherDto convertToTeacherDto() {
         TeacherDto dto = new TeacherDto();
@@ -50,7 +62,7 @@ public class Teacher implements Serializable {
         dto.setTeacherId(teacherId);
         dto.setUsername(account.getUsername());
         dto.setExperience(experience);
-        dto.setRating(rating);
+        dto.setRating(calculateRating(rating));
         dto.setName(account.getName());
         dto.setAddress(account.getAddress());
         dto.setEmail(account.getEmail());

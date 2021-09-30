@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.NotificationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,8 @@ public class Notification implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "receiver_username")
-    private String receiverUsername;
+    @Column(name = "sender_username")
+    private String senderUsername;
     @Column(name = "title")
     private String title;
     @Column(name = "body")
@@ -32,6 +33,24 @@ public class Notification implements Serializable {
     private Date lastModified;
 
     @ManyToOne
-    @JoinColumn(name = "username")
-    private Account senderUsername;
+    @JoinColumn(name = "receiver_username")
+    private Account receiverUsername;
+
+    //<editor-fold desc="Modify isRead">
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to NotificationDto">
+    public NotificationDto convertToNotificationDto() {
+        NotificationDto notificationDto = new NotificationDto(id, senderUsername, receiverUsername.getUsername(), title, body, isRead, creatingDate, lastModified);
+        return notificationDto;
+    }
+    //</editor-fold>
 }

@@ -28,10 +28,10 @@ public class Room implements Serializable {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Class> classList;
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Session> sessionList;
 
@@ -42,6 +42,17 @@ public class Room implements Serializable {
 
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", roomName=" + roomName +
+                ", isAvailable=" + isAvailable +
+                '}';
     }
     //</editor-fold>
 

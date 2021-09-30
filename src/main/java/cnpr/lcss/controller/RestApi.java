@@ -5,13 +5,12 @@ import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,8 @@ import java.util.Map;
 public class RestApi {
     @Autowired
     AccountService accountService;
+    @Autowired
+    AttendanceService attendanceService;
     @Autowired
     BookingService bookingService;
     @Autowired
@@ -45,6 +46,8 @@ public class RestApi {
     TeacherService teacherService;
     @Autowired
     RoomService roomService;
+    @Autowired
+    NotificationService notificationService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -103,6 +106,28 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.03 - Search Account By Name and Paging">
+
+    /**
+     * @param name
+     * @param role
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.03-search account by name
+     * @author HuuNT - 2021.09.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/account", params = "name", method = RequestMethod.GET)
+    public ResponseEntity<?> searchAccountLikeNamePaging(@RequestParam(value = "role") String role,
+                                                         @RequestParam(value = "name") String name,
+                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchAccountLikeNamePaging(role, name, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="1.04-search-info-by-username">
 
     /**
@@ -116,6 +141,8 @@ public class RestApi {
     public ResponseEntity<?> searchInfoByUsername(@PathVariable String username) throws Exception {
         return accountService.searchInfoByUsername(username);
     }
+
+
     //</editor-fold>
 
     //<editor-fold desc="1.05-create-new-account">
@@ -704,6 +731,29 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
+    //<editor-fold desc="8.01-search booking by classID and status in a branch">
+
+    /**
+     * @param branchId
+     * @param classId
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 8.01 search booking by Class ID And Status in A Branch
+     * @author HuuNT - 2021.19.09
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings/{branchId}", params = "classId", method = RequestMethod.GET)
+    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(@PathVariable(value = "branchId") int branchId,
+                                                                   @RequestParam(value = "classId") int classId,
+                                                                   @RequestParam(value = "status") String status,
+                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                   @RequestParam(value = "pageSize") int pageSize) {
+        return bookingService.findBookingByClassIdandPhoneAndStatus(branchId, classId, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="8.02-search-booking-by-student-id">
 
     /**
@@ -711,14 +761,14 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @apiNote 8.02-search-booking-by-studentid
-     * @author HuuNT - 2021.07.09
+     * @apiNote 8.02-search-booking-by-studentUserName
+     * @author HuuNT - 2021.07.09/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", method = RequestMethod.GET)
-    public BookingSearchResponsePagingDto findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
-                                                                 @RequestParam(value = "pageNo") int pageNo,
-                                                                 @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findBookingByStudentId(@RequestParam(value = "studentUsername") String studentUsername,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return bookingService.findBookingByStudentUsername(studentUsername, pageNo, pageSize);
     }
     //</editor-fold>
@@ -730,7 +780,7 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 8.03-get-booking-detail-by-id
-     * @author HuuNT - 2021.07.10
+     * @author HuuNT - 2021.07.10/2021.19.09
      */
     @CrossOrigin
     @RequestMapping(value = "/bookings", params = "bookingId", method = RequestMethod.GET)
@@ -829,6 +879,28 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.05-search-class-of-teacher-by-username">
+
+    /**
+     * @param username
+     * @param status
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 9.05-search class of teacher by username
+     * @author HuuNT - 2021.09.20
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teacher-class/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(@PathVariable(value = "username") String username,
+                                                                         @RequestParam(value = "status") String status,
+                                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                                         @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return classService.searchClassByTeacherUsernameAndStatusPaging(username, status, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.06-create-new-class">
 
     /**
@@ -895,6 +967,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username">
+
+    /**
+     * @param studentUsername
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.09.24
+     * @apiNote 9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/student-feedback-class/{studentUsername}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(@PathVariable(value = "studentUsername") String studentUsername) throws Exception {
+        return classService.getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(studentUsername);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
@@ -914,6 +1002,22 @@ public class RestApi {
     public ResponseEntity<?> moveStudentInClass(@RequestParam(value = "classId") int classId,
                                                 @RequestBody List<Integer> bookingId) throws Exception {
         return studentInClassService.moveStudentToOpeningClass(classId, bookingId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="10.02-student-gives-feedback">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 10.02-student-gives-feedback
+     * @author LamHNT - 2021.09.25
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/feedback", method = RequestMethod.PUT)
+    public ResponseEntity<?> studentGivesFeedback(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return studentInClassService.studentGivesFeedback(reqBody);
     }
     //</editor-fold>
 
@@ -937,6 +1041,26 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="10.06-manager-view-feedback">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 10.06-manager-view-feedback
+     * @author LamHNT - 2021.09.25
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/feedback/{classId}/", params = "pageNo", method = RequestMethod.GET)
+    public ResponseEntity<?> getFeedbackForManager(@PathVariable(value = "classId") int classId,
+                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentInClassService.getFeedbackForManager(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------SESSION--------------------------------
      */
@@ -952,8 +1076,89 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
-    public ResponseEntity<?> viewSchedule(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) throws Exception {
+    public ResponseEntity<?> viewSchedule(@RequestParam String date) throws Exception {
         return sessionService.viewSchedule(date);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.04-view-session-of-class">
+
+    /**
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 11.04 - View Session Of a Class
+     * @author HuuNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/session", method = RequestMethod.GET)
+    public ResponseEntity<?> viewSessionOfaClass(@RequestParam int classId,
+                                                 @RequestParam int pageNo,
+                                                 @RequestParam int pageSize) throws Exception {
+        return sessionService.viewSessionOfaClass(classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------ATTENDANCE--------------------------------
+     */
+
+    //<editor-fold desc="12.01-view-student-attendance-in-a-class">
+
+    /**
+     * @param studentUsername
+     * @param classId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @apiNote 12.01-view-student-attendance-in-a-class
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance/{studentUsername}/", method = RequestMethod.GET)
+    public ResponseEntity<?> viewStudentAttendanceInAClass(@PathVariable(value = "studentUsername") String studentUsername,
+                                                           @RequestParam(value = "classId") int classId,
+                                                           @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                           @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return attendanceService.viewStudentAttendanceInAClass(studentUsername, classId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.02-view-all-student-attendance-in-a-session">
+
+    /**
+     * @param sessionId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 12.02-view-all-student-attendance-in-a-session
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance/teacher/{sessionId}/", method = RequestMethod.GET)
+    public ResponseEntity<?> viewAllStudentAttendanceInASession(@PathVariable(value = "sessionId") int sessionId,
+                                                                @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                                @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return attendanceService.viewAllStudentAttendanceInASession(sessionId, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.03-update-attendance">
+
+    /**
+     * @param updateAttendanceList
+     * @return
+     * @throws Exception
+     * @apiNote 12.03-update-attendance
+     * @author LamHNT - 2021.09.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/attendance", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAttendance(@RequestBody List<UpdateAttendanceDto> updateAttendanceList) throws Exception {
+        return attendanceService.updateAttendance(updateAttendanceList);
     }
     //</editor-fold>
 
@@ -1092,15 +1297,141 @@ public class RestApi {
     //</editor-fold>
 
     /**
+     * -------------------------------NOTIFICATION--------------------------------
+     */
+
+    //<editor-fold desc="15.01-create-notification-for-all-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.01-create-notification-for-all-in-a-branch
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-all", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInBranch(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInBranch(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.02-create-notification-for-student-and-teacher-in-a-class
+     * @author LamHNT - 2021.09.27
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-in-class", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInClass(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInClass(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.03-create-notification-for-person">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.03-create-notification-for-person
+     * @author HuuNT - 2021.09.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-person", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationForPerson(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationForPerson(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.04-create-notification-for-staff-and-manager-in-a-branch
+     * @author LamHNT - 2021.09.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-staff", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationToStaff(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationToStaff(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.05-get-all-notification">
+
+    /**
+     * @param userName
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 15.05-get-all-notification
+     * @author HuuNT - 2021.09.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification/{userName}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllNotificationByIsRead(@PathVariable(value = "userName") String userName,
+                                                        @RequestParam int pageNo,
+                                                        @RequestParam int pageSize) throws Exception {
+        return notificationService.getAllNotificationByUserName(userName, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.06-update-notification">
+
+    /**
+     * @param notificationId
+     * @param reqBody
+     * @return
+     * @apiNote 15.06-update-notification
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification/{notificationId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateNotification(@PathVariable(value = "notificationId") int notificationId,
+                                                @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.updateNotification(notificationId, reqBody);
+    }
+    //</editor-fold>
+
+    /**
      * -------------------------------FIREBASE--------------------------------
      **/
 
     //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
+
     public ImageResponseDTO upload(@RequestParam(value = "id") String id,
                                    @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
+    /*
+    @RequestMapping(value = "/token", method = RequestMethod.POST)
+    public String sendPnsToDevice(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToDevice(notificationRequestDto);
+    }
+
+    @PostMapping("/subscribe")
+    public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.subscribeToTopic(subscriptionRequestDto);
+    }
+
+    @PostMapping("/unsubscribe")
+    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.unsubscribeFromTopic(subscriptionRequestDto);
+    }
+
+    @PostMapping("/topic")
+    public String sendPnsToTopic(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToTopic(notificationRequestDto);
+    }*/
 }

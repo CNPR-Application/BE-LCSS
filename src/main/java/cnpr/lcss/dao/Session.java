@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.SessionClassDto;
 import cnpr.lcss.model.SessionResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -58,4 +59,31 @@ public class Session implements Serializable {
         return dto;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString">
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="convertToSessionClassDto">
+    public SessionClassDto convertToSessionClassDto() {
+        SessionClassDto dto = new SessionClassDto();
+        dto.setSessionId(sessionId);
+        dto.setTeacherId(teacher.getTeacherId());
+        dto.setTeacherName(teacher.getAccount().getName());
+        dto.setTeacherImage(teacher.getAccount().getImage());
+        dto.setRoomId(room.getRoomId());
+        dto.setRoomName(room.getRoomName());
+        dto.setStartTime(startTime);
+        dto.setEndTime(endTime);
+        return dto;
+    }
+    //</editor-fold>
+
 }

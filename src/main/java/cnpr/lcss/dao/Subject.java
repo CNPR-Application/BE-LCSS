@@ -78,6 +78,25 @@ public class Subject implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "subjectId=" + subjectId +
+                ", subjectCode='" + subjectCode + '\'' +
+                ", subjectName='" + subjectName + '\'' +
+                ", price=" + price +
+                ", creatingDate=" + creatingDate +
+                ", description='" + description + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", image='" + image + '\'' +
+                ", slot=" + slot +
+                ", slotPerWeek=" + slotPerWeek +
+                ", rating='" + rating + '\'' +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to SubjectDto">
     public SubjectDto convertToDto() {
         SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum);

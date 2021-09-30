@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "shift")
 public class Shift implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shift_id")
@@ -54,6 +53,20 @@ public class Shift implements Serializable {
         dto.setDuration(duration);
         dto.setAvailable(isAvailable);
         return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Shift{" +
+                "shiftId=" + shiftId +
+                ", timeStart='" + timeStart + '\'' +
+                ", timeEnd='" + timeEnd + '\'' +
+                ", dayOfWeek='" + dayOfWeek + '\'' +
+                ", duration=" + duration +
+                ", isAvailable=" + isAvailable +
+                '}';
     }
     //</editor-fold>
 }
