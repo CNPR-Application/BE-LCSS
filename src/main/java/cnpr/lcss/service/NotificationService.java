@@ -142,6 +142,42 @@ public class NotificationService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.03-Create Notification For Person">
+    public ResponseEntity<?> createNotificationForPerson(HashMap<String, Object> reqBody) throws Exception {
+        try {
+
+            String senderUsername = (String) reqBody.get("senderUsername");
+            String receiverUsername = (String) reqBody.get("receiverUsername");
+
+            if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                if (accountRepository.existsByUsername(senderUsername) == Boolean.FALSE)
+                    throw new Exception(Constant.INVALID_USERNAME);
+            }
+            String title = (String) reqBody.get("title");
+            String body = (String) reqBody.get("body");
+
+            ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
+            ZonedDateTime today = ZonedDateTime.now(zoneId);
+            if (accountRepository.existsByUsername(receiverUsername) == Boolean.FALSE)
+                throw new Exception((Constant.INVALID_USERNAME));
+            Account receiver = accountRepository.findOneByUsername(receiverUsername);
+            Notification newNoti = new Notification();
+            newNoti.setSenderUsername(senderUsername.toLowerCase());
+            newNoti.setReceiverUsername(receiver);
+            newNoti.setTitle(title.trim());
+            newNoti.setBody(body.trim());
+            newNoti.setIsRead(Boolean.FALSE);
+            newNoti.setCreatingDate(Date.from(today.toInstant()));
+            newNoti.setLastModified(Date.from(today.toInstant()));
+            notificationRepository.save(newNoti);
+            return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
     //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> createNotificationToStaff(HashMap<String, Object> reqBody) throws Exception {
