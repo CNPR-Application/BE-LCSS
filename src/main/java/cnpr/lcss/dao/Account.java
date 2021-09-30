@@ -36,6 +36,8 @@ public class Account implements Serializable {
     private boolean isAvailable;
     @Column(name = "creating_date")
     private Date creatingDate;
+    @Column(name = "token")
+    private String token;
 
     @OneToOne(mappedBy = "account")
     private Staff staff;
@@ -75,6 +77,7 @@ public class Account implements Serializable {
                 ", image='" + image + '\'' +
                 ", isAvailable=" + isAvailable +
                 ", creatingDate=" + creatingDate +
+                ", token='" + token + '\'' +
                 '}';
     }
     //</editor-fold>
