@@ -1318,7 +1318,7 @@ public class RestApi {
         notificationService.subscribeToTopic(subscriptionRequestDto);
     }
 
-    @PostMapping("/unsu bscribe")
+    @PostMapping("/unsubscribe")
     public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
         notificationService.unsubscribeFromTopic(subscriptionRequestDto);
     }
