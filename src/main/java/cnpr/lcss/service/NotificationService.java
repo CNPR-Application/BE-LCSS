@@ -7,6 +7,10 @@ import cnpr.lcss.dao.Teacher;
 import cnpr.lcss.model.NotificationDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +24,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import cnpr.lcss.model.NotificationRequestDto;
-import cnpr.lcss.model.SubscriptionRequestDto;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
 
 @Slf4j
 @Service
@@ -43,6 +39,8 @@ public class NotificationService {
     StudentInClassRepository studentInClassRepository;
     @Autowired
     TeacherRepository teacherRepository;
+
+    private FirebaseApp firebaseApp;
 
     //<editor-fold desc="15.01-create-notification-for-all-in-a-branch">
     @Transactional(rollbackFor = Exception.class)
@@ -157,6 +155,7 @@ public class NotificationService {
         try {
             String senderUsername = (String) reqBody.get("senderUsername");
             String receiverUsername = (String) reqBody.get("receiverUsername");
+            String token = (String) reqBody.get("token");
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
                 if (!accountRepository.existsByUsername(senderUsername))
                     throw new Exception(Constant.INVALID_USERNAME);
@@ -170,6 +169,7 @@ public class NotificationService {
                 throw new Exception((Constant.INVALID_USERNAME));
             }
             Account receiver = accountRepository.findOneByUsername(receiverUsername);
+            String targetToken = "";
             Notification newNoti = new Notification();
             newNoti.setSenderUsername(senderUsername.toLowerCase());
             newNoti.setReceiverUsername(receiver);
@@ -178,6 +178,21 @@ public class NotificationService {
             newNoti.setIsRead(Boolean.FALSE);
             newNoti.setCreatingDate(Date.from(today.toInstant()));
             newNoti.setLastModified(Date.from(today.toInstant()));
+            //Send notification to token's device
+            Message message = com.google.firebase.messaging.Message.builder()
+                    .setToken(token)
+                    .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
+                    .putData("content", newNoti.getTitle())
+                    .putData("body", newNoti.getBody())
+                    .build();
+
+            String response = "";
+            try {
+                response = FirebaseMessaging.getInstance().send(message);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + response);
+            }
+
             notificationRepository.save(newNoti);
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
@@ -252,6 +267,7 @@ public class NotificationService {
     }
     //</editor-fold>
 
+
     //<editor-fold desc="15.06-update-notification">
     public ResponseEntity<?> updateNotification(int notificationId, HashMap<String, Object> reqBody) throws Exception {
         try {
@@ -270,8 +286,7 @@ public class NotificationService {
     }
     //</editor-fold>
 
-    private FirebaseApp firebaseApp;
-
+    /*
     public String sendPnsToDevice(NotificationRequestDto notificationRequestDto) {
         Message message = com.google.firebase.messaging.Message.builder()
                 .setToken(notificationRequestDto.getTarget())
@@ -280,11 +295,11 @@ public class NotificationService {
                 .putData("body", notificationRequestDto.getBody())
                 .build();
 
-        String response = "send Pns to Device";
+        String response = "";
         try {
             response = FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
-            response="fail";
+            response = "fail";
         }
 
         return response;
@@ -311,7 +326,7 @@ public class NotificationService {
     public String sendPnsToTopic(NotificationRequestDto notificationRequestDto) {
         Message message = com.google.firebase.messaging.Message.builder()
                 .setTopic(notificationRequestDto.getTarget())
-                .setNotification(new Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
+                .setNotification(new com.google.firebase.messaging.Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
                 .putData("content", notificationRequestDto.getTitle())
                 .putData("body", notificationRequestDto.getBody())
                 .build();
@@ -320,11 +335,13 @@ public class NotificationService {
         try {
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-            response="fail";
+            response = "fail";
         }
 
         return response;
     }
+
+     */
 }
 
 

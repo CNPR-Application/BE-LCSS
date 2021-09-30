@@ -1333,6 +1333,7 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="15.03-create-notification-for-person">
+
     /**
      * @param reqBody
      * @return
@@ -1413,11 +1414,12 @@ public class RestApi {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
-
-    @PostMapping("/token")
+    /*
+    @RequestMapping(value = "/token", method = RequestMethod.POST)
     public String sendPnsToDevice(@RequestBody NotificationRequestDto notificationRequestDto) {
         return notificationService.sendPnsToDevice(notificationRequestDto);
     }
+
     @PostMapping("/subscribe")
     public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
         notificationService.subscribeToTopic(subscriptionRequestDto);
@@ -1427,8 +1429,9 @@ public class RestApi {
     public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
         notificationService.unsubscribeFromTopic(subscriptionRequestDto);
     }
+
     @PostMapping("/topic")
     public String sendPnsToTopic(@RequestBody NotificationRequestDto notificationRequestDto) {
         return notificationService.sendPnsToTopic(notificationRequestDto);
-    }
+    }*/
 }
