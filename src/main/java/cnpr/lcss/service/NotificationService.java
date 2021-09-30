@@ -74,8 +74,27 @@ public class NotificationService {
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
+
+                    //Send notification to token's device
+                    if (receiver.getToken() != null) {
+                        Message message = com.google.firebase.messaging.Message.builder()
+                                .setToken(receiver.getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
+                                .putData("content", newNotification.getTitle())
+                                .putData("body", newNotification.getBody())
+                                .build();
+
+                        String response = "";
+
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (Exception e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                        }
+                    }
                     notificationRepository.save(newNotification);
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
@@ -176,7 +195,7 @@ public class NotificationService {
             newNoti.setLastModified(Date.from(today.toInstant()));
             //Send notification to token's device
             Message message = com.google.firebase.messaging.Message.builder()
-                    .setToken(title)
+                    .setToken(receiverAcc.getToken())
                     .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
                     .putData("content", newNoti.getTitle())
                     .putData("body", newNoti.getBody())
@@ -186,11 +205,11 @@ public class NotificationService {
             try {
                 response = FirebaseMessaging.getInstance().send(message);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + response);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
             }
 
             notificationRepository.save(newNoti);
-            return ResponseEntity.ok(Boolean.TRUE);
+            return ResponseEntity.ok(Boolean.TRUE + "" + response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
