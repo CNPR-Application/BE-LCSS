@@ -76,6 +76,7 @@ public class NotificationService {
                     newNotification.setLastModified(Date.from(today.toInstant()));
 
                     //Send notification to token's device
+                    //who has token's device will get a noti
                     if (receiver.getToken() != null) {
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(receiver.getToken())
@@ -143,14 +144,34 @@ public class NotificationService {
             ZonedDateTime today = ZonedDateTime.now(zoneId);
             try {
                 for (String user : usernameList) {
+                    //get an account from username
+                    Account receiver=accountRepository.findOneByUsername(user);
                     Notification newNoti = new Notification();
                     newNoti.setSenderUsername(senderUsername.toLowerCase());
-                    newNoti.setReceiverUsername(accountRepository.findOneByUsername(user));
+                    newNoti.setReceiverUsername(receiver);
                     newNoti.setTitle(title.trim());
                     newNoti.setBody(body.trim());
                     newNoti.setIsRead(Boolean.FALSE);
                     newNoti.setCreatingDate(Date.from(today.toInstant()));
                     newNoti.setLastModified(Date.from(today.toInstant()));
+                    //Send notification to token's device
+                    //who has token's device will get a noti
+                    if (receiver.getToken() != null) {
+                        Message message = com.google.firebase.messaging.Message.builder()
+                                .setToken(receiver.getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
+                                .putData("content", newNoti.getTitle())
+                                .putData("body", newNoti.getBody())
+                                .build();
+
+                        String response = "";
+
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (Exception e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                        }
+                    }
                     notificationRepository.save(newNoti);
                 }
             } catch (Exception e) {
@@ -194,22 +215,24 @@ public class NotificationService {
             newNoti.setCreatingDate(Date.from(today.toInstant()));
             newNoti.setLastModified(Date.from(today.toInstant()));
             //Send notification to token's device
-            Message message = com.google.firebase.messaging.Message.builder()
-                    .setToken(receiverAcc.getToken())
-                    .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
-                    .putData("content", newNoti.getTitle())
-                    .putData("body", newNoti.getBody())
-                    .build();
+            //who has token's device will get a noti
+            if (receiverAcc.getToken() != null) {
+                Message message = com.google.firebase.messaging.Message.builder()
+                        .setToken(receiverAcc.getToken())
+                        .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
+                        .putData("content", newNoti.getTitle())
+                        .putData("body", newNoti.getBody())
+                        .build();
 
-            String response = "";
-            try {
-                response = FirebaseMessaging.getInstance().send(message);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                String response = "";
+                try {
+                    response = FirebaseMessaging.getInstance().send(message);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                }
             }
-
             notificationRepository.save(newNoti);
-            return ResponseEntity.ok(Boolean.TRUE + "" + response);
+            return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -243,6 +266,23 @@ public class NotificationService {
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
+                    //Send notification to token's device
+                    if (staff.getToken() != null) {
+                        Message message = com.google.firebase.messaging.Message.builder()
+                                .setToken(staff.getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
+                                .putData("content", newNotification.getTitle())
+                                .putData("body", newNotification.getBody())
+                                .build();
+
+                        String response = "";
+
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (Exception e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                        }
+                    }
                     notificationRepository.save(newNotification);
                 }
             } catch (Exception e) {
