@@ -25,7 +25,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Slf4j
 @Service
 public class NotificationService {
@@ -39,8 +38,7 @@ public class NotificationService {
     StudentInClassRepository studentInClassRepository;
     @Autowired
     TeacherRepository teacherRepository;
-
-    private FirebaseApp firebaseApp;
+    FirebaseApp firebaseApp;
 
     //<editor-fold desc="15.01-create-notification-for-all-in-a-branch">
     @Transactional(rollbackFor = Exception.class)
@@ -74,9 +72,8 @@ public class NotificationService {
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
-
-                    //Send notification to token's device
-                    //who has token's device will get a noti
+                    // Send notification to token's device
+                    // who has token's device will get a noti
                     if (receiver.getToken() != null) {
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(receiver.getToken())
@@ -84,9 +81,7 @@ public class NotificationService {
                                 .putData("content", newNotification.getTitle())
                                 .putData("body", newNotification.getBody())
                                 .build();
-
                         String response = "";
-
                         try {
                             response = FirebaseMessaging.getInstance().send(message);
                         } catch (Exception e) {
@@ -95,7 +90,6 @@ public class NotificationService {
                     }
                     notificationRepository.save(newNotification);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
@@ -145,7 +139,7 @@ public class NotificationService {
             try {
                 for (String user : usernameList) {
                     //get an account from username
-                    Account receiver=accountRepository.findOneByUsername(user);
+                    Account receiver = accountRepository.findOneByUsername(user);
                     Notification newNoti = new Notification();
                     newNoti.setSenderUsername(senderUsername.toLowerCase());
                     newNoti.setReceiverUsername(receiver);
@@ -154,8 +148,8 @@ public class NotificationService {
                     newNoti.setIsRead(Boolean.FALSE);
                     newNoti.setCreatingDate(Date.from(today.toInstant()));
                     newNoti.setLastModified(Date.from(today.toInstant()));
-                    //Send notification to token's device
-                    //who has token's device will get a noti
+                    // Send notification to token's device
+                    // who has token's device will get a noti
                     if (receiver.getToken() != null) {
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(receiver.getToken())
@@ -163,9 +157,7 @@ public class NotificationService {
                                 .putData("content", newNoti.getTitle())
                                 .putData("body", newNoti.getBody())
                                 .build();
-
                         String response = "";
-
                         try {
                             response = FirebaseMessaging.getInstance().send(message);
                         } catch (Exception e) {
@@ -191,21 +183,18 @@ public class NotificationService {
         try {
             String senderUsername = (String) reqBody.get("senderUsername");
             String receiverUsername = (String) reqBody.get("receiverUsername");
-
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
                 if (!accountRepository.existsByUsername(senderUsername))
                     throw new Exception(Constant.INVALID_USERNAME);
             }
             String title = (String) reqBody.get("title");
             String body = (String) reqBody.get("body");
-
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime today = ZonedDateTime.now(zoneId);
             if (!accountRepository.existsByUsername(receiverUsername)) {
                 throw new Exception((Constant.INVALID_USERNAME));
             }
             Account receiverAcc = accountRepository.findOneByUsername(receiverUsername);
-
             Notification newNoti = new Notification();
             newNoti.setSenderUsername(senderUsername.toLowerCase());
             newNoti.setReceiverUsername(receiverAcc);
@@ -214,8 +203,8 @@ public class NotificationService {
             newNoti.setIsRead(Boolean.FALSE);
             newNoti.setCreatingDate(Date.from(today.toInstant()));
             newNoti.setLastModified(Date.from(today.toInstant()));
-            //Send notification to token's device
-            //who has token's device will get a noti
+            // Send notification to token's device
+            // who has token's device will get a noti
             if (receiverAcc.getToken() != null) {
                 Message message = com.google.firebase.messaging.Message.builder()
                         .setToken(receiverAcc.getToken())
@@ -223,7 +212,6 @@ public class NotificationService {
                         .putData("content", newNoti.getTitle())
                         .putData("body", newNoti.getBody())
                         .build();
-
                 String response = "";
                 try {
                     response = FirebaseMessaging.getInstance().send(message);
@@ -266,7 +254,7 @@ public class NotificationService {
                     newNotification.setIsRead(Boolean.FALSE);
                     newNotification.setCreatingDate(Date.from(today.toInstant()));
                     newNotification.setLastModified(Date.from(today.toInstant()));
-                    //Send notification to token's device
+                    // Send notification to token's device
                     if (staff.getToken() != null) {
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(staff.getToken())
@@ -274,9 +262,7 @@ public class NotificationService {
                                 .putData("content", newNotification.getTitle())
                                 .putData("body", newNotification.getBody())
                                 .build();
-
                         String response = "";
-
                         try {
                             response = FirebaseMessaging.getInstance().send(message);
                         } catch (Exception e) {
@@ -316,10 +302,8 @@ public class NotificationService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
     }
     //</editor-fold>
-
 
     //<editor-fold desc="15.06-update-notification">
     public ResponseEntity<?> updateNotification(int notificationId, HashMap<String, Object> reqBody) throws Exception {
@@ -338,63 +322,6 @@ public class NotificationService {
         }
     }
     //</editor-fold>
-
-    /*
-    public String sendPnsToDevice(NotificationRequestDto notificationRequestDto) {
-        Message message = com.google.firebase.messaging.Message.builder()
-                .setToken(notificationRequestDto.getTarget())
-                .setNotification(new com.google.firebase.messaging.Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
-                .putData("content", notificationRequestDto.getTitle())
-                .putData("body", notificationRequestDto.getBody())
-                .build();
-
-        String response = "";
-        try {
-            response = FirebaseMessaging.getInstance().send(message);
-        } catch (Exception e) {
-            response = "fail";
-        }
-
-        return response;
-    }
-
-    public void subscribeToTopic(SubscriptionRequestDto subscriptionRequestDto) {
-        try {
-            FirebaseMessaging.getInstance(firebaseApp).subscribeToTopic(subscriptionRequestDto.getTokens(),
-                    subscriptionRequestDto.getTopicName());
-        } catch (FirebaseMessagingException e) {
-
-        }
-    }
-
-    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
-        try {
-            FirebaseMessaging.getInstance(firebaseApp).unsubscribeFromTopic(subscriptionRequestDto.getTokens(),
-                    subscriptionRequestDto.getTopicName());
-        } catch (FirebaseMessagingException e) {
-
-        }
-    }
-
-    public String sendPnsToTopic(NotificationRequestDto notificationRequestDto) {
-        Message message = com.google.firebase.messaging.Message.builder()
-                .setTopic(notificationRequestDto.getTarget())
-                .setNotification(new com.google.firebase.messaging.Notification(notificationRequestDto.getTitle(), notificationRequestDto.getBody()))
-                .putData("content", notificationRequestDto.getTitle())
-                .putData("body", notificationRequestDto.getBody())
-                .build();
-
-        String response = "send Pns to Topic";
-        try {
-            FirebaseMessaging.getInstance().send(message);
-        } catch (FirebaseMessagingException e) {
-            response = "fail";
-        }
-
-        return response;
-    }
-
-     */
 }
 
 
