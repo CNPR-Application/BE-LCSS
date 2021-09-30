@@ -852,6 +852,7 @@ public class AccountService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.09-change-password">
     public ResponseEntity<?> changePassword(String username, HashMap<String, Object> reqBody) throws Exception {
         try {
 
@@ -873,4 +874,5 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 }

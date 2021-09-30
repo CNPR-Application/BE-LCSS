@@ -213,12 +213,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.09-change-password">
+    /**
+     * @param username
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 1.09-change-password
+     * @author HuuNT - 2021.09.30
+     */
     @CrossOrigin
     @RequestMapping(value = "/accounts", method = RequestMethod.PUT)
     public ResponseEntity<?> changePassword(@RequestParam(value = "username") String username,
                                             @RequestBody HashMap<String, Object> reqBody) throws Exception {
         return accountService.changePassword(username, reqBody);
     }
+    //</editor-fold>
 
     //<editor-fold desc="1.11-search-teachers-by-branch-id-and-by-subject-id">
 
