@@ -145,12 +145,10 @@ public class NotificationService {
     //<editor-fold desc="15.03-Create Notification For Person">
     public ResponseEntity<?> createNotificationForPerson(HashMap<String, Object> reqBody) throws Exception {
         try {
-
             String senderUsername = (String) reqBody.get("senderUsername");
             String receiverUsername = (String) reqBody.get("receiverUsername");
-
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
-                if (accountRepository.existsByUsername(senderUsername) == Boolean.FALSE)
+                if (!accountRepository.existsByUsername(senderUsername))
                     throw new Exception(Constant.INVALID_USERNAME);
             }
             String title = (String) reqBody.get("title");
@@ -158,8 +156,9 @@ public class NotificationService {
 
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime today = ZonedDateTime.now(zoneId);
-            if (accountRepository.existsByUsername(receiverUsername) == Boolean.FALSE)
+            if (!accountRepository.existsByUsername(receiverUsername)) {
                 throw new Exception((Constant.INVALID_USERNAME));
+            }
             Account receiver = accountRepository.findOneByUsername(receiverUsername);
             Notification newNoti = new Notification();
             newNoti.setSenderUsername(senderUsername.toLowerCase());
