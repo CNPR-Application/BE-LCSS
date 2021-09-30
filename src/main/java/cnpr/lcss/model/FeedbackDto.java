@@ -13,7 +13,7 @@ public class FeedbackDto {
     private String studentUsername;
     private String studentName;
     private String studentImage;
-    private int teacherRating;
-    private int subjectRating;
+    private double teacherRating;
+    private double subjectRating;
     private String feedback;
 }

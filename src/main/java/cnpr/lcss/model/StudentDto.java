@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class StudentDto {
-
     private int id;
     private String parentPhone;
     private String parentName;

@@ -1081,7 +1081,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="11.04-View Sesion Of a Class">
+    //<editor-fold desc="11.04-view-session-of-class">
 
     /**
      * @param classId
@@ -1297,12 +1297,117 @@ public class RestApi {
     //</editor-fold>
 
     /**
+     * -------------------------------NOTIFICATION--------------------------------
+     */
+
+    //<editor-fold desc="15.01-create-notification-for-all-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.01-create-notification-for-all-in-a-branch
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-all", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInBranch(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInBranch(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.02-create-notification-for-student-and-teacher-in-a-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.02-create-notification-for-student-and-teacher-in-a-class
+     * @author LamHNT - 2021.09.27
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-in-class", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationInClass(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationInClass(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.03-create-notification-for-person">
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.03-create-notification-for-person
+     * @author HuuNT - 2021.09.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-person", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationForPerson(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationForPerson(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.04-create-notification-for-staff-and-manager-in-a-branch
+     * @author LamHNT - 2021.09.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-staff", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationToStaff(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationToStaff(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.05-get-all-notification">
+
+    /**
+     * @param userName
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 15.05-get-all-notification
+     * @author HuuNT - 2021.09.29
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification/{userName}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllNotificationByIsRead(@PathVariable(value = "userName") String userName,
+                                                        @RequestParam int pageNo,
+                                                        @RequestParam int pageSize) throws Exception {
+        return notificationService.getAllNotificationByUserName(userName, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.06-update-notification">
+
+    /**
+     * @param notificationId
+     * @param reqBody
+     * @return
+     * @apiNote 15.06-update-notification
+     * @author LamHNT - 2021.09.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification/{notificationId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateNotification(@PathVariable(value = "notificationId") int notificationId,
+                                                @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.updateNotification(notificationId, reqBody);
+    }
+    //</editor-fold>
+
+    /**
      * -------------------------------FIREBASE--------------------------------
      **/
 
     //<editor-fold desc="Upload Image via Firebase">
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/image", method = RequestMethod.POST)
+
     public ImageResponseDTO upload(@RequestParam(value = "id") String id,
                                    @RequestBody ImageRequestDto base64) throws IOException, FirebaseAuthException {
         return fireBaseService.upload(base64, id);

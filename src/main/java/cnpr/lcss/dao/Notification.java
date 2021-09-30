@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.NotificationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,12 +9,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Entity
 @Table(name = "notification")
-public class Notification  implements Serializable {
+public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,10 +33,24 @@ public class Notification  implements Serializable {
     private Date lastModified;
 
     @ManyToOne
-    @JoinColumn(name = "username")
+    @JoinColumn(name = "receiver_username")
     private Account receiverUsername;
 
+    //<editor-fold desc="Modify isRead">
+    public boolean isRead() {
+        return isRead;
+    }
 
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
+    //</editor-fold>
 
+    //<editor-fold desc="Convert to NotificationDto">
+    public NotificationDto convertToNotificationDto() {
+        NotificationDto notificationDto = new NotificationDto(id, senderUsername, receiverUsername.getUsername(), title, body, isRead, creatingDate, lastModified);
+        return notificationDto;
+    }
+    //</editor-fold>
 }

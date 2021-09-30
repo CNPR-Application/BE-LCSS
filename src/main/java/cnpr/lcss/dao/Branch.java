@@ -69,15 +69,6 @@ public class Branch implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Convert to BranchResponseDto">
-    public BranchResponseDto convertToBranchResponseDto() {
-        BranchResponseDto dto = new BranchResponseDto();
-        dto.setBranchId(branchId);
-        dto.setBranchName(branchName);
-        return dto;
-    }
-    //</editor-fold>
-
     //<editor-fold desc="Modify isAvailable">
     public Boolean getIsAvailable() {
         return isAvailable;
@@ -85,6 +76,29 @@ public class Branch implements Serializable {
 
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Branch{" +
+                "branchId=" + branchId +
+                ", branchName='" + branchName + '\'' +
+                ", address='" + address + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", openingDate=" + openingDate +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to BranchResponseDto">
+    public BranchResponseDto convertToBranchResponseDto() {
+        BranchResponseDto dto = new BranchResponseDto();
+        dto.setBranchId(branchId);
+        dto.setBranchName(branchName);
+        return dto;
     }
     //</editor-fold>
 }

@@ -621,7 +621,7 @@ public class AccountService {
                 Account accountTeacher = accountRepository.findOneByUsername(accTmp.getUsername());
                 if (newAcc.getExperience() != null && !newAcc.getExperience().isEmpty()) {
                     teacher.setAccount(accountTeacher);
-                    teacher.setRating(null);
+                    teacher.setRating(Constant.DEFAULT_TEACHER_RATING);
                     teacher.setExperience(newAcc.getExperience());
                     teacherRepository.save(teacher);
                     teachingBranch.setBranch(branch);
@@ -632,9 +632,7 @@ public class AccountService {
                     throw new Exception(Constant.INVALID_TEACHER_EXP);
                 }
             }
-
             mapObj.put("username", accTmp.getUsername());
-
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();

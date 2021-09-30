@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface ClassRepository extends JpaRepository<Class, Integer> {
-
     Page<Class> findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(int branchId, int subjectId, int shiftId, String status, Pageable pageable);
 
     Page<Class> findClassByBranch_BranchIdAndStatus(int branchId, String status, Pageable pageable);
@@ -64,4 +63,13 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "and c.status = ?2 " +
             "and studentInClassList.teacherRating = 0")
     List<Class> findClassesNeedFeedback(Integer id, String status);
+
+    @Query(
+            nativeQuery = true,
+            value = "select c.class_id, c.status, sic.student_id " +
+                    "from class as c " +
+                    "join student_in_class as sic on c.class_id = sic.class_id " +
+                    "where c.class_id = :classId"
+    )
+    List<Class> findStudentByClassId(@Param(value = "classId") int classId);
 }
