@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +15,6 @@ import java.util.Date;
 @Entity
 @Table(name = "account")
 public class Account implements Serializable {
-
     @Id
     @Column(name = "username")
     private String username;
@@ -32,12 +32,12 @@ public class Account implements Serializable {
     private String email;
     @Column(name = "image")
     private String image;
-    @Column(name = "role")
-    private String role;
     @Column(name = "is_available")
     private boolean isAvailable;
     @Column(name = "creating_date")
     private Date creatingDate;
+    @Column(name = "token")
+    private String token;
 
     @OneToOne(mappedBy = "account")
     private Staff staff;
@@ -46,6 +46,13 @@ public class Account implements Serializable {
     @OneToOne(mappedBy = "account")
     private Teacher teacher;
 
+    @OneToMany(mappedBy = "receiverUsername")
+    private List<Notification> notificationList;
+
+    @ManyToOne
+    @JoinColumn(name = "role")
+    private Role role;
+
     //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
@@ -53,6 +60,25 @@ public class Account implements Serializable {
 
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Account{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", image='" + image + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", creatingDate=" + creatingDate +
+                ", token='" + token + '\'' +
+                '}';
     }
     //</editor-fold>
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
@@ -43,4 +45,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     @Query(value = "SELECT t " +
             "FROM Teacher AS t ")
     Page<Teacher> findAllTeacher(Pageable pageable);
+
+    @Query("select distinct t from Teacher t left join t.sessionList sessionList where sessionList.aClass.classId = ?1 and t.account.isAvailable = true")
+    List<Teacher> findDistinctBySessionList_AClass_ClassIdAndAccount_IsAvailableIsTrue(int classId);
 }

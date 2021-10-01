@@ -8,9 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ClassRepository extends JpaRepository<Class, Integer> {
-
     Page<Class> findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(int branchId, int subjectId, int shiftId, String status, Pageable pageable);
 
     Page<Class> findClassByBranch_BranchIdAndStatus(int branchId, String status, Pageable pageable);
@@ -52,4 +53,23 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "FROM Class AS c " +
             "WHERE c.classId = :classId")
     int findSubjectIdByClassId(@Param(value = "classId") int classId);
+
+    Page<Class> findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(List<Integer> list, String status, Pageable pageable);
+
+    @Query("select distinct c from Class c " +
+            "join c.studentInClassList studentInClassList " +
+            "join c.sessionList sessionList " +
+            "where studentInClassList.student.id = ?1 " +
+            "and c.status = ?2 " +
+            "and studentInClassList.teacherRating = 0")
+    List<Class> findClassesNeedFeedback(Integer id, String status);
+
+    @Query(
+            nativeQuery = true,
+            value = "select c.class_id, c.status, sic.student_id " +
+                    "from class as c " +
+                    "join student_in_class as sic on c.class_id = sic.class_id " +
+                    "where c.class_id = :classId"
+    )
+    List<Class> findStudentByClassId(@Param(value = "classId") int classId);
 }

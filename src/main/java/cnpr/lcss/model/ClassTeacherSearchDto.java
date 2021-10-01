@@ -9,13 +9,12 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ClassDto {
+public class ClassTeacherSearchDto {
     private int classId;
     private String className;
     private Date openingDate;
     private String status;
     private int slot;
-
     private int subjectId;
     private String subjectName;
     private float subjectPrice;
@@ -23,11 +22,6 @@ public class ClassDto {
     private String branchName;
     private int shiftId;
     private String shiftDescription;
-    private int teacherId;
-    private String teacherName;
     private int roomName;
     private Integer roomId;
-    private int numberOfStudent;
-    private int managerId;
-    private String managerUsername;
 }

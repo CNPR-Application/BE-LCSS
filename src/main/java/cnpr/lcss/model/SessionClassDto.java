@@ -6,15 +6,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class SessionResponseDto {
+public class SessionClassDto {
     private int sessionId;
-    private int classId;
-    private String className;
-    private int subjectId;
-    private String subjectName;
     private int teacherId;
     private String teacherName;
     private String teacherImage;

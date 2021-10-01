@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class StudentDto {
-    private int id;
-    private String parentPhone;
-    private String parentName;
-    private String studentUsername;
+public class RoomAndBranchDto {
+    private int roomId;
+    private int roomName;
     private int branchId;
 }

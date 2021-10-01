@@ -1,10 +1,8 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Booking;
-import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.model.BookingRequestDto;
 import cnpr.lcss.model.BookingSearchResponseDto;
-import cnpr.lcss.model.BookingSearchResponsePagingDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,59 +120,9 @@ public class BookingService {
             }
             //</editor-fold>
 
-            //<editor-fold desc="Insert data to Student In Class">
-
-            /**
-             * Insert data to Student In Class
-             */
-            StudentInClass newStdInClass = new StudentInClass();
-
-            // Set Booking ID into New Student In Class
-            try {
-                newStdInClass.setBooking(bookingRepository.findBookingByBookingId(bookingId));
-            } catch (Exception e) {
-                throw new Exception(Constant.INVALID_BOOKING_ID);
-            }
-
-            // Class ID
-            // Check existence
-            if (classRepository.existsById(insBooking.getClassId())) {
-                // Class Status must be waiting
-                if (classRepository.findStatusByClassId(insBooking.getClassId()).equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
-                    newStdInClass.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_CLASS_STATUS_NOT_WAITING);
-                }
-            } else {
-                bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
-                throw new ValidationException(Constant.INVALID_CLASS_ID);
-            }
-
-            // Student ID
-            // Student is validated above
-            newStdInClass.setStudent(studentRepository.findStudentByAccount_Username(insBooking.getStudentUsername()));
-
-            // Teacher Rating
-            newStdInClass.setTeacherRating(0);
-
-            // Subject Rating
-            newStdInClass.setSubjectRating(0);
-
-            // Feedback
-            newStdInClass.setFeedback(null);
-
             HashMap mapObj = new LinkedHashMap();
             mapObj.put("bookingId", bookingId);
-
-            // Insert new Student In Class to DB
-            try {
-                studentInClassRepository.save(newStdInClass);
-                return ResponseEntity.ok(mapObj);
-            } catch (Exception e) {
-                bookingRepository.delete(bookingRepository.findBookingByBookingId(bookingId));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
-            }
-            //</editor-fold>
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -182,28 +130,83 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search Booking By Student Id">
-    public BookingSearchResponsePagingDto findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+    //<editor-fold desc="autoMapping Booking">
+    public List<BookingSearchResponseDto> autoMapping(Page<Booking> bookingList) {
+        List<BookingSearchResponseDto> bookingSearchResponseDtos = bookingList.getContent().stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
 
-        Page<Booking> page = bookingRepository.findBookingByStudent_Account_Username(studentUsername, pageable);
-        List<Booking> bookingList = page.getContent();
-        List<BookingSearchResponseDto> bookingSearchResponseDtoList = bookingList.stream().map(booking -> booking.convertToSearchDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        BookingSearchResponsePagingDto bookingSearchResponsePagingDto = new BookingSearchResponsePagingDto(pageNo, pageSize, pageTotal, bookingSearchResponseDtoList);
-
-        return bookingSearchResponsePagingDto;
+        for (BookingSearchResponseDto bookingDto : bookingSearchResponseDtos) {
+            bookingDto.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(bookingDto.getSubjectId()));
+        }
+        return bookingSearchResponseDtos;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get Booking Detail By Id">
+    //<editor-fold desc="8.01 Search Booking By Class Id and Phone and Status in A BRANCH">
+    public ResponseEntity<?> findBookingByClassIdandPhoneAndStatus(int branchId, int classId, String status, int pageNo, int pageSize) {
+        // pageNo starts at 0
+        // always set first page = 1 ---> pageNo - 1
+        HashMap<String, Object> mapObj = new LinkedHashMap();
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        try {
+            Page<Booking> bookingList;
+            int pageTotal;
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            //CASE 1
+            if (classId != 0) {
+                bookingList = bookingRepository.findBookingByaClass_ClassIdAndBranch_BranchIdAndStatusContainingAllIgnoreCase(classId, branchId, status, pageable);
+                pageTotal = bookingList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(bookingList));
+            }
+            //Case 2
+            if (classId == 0) {
+                bookingList = bookingRepository.findBookingByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
+                pageTotal = bookingList.getTotalPages();
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", autoMapping(bookingList));
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="8.02 Search Booking By Student UserName">
+    public ResponseEntity<?> findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
+        // pageNo starts at 0
+        // always set first page = 1 ---> pageNo - 1
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        HashMap<String, Object> mapObj = new LinkedHashMap();
+        try {
+            Page<Booking> bookingList;
+            int pageTotal;
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            //get booking by username
+            bookingList = bookingRepository.findBookingByStudent_Account_Username(studentUsername, pageable);
+            pageTotal = bookingList.getTotalPages();
+            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("classList", autoMapping(bookingList));
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="8.03 Get Booking Detail By Id">
     public BookingSearchResponseDto findBookingByBookingId(int bookingId) throws Exception {
         if (bookingRepository.existsBookingByBookingId(bookingId)) {
             Booking booking = bookingRepository.findBookingByBookingId(bookingId);
             BookingSearchResponseDto bookingSearchResponseDto = booking.convertToSearchDto();
+            //get subject Name
+            String subjectName = (subjectRepository.findBySubjectId(bookingSearchResponseDto.getSubjectId()).getSubjectName());
+            bookingSearchResponseDto.setSubjectName(subjectName);
+
             return bookingSearchResponseDto;
         } else {
             throw new ValidationException(Constant.INVALID_BOOKING_ID);

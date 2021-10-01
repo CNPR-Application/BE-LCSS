@@ -38,4 +38,13 @@ public class Staff implements Serializable {
         this.branch = branch;
     }
     //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id=" + id +
+                '}';
+    }
+    //</editor-fold>
 }

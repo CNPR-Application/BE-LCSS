@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CurriculumService {
-
     @Autowired
     CurriculumRepository curriculumRepository;
     @Autowired
@@ -166,7 +165,6 @@ public class CurriculumService {
 
     //<editor-fold desc="Update Curriculum by Curriculum id">
     public ResponseEntity<?> updateCurriculum(int curId, CurriculumRequestDto insCur) throws Exception {
-
         try {
             if (!curriculumRepository.existsById(curId)) {
                 throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);

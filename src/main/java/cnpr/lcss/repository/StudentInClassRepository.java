@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface StudentInClassRepository extends JpaRepository<StudentInClass, Integer> {
-
     @Query(value = "SELECT COUNT(sic.studentInClassId) " +
             "FROM StudentInClass AS sic " +
             "WHERE sic.aClass.classId = :classId")
@@ -23,7 +22,22 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
             "WHERE sic.aClass.classId = :classId")
     List<StudentInClass> findStudentsByClassId(@Param(value = "classId") int classId);
 
-    StudentInClass findStudentInClassByBooking_BookingId(int bookingId);
-
     Page<StudentInClass> findStudentInClassByaClass_ClassId(int classId, Pageable pageable);
+
+    List<StudentInClass> findStudentInClassByStudent_Id(int studentId);
+
+    @Query("select distinct s from StudentInClass s where s.student.id = ?1 and s.aClass.classId = ?2")
+    StudentInClass findByStudent_IdAndAClass_ClassId(Integer id, int classId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select sic.* " +
+                    "from student_in_class as sic " +
+                    "join class c on sic.class_id = c.class_id " +
+                    "join student s on sic.student_id = s.student_id " +
+                    "join account a on s.student_username = a.username " +
+                    "where c.class_id = :classId " +
+                    "and a.is_available = 1"
+    )
+    List<StudentInClass> findStudentInClassIsAvailableByClassId(int classId);
 }

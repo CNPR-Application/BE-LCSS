@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,29 +45,40 @@ public class Booking implements Serializable {
     @JsonIgnore
     private Class aClass;
 
-    @OneToMany(mappedBy = "booking")
-    @JsonIgnore
-    private List<StudentInClass> studentInClassList;
-
     //<editor-fold desc="Convert to SearchDto">
     public BookingSearchResponseDto convertToSearchDto() {
-        BookingSearchResponseDto bookingSearchResponseDto = new BookingSearchResponseDto(
-                bookingId,
-                payingDate,
-//        subject.getSubjectId(),
-//        subject.getSubjectName(),
-//        shift.getShiftId(),
-//        shift.getDayOfWeek()+"-"+"("+shift.getTimeStart()+"-"+shift.getTimeEnd()+")",
-                student.getId(),
-                student.getAccount().getName(),
-                student.getAccount().getImage(),
-                status,
-                branch.getBranchId(),
-                branch.getBranchName(),
-                payingPrice,
-                description
-        );
+        BookingSearchResponseDto bookingSearchResponseDto = new BookingSearchResponseDto();
+        bookingSearchResponseDto.setBookingId(bookingId);
+        bookingSearchResponseDto.setPayingDate(payingDate);
+        bookingSearchResponseDto.setClassId(aClass.getClassId());
+        bookingSearchResponseDto.setClassName(aClass.getClassName());
+        bookingSearchResponseDto.setShiftId(aClass.getShift().getShiftId());
+        bookingSearchResponseDto.setShiftDescription(aClass.getShift().getDayOfWeek() + "-" + "(" + aClass.getShift().getTimeStart() + "-" + aClass.getShift().getTimeEnd() + ")");
+        bookingSearchResponseDto.setSubjectId(subjectId);
+        //subjectName
+        bookingSearchResponseDto.setStudentId(student.getId());
+        bookingSearchResponseDto.setStudentName(student.getAccount().getName());
+        bookingSearchResponseDto.setImage(student.getAccount().getImage());
+        bookingSearchResponseDto.setStatus(status);
+        bookingSearchResponseDto.setBranchId(branch.getBranchId());
+        bookingSearchResponseDto.setBranchName(branch.getBranchName());
+        bookingSearchResponseDto.setPayingPrice(payingPrice);
+        bookingSearchResponseDto.setDescription(description);
         return bookingSearchResponseDto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", payingPrice=" + payingPrice +
+                ", payingDate=" + payingDate +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", subjectId=" + subjectId +
+                '}';
     }
     //</editor-fold>
 }

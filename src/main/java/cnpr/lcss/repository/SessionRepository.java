@@ -13,17 +13,19 @@ import java.util.List;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Integer> {
-
-    @Query(value = "SELECT * " +
-            "FROM [Language Center].dbo.session AS s " +
-            "JOIN [Language Center].dbo.class c ON c.class_id = s.class_id " +
-            "WHERE (DATEPART(yy, s.start_time) = 2021 " +
-            "AND DATEPART(mm, s.start_time) = 09 " +
-            "AND DATEPART(dd, s.start_time) = 01)",
-            nativeQuery = true)
-    Page<Session> findByStartTimeAndAClass_Status(@Param("startTime") Date startTime,
-                                                  @Param("status") String status,
-                                                  Pageable pageable);
+    @Query(value = "SELECT s " +
+            "FROM Session AS s " +
+            "JOIN Class AS c ON c.classId = s.aClass.classId " +
+            "WHERE c.status = :status " +
+            "AND (s.startTime >= :datetimeStart AND s.endTime <= :datetimeEnd) " +
+            "ORDER BY s.startTime ASC ")
+    List<Session> findByStartTimeAndAClass_Status(@Param("datetimeStart") Date datetimeStart,
+                                                  @Param("datetimeEnd") Date datetimeEnd,
+                                                  @Param("status") String status);
 
     List<Session> findSessionByaClass_ClassId(int classId);
+
+    List<Session> findSessionByTeacher_TeacherId(int teacherId);
+
+    Page<Session> findByaClass_ClassId(int classId, Pageable pageable);
 }

@@ -2,8 +2,7 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
-import cnpr.lcss.model.ClassDto;
-import cnpr.lcss.model.ClassRequestDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class ClassService {
-
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -46,41 +44,41 @@ public class ClassService {
     TeacherRepository teacherRepository;
     @Autowired
     RoomRepository roomRepository;
+    @Autowired
+    BookingRepository bookingRepository;
+    @Autowired
+    StudentRepository studentRepository;
 
     //<editor-fold desc="Auto Mapping">
     public List<ClassDto> autoMapping(Page<Class> classList) {
         List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
 
         for (ClassDto aClass : classDtoList) {
-            // Subject Name
             aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-            // Subject Price
             aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
-            // Branch Name
             aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-            // Shift Description
             String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
                     + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                    + " - " + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
             aClass.setShiftDescription(description);
-            // Teacher AND Room
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             } else {
-                // TODO: create connection between Session and Teacher
-                // TODO: check validation of Status
-                // Temporary set to 0 or null
-                aClass.setTeacherId(0);
-                aClass.setTeacherName(null);
-                aClass.setRoomNo(0);
+                // CLASS_STATUS: STUDYING || FINISHED
+                List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                Teacher teacher = sessionList.get(0).getTeacher();
+                aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherName(teacher.getAccount().getName());
+                int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                aClass.setNumberOfStudent(numberOfStudent);
             }
-            // Count Student In Class by Class ID
-            aClass.setNumberOfStudent(studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
-            // Manager ID
+            Room room = roomRepository.findByRoomId(aClass.getRoomId());
+            aClass.setRoomName(room.getRoomName());
+            aClass.setRoomId(room.getRoomId());
             aClass.setManagerId(aClass.getManagerId());
-            // Manager Username
             aClass.setManagerUsername(aClass.getManagerUsername());
         }
         return classDtoList;
@@ -187,6 +185,7 @@ public class ClassService {
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
+
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,11 +215,98 @@ public class ClassService {
                             + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
                             + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
                     aClass.setShiftDescription(description);
+                    //STATUS: waiting and canceled
+                    // Teacher is no need to query if status are WAITING OR CANCELED
+                    if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                        aClass.setTeacherId(0);
+                        aClass.setTeacherName(null);
+                        //number of student
+                        int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                        // int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                        aClass.setNumberOfStudent(numberOfStudent);
+                    } else {
+                        //STATUS: studying và finished
+                        //get list session
+                        List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
+                        //get teacher
+                        Teacher teacher = sessionList.get(0).getTeacher();
+                        aClass.setTeacherId(teacher.getTeacherId());
+                        aClass.setTeacherName(teacher.getAccount().getName());
+                        //number of student
+                        int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                        aClass.setNumberOfStudent(numberOfStudent);
+                    }
+                    //ROOM
+                    //find room by ID
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
+                    aClass.setRoomId(room.getRoomId());
+                }
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", classDtoList);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new ValidationException(Constant.INVALID_BRANCH_ID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.03-search-class-of-student-and-teacher-by-username-and-status">
+    public ResponseEntity<?> searchClassByUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            if (accountRepository.existsByUsername(username)) {
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+                HashMap<String, Object> mapObj = new LinkedHashMap();
+                //get a student by username
+                Student student = studentRepository.findByStudent_StudentUsername(username);
+                //initial a arraylist to store classIDs
+                List<Integer> list = new ArrayList();
+                //with status: studying and finished
+                if (status.equalsIgnoreCase(Constant.CLASS_STATUS_STUDYING) || status.equalsIgnoreCase(Constant.CLASS_STATUS_FINISHED)) {
+                    //get a list student in class by student Id
+                    List<StudentInClass> studentInClassList = studentInClassRepository.findStudentInClassByStudent_Id(student.getId());
+                    //get a classIDList by Student In Class list
+                    for (StudentInClass studentInClass : studentInClassList) {
+                        list.add(studentInClass.getAClass().getClassId());
+                    }
+                }
+                //with status: waiting and canceled
+                if (status.equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || status.equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                    //get booking list by student ID
+                    List<Booking> bookingList = bookingRepository.findBookingByStudent_Id(student.getId());
+                    //get a class ID list by booking list
+                    for (Booking booking : bookingList) {
+                        list.add(booking.getAClass().getClassId());
+                    }
+                }
+                //Get classes with CLASSID LIST and STATUS
+                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
+                List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
+                int pageTotal = classList.getTotalPages();
+                for (ClassSearchDto aClass : classSearchDtoList) {
+                    // Subject Name
+                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                    // Branch Name
+                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                    // Shift Description
+                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    aClass.setShiftDescription(description);
+                    //STATUS: waiting and canceled
                     // Teacher is no need to query if status are WAITING OR CANCELED
                     if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                         aClass.setTeacherId(0);
                         aClass.setTeacherName(null);
                     } else {
+                        //STATUS: studying và finished
                         //get list session
                         List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                         //get teacher
@@ -231,18 +317,73 @@ public class ClassService {
                     //ROOM
                     //find room by ID
                     Room room = roomRepository.findByRoomId(aClass.getRoomId());
-                    aClass.setRoomNo(room.getRoomNo());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
                     aClass.setRoomId(room.getRoomId());
-                    int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
-                    aClass.setNumberOfStudent(numberOfStudent);
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
                 mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", classDtoList);
+                mapObj.put("classList", classSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
-                throw new ValidationException(Constant.INVALID_BRANCH_ID);
+                throw new ValidationException(Constant.INVALID_USERNAME);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.05_search_class_of_teacher_by_username">
+    public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
+        try {
+            if (accountRepository.existsByUsername(username)) {
+                Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+                HashMap<String, Object> mapObj = new LinkedHashMap();
+                //get a teacher by username
+                Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
+                //initial a arraylist to store classIDs
+                List<Integer> list = new ArrayList();
+                //with status: studying and finished
+                if (status.matches("studying") || status.matches("finished")) {
+                    //get a list student in class by student Id
+                    List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
+                    //get a classIDList by Student In Class list
+                    for (Session session : sessionList) {
+                        list.add(session.getAClass().getClassId());
+                    }
+                }
+
+                //Get classes with CLASSID LIST and STATUS
+                Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
+                List<ClassTeacherSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToTeacherSearchDto()).collect(Collectors.toList());
+                int pageTotal = classList.getTotalPages();
+                for (ClassTeacherSearchDto aClass : classSearchDtoList) {
+                    // Subject Name
+                    aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
+                    // Branch Name
+                    aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
+                    // Shift Description
+                    String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
+                            + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
+                            + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
+                    aClass.setShiftDescription(description);
+                    //ROOM
+                    //find room by ID
+                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                    //room name and ID
+                    aClass.setRoomName(room.getRoomName());
+                    aClass.setRoomId(room.getRoomId());
+                }
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("classList", classSearchDtoList);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new ValidationException(Constant.INVALID_USERNAME);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -304,7 +445,7 @@ public class ClassService {
             }
             // Creator is Account-Username
             newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            newClass.setRoom(roomRepository.findByRoomNo(insClass.getRoomNo()));
+            newClass.setRoom(null);
 
             // Get Booking ID
             int classId;
@@ -336,7 +477,6 @@ public class ClassService {
             String reqDate = (String) reqBody.get("openingDate");
             Date openingDate = sdf.parse(reqDate);
             Integer roomId = (Integer) reqBody.get("roomId");
-            Integer shiftId = (Integer) reqBody.get("shiftId");
             String status = (String) reqBody.get("status");
 
             // Find Class by Class ID
@@ -344,7 +484,7 @@ public class ClassService {
 
             /**
              * If status = waiting
-             * ➞ Edit: className, openingDate, status, shiftId, roomNo
+             * ➞ Edit: className, openingDate, status, roomNo
              * If status != waiting
              * ➞ Edit: status
              */
@@ -383,10 +523,6 @@ public class ClassService {
                 if (status != null && !status.isEmpty() && !status.equals(editClass.getStatus())) {
                     editClass.setStatus(status);
                 }
-                // Shift ID
-                if (shiftId != null && !shiftId.equals(editClass.getShift().getShiftId())) {
-                    editClass.setShift(shiftRepository.findShiftByShiftId(shiftId));
-                }
                 // Room ID
                 if (roomId != null && roomId != 0 && roomId != editClass.getRoom().getRoomId()) {
                     editClass.setRoom(roomRepository.findByRoomId(roomId));
@@ -397,7 +533,7 @@ public class ClassService {
                     editClass.setStatus(status);
                 }
             }
-
+            classRepository.save(editClass);
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -440,7 +576,7 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomNo = (int) reqBody.get("roomNo");
+        int roomId = (int) reqBody.get("roomId");
         int teacherId = (int) reqBody.get("teacherId");
         int classId = (int) reqBody.get("classId");
         String creator = (String) reqBody.get("creator");
@@ -448,20 +584,28 @@ public class ClassService {
 
         try {
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomNo(roomNo);
+            Room room = roomRepository.findByRoomId(roomId);
             Class activateClass = classRepository.findClassByClassId(classId);
 
-            // Move Student to Opening Class
             try {
                 for (int bookingId : bookingIdList) {
-                    StudentInClass studentInClass = studentInClassRepository.findStudentInClassByBooking_BookingId(bookingId);
-                    studentInClass.setAClass(activateClass);
-                    // update new class field in student in class
-                    studentInClassRepository.save(studentInClass);
+                    // Change Booking Status: PAID → PROCESSED
+                    Booking currentBooking = bookingRepository.findBookingByBookingId(bookingId);
+                    currentBooking.setStatus(Constant.BOOKING_STATUS_PROCESSED);
+                    // Insert Student to Student In Class
+                    Student currentStudent = currentBooking.getStudent();
+                    StudentInClass newStudentInClass = new StudentInClass();
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setTeacherRating(0);
+                    newStudentInClass.setSubjectRating(0);
+                    newStudentInClass.setFeedback(null);
+                    newStudentInClass.setAClass(activateClass);
+                    newStudentInClass.setStudent(currentStudent);
+                    studentInClassRepository.save(newStudentInClass);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new Exception(Constant.ERROR_MOVE_STUDENT);
+                throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
             }
 
             // Creator (aka Staff)
@@ -550,6 +694,29 @@ public class ClassService {
             classRepository.save(activateClass);
 
             return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.11-get-all-classes-has-not-got-feedback-from-student-by-student-username">
+    public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(String studentUsername) throws Exception {
+        /**
+         * Find Classes that need Student feedback
+         * Class Status = finished
+         * Session - Teacher Rating = 0
+         */
+        try {
+            int studentId = studentRepository.findStudentByAccount_Username(studentUsername).getId();
+            List<ClassNeedsFeedbackDto> classList = classRepository.findClassesNeedFeedback(studentId, Constant.CLASS_STATUS_FINISHED)
+                    .stream().map(aClass -> aClass.convertToClassNeedsFeedbackDto()).collect(Collectors.toList());
+            for (ClassNeedsFeedbackDto dto : classList) {
+                dto.setTeacherId(sessionRepository.findSessionByaClass_ClassId(dto.getClassId()).get(classList.size()).getTeacher().getTeacherId());
+                dto.setStudentInClassId(studentInClassRepository.findByStudent_IdAndAClass_ClassId(studentId, dto.getClassId()).getStudentInClassId());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(classList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

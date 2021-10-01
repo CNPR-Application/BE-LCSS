@@ -1,6 +1,9 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.ClassDto;
+import cnpr.lcss.model.ClassNeedsFeedbackDto;
+import cnpr.lcss.model.ClassSearchDto;
+import cnpr.lcss.model.ClassTeacherSearchDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,7 +49,7 @@ public class Class implements Serializable {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
     @OneToMany(mappedBy = "aClass")
@@ -76,6 +79,67 @@ public class Class implements Serializable {
             dto.setManagerUsername(null);
         }
         dto.setRoomId(room.getRoomId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Class{" +
+                "classId=" + classId +
+                ", className='" + className + '\'' +
+                ", openingDate=" + openingDate +
+                ", status='" + status + '\'' +
+                ", slot=" + slot +
+                '}';
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to ClassSearchDto">
+    public ClassSearchDto convertToSearchDto() {
+        ClassSearchDto dto = new ClassSearchDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setOpeningDate(openingDate);
+        dto.setStatus(status);
+        dto.setSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectPrice(subject.getPrice());
+        dto.setBranchId(branch.getBranchId());
+        dto.setShiftId(shift.getShiftId());
+        dto.setRoomId(room.getRoomId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to TeacherSearchDto">
+    public ClassTeacherSearchDto convertToTeacherSearchDto() {
+        ClassTeacherSearchDto dto = new ClassTeacherSearchDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setOpeningDate(openingDate);
+        dto.setStatus(status);
+        dto.setSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectPrice(subject.getPrice());
+        dto.setBranchId(branch.getBranchId());
+        dto.setShiftId(shift.getShiftId());
+        dto.setRoomId(room.getRoomId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to ClassNeedsFeedbackDto">
+    public ClassNeedsFeedbackDto convertToClassNeedsFeedbackDto() {
+        ClassNeedsFeedbackDto dto = new ClassNeedsFeedbackDto();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setClassOpeningDate(openingDate);
+        dto.setClassStatus(status);
+        dto.setClassSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setBranchId(branch.getBranchId());
         return dto;
     }
     //</editor-fold>

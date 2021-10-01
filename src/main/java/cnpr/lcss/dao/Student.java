@@ -18,7 +18,7 @@ public class Student implements Serializable {
     @Id
     @GeneratedValue
     @Column(name = "student_id")
-    private int id;
+    private Integer id;
     @Column(name = "parent_phone")
     private String parentPhone;
     @Column(name = "parent_name")
@@ -35,10 +35,11 @@ public class Student implements Serializable {
     @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<Booking> bookingList;
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "student")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 
+    //<editor-fold desc="Modify toString">
     @Override
     public String toString() {
         return "Student{" +
@@ -47,4 +48,5 @@ public class Student implements Serializable {
                 ", parentName='" + parentName + '\'' +
                 '}';
     }
+    //</editor-fold>
 }
