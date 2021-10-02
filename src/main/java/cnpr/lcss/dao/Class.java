@@ -60,7 +60,7 @@ public class Class implements Serializable {
     private List<Booking> bookingList;
 
     //<editor-fold desc="Convert to ClassDto">
-    public ClassDto convertToDto() {
+    public ClassDto convertToClassDto() {
         ClassDto dto = new ClassDto();
         dto.setClassId(classId);
         dto.setClassName(className);
