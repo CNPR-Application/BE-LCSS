@@ -298,6 +298,7 @@ public class Constant {
     public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
     public static final String INVALID_NAME = "Null or empty or unreal name!";
     public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
+    public static final String INVALID_PARENT_PHONE_PATTERN = "Invalid parent phone!";
     public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     public static final String NAME_PATTERN = "[A-Za-z ]*";
     public static final String NUMBERS = "1234567890";

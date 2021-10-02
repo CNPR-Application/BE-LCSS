@@ -1,6 +1,7 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Account;
+import cnpr.lcss.dao.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Query(value = "SELECT a.role " +
             "FROM Account a " +
             "WHERE a.username = :username")
-    String findRoleByUsername(@Param(value = "username") String username);
+    Role findRoleByUsername(@Param(value = "username") String username);
 
     Page<Account> findByRole_RoleIdAndUsernameContainingAndIsAvailable(@Param(value = "role") String role,
                                                                        @Param(value = "username") String keyword,

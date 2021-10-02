@@ -734,7 +734,6 @@ public class RestApi {
     //<editor-fold desc="8.01-search booking by classID and status in a branch">
 
     /**
-     * @param branchId
      * @param classId
      * @param status
      * @param pageNo
