@@ -861,7 +861,11 @@ public class AccountService {
                 throw new Exception(Constant.INVALID_USERNAME);
             String newPassword = (String) reqBody.get("newPassword");
             String oldPassword = (String) reqBody.get("oldPassword");
-            if(newPassword.matches(oldPassword)){
+            String reNewPassword = (String) reqBody.get("reNewPassword");
+            if(!oldPassword.matches(account.getPassword())) {
+                throw new Exception(Constant.PASSWORD_NOT_MATCH);
+            }
+            if(!newPassword.matches(oldPassword)&&reNewPassword.matches(newPassword)){
                 account.setPassword(newPassword);
                 accountRepository.save(account);
                 return ResponseEntity.ok(Boolean.TRUE);

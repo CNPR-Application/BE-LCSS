@@ -223,7 +223,7 @@ public class RestApi {
      * @author HuuNT - 2021.09.30
      */
     @CrossOrigin
-    @RequestMapping(value = "/accounts", method = RequestMethod.PUT)
+    @RequestMapping(value = "/accounts-change-password", method = RequestMethod.PUT)
     public ResponseEntity<?> changePassword(@RequestParam(value = "username") String username,
                                             @RequestBody HashMap<String, Object> reqBody) throws Exception {
         return accountService.changePassword(username, reqBody);
