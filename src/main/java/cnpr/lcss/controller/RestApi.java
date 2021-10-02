@@ -1349,6 +1349,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.03-create-notification-for-person">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 15.03-create-notification-for-person
+     * @author HuuNT - 2021.09.30
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-person", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationForPerson(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return notificationService.createNotificationForPerson(reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="15.04-create-notification-for-staff-and-manager-in-a-branch">
 
     /**
@@ -1415,4 +1431,24 @@ public class RestApi {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
+    /*
+    @RequestMapping(value = "/token", method = RequestMethod.POST)
+    public String sendPnsToDevice(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToDevice(notificationRequestDto);
+    }
+
+    @PostMapping("/subscribe")
+    public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.subscribeToTopic(subscriptionRequestDto);
+    }
+
+    @PostMapping("/unsubscribe")
+    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
+        notificationService.unsubscribeFromTopic(subscriptionRequestDto);
+    }
+
+    @PostMapping("/topic")
+    public String sendPnsToTopic(@RequestBody NotificationRequestDto notificationRequestDto) {
+        return notificationService.sendPnsToTopic(notificationRequestDto);
+    }*/
 }
