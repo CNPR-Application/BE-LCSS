@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,114 +20,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
-
     @Autowired
     BookingRepository bookingRepository;
     @Autowired
-    StudentRepository studentRepository;
-    @Autowired
     BranchRepository branchRepository;
-    @Autowired
-    SubjectRepository subjectRepository;
-    @Autowired
-    ShiftRepository shiftRepository;
     @Autowired
     ClassRepository classRepository;
     @Autowired
+    ShiftRepository shiftRepository;
+    @Autowired
     StudentInClassRepository studentInClassRepository;
     @Autowired
-    JdbcTemplate jdbcTemplate;
-
-    //<editor-fold desc="Create New Booking">
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<?> createNewBooking(BookingRequestDto insBooking) throws Exception {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
-        Date today = calendar.getTime();
-
-        try {
-            Booking newBooking = new Booking();
-
-            //<editor-fold desc="Insert data to Booking">
-            /**
-             * Insert data to Booking
-             */
-
-            // Class ID
-            // Check existence
-            if (classRepository.existsById(insBooking.getClassId())) {
-                newBooking.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_CLASS_ID);
-            }
-
-            // Subject ID
-            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
-            newBooking.setSubjectId(subjectId);
-
-            // Paying Price
-            // GREATER or EQUAL to Subject's Price
-            Float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(subjectId);
-            if (insBooking.getPayingPrice() >= subjectPrice) {
-                newBooking.setPayingPrice(insBooking.getPayingPrice());
-            } else {
-                throw new ValidationException(Constant.INVALID_BOOKING_PAYING_PRICE);
-            }
-
-            // Paying Date
-            newBooking.setPayingDate(today);
-
-            // Description
-            newBooking.setDescription(insBooking.getDescription());
-
-            // Status
-            if (insBooking.getStatus().equalsIgnoreCase(Constant.BOOKING_STATUS_PAID)
-                    || insBooking.getStatus().equalsIgnoreCase(Constant.BOOKING_STATUS_CANCELED)) {
-                newBooking.setStatus(insBooking.getStatus());
-            } else {
-                throw new ValidationException(Constant.INVALID_BOOKING_STATUS);
-            }
-
-            // Student Username
-            // Check existence
-            if (studentRepository.existsByAccount_Username(insBooking.getStudentUsername())) {
-                newBooking.setStudent(studentRepository.findByStudent_StudentUsername(insBooking.getStudentUsername()));
-            } else {
-                throw new ValidationException(Constant.INVALID_STUDENT_USERNAME);
-            }
-
-            // Branch ID
-            // Check existence
-            if (branchRepository.existsById(insBooking.getBranchId())) {
-                // Check is available
-                if (branchRepository.findIsAvailableByBranchId(insBooking.getBranchId())) {
-                    newBooking.setBranch(branchRepository.findByBranchId(insBooking.getBranchId()));
-                } else {
-                    throw new ValidationException(Constant.INVALID_BRANCH_AVAILABLE);
-                }
-            } else {
-                throw new ValidationException(Constant.INVALID_BRANCH_ID);
-            }
-
-            // Insert new Booking to DB
-            int bookingId;
-            try {
-                Booking booking = bookingRepository.save(newBooking);
-                bookingId = booking.getBookingId();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception(Constant.ERROR_GET_BOOKING_ID);
-            }
-            //</editor-fold>
-
-            HashMap mapObj = new LinkedHashMap();
-            mapObj.put("bookingId", bookingId);
-            return ResponseEntity.ok(mapObj);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    //</editor-fold>
+    StudentRepository studentRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
 
     //<editor-fold desc="autoMapping Booking">
     public List<BookingSearchResponseDto> autoMapping(Page<Booking> bookingList) {
@@ -210,6 +115,53 @@ public class BookingService {
             return bookingSearchResponseDto;
         } else {
             throw new ValidationException(Constant.INVALID_BOOKING_ID);
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="8.05-create-new-booking">
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> createNewBooking(BookingRequestDto insBooking) throws Exception {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+        try {
+            Booking newBooking = new Booking();
+            newBooking.setAClass(classRepository.findClassByClassId(insBooking.getClassId()));
+            int subjectId = classRepository.findSubjectIdByClassId(insBooking.getClassId());
+            newBooking.setSubjectId(subjectId);
+            float subjectPrice = subjectRepository.findSubject_SubjectPriceBySubjectId(subjectId);
+            if (insBooking.getPayingPrice() >= subjectPrice) {
+                newBooking.setPayingPrice(insBooking.getPayingPrice());
+            } else {
+                throw new ValidationException(Constant.INVALID_BOOKING_PAYING_PRICE);
+            }
+            newBooking.setPayingDate(calendar.getTime());
+            newBooking.setDescription(insBooking.getDescription());
+            if (insBooking.getStatus().equalsIgnoreCase(Constant.BOOKING_STATUS_PAID)
+                    || insBooking.getStatus().equalsIgnoreCase(Constant.BOOKING_STATUS_CANCELED)) {
+                newBooking.setStatus(insBooking.getStatus());
+            } else {
+                throw new ValidationException(Constant.INVALID_BOOKING_STATUS);
+            }
+            newBooking.setStudent(studentRepository.findByStudent_StudentUsername(insBooking.getStudentUsername()));
+            if (branchRepository.findIsAvailableByBranchId(insBooking.getBranchId())) {
+                newBooking.setBranch(branchRepository.findByBranchId(insBooking.getBranchId()));
+            } else {
+                throw new ValidationException(Constant.INVALID_BRANCH_AVAILABLE);
+            }
+            int bookingId;
+            try {
+                Booking booking = bookingRepository.save(newBooking);
+                bookingId = booking.getBookingId();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GET_BOOKING_ID);
+            }
+            HashMap mapObj = new LinkedHashMap();
+            mapObj.put("bookingId", bookingId);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>
