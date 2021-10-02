@@ -20,6 +20,7 @@ public class BookingSearchResponseDto {
     private String subjectName;
     private int studentId;
     private String studentName;
+    private String studentUsername;
     private String image;
     private String status;
     private int branchId;

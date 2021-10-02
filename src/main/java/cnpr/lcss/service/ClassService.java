@@ -54,13 +54,6 @@ public class ClassService {
         List<ClassDto> classDtoList = classList.getContent().stream().map(aClass -> aClass.convertToDto()).collect(Collectors.toList());
 
         for (ClassDto aClass : classDtoList) {
-            aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
-            aClass.setSubjectPrice(subjectRepository.findSubject_SubjectPriceBySubjectId(aClass.getSubjectId()));
-            aClass.setBranchName(branchRepository.findBranch_BranchNameByBranchId(aClass.getBranchId()));
-            String description = shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShiftId())
-                    + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShiftId())
-                    + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShiftId()) + ")";
-            aClass.setShiftDescription(description);
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
@@ -75,9 +68,6 @@ public class ClassService {
                 int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
             }
-            Room room = roomRepository.findByRoomId(aClass.getRoomId());
-            aClass.setRoomName(room.getRoomName());
-            aClass.setRoomId(room.getRoomId());
             aClass.setManagerId(aClass.getManagerId());
             aClass.setManagerUsername(aClass.getManagerUsername());
         }
@@ -119,8 +109,8 @@ public class ClassService {
          * CASE 3: Subject ID != 0 && Shift ID != 0 && Status != null/empty
          * CASE 4: Subject ID != 0 && Status != null/empty
          * CASE 5: Shift ID != 0
-         * CASE 6: Shift ID != 0 && Status != 0
-         * CASE 7: Status != 0
+         * CASE 6: Shift ID != 0 && Status != null/empty
+         * CASE 7: Status != null/empty
          * CASE 8: All = 0
          */
         try {
@@ -174,8 +164,7 @@ public class ClassService {
             // CASE 7
             if (branchId != 0 && subjectId == 0 && shiftId == 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
-                pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("pageTotal", classList.getTotalPages());
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 8

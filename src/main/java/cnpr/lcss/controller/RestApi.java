@@ -744,13 +744,12 @@ public class RestApi {
      * @author HuuNT - 2021.19.09
      */
     @CrossOrigin
-    @RequestMapping(value = "/bookings/{branchId}", params = "classId", method = RequestMethod.GET)
-    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(@PathVariable(value = "branchId") int branchId,
-                                                                   @RequestParam(value = "classId") int classId,
+    @RequestMapping(value = "/bookings", params = "classId", method = RequestMethod.GET)
+    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(@RequestParam(value = "classId") int classId,
                                                                    @RequestParam(value = "status") String status,
                                                                    @RequestParam(value = "pageNo") int pageNo,
                                                                    @RequestParam(value = "pageSize") int pageSize) {
-        return bookingService.findBookingByClassIdandPhoneAndStatus(branchId, classId, status, pageNo, pageSize);
+        return bookingService.findBookingByClassIdandPhoneAndStatus(classId, status, pageNo, pageSize);
     }
     //</editor-fold>
 

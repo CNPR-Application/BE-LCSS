@@ -68,17 +68,21 @@ public class Class implements Serializable {
         dto.setStatus(status);
         dto.setSlot(slot);
         dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectName(subject.getSubjectName());
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
+        dto.setBranchName(branch.getBranchName());
         dto.setShiftId(shift.getShiftId());
-        if (staff != null) {
-            dto.setManagerId(staff.getId());
-            dto.setManagerUsername(staff.getAccount().getUsername());
+        dto.setShiftDescription(shift.getDayOfWeek() + " (" + shift.getTimeStart() + "-" + shift.getTimeEnd() + ")");
+        dto.setManagerId(staff.getId());
+        dto.setManagerUsername(staff.getAccount().getUsername());
+        if (room != null) {
+            dto.setRoomId(room.getRoomId());
+            dto.setRoomName(room.getRoomName());
         } else {
-            dto.setManagerId(0);
-            dto.setManagerUsername(null);
+            dto.setRoomId(0);
+            dto.setRoomName(0);
         }
-        dto.setRoomId(room.getRoomId());
         return dto;
     }
     //</editor-fold>
