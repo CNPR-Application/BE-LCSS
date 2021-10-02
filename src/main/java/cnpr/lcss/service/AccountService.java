@@ -649,7 +649,7 @@ public class AccountService {
             // Check username existence
             if (accountRepository.existsByUsername(username)) {
                 // Find user's role
-                String userRole = accountRepository.findRoleByUsername(username);
+                Role userRole = accountRepository.findRoleByUsername(username);
 
                 // Find account by username
                 Account updateAcc = accountRepository.findOneByUsername(username);
@@ -682,23 +682,23 @@ public class AccountService {
                     int yo = today.getYear() - insAcc.getBirthday().getYear();
                     // Role: ADMIN, MANAGER, STAFF
                     // OLDER OR EQUAL 18
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN) && yo < 18) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN) && yo < 18) {
                         throw new Exception(Constant.INVALID_ADMIN_BIRTHDAY);
                     }
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_MANAGER) && yo < 18) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) && yo < 18) {
                         throw new Exception(Constant.INVALID_MANAGER_BIRTHDAY);
                     }
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_STAFF) && yo < 18) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF) && yo < 18) {
                         throw new Exception(Constant.INVALID_STAFF_BIRTHDAY);
                     }
                     // Role: TEACHER
                     // OLDER OR EQUAL 18
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_TEACHER) && yo < 18) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER) && yo < 18) {
                         throw new Exception(Constant.INVALID_TEACHER_BIRTHDAY);
                     }
                     // Role: STUDENT
                     // OLDER OR EQUAL 3
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_STUDENT) && yo < 3) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT) && yo < 3) {
                         throw new Exception(Constant.INVALID_STUDENT_BIRTHDAY);
                     }
                     updateAcc.setBirthday(insAcc.getBirthday());
@@ -729,15 +729,15 @@ public class AccountService {
                     Branch updateBranch = branchRepository.findByBranchId(insAcc.getBranchId());
 
                     // Role: ADMIN, MANAGER, STAFF
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_ADMIN)
-                            || userRole.equalsIgnoreCase(Constant.ROLE_MANAGER)
-                            || userRole.equalsIgnoreCase(Constant.ROLE_STAFF)) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)
+                            || userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER)
+                            || userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)) {
                         Staff staff = staffRepository.findByAccount_Username(username);
                         staff.setBranch(updateBranch);
                         staffRepository.save(staff);
                     } else
                         // Role: TEACHER
-                        if (userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                        if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                             // Find Teacher by username
                             Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
                             if (!teachingBranchRepository.existsByTeacher_TeacherIdAndBranch_BranchId(teacher.getTeacherId(), insAcc.getBranchId())) {
@@ -759,7 +759,7 @@ public class AccountService {
 
                     // Update Parent's information
                     // Role: STUDENT
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                         Student student = studentRepository.findStudentByAccount_Username(username);
                         // Update Parent's name
                         if (insAcc.getParentName() != null && !insAcc.getParentName().isEmpty()) {
@@ -772,7 +772,7 @@ public class AccountService {
                         if (insAcc.getParentPhone() != null && insAcc.getParentPhone().matches(Constant.PHONE_PATTERN)) {
                             student.setParentPhone(insAcc.getParentPhone());
                         } else {
-                            throw new Exception(Constant.INVALID_PHONE_PATTERN);
+                            throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
                         }
 
                         studentRepository.save(student);
@@ -780,7 +780,7 @@ public class AccountService {
 
                     // Update Teacher's Experience
                     // Role: TEACHER
-                    if (userRole.equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                    if (userRole.getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
                         Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
                         if (insAcc.getExperience() != null && !insAcc.getExperience().isEmpty()) {
                             teacher.setExperience(insAcc.getExperience().trim());
