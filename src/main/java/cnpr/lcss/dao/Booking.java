@@ -55,9 +55,9 @@ public class Booking implements Serializable {
         bookingSearchResponseDto.setShiftId(aClass.getShift().getShiftId());
         bookingSearchResponseDto.setShiftDescription(aClass.getShift().getDayOfWeek() + "-" + "(" + aClass.getShift().getTimeStart() + "-" + aClass.getShift().getTimeEnd() + ")");
         bookingSearchResponseDto.setSubjectId(subjectId);
-        //subjectName
         bookingSearchResponseDto.setStudentId(student.getId());
         bookingSearchResponseDto.setStudentName(student.getAccount().getName());
+        bookingSearchResponseDto.setStudentUsername(student.getAccount().getUsername());
         bookingSearchResponseDto.setImage(student.getAccount().getImage());
         bookingSearchResponseDto.setStatus(status);
         bookingSearchResponseDto.setBranchId(branch.getBranchId());

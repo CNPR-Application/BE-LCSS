@@ -47,7 +47,7 @@ public class BookingService {
     //</editor-fold>
 
     //<editor-fold desc="8.01 Search Booking By Class Id and Phone and Status in A BRANCH">
-    public ResponseEntity<?> findBookingByClassIdandPhoneAndStatus(int branchId, int classId, String status, int pageNo, int pageSize) {
+    public ResponseEntity<?> findBookingByClassIdandPhoneAndStatus(int classId, String status, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         HashMap<String, Object> mapObj = new LinkedHashMap();
@@ -59,14 +59,15 @@ public class BookingService {
             mapObj.put("pageSize", pageSize);
             //CASE 1
             if (classId != 0) {
-                bookingList = bookingRepository.findBookingByaClass_ClassIdAndBranch_BranchIdAndStatusContainingAllIgnoreCase(classId, branchId, status, pageable);
+                bookingList = bookingRepository.findBookingByaClass_ClassIdAndStatusContainingAllIgnoreCase(classId, status, pageable);
                 pageTotal = bookingList.getTotalPages();
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
             }
             //Case 2
+            //class ID=0 then get all by status
             if (classId == 0) {
-                bookingList = bookingRepository.findBookingByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
+                bookingList = bookingRepository.findBookingByStatusContainingAllIgnoreCase( status, pageable);
                 pageTotal = bookingList.getTotalPages();
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
