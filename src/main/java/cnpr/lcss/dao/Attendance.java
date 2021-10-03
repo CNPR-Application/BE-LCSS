@@ -49,6 +49,7 @@ public class Attendance implements Serializable {
         dto.setAttendanceId(attendanceId);
         dto.setSessionId(session.getSessionId());
         dto.setStatus(status);
+        dto.setStartTime(session.getStartTime());
         dto.setCheckingDate(checkingDate);
         dto.setStudentInClassId(studentInClass.getStudentInClassId());
         return dto;

@@ -13,6 +13,7 @@ public class StudentAttendanceInAClassDto {
     private int attendanceId;
     private int sessionId;
     private String status;
+    private Date startTime;
     private Date checkingDate;
     private int studentInClassId;
 }
