@@ -638,6 +638,7 @@ public class ClassService {
             }
 
             // Update Class information
+            activateClass.setRoom(room);
             activateClass.setStatus(Constant.CLASS_STATUS_STUDYING);
             classRepository.save(activateClass);
 
