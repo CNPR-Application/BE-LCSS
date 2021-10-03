@@ -22,7 +22,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Page<Booking> findBookingByStudent_Account_Username(String studentUsername, Pageable pageable);
 
-    int countBookingByaClass_ClassId(int classId);
+    @Query("select count(distinct b) from Booking b where b.aClass.classId = ?1 and b.status = ?2")
+    long countWaitingBookingByClassIdAndStatusIsPaid(int classId, String status);
 
     List<Booking> findBookingByStudent_Id(int studentId);
 

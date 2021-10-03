@@ -57,7 +57,7 @@ public class ClassService {
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
                 aClass.setTeacherName(null);
-                int numberOfStudent = bookingRepository.countBookingByaClass_ClassId(aClass.getClassId());
+                int numberOfStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
                 aClass.setNumberOfStudent(numberOfStudent);
             } else {
                 // CLASS_STATUS: STUDYING || FINISHED
@@ -181,7 +181,7 @@ public class ClassService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    //</editor-fold>
+    //</editor-fold>xxxxxxxx
 
     //<editor-fold desc="9.02-Get-all-class-by-branchId-status">
     public ResponseEntity<?> searchAllClassByBranchIdAndStatusPaging(int branchId, String status, int pageNo, int pageSize) throws Exception {
