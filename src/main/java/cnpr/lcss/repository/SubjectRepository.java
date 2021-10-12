@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
-
     int countByCurriculum_CurriculumId(int curriculumId);
 
     List<Subject> findAllByCurriculum_CurriculumId(int curriculumId);
@@ -34,11 +33,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Boolean existsSubjectBySubjectNameAndSubjectIdIsNot(String subjectName, int subjectId);
 
-    @Query(value = "SELECT s.isAvailable " +
-            "FROM Subject AS s " +
-            "WHERE s.subjectId = :subjectId")
-    Boolean findIsAvailableBySubjectId(@Param(value = "subjectId") int subjectId);
-
     @Query(value = "SELECT s.slot " +
             "FROM Subject AS s " +
             "WHERE s.subjectId = :subjectId")
@@ -58,4 +52,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             "FROM Subject AS s " +
             "WHERE s.subjectId = :subjectId")
     Float findSubject_SubjectPriceBySubjectId(@Param(value = "subjectId") int subjectId);
+
+    @Query("select distinct s from Subject s left join s.teachingSubjectList teachingSubjectList where teachingSubjectList.teacher.teacherId = ?1")
+    List<Subject> findDistinctByTeachingSubjectList_Teacher_TeacherId(int teacherId);
 }

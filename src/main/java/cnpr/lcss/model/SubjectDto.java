@@ -11,7 +11,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class SubjectDto {
-
     private int subjectId;
     private String subjectCode;
     private String subjectName;
@@ -25,9 +24,7 @@ public class SubjectDto {
     private String rating;
     private Curriculum curriculum;
 
-    /**
-     * --- modify getter & setter ---
-     */
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -35,4 +32,5 @@ public class SubjectDto {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }

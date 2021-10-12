@@ -35,6 +35,8 @@ public class AccountService {
     @Autowired
     TeachingBranchRepository teachingBranchRepository;
     @Autowired
+    SubjectRepository subjectRepository;
+    @Autowired
     RoleRepository roleRepository;
 
     //<editor-fold desc="Convert Vietnamese characters to ASCII">
@@ -857,22 +859,50 @@ public class AccountService {
         try {
 
             Account account = accountRepository.findOneByUsername(username);
-            if(account.equals(null))
+            if (account.equals(null))
                 throw new Exception(Constant.INVALID_USERNAME);
             String newPassword = (String) reqBody.get("newPassword");
             String oldPassword = (String) reqBody.get("oldPassword");
             String reNewPassword = (String) reqBody.get("reNewPassword");
-            if(!oldPassword.matches(account.getPassword())) {
+            if (!oldPassword.matches(account.getPassword())) {
                 throw new Exception(Constant.PASSWORD_NOT_MATCH);
             }
-            if(!newPassword.matches(oldPassword)&&reNewPassword.matches(newPassword)){
+            if (!newPassword.matches(oldPassword) && reNewPassword.matches(newPassword)) {
                 account.setPassword(newPassword);
                 accountRepository.save(account);
                 return ResponseEntity.ok(Boolean.TRUE);
-            }else {
+            } else {
                 return ResponseEntity.ok(Boolean.FALSE);
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.12-search-teacher-in-branch">
+    public ResponseEntity<?> searchTeacherInBranch(int branchId, boolean isAvailable, int pageNo, int pageSize) throws Exception {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Page<Teacher> page = teacherRepository
+                    .findDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(branchId, isAvailable, pageable);
+            List<TeacherInBranchDto> teacherInBranchDtoList = page.getContent().stream()
+                    .map(teacher -> teacher.convertToTeacherInBranchDto()).collect(Collectors.toList());
+            for (TeacherInBranchDto teacher : teacherInBranchDtoList) {
+                teacher.setTeacherStartingDate(teachingBranchRepository
+                        .findByBranch_BranchIdAndTeacher_TeacherId(branchId, teacher.getTeacherId()).getStartingDate());
+                teacher.setTeachingSubjectList(subjectRepository
+                        .findDistinctByTeachingSubjectList_Teacher_TeacherId(teacher.getTeacherId()).stream()
+                        .map(subject -> subject.convertToSubjectBasicInfoDto()).collect(Collectors.toList()));
+            }
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("totalPage", page.getTotalPages());
+            mapObj.put("teacherInBranchList", teacherInBranchDtoList);
+            return ResponseEntity.status(HttpStatus.OK).body(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
