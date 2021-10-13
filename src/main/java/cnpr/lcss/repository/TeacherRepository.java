@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, String> {
-
     @Query("SELECT t.experience FROM Teacher t WHERE t.account.username = :username")
     String findExperienceByTeacherUsername(@Param("username") String teacherUsername);
 
@@ -48,4 +47,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
     @Query("select distinct t from Teacher t left join t.sessionList sessionList where sessionList.aClass.classId = ?1 and t.account.isAvailable = true")
     List<Teacher> findDistinctBySessionList_AClass_ClassIdAndAccount_IsAvailableIsTrue(int classId);
+
+    @Query("select distinct t from Teacher t left join t.teachingBranchList teachingBranchList where teachingBranchList.branch.branchId = ?1 and t.account.isAvailable = ?2")
+    Page<Teacher> findDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 }
