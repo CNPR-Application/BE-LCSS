@@ -2,6 +2,7 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.SubjectDetail;
+import cnpr.lcss.dao.TeachingSubject;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectDetailRepository;
@@ -148,7 +149,7 @@ public class SubjectService {
                 throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             } else {
                 Subject deleteSubject = subjectRepository.findBySubjectId(subjectId);
-                if (deleteSubject.getIsAvailable()) {
+                if (deleteSubject.getIsAvailable()&&deleteSubject.getClassList().isEmpty()) {
                     List<SubjectDetail> subjectDetailList = subjectDetailRepository.findSubjectDetailBySubject_SubjectId(subjectId);
                     for (SubjectDetail subjectDetail : subjectDetailList) {
                         subjectDetail.setIsAvailable(false);
