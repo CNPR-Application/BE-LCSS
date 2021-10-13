@@ -1,9 +1,7 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Student;
-import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.StudentDto;
-import cnpr.lcss.model.SubjectSearchDto;
 import cnpr.lcss.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,25 +21,19 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
-    //<editor-fold desc="findStudentInABranch">
+    //<editor-fold desc="1.13-search-student-in-branch">
     public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) {
-
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Map<String, Object> mapObj = new LinkedHashMap<>();
-
             Page<Student> studentList = studentRepository.findStudentByBranch_BranchIdAndAccount_IsAvailable(branchId, isAvailable, pageable);
             List<StudentDto> studentDtoList = studentList.getContent().stream().map(student -> student.convertToDto()).collect(Collectors.toList());
             int pageTotal = studentList.getTotalPages();
-
-
+            Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
             mapObj.put("pageTotal", pageTotal);
             mapObj.put("studentResponseDtos", studentDtoList);
-
             return ResponseEntity.ok(mapObj);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
