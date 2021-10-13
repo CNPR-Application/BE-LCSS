@@ -138,7 +138,7 @@ public class NotificationService {
             ZonedDateTime today = ZonedDateTime.now(zoneId);
             try {
                 //first loop to first user who has token to send Noti first
-                for(String user : usernameList){
+                for (String user : usernameList) {
                     Account receiver = accountRepository.findOneByUsername(user);
                     //users have token
                     if (receiver.getToken() != null) {
@@ -264,15 +264,15 @@ public class NotificationService {
                 //first loop to first user who has token to send Noti first
                 for (Account staff : staffList) {
                     if (staff.getToken() != null) {
-                    Notification newNotification = new Notification();
-                    newNotification.setSenderUsername(senderUsername.toLowerCase());
-                    newNotification.setReceiverUsername(staff);
-                    newNotification.setTitle(title.trim());
-                    newNotification.setBody(body.trim());
-                    newNotification.setIsRead(Boolean.FALSE);
-                    newNotification.setCreatingDate(Date.from(today.toInstant()));
-                    newNotification.setLastModified(Date.from(today.toInstant()));
-                    // Send notification to token's device
+                        Notification newNotification = new Notification();
+                        newNotification.setSenderUsername(senderUsername.toLowerCase());
+                        newNotification.setReceiverUsername(staff);
+                        newNotification.setTitle(title.trim());
+                        newNotification.setBody(body.trim());
+                        newNotification.setIsRead(Boolean.FALSE);
+                        newNotification.setCreatingDate(Date.from(today.toInstant()));
+                        newNotification.setLastModified(Date.from(today.toInstant()));
+                        // Send notification to token's device
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(staff.getToken())
                                 .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
