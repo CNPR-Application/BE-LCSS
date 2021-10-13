@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.StudentDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,6 +40,24 @@ public class Student implements Serializable {
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
 
+    //<editor-fold desc="Convert to Dto">
+    public StudentDto convertToDto(){
+        StudentDto studentDto=new StudentDto();
+        studentDto.setStudentId(id);
+        studentDto.setName(account.getName());
+        studentDto.setUsername(account.getUsername());
+        studentDto.setAdress(account.getAddress());
+        studentDto.setEmail(account.getEmail());
+        studentDto.setBirthday(account.getBirthday());
+        studentDto.setPhone(account.getPhone());
+        studentDto.setImage(account.getImage());
+        studentDto.setRole(account.getRole().getRoleId());
+        studentDto.setParentName(parentName);
+        studentDto.setParentPhone(parentPhone);
+        return studentDto;
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Modify toString">
     @Override
     public String toString() {
@@ -49,4 +68,6 @@ public class Student implements Serializable {
                 '}';
     }
     //</editor-fold>
+
+
 }
