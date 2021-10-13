@@ -1,6 +1,8 @@
 package cnpr.lcss.repository;
 
 import cnpr.lcss.dao.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     Student findByStudent_StudentUsername(@Param(value = "studentUsername") String studentUsername);
 
     boolean existsByAccount_Username(String username);
+
+    Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 }

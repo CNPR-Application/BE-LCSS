@@ -48,6 +48,8 @@ public class RestApi {
     RoomService roomService;
     @Autowired
     NotificationService notificationService;
+    @Autowired
+    StudentService studentService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -269,6 +271,25 @@ public class RestApi {
                                                    @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
                                                    @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return accountService.searchTeacherInBranch(branchId, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.13-search-student-in-branch">
+
+    /**
+     * @param branchId
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 1.13-search-student-in-branch
+     * @author HuuNT - 2021.10.12
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/students", method = RequestMethod.GET)
+    public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) throws Exception {
+        return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
 
