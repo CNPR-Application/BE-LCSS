@@ -21,7 +21,7 @@ public class Session implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "session_id")
-    private int sessionId;
+    private Integer sessionId;
     @Column(name = "start_time")
     private Date startTime;
     @Column(name = "end_time")

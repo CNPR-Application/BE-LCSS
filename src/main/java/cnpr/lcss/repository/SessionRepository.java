@@ -28,4 +28,7 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     List<Session> findSessionByTeacher_TeacherId(int teacherId);
 
     Page<Session> findByaClass_ClassId(int classId, Pageable pageable);
+
+    @Query("select s from Session s where s.sessionId = ?1")
+    Session findBySessionId(Integer sessionId);
 }

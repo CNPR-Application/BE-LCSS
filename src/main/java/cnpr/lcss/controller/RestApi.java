@@ -1160,6 +1160,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="11.08-update-session-in-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.13
+     * @apiNote 11.08-update-session-in-class
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/sessions", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSessionInClass(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return sessionService.updateSessionInClass(reqBody);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------ATTENDANCE--------------------------------
      */

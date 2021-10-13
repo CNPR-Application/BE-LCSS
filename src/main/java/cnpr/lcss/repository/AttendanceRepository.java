@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
     //<editor-fold desc="Page<Attendance> findStudentAttendanceInAClass">
@@ -53,4 +55,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     Page<Attendance> findAllStudentAttendanceInASession(@Param(value = "sessionId") int sessionId,
                                                         Pageable pageable);
     //</editor-fold>
+
+    @Query("select a from Attendance a where a.session.sessionId = ?1")
+    List<Attendance> findBySession_SessionId(Integer sessionId);
 }
