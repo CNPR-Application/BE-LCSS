@@ -271,6 +271,28 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.12-search-teacher-in-branch">
+
+    /**
+     * @param branchId
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.12
+     * @apiNote 1.12-search-teacher-in-branch
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers", params = "branchId", method = RequestMethod.GET)
+    public ResponseEntity<?> searchTeacherInBranch(@RequestParam(value = "branchId", defaultValue = "1") int branchId,
+                                                   @RequestParam(value = "isAvailable", defaultValue = "true") boolean isAvailable,
+                                                   @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchTeacherInBranch(branchId, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------BRANCH--------------------------------
      */

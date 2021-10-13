@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.TeacherDto;
+import cnpr.lcss.model.TeacherInBranchDto;
 import cnpr.lcss.util.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,10 +56,20 @@ public class Teacher implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Modify toString()">
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "teacherId=" + teacherId +
+                ", experience='" + experience + '\'' +
+                ", rating='" + rating + '\'' +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to TeacherDto">
     public TeacherDto convertToTeacherDto() {
         TeacherDto dto = new TeacherDto();
-
         dto.setTeacherId(teacherId);
         dto.setUsername(account.getUsername());
         dto.setExperience(experience);
@@ -71,19 +82,26 @@ public class Teacher implements Serializable {
         dto.setImage(account.getImage());
         dto.setRole(account.getRole().getRoleId());
         dto.setCreatingDate(account.getCreatingDate());
-
         return dto;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Modify toString()">
-    @Override
-    public String toString() {
-        return "Teacher{" +
-                "teacherId=" + teacherId +
-                ", experience='" + experience + '\'' +
-                ", rating='" + rating + '\'' +
-                '}';
+    //<editor-fold desc="Convert to TeacherInBranchDto">
+    public TeacherInBranchDto convertToTeacherInBranchDto() {
+        TeacherInBranchDto dto = new TeacherInBranchDto();
+        dto.setTeacherId(teacherId);
+        dto.setTeacherUsername(account.getUsername());
+        dto.setTeacherName(account.getName());
+        dto.setTeacherAddress(account.getAddress());
+        dto.setTeacherEmail(account.getEmail());
+        dto.setTeacherBirthday(account.getBirthday());
+        dto.setTeacherPhone(account.getPhone());
+        dto.setTeacherImage(account.getImage());
+        dto.setRole(account.getRole().getRoleId());
+        dto.setAccountCreatingDate(account.getCreatingDate());
+        dto.setTeacherExperience(experience);
+        dto.setTeacherRating(calculateRating(rating));
+        return dto;
     }
     //</editor-fold>
 }
