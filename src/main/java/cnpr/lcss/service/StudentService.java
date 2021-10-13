@@ -23,6 +23,7 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
+    //<editor-fold desc="findStudentInABranch">
     public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) {
 
         try {
@@ -46,4 +47,5 @@ public class StudentService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 }

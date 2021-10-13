@@ -41,8 +41,8 @@ public class Student implements Serializable {
     private List<StudentInClass> studentInClassList;
 
     //<editor-fold desc="Convert to Dto">
-    public StudentDto convertToDto(){
-        StudentDto studentDto=new StudentDto();
+    public StudentDto convertToDto() {
+        StudentDto studentDto = new StudentDto();
         studentDto.setStudentId(id);
         studentDto.setName(account.getName());
         studentDto.setUsername(account.getUsername());
