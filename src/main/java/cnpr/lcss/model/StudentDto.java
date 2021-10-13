@@ -4,13 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.Date;
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class StudentDto {
-    private int id;
-    private String parentPhone;
+    private int studentId;
+    private String name;
+    private String username;
+    private String adress;
+    private String email;
+    private Date birthday;
+    private String phone;
+    private String image;
+    private String role;
     private String parentName;
-    private String studentUsername;
-    private int branchId;
+    private String parentPhone;
+
 }
