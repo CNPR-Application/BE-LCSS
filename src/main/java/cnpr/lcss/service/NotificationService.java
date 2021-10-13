@@ -194,7 +194,7 @@ public class NotificationService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="15.03-Create Notification For Person">
+    //<editor-fold desc="15.03-create-notification-for-a-person">
     public ResponseEntity<?> createNotificationForPerson(HashMap<String, Object> reqBody) throws Exception {
         try {
             String senderUsername = (String) reqBody.get("senderUsername");
