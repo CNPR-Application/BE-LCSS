@@ -137,7 +137,8 @@ public class ShiftService {
                 throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
             } else {
                 Shift deleteShift = shiftRepository.findShiftByShiftId(shiftId);
-                if (deleteShift.getIsAvailable()) {
+                //check shift if there are class lists, if is empty delete shift
+                if (deleteShift.getIsAvailable()&&deleteShift.getClassList().isEmpty()) {
                     deleteShift.setIsAvailable(false);
                     shiftRepository.save(deleteShift);
                     return ResponseEntity.ok(Boolean.TRUE);
