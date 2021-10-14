@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -181,9 +183,10 @@ public class SessionService {
                         if (newShiftId == null) {
                             throw new Exception(Constant.INVALID_NEW_SHIFT_ID);
                         } else {
-                            String newStartTime_startTime = newStartTime.getHours() + Constant.SYMBOL_COLON + newStartTime.getMinutes();
+                            String newStartTime_startTime = LocalTime.of(newStartTime.getHours(), newStartTime.getMinutes())
+                                    .format(DateTimeFormatter.ofPattern(Constant.TIME_PATTERN));
                             String newShift_startTime = shiftRepository.findShift_TimeStartByShiftId(newShiftId);
-                            if (!newShift_startTime.equalsIgnoreCase(newShift_startTime)) {
+                            if (!newStartTime_startTime.equalsIgnoreCase(newShift_startTime)) {
                                 throw new Exception(Constant.INCOMPATIBLE_START_TIME);
                             } else {
                                 try {
@@ -193,6 +196,7 @@ public class SessionService {
                                     calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(newShift.getTimeStart().split(Constant.SYMBOL_COLON)[0]));
                                     calendar.set(Calendar.MINUTE, Integer.valueOf(newShift.getTimeStart().split(Constant.SYMBOL_COLON)[1]));
                                     int totalSession = sessionList.indexOf(updateSession);
+                                    daysOfWeek = classService.convertDowToInteger(newShift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN));
                                     List<Date> dateList = new ArrayList<>();
                                     while (totalSession < updateClass.getSlot()) {
                                         if (classService.isDaysInShift(daysOfWeek, calendar)) {
