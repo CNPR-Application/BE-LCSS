@@ -19,13 +19,15 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
                     "FROM attendance AS a " +
                     "INNER JOIN student_in_class AS sic on a.student_class_id = sic.student_class_id " +
                     "INNER JOIN student s on sic.student_id = s.student_id " +
+                    "JOIN session ss on a.session_id = ss.session_id " +
                     "WHERE s.student_username = :studentUsername AND sic.class_id = :classId ",
             value = "SELECT a.attendance_id, a.session_id, a.status, a.checking_date, sic.student_class_id " +
                     "FROM attendance AS a " +
                     "JOIN student_in_class AS sic on a.student_class_id = sic.student_class_id " +
                     "JOIN student s on sic.student_id = s.student_id " +
+                    "JOIN session ss on a.session_id = ss.session_id " +
                     "WHERE s.student_username = :studentUsername AND sic.class_id = :classId " +
-                    "ORDER BY a.checking_date ASC"
+                    "ORDER BY ss.start_time ASC"
     )
     Page<Attendance> findStudentAttendanceInAClass(@Param(value = "studentUsername") String studentUsername,
                                                    @Param(value = "classId") int classId,
