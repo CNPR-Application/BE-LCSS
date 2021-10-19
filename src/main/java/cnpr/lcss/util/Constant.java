@@ -89,7 +89,7 @@ public class Constant {
     // Error Message
     public static final String INVALID_BOOKING_ID = "Invalid Booking ID!";
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
-    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled!";
+    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled/processed!";
     public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
     //</editor-fold>
 

@@ -864,6 +864,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="8.06-Update Booking">
+
+    /**
+     * @param bookingId
+     * @param bookingAtt
+     * @return
+     * @throws Exception
+     * @apiNote 8.06-update-booking
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBooking(@RequestParam int bookingId,
+                                           @RequestBody Map<String, String> bookingAtt) throws Exception {
+        return bookingService.updateBooking(bookingId, bookingAtt);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------CLASS-------------------------------
      */

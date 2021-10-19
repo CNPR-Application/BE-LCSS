@@ -67,7 +67,7 @@ public class BookingService {
             //Case 2
             //class ID=0 then get all by status
             if (classId == 0) {
-                bookingList = bookingRepository.findBookingByStatusContainingAllIgnoreCase( status, pageable);
+                bookingList = bookingRepository.findBookingByStatusContainingAllIgnoreCase(status, pageable);
                 pageTotal = bookingList.getTotalPages();
                 mapObj.put("pageTotal", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
@@ -163,6 +163,31 @@ public class BookingService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    //</editor-fold>
+    //<editor-fold desc="Update Booking">
+    public ResponseEntity<?> updateBooking(int bookingId, Map<String, String> bookingAtt) throws Exception {
+        try {
+            Booking booking = bookingRepository.findBookingByBookingId(bookingId);
+            if (booking != null) {
+                String status = bookingAtt.get("status");
+                if (status.matches(Constant.BOOKING_STATUS_CANCELED) || status.matches(Constant.BOOKING_STATUS_PAID)
+                        || status.matches(Constant.BOOKING_STATUS_PROCESSED))
+                    booking.setStatus(status);
+                else
+                    throw new IllegalArgumentException(Constant.INVALID_BOOKING_STATUS);
+                String description = bookingAtt.get("description");
+                booking.setDescription(description);
+                bookingRepository.save(booking);
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_BOOKING_ID);
+            }
+            return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
         }
     }
     //</editor-fold>
