@@ -273,6 +273,7 @@ public class Constant {
     public static final String DEFAULT_TEACHER_RATING = "0/0";
     // Error Message
     public static final String ERROR_GENERATE_TEACHER_RATING = "Generate teacher rating FAILED!";
+    public static final String ERROR_DELETE_TEACHER_CLASS = "CAN NOT DELETE TEACHER BECAUSE TEACHER'S CLASS IS WAITING/STUDYING!";
     //</editor-fold>
 
     //<editor-fold desc="Teaching Branch">
