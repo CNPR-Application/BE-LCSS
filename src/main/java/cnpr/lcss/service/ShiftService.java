@@ -82,24 +82,7 @@ public class ShiftService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Search Shift by Day Of Week or Time Start containing">
-    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, int pageNo, int pageSize) {
-
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-        Page<Shift> page = shiftRepository.findShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageable);
-        List<Shift> shiftList = page.getContent();
-        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
-
-        int pageTotal = page.getTotalPages();
-
-        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
-
-        return shiftPagingResponseDto;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Find Shift by Shift Id">
+    //<editor-fold desc="13.01-search-shift-by-shift-id">
     public ResponseEntity<?> findShiftByShiftId(int shiftId) throws Exception {
 
         try {
@@ -116,21 +99,24 @@ public class ShiftService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Shift By isAvailable">
-    public ShiftPagingResponseDto findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
+    //<editor-fold desc="13.02-search-shift-by-dow-and-by-time-start-containing">
+    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, int pageNo, int pageSize) {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        Page<Shift> page = shiftRepository.findByIsAvailable(isAvailable, pageable);
+
+        Page<Shift> page = shiftRepository.findShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageable);
         List<Shift> shiftList = page.getContent();
         List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+
         int pageTotal = page.getTotalPages();
 
         ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
+
         return shiftPagingResponseDto;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Delete Shift By Id">
+    //<editor-fold desc="13.04-delete-shift-by-id">
     public ResponseEntity<?> deleteShiftByShiftId(int shiftId) throws Exception {
         try {
             if (!shiftRepository.existsById(shiftId)) {
@@ -138,7 +124,7 @@ public class ShiftService {
             } else {
                 Shift deleteShift = shiftRepository.findShiftByShiftId(shiftId);
                 //check shift if there are class lists, if is empty delete shift
-                if (deleteShift.getIsAvailable()&&deleteShift.getClassList().isEmpty()) {
+                if (deleteShift.getIsAvailable() && deleteShift.getClassList().isEmpty()) {
                     deleteShift.setIsAvailable(false);
                     shiftRepository.save(deleteShift);
                     return ResponseEntity.ok(Boolean.TRUE);
@@ -153,7 +139,21 @@ public class ShiftService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Revival Shift by ID">
+    //<editor-fold desc="13.05-get-all-shift-by-isAvailable">
+    public ShiftPagingResponseDto findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<Shift> page = shiftRepository.findByIsAvailable(isAvailable, pageable);
+        List<Shift> shiftList = page.getContent();
+        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+        int pageTotal = page.getTotalPages();
+
+        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
+        return shiftPagingResponseDto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="13.06-Revival Shift by Id">
     public ResponseEntity<?> revivalShiftbyShiftId(int shiftID) throws Exception {
         try {
             if (!shiftRepository.existsById(shiftID)) {
