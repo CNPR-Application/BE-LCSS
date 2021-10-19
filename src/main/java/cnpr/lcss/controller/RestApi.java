@@ -700,7 +700,7 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
-                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+                                                 @RequestBody Map<String, String> subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
     }
     //</editor-fold>

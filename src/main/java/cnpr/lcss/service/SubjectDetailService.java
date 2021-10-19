@@ -5,7 +5,6 @@ import cnpr.lcss.dao.SubjectDetail;
 import cnpr.lcss.model.SubjectDetailDto;
 import cnpr.lcss.model.SubjectDetailPagingResponseDto;
 import cnpr.lcss.model.SubjectDetailRequestDto;
-import cnpr.lcss.model.SubjectDetailUpdateRequestDto;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
 import cnpr.lcss.util.Constant;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,17 +89,20 @@ public class SubjectDetailService {
     //</editor-fold>
 
     //<editor-fold desc="Update Subject Detail by Subject Detail Id">
-    public ResponseEntity<?> updateSubjectDetail(int subjectDetailId, SubjectDetailUpdateRequestDto insSubjectDetail) throws Exception {
+    public ResponseEntity<?> updateSubjectDetail(int subjectDetailId, Map<String, String> insSubjectDetail) throws Exception {
         try {
             if (subjectDetailRepository.existsById(subjectDetailId)) {
-                if (insSubjectDetail.getWeekNum() > 0) {
+                int weekNum = Integer.parseInt(insSubjectDetail.get("weekNum"));
+                String weekDescription = insSubjectDetail.get("weekDescription");
+                String learningOutcome = insSubjectDetail.get("learningOutcome");
+                if (weekNum > 0) {
                     SubjectDetail updateSubjectDetail = subjectDetailRepository.findBySubjectDetailId(subjectDetailId);
 
-                    updateSubjectDetail.setWeekNum(insSubjectDetail.getWeekNum());
-                    updateSubjectDetail.setWeekDescription(insSubjectDetail.getWeekDescription().trim());
-                    updateSubjectDetail.setIsAvailable(insSubjectDetail.getIsAvailable());
-                    updateSubjectDetail.setLearningOutcome(insSubjectDetail.getLearningOutcome().trim());
-
+                    updateSubjectDetail.setWeekNum(weekNum);
+                    updateSubjectDetail.setWeekDescription(weekDescription);
+                    updateSubjectDetail.setLearningOutcome(learningOutcome);
+                    //change status from fasle to true if fields updated
+                    updateSubjectDetail.setIsAvailable(true);
                     subjectDetailRepository.save(updateSubjectDetail);
                 } else {
                     throw new Exception(Constant.INVALID_WEEK_NUM);
