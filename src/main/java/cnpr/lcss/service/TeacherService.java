@@ -120,7 +120,7 @@ public class TeacherService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Delete Teacher">
+    //<editor-fold desc="1.15-delete-teacher">
     public ResponseEntity<?> deleteTeacher(String username) throws Exception {
         try {
             Account account = accountRepository.findOneByUsername(username);
@@ -129,7 +129,7 @@ public class TeacherService {
             } else {
                 Teacher teacher = account.getTeacher();
                 Boolean teacherClassAbleToDelete = true;
-                //check each class of this teacher,
+                // check each class of this teacher,
                 // is there any class with status waiting or studying,
                 // if so, it should not be deleted
                 List<Session> sessionList = teacher.getSessionList();
@@ -139,10 +139,11 @@ public class TeacherService {
                             || aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING))
                         teacherClassAbleToDelete = false;
                 }
-                if (teacherClassAbleToDelete == false)
+                if (!teacherClassAbleToDelete) {
                     throw new IllegalArgumentException(Constant.ERROR_DELETE_TEACHER_CLASS);
+                }
 
-                if (teacherClassAbleToDelete == true) {
+                if (teacherClassAbleToDelete) {
                     account.setIsAvailable(false);
                     accountRepository.save(account);
                     return ResponseEntity.ok(Boolean.TRUE);

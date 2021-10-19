@@ -312,8 +312,9 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.15-delete-teacher">
+
     /**
-     *
      * @param username
      * @return
      * @throws Exception
@@ -325,6 +326,7 @@ public class RestApi {
     public ResponseEntity<?> deleteTeacher(@PathVariable String username) throws Exception {
         return teacherService.deleteTeacher(username);
     }
+    //</editor-fold>
 
     /**
      * -------------------------------BRANCH--------------------------------

@@ -52,10 +52,9 @@ public class StudentService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Delete Student">
+    //<editor-fold desc="1.14 Delete Student">
     public ResponseEntity<?> deleteStudent(String username) throws Exception {
         try {
-            //Student student=studentRepository.findByStudent_StudentUsername(username);
             Account account = accountRepository.findOneByUsername(username);
             if (account == null) {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
@@ -63,15 +62,16 @@ public class StudentService {
                 Student student = account.getStudent();
                 Boolean studentBookingAbleToDelete = true;
                 Boolean studentClassAbleToDelete = true;
-                //check is there any this student's booking is paid, if there are student UNABLE TO DELETE
+                // check is there any this student's booking is paid, if there are student UNABLE TO DELETE
                 List<Booking> bookingList = student.getBookingList();
                 for (Booking booking : bookingList) {
                     if (booking.getStatus().matches(Constant.BOOKING_STATUS_PAID))
                         studentBookingAbleToDelete = false;
                 }
-                if (studentBookingAbleToDelete == false)
+                if (!studentBookingAbleToDelete) {
                     throw new IllegalArgumentException(Constant.ERROR_DELETE_STUDENT_BOOKING);
-                //check each class of this student,
+                }
+                // check each class of this student,
                 // is there any class with status waiting or studying,
                 // if so, it should not be deleted
                 List<StudentInClass> studentInClassList = student.getStudentInClassList();
@@ -81,10 +81,11 @@ public class StudentService {
                             || aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING))
                         studentClassAbleToDelete = false;
                 }
-                if (studentClassAbleToDelete == false)
+                if (!studentClassAbleToDelete) {
                     throw new IllegalArgumentException(Constant.ERROR_DELETE_STUDENT_CLASS);
+                }
 
-                if (studentBookingAbleToDelete == true && studentClassAbleToDelete == true) {
+                if (studentBookingAbleToDelete && studentClassAbleToDelete) {
                     account.setIsAvailable(false);
                     accountRepository.save(account);
                     return ResponseEntity.ok(Boolean.TRUE);
