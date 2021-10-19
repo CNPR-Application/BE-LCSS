@@ -46,7 +46,7 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.01 Search Booking By Class Id and Phone and Status in A BRANCH">
+    //<editor-fold desc="8.01_search_booking_by_classId_and_status_in_aBranch">
     public ResponseEntity<?> findBookingByClassIdandPhoneAndStatus(int classId, String status, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -80,7 +80,7 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.02 Search Booking By Student UserName">
+    //<editor-fold desc="8.02-search-booking-by-studentid">
     public ResponseEntity<?> findBookingByStudentUsername(String studentUsername, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -104,7 +104,7 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.03 Get Booking Detail By Id">
+    //<editor-fold desc="8.03-get-booking-detail-by-id">
     public BookingSearchResponseDto findBookingByBookingId(int bookingId) throws Exception {
         if (bookingRepository.existsBookingByBookingId(bookingId)) {
             Booking booking = bookingRepository.findBookingByBookingId(bookingId);
@@ -167,17 +167,19 @@ public class BookingService {
     }
 
     //</editor-fold>
-    //<editor-fold desc="Update Booking">
+
+    //<editor-fold desc="8.06-update-booking">
     public ResponseEntity<?> updateBooking(int bookingId, Map<String, String> bookingAtt) throws Exception {
         try {
             Booking booking = bookingRepository.findBookingByBookingId(bookingId);
             if (booking != null) {
                 String status = bookingAtt.get("status");
                 if (status.matches(Constant.BOOKING_STATUS_CANCELED) || status.matches(Constant.BOOKING_STATUS_PAID)
-                        || status.matches(Constant.BOOKING_STATUS_PROCESSED))
+                        || status.matches(Constant.BOOKING_STATUS_PROCESSED)) {
                     booking.setStatus(status);
-                else
+                } else {
                     throw new IllegalArgumentException(Constant.INVALID_BOOKING_STATUS);
+                }
                 String description = bookingAtt.get("description");
                 booking.setDescription(description);
                 bookingRepository.save(booking);
@@ -187,7 +189,7 @@ public class BookingService {
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>
