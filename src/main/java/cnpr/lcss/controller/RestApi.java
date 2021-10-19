@@ -174,13 +174,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 1.06-update-account
-     * @author LamHNT - 2021.06.27
+     * @author LamHNT - 2021.10.20
      */
     @CrossOrigin
     @RequestMapping(value = "/accounts", params = "username", method = RequestMethod.PUT)
     public ResponseEntity<?> updateAccount(@RequestParam String username,
-                                           @RequestBody AccountRequestDto insAcc) throws Exception {
-        return accountService.updateAccount(username, insAcc);
+                                           @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return accountService.updateAccount(username, reqBody);
     }
     //</editor-fold>
 
@@ -733,7 +733,7 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
-                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+                                                 @RequestBody Map<String, String> subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
     }
     //</editor-fold>
@@ -894,6 +894,24 @@ public class RestApi {
     @RequestMapping(value = "/bookings", method = RequestMethod.POST)
     public ResponseEntity<?> createNewBooking(@RequestBody BookingRequestDto bookingRequestDto) throws Exception {
         return bookingService.createNewBooking(bookingRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="8.06-Update Booking">
+
+    /**
+     * @param bookingId
+     * @param bookingAtt
+     * @return
+     * @throws Exception
+     * @apiNote 8.06-update-booking
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBooking(@RequestParam int bookingId,
+                                           @RequestBody Map<String, String> bookingAtt) throws Exception {
+        return bookingService.updateBooking(bookingId, bookingAtt);
     }
     //</editor-fold>
 
