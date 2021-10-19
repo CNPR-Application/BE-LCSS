@@ -1,7 +1,7 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.*;
 import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.*;
 import cnpr.lcss.model.StudentDto;
 import cnpr.lcss.repository.AccountRepository;
 import cnpr.lcss.repository.ClassRepository;
@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class StudentService {
     StudentInClassRepository studentInClassRepository;
     @Autowired
     AccountRepository accountRepository;
+
     //<editor-fold desc="1.13-search-student-in-branch">
     public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) {
         try {
@@ -54,11 +56,11 @@ public class StudentService {
     public ResponseEntity<?> deleteStudent(String username) throws Exception {
         try {
             //Student student=studentRepository.findByStudent_StudentUsername(username);
-            Account account=accountRepository.findOneByUsername(username);
-            Student student=account.getStudent();
-            Boolean studentBookingAbleToDelete=true;
-            Boolean studentClassAbleToDelete=true;
-            if (student== null) {
+            Account account = accountRepository.findOneByUsername(username);
+            Student student = account.getStudent();
+            Boolean studentBookingAbleToDelete = true;
+            Boolean studentClassAbleToDelete = true;
+            if (student == null) {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             } else {
                 //check is there any this student's booking is paid, if there are student UNABLE TO DELETE
@@ -79,7 +81,7 @@ public class StudentService {
                             || aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING))
                         studentClassAbleToDelete = false;
                 }
-                if (studentClassAbleToDelete = false)
+                if (studentClassAbleToDelete == false)
                     throw new IllegalArgumentException(Constant.ERROR_DELETE_STUDENT_CLASS);
 
                 if (studentBookingAbleToDelete == true && studentClassAbleToDelete == true) {
