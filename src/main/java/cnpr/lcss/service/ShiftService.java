@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ShiftService {
     @Autowired
     ShiftRepository shiftRepository;
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat sdf = new SimpleDateFormat(Constant.TIME_PATTERN);
 
     //<editor-fold desc="Convert to Time End">
     public String convertToTimeEnd(String timeStart, int duration) throws ParseException {

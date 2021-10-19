@@ -76,7 +76,7 @@ public class ClassService {
     //</editor-fold>
 
     //<editor-fold desc="Convert CN to 1">
-    private String[] convertDowToInteger(String[] daysOfWeek) {
+    public String[] convertDowToInteger(String[] daysOfWeek) {
         String[] daysOfWeekCopy = new String[daysOfWeek.length];
         // Copy the old one to the new one
         System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
@@ -91,7 +91,7 @@ public class ClassService {
     //</editor-fold>
 
     //<editor-fold desc="Is Days In Shift">
-    private boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
+    public boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
         return Arrays.stream(convertDowToInteger(daysOfWeek))
                 .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
     }

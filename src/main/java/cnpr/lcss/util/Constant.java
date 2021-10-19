@@ -89,7 +89,7 @@ public class Constant {
     // Error Message
     public static final String INVALID_BOOKING_ID = "Invalid Booking ID!";
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
-    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled!";
+    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled/processed!";
     public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
     //</editor-fold>
 
@@ -188,6 +188,7 @@ public class Constant {
      */
     // Error Message
     public static final String ERROR_GENERATE_SESSIONS = "Error at Generate Sessions!";
+    public static final String INVALID_NEW_SESSION = "New Start Time already existed in Session List!";
     //</editor-fold>
 
     //<editor-fold desc="Shift">
@@ -200,8 +201,10 @@ public class Constant {
     public static final String TIME_START_PATTERN = "(08:00)|(09:30)|(14:00)|(15:30)|(18:00)|(19:30)";
     // Error Message
     public static final String DUPLICATE_SHIFT = "Duplicate Shift!";
+    public static final String INCOMPATIBLE_START_TIME = "New Start Time incompatible with new Shift's Start Time!";
     public static final String INVALID_DAY_OF_WEEK = "DayOfWeek must be 2 days or more, separated by [-]! (2-4-6, 3-5, 7-CN)";
     public static final String INVALID_DURATION = "Duration must be multiples of 90 and larger than 0!";
+    public static final String INVALID_NEW_SHIFT_ID = "You're changing the rest Sessions of this Class to another Shift. Please input new Shift ID!";
     public static final String INVALID_SHIFT_AVAILABLE = "Shift not available!";
     public static final String INVALID_SHIFT_ID = "Shift ID not exist!";
     public static final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
@@ -289,7 +292,9 @@ public class Constant {
      * -----OTHERS-----
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final String TIME_PATTERN = "HH:mm";
     public static final String DAY_END = " 11:59:59";
     public static final String DAY_START = " 00:00:00";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
@@ -305,6 +310,8 @@ public class Constant {
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
     public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String SYMBOL_COLON = ":";
+    public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;

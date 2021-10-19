@@ -28,4 +28,16 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     List<Session> findSessionByTeacher_TeacherId(int teacherId);
 
     Page<Session> findByaClass_ClassId(int classId, Pageable pageable);
+
+    @Query("select s from Session s where s.sessionId = ?1")
+    Session findBySessionId(Integer sessionId);
+
+    @Query(nativeQuery = true,
+            value = "select ses.* " +
+                    "from session as ses " +
+                    "join student_in_class sic on ses.class_id = sic.class_id " +
+                    "where (ses.start_time >= ?1 and ses.end_time <= ?2) " +
+                    "and sic.student_id = ?3 " +
+                    "order by ses.start_time ASC")
+    List<Session> findByStartTimeAndEndTimeAndStudentId(Date srchStartTime, Date srchEndTime, int studentId);
 }
