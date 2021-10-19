@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftRepository extends JpaRepository<Shift, Integer> {
-
     Page<Shift> findShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, Pageable pageable);
 
     Page<Shift> findAll(Pageable pageable);
@@ -40,4 +39,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
             "FROM Shift AS s " +
             "WHERE s.shiftId = :shiftId")
     String findShift_DayOfWeekByShiftId(@Param(value = "shiftId") int shiftId);
+
+    @Query("select s from Shift s left join s.classList classList where classList.classId = ?1")
+    Shift findByClassList_ClassId(int classId);
 }
