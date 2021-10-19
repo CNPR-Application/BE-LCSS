@@ -174,13 +174,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 1.06-update-account
-     * @author LamHNT - 2021.06.27
+     * @author LamHNT - 2021.10.20
      */
     @CrossOrigin
     @RequestMapping(value = "/accounts", params = "username", method = RequestMethod.PUT)
     public ResponseEntity<?> updateAccount(@RequestParam String username,
-                                           @RequestBody AccountRequestDto insAcc) throws Exception {
-        return accountService.updateAccount(username, insAcc);
+                                           @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return accountService.updateAccount(username, reqBody);
     }
     //</editor-fold>
 
