@@ -293,6 +293,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.14 Delete Student">
+    /**
+     *
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.14 Delete Student
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/students/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStudent(@PathVariable String username) throws Exception {
+        return studentService.deleteStudent(username);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------BRANCH--------------------------------
      */

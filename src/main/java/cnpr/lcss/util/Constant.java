@@ -225,6 +225,8 @@ public class Constant {
     // Error Message
     public static final String INVALID_STUDENT_ID = "Student ID not exist!";
     public static final String INVALID_STUDENT_USERNAME = "Student Username not exist!";
+    public static final String ERROR_DELETE_STUDENT_BOOKING = "CAN NOT DELETE STUDENT BECAUSE STUDENT'S BOOKING IS PAID!";
+    public static final String ERROR_DELETE_STUDENT_CLASS = "CAN NOT DELETE STUDENT BECAUSE STUDENT'S CLASS IS WAITING/STUDYING!";
     //</editor-fold>
 
     //<editor-fold desc="Student In Class">
