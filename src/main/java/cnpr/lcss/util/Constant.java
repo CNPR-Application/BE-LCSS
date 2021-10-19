@@ -89,7 +89,7 @@ public class Constant {
     // Error Message
     public static final String INVALID_BOOKING_ID = "Invalid Booking ID!";
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
-    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled!";
+    public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled/processed!";
     public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
     //</editor-fold>
 
@@ -292,6 +292,7 @@ public class Constant {
      * -----OTHERS-----
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String TIME_PATTERN = "HH:mm";
     public static final String DAY_END = " 11:59:59";

@@ -4,6 +4,7 @@ import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
 import cnpr.lcss.model.SessionClassDto;
 import cnpr.lcss.model.SessionResponseDto;
+import cnpr.lcss.model.StudentScheduleDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +38,25 @@ public class SessionService {
     @Autowired
     ShiftService shiftService;
     @Autowired
+    StudentRepository studentRepository;
+    @Autowired
     TeacherRepository teacherRepository;
+
+    //<editor-fold desc="Get Start Time of the insert Date">
+    public Date getStartTimeOfTheDate(ZonedDateTime insDate) {
+        LocalDateTime ldtCurrentDate = insDate.toLocalDateTime().toLocalDate().atTime(LocalTime.MIN);
+        Date startTimeOfTheDate = Date.from(ldtCurrentDate.atZone(ZoneId.of(Constant.TIMEZONE)).toInstant());
+        return startTimeOfTheDate;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Get End Time of the insert Date">
+    public Date getEndTimeOfTheDate(ZonedDateTime insDate) {
+        LocalDateTime ldtCurrentDate = insDate.toLocalDateTime().toLocalDate().atTime(LocalTime.MAX);
+        Date endTimeOfTheDate = Date.from(ldtCurrentDate.atZone(ZoneId.of(Constant.TIMEZONE)).toInstant());
+        return endTimeOfTheDate;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="11.03-view-schedule">
     public ResponseEntity<?> viewSchedule(String date) throws Exception {
@@ -71,6 +90,30 @@ public class SessionService {
             mapObj.put("pageTotal", pageTotal);
             mapObj.put("sessionClassList", sessionClassDtos);
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.06-search-student-schedule">
+    public ResponseEntity<?> searchStudentSchedule(String studentUsername, Date srchDate) throws Exception {
+        try {
+            ZonedDateTime currentDate = ZonedDateTime.ofInstant(srchDate.toInstant(), ZoneId.of(Constant.TIMEZONE));
+            ZonedDateTime startDateOfWeek = currentDate.with(DayOfWeek.MONDAY);
+            ZonedDateTime endDateOfWeek = currentDate.with(DayOfWeek.SUNDAY);
+            Integer insStudent = studentRepository.findStudentByAccount_Username(studentUsername).getId();
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            ZonedDateTime cursor = startDateOfWeek;
+            while (cursor.isBefore(endDateOfWeek.plusDays(1))) {
+                List<StudentScheduleDto> studentScheduleDtoList = sessionRepository
+                        .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
+                        .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
+                mapObj.put(cursor.getDayOfWeek().name(), studentScheduleDtoList);
+                cursor = cursor.plusDays(1);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
