@@ -57,12 +57,12 @@ public class StudentService {
         try {
             //Student student=studentRepository.findByStudent_StudentUsername(username);
             Account account = accountRepository.findOneByUsername(username);
-            Student student = account.getStudent();
-            Boolean studentBookingAbleToDelete = true;
-            Boolean studentClassAbleToDelete = true;
-            if (student == null) {
+            if (account == null) {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             } else {
+                Student student = account.getStudent();
+                Boolean studentBookingAbleToDelete = true;
+                Boolean studentClassAbleToDelete = true;
                 //check is there any this student's booking is paid, if there are student UNABLE TO DELETE
                 List<Booking> bookingList = student.getBookingList();
                 for (Booking booking : bookingList) {
