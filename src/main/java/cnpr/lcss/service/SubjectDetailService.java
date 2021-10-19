@@ -28,7 +28,7 @@ public class SubjectDetailService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    //<editor-fold desc="Find Subject Detail by Subject Id">
+    //<editor-fold desc="5.01-search-subject-detail-by-subject-id">
     public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
@@ -45,7 +45,32 @@ public class SubjectDetailService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Create New Subject Detail">
+    //<editor-fold desc="5.02-delete-subject-detail-by-subject-detail-id">
+    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(int subjectDetailId) throws Exception {
+        try {
+            if (subjectDetailRepository.existsById(subjectDetailId)) {
+                // Find Subject Detail by Subject Detail Id
+                SubjectDetail subjectDetail = subjectDetailRepository.findBySubjectDetailId(subjectDetailId);
+                // Check whether subject detail is available or not
+                if (subjectDetail.getIsAvailable() == true) {
+                    // If being available, change to unavailable
+                    subjectDetail.setIsAvailable(false);
+                    subjectDetailRepository.save(subjectDetail);
+                } else {
+                    throw new Exception(Constant.INVALID_SUBJECT_DETAIL_AVAILABLE);
+                }
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_DETAIL_ID);
+            }
+            return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="5.03-create-new-subject-detail">
     @Transactional
     public ResponseEntity<?> createNewSubjectDetail(SubjectDetailRequestDto insSubjectDetail) throws Exception {
 
@@ -88,7 +113,7 @@ public class SubjectDetailService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Update Subject Detail by Subject Detail Id">
+    //<editor-fold desc="5.04-update-subject-detail-by-subject-detail-id">
     public ResponseEntity<?> updateSubjectDetail(int subjectDetailId, Map<String, String> insSubjectDetail) throws Exception {
         try {
             if (subjectDetailRepository.existsById(subjectDetailId)) {
@@ -101,7 +126,7 @@ public class SubjectDetailService {
                     updateSubjectDetail.setWeekNum(weekNum);
                     updateSubjectDetail.setWeekDescription(weekDescription);
                     updateSubjectDetail.setLearningOutcome(learningOutcome);
-                    //change status from fasle to true if fields updated
+                    //change status from false to true if fields updated
                     updateSubjectDetail.setIsAvailable(true);
                     subjectDetailRepository.save(updateSubjectDetail);
                 } else {
@@ -113,33 +138,7 @@ public class SubjectDetailService {
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Delete Subject Detail by Subject Detail Id">
-    public ResponseEntity<?> deleteSubjectDetailBySubjectDetailId(int subjectDetailId) throws Exception {
-
-        try {
-            if (subjectDetailRepository.existsById(subjectDetailId)) {
-                // Find Subject Detail by Subject Detail Id
-                SubjectDetail subjectDetail = subjectDetailRepository.findBySubjectDetailId(subjectDetailId);
-                // Check whether subject detail is available or not
-                if (subjectDetail.getIsAvailable() == true) {
-                    // If being available, change to unavailable
-                    subjectDetail.setIsAvailable(false);
-                    subjectDetailRepository.save(subjectDetail);
-                } else {
-                    throw new Exception(Constant.INVALID_SUBJECT_DETAIL_AVAILABLE);
-                }
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_DETAIL_ID);
-            }
-            return ResponseEntity.ok(Boolean.TRUE);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>
