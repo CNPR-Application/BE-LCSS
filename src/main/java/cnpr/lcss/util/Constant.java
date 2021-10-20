@@ -317,6 +317,7 @@ public class Constant {
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
+    public static final String NOT_AVAILABLE_INFO = "N/A";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     //</editor-fold>
 }

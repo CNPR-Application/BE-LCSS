@@ -1309,6 +1309,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="12.04-reopen-attendance-in-a-session">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 12.04-reopen-attendance-in-a-session
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/reopen-attendance", method = RequestMethod.PUT)
+    public ResponseEntity<?> reopenAttendanceInASession(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return attendanceService.reopenAttendanceInASession(reqBody);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------SHIFT--------------------------------
      */
