@@ -81,6 +81,9 @@ public class Attendance implements Serializable {
         dto.setAttendanceId(attendanceId);
         dto.setCheckingDate(checkingDate);
         dto.setStatus(status);
+        dto.setIsReopen(isReopen);
+        dto.setClosingDate(closingDate);
+        dto.setReopenReason(reopenReason);
         dto.setSessionId(session.getSessionId());
         dto.setStudentInClassId(studentInClass.getStudentInClassId());
         dto.setStudentUsername(studentInClass.getStudent().getAccount().getUsername());

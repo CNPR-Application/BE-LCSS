@@ -43,7 +43,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
                     "INNER JOIN student AS s ON sic.student_id = s.student_id " +
                     "INNER JOIN account AS acc on s.student_username = acc.username " +
                     "WHERE a.session_id = :sessionId ",
-            value = "SELECT a.attendance_id, a.checking_date, a.status, a.session_id, a.student_class_id, " +
+            value = "SELECT a.attendance_id, a.checking_date, a.status, a.session_id, a.student_class_id, a.is_reopen, a.closing_date, a.reopen_reason, " +
                     "sic.student_id, " +
                     "s.student_username, " +
                     "acc.name, acc.image " +
