@@ -1224,11 +1224,30 @@ public class RestApi {
      * @apiNote 11.06-search-student-schedule
      */
     @CrossOrigin
-    @RequestMapping(value = "/schedules/{studentUsername}", method = RequestMethod.GET)
-    public ResponseEntity<?> searchStudentSchedule(@PathVariable(value = "studentUsername") String studentUsername,
+    @RequestMapping(value = "/schedules", params = "studentUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchStudentSchedule(@RequestParam(value = "studentUsername") String studentUsername,
                                                    @RequestParam(value = "srchDate")
                                                    @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date srchDate) throws Exception {
         return sessionService.searchStudentSchedule(studentUsername, srchDate);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.07-search-teacher-schedule">
+
+    /**
+     * @param teacherUsername
+     * @param srchDate
+     * @return
+     * @throws Exception
+     * @apiNote 11.07-search-teacher-schedule
+     * @author LamHNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/schedules", params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchTeacherSchedule(@RequestParam(value = "teacherUsername") String teacherUsername,
+                                                   @RequestParam(value = "srchDate")
+                                                   @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date srchDate) throws Exception {
+        return sessionService.searchTeacherSchedule(teacherUsername, srchDate);
     }
     //</editor-fold>
 

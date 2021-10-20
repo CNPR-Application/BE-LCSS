@@ -3,6 +3,7 @@ package cnpr.lcss.dao;
 import cnpr.lcss.model.SessionClassDto;
 import cnpr.lcss.model.SessionResponseDto;
 import cnpr.lcss.model.StudentScheduleDto;
+import cnpr.lcss.model.TeacherScheduleDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -87,7 +88,7 @@ public class Session implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Convert to studentScheduleDto">
+    //<editor-fold desc="Convert to StudentScheduleDto">
     public StudentScheduleDto convertToStudentScheduleDto() {
         StudentScheduleDto dto = new StudentScheduleDto();
         dto.setSessionId(sessionId);
@@ -100,6 +101,22 @@ public class Session implements Serializable {
         dto.setTeacherId(teacher.getTeacherId());
         dto.setTeacherName(teacher.getAccount().getName());
         dto.setTeacherImage(teacher.getAccount().getImage());
+        dto.setRoomName(room.getRoomName());
+        return dto;
+    }
+    //</editor-fold>
+
+    // <editor-fold desc="Convert to TeacherScheduleDto">
+    public TeacherScheduleDto convertToTeacherScheduleDto() {
+        TeacherScheduleDto dto = new TeacherScheduleDto();
+        dto.setSessionId(sessionId);
+        dto.setStartTime(startTime);
+        dto.setEndTime(endTime);
+        dto.setClassId(aClass.getClassId());
+        dto.setClassName(aClass.getClassName());
+        dto.setSubjectId(aClass.getSubject().getSubjectId());
+        dto.setSubjectName(aClass.getSubject().getSubjectName());
+        dto.setRoomId(room.getRoomId());
         dto.setRoomName(room.getRoomName());
         return dto;
     }

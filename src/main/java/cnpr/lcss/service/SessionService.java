@@ -5,6 +5,7 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.SessionClassDto;
 import cnpr.lcss.model.SessionResponseDto;
 import cnpr.lcss.model.StudentScheduleDto;
+import cnpr.lcss.model.TeacherScheduleDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,30 @@ public class SessionService {
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
                 mapObj.put(cursor.getDayOfWeek().name(), studentScheduleDtoList);
+                cursor = cursor.plusDays(1);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.07-search-teacher-schedule">
+    public ResponseEntity<?> searchTeacherSchedule(String teacherUsername, Date srchDate) throws Exception {
+        try {
+            ZonedDateTime currentDate = ZonedDateTime.ofInstant(srchDate.toInstant(), ZoneId.of(Constant.TIMEZONE));
+            ZonedDateTime startDateOfWeek = currentDate.with(DayOfWeek.MONDAY);
+            ZonedDateTime endDateOfWeek = currentDate.with(DayOfWeek.SUNDAY);
+            Integer insTeacher = teacherRepository.findTeacherByAccount_Username(teacherUsername).getTeacherId();
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            ZonedDateTime cursor = startDateOfWeek;
+            while (cursor.isBefore(endDateOfWeek.plusDays(1))) {
+                List<TeacherScheduleDto> teacherScheduleDtoList = sessionRepository
+                        .findByStartTimeAndEndTimeAndTeacherId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insTeacher)
+                        .stream().map(session -> session.convertToTeacherScheduleDto()).collect(Collectors.toList());
+                mapObj.put(cursor.getDayOfWeek().name(), teacherScheduleDtoList);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);

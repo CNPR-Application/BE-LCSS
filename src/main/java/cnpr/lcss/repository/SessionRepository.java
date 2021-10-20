@@ -40,4 +40,12 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
                     "and sic.student_id = ?3 " +
                     "order by ses.start_time ASC")
     List<Session> findByStartTimeAndEndTimeAndStudentId(Date srchStartTime, Date srchEndTime, int studentId);
+
+    @Query(nativeQuery = true,
+            value = "select ses.* " +
+                    "from session as ses " +
+                    "where (ses.start_time >= ?1 and ses.end_time <= ?2) " +
+                    "and ses.teacher_id = ?3 " +
+                    "order by ses.start_time ASC")
+    List<Session> findByStartTimeAndEndTimeAndTeacherId(Date srchStartTime, Date srchEndTime, int teacherId);
 }
