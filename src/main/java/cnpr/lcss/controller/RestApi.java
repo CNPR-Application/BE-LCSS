@@ -174,7 +174,6 @@ public class RestApi {
 
     /**
      * @param username
-     * @param insAcc
      * @return
      * @throws Exception
      * @apiNote 1.06-update-account
@@ -1508,6 +1507,22 @@ public class RestApi {
                                                               @RequestParam(value = "shiftId") int shiftId,
                                                               @RequestParam String openingDate) throws Exception {
         return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="14.03 Update Room">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 14.03 update room
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
+        return roomService.updateRoom(reqBody);
     }
     //</editor-fold>
 

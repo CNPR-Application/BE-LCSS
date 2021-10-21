@@ -180,6 +180,7 @@ public class Constant {
      */
     // Error Message
     public static final String ERROR_GET_ROOM_ID = "Unable to get Room ID!";
+    public static final String INVALID_ROOM_ID = "Room ID not exist!";
     //</editor-fold>
 
     //<editor-fold desc="Session">
