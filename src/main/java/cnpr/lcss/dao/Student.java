@@ -46,7 +46,7 @@ public class Student implements Serializable {
         studentDto.setStudentId(id);
         studentDto.setName(account.getName());
         studentDto.setUsername(account.getUsername());
-        studentDto.setAdress(account.getAddress());
+        studentDto.setAddress(account.getAddress());
         studentDto.setEmail(account.getEmail());
         studentDto.setBirthday(account.getBirthday());
         studentDto.setPhone(account.getPhone());

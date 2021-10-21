@@ -1526,6 +1526,28 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="14.02-get-all-room-in-branch">
+
+    /**
+     * @param branchId
+     * @param isAvailable
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 14.02-get-all-room-in-branch
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms/{branchId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableRoomsInBranch(@PathVariable int branchId,
+                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                       @RequestParam(value = "pageNo") int pageNo,
+                                                       @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return roomService.getAvailableRoomsInBranch(branchId, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------NOTIFICATION--------------------------------
      */
