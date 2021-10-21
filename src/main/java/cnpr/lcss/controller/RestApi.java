@@ -1520,7 +1520,21 @@ public class RestApi {
     }
     //</editor-fold>
 
-    
+    //<editor-fold desc="14.04 Create New Room">
+    /**
+     *
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 14.04 - Create New Room
+     * @author HuuNT - 2021.10.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
+        return roomService.createNewRoom(reqBody);
+    }
+    //</editor-fold>
 
     /**
      * -------------------------------NOTIFICATION--------------------------------
