@@ -65,20 +65,19 @@ public class RoomService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get All Room In Branch">
-    public ResponseEntity<?> getAvailableRoomsInBranch(int branchId, boolean isAvailable, int pageNo,int pageSize) throws Exception {
+    //<editor-fold desc="14.02-get-all-room-in-branch">
+    public ResponseEntity<?> getAvailableRoomsInBranch(int branchId, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            HashMap<String, Object> mapObj = new LinkedHashMap<>();
-            Page<Room> rooms = roomRepository.findAllByBranch_BranchIdAndAndIsAvailable(branchId, isAvailable,pageable);
+            Page<Room> rooms = roomRepository.findAllByBranch_BranchIdAndAndIsAvailable(branchId, isAvailable, pageable);
             List<RoomDto> roomList = rooms.stream().map(Room::convertToRoomDto).collect(Collectors.toList());
-            int pageTotal = rooms.getTotalPages();
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", rooms.getTotalPages());
             mapObj.put("roomList", roomList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

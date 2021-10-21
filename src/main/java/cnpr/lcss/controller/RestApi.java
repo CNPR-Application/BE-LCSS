@@ -1511,7 +1511,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.02 Get All Room In Branch">
+    //<editor-fold desc="14.02-get-all-room-in-branch">
 
     /**
      * @param branchId
@@ -1520,7 +1520,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
-     * @apiNote 14.02 Get All Room in Branch
+     * @apiNote 14.02-get-all-room-in-branch
      * @author HuuNT - 2021.10.21
      */
     @CrossOrigin
