@@ -36,7 +36,7 @@ public class SchedulerService {
          */
         List<Class> studyingClassList = classRepository.findByStatus(Constant.CLASS_STATUS_STUDYING);
         for (Class aClass : studyingClassList) {
-            if (currentDate.compareTo(ZonedDateTime.ofInstant(Iterables.getLast(aClass.getSessionList()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
+            if (currentDate.isAfter(ZonedDateTime.ofInstant(Iterables.getLast(aClass.getSessionList()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE)))) {
                 aClass.setStatus(Constant.CLASS_STATUS_FINISHED);
             }
         }
