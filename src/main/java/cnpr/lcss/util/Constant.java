@@ -295,7 +295,7 @@ public class Constant {
      * -----OTHERS-----
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 3 * * ?";
+    public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * ?";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final String DAY_END = " 11:59:59";
