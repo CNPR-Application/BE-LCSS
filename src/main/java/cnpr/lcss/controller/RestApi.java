@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@EnableScheduling
 public class RestApi {
     @Autowired
     AccountService accountService;
@@ -57,6 +59,8 @@ public class RestApi {
     StudentService studentService;
     @Autowired
     StaffService staffService;
+    @Autowired
+    SchedulerService schedulerService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -1121,9 +1125,8 @@ public class RestApi {
      * @author LamHNT - 2021.10.21
      * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
      */
-    @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
-    public void scanAndUpdateClasses() throws Exception {
-        classService.scanAndUpdateClasses();
+    public void scanAndUpdateClasses() {
+        schedulerService.scanAndUpdateClasses();
     }
     //</editor-fold>
 

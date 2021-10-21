@@ -5,7 +5,6 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
-import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -672,46 +669,6 @@ public class ClassService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
-    public void scanAndUpdateClasses() throws Exception {
-        ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
-
-        /**
-         * UPDATE CLASS STATUS
-         * Classes which last Session is over → Class_Status = FINISHED
-         */
-        try {
-            List<Class> studyingClassList = classRepository.findByStatus(Constant.CLASS_STATUS_STUDYING);
-            for (Class aClass : studyingClassList) {
-                if (currentDate.compareTo(ZonedDateTime.ofInstant(Iterables.getLast(aClass.getSessionList()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
-                    aClass.setStatus(Constant.CLASS_STATUS_FINISHED);
-                }
-            }
-            classRepository.saveAll(studyingClassList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(e.getMessage());
-        }
-
-        /**
-         * UPDATE ATTENDANCE ISREOPEN
-         * Attendances which Closing_Date is over → Attendance_Reopen = FALSE
-         */
-        try {
-            List<Attendance> isReopenAttendanceList = attendanceRepository.findByIsReopenIsTrue();
-            for (Attendance attendance : isReopenAttendanceList) {
-                if (currentDate.compareTo(ZonedDateTime.ofInstant(attendance.getClosingDate().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
-                    attendance.setIsReopen(Boolean.FALSE);
-                }
-            }
-            attendanceRepository.saveAll(isReopenAttendanceList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(e.getMessage());
         }
     }
     //</editor-fold>
