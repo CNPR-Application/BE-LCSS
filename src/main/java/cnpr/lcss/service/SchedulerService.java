@@ -52,7 +52,7 @@ public class SchedulerService {
          */
         List<Attendance> isReopenAttendanceList = attendanceRepository.findByIsReopenIsTrue();
         for (Attendance attendance : isReopenAttendanceList) {
-            if (currentDate.compareTo(ZonedDateTime.ofInstant(attendance.getClosingDate().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
+            if (currentDate.isAfter(ZonedDateTime.ofInstant(attendance.getClosingDate().toInstant(), ZoneId.of(Constant.TIMEZONE)))) {
                 attendance.setIsReopen(Boolean.FALSE);
             }
         }
