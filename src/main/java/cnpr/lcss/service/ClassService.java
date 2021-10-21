@@ -5,6 +5,7 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
+import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -686,7 +687,7 @@ public class ClassService {
         try {
             List<Class> studyingClassList = classRepository.findByStatus(Constant.CLASS_STATUS_STUDYING);
             for (Class aClass : studyingClassList) {
-                if (currentDate.compareTo(ZonedDateTime.ofInstant(aClass.getSessionList().get(studyingClassList.size()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
+                if (currentDate.compareTo(ZonedDateTime.ofInstant(Iterables.getLast(aClass.getSessionList()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
                     aClass.setStatus(Constant.CLASS_STATUS_FINISHED);
                 }
             }
