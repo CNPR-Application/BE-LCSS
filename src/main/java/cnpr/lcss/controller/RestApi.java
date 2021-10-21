@@ -1115,19 +1115,6 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
-
-    /**
-     * @throws Exception
-     * @author LamHNT - 2021.10.21
-     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
-     */
-    @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
-    public void scanAndUpdateClasses() throws Exception {
-        classService.scanAndUpdateClasses();
-    }
-    //</editor-fold>
-
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
