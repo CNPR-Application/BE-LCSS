@@ -52,7 +52,7 @@ public class Class implements Serializable {
     @OneToMany(mappedBy = "aClass")
     @JsonIgnore
     private List<StudentInClass> studentInClassList;
-    @OneToMany(mappedBy = "aClass")
+    @OneToMany(mappedBy = "aClass", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Session> sessionList;
     @OneToMany(mappedBy = "aClass")

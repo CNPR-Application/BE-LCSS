@@ -1,4 +1,4 @@
-package cnpr.lcss.controller;
+package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Attendance;
 import cnpr.lcss.dao.Class;
@@ -16,8 +16,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Component
 @Service
+@Component
 @EnableScheduling
 public class SchedulerService {
     @Autowired
@@ -26,12 +26,6 @@ public class SchedulerService {
     AttendanceRepository attendanceRepository;
 
     //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
-
-    /**
-     * @throws Exception
-     * @author LamHNT - 2021.10.21
-     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
-     */
     @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
     public void scanAndUpdateClasses() {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
