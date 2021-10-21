@@ -17,14 +17,14 @@ public class StaffService {
     @Autowired
     StaffRepository staffRepository;
 
-    //<editor-fold desc="Delete Staff or Manager">
-    public ResponseEntity<?> deleteStaffOrManager(String userName) throws Exception {
+    //<editor-fold desc="1.16-delete-staff">
+    public ResponseEntity<?> deleteStaffOrManager(String username) throws Exception {
         try {
-            Staff staff=staffRepository.findByAccount_Username(userName);
+            Staff staff = staffRepository.findByAccount_Username(username);
             if (staff == null) {
                 throw new IllegalArgumentException(Constant.INVALID_USERNAME);
             } else {
-                Account account=staff.getAccount();
+                Account account = staff.getAccount();
                 if (account.getIsAvailable()) {
                     account.setIsAvailable(false);
                     accountRepository.save(account);

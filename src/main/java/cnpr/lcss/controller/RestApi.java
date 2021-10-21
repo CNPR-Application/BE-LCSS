@@ -330,17 +330,17 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.16 Delete Staff Or Manger">
+    //<editor-fold desc="1.16-delete-staff">
 
     /**
      * @param username
      * @return
      * @throws Exception
-     * @apiNote 1.16 delete Staff or Manger
-     * @aythor HuuNT - 2021.10.21
+     * @apiNote 1.16-delete-staff
+     * @author HuuNT - 2021.10.21
      */
     @CrossOrigin
-    @RequestMapping(value = "/staff/{username}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/staffs/{username}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStaffOrManager(@PathVariable String username) throws Exception {
         return staffService.deleteStaffOrManager(username);
     }
