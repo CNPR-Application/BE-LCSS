@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +68,7 @@ public class RestApi {
     @RequestMapping(value = "/")
 
     public String welcome() {
-        return "Welcome to LCSS - Language Center Support System!";
+        return "Welcome to LCSS - Language Center Support System!\n" + ZonedDateTime.now();
     }
     //</editor-fold>
 
