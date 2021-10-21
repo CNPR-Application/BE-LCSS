@@ -3,13 +3,18 @@ package cnpr.lcss.controller;
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.*;
 import cnpr.lcss.service.*;
+import cnpr.lcss.util.Constant;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +55,8 @@ public class RestApi {
     NotificationService notificationService;
     @Autowired
     StudentService studentService;
+    @Autowired
+    StaffService staffService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -61,7 +68,7 @@ public class RestApi {
     @RequestMapping(value = "/")
 
     public String welcome() {
-        return "Welcome to LCSS - Language Center Support System!";
+        return "Welcome to LCSS - Language Center Support System!\n" + ZonedDateTime.now();
     }
     //</editor-fold>
 
@@ -171,13 +178,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 1.06-update-account
-     * @author LamHNT - 2021.06.27
+     * @author LamHNT - 2021.10.20
      */
     @CrossOrigin
     @RequestMapping(value = "/accounts", params = "username", method = RequestMethod.PUT)
     public ResponseEntity<?> updateAccount(@RequestParam String username,
-                                           @RequestBody AccountRequestDto insAcc) throws Exception {
-        return accountService.updateAccount(username, insAcc);
+                                           @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return accountService.updateAccount(username, reqBody);
     }
     //</editor-fold>
 
@@ -290,6 +297,54 @@ public class RestApi {
     @RequestMapping(value = "/students", method = RequestMethod.GET)
     public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.14 Delete Student">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.14 Delete Student
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/students/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStudent(@PathVariable String username) throws Exception {
+        return studentService.deleteStudent(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.15-delete-teacher">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.15-delete-teacher
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteTeacher(@PathVariable String username) throws Exception {
+        return teacherService.deleteTeacher(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.16-delete-staff">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.16-delete-staff
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/staffs/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStaffOrManager(@PathVariable String username) throws Exception {
+        return staffService.deleteStaffOrManager(username);
     }
     //</editor-fold>
 
@@ -700,7 +755,7 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects/details/{subjectDetailId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
-                                                 @RequestBody SubjectDetailUpdateRequestDto subjectDetailUpdateRequestDto) throws Exception {
+                                                 @RequestBody Map<String, String> subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
     }
     //</editor-fold>
@@ -861,6 +916,24 @@ public class RestApi {
     @RequestMapping(value = "/bookings", method = RequestMethod.POST)
     public ResponseEntity<?> createNewBooking(@RequestBody BookingRequestDto bookingRequestDto) throws Exception {
         return bookingService.createNewBooking(bookingRequestDto);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="8.06-Update Booking">
+
+    /**
+     * @param bookingId
+     * @param bookingAtt
+     * @return
+     * @throws Exception
+     * @apiNote 8.06-update-booking
+     * @author HuuNT - 2021.10.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/bookings", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBooking(@RequestParam int bookingId,
+                                           @RequestBody Map<String, String> bookingAtt) throws Exception {
+        return bookingService.updateBooking(bookingId, bookingAtt);
     }
     //</editor-fold>
 
@@ -1042,6 +1115,19 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
+
+    /**
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
+     */
+    @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
+    public void scanAndUpdateClasses() throws Exception {
+        classService.scanAndUpdateClasses();
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
@@ -1160,6 +1246,60 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="11.06-search-student-schedule">
+
+    /**
+     * @param studentUsername
+     * @param srchDate
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.19
+     * @apiNote 11.06-search-student-schedule
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/schedules", params = "studentUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchStudentSchedule(@RequestParam(value = "studentUsername") String studentUsername,
+                                                   @RequestParam(value = "srchDate")
+                                                   @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date srchDate) throws Exception {
+        return sessionService.searchStudentSchedule(studentUsername, srchDate);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.07-search-teacher-schedule">
+
+    /**
+     * @param teacherUsername
+     * @param srchDate
+     * @return
+     * @throws Exception
+     * @apiNote 11.07-search-teacher-schedule
+     * @author LamHNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/schedules", params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchTeacherSchedule(@RequestParam(value = "teacherUsername") String teacherUsername,
+                                                   @RequestParam(value = "srchDate")
+                                                   @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date srchDate) throws Exception {
+        return sessionService.searchTeacherSchedule(teacherUsername, srchDate);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="11.08-update-session-in-class">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.13
+     * @apiNote 11.08-update-session-in-class
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/sessions", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateSessionInClass(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return sessionService.updateSessionInClass(reqBody);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------ATTENDANCE--------------------------------
      */
@@ -1218,6 +1358,22 @@ public class RestApi {
     @RequestMapping(value = "/attendance", method = RequestMethod.PUT)
     public ResponseEntity<?> updateAttendance(@RequestBody List<UpdateAttendanceDto> updateAttendanceList) throws Exception {
         return attendanceService.updateAttendance(updateAttendanceList);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="12.04-reopen-attendance-in-a-session">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 12.04-reopen-attendance-in-a-session
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/reopen-attendance", method = RequestMethod.PUT)
+    public ResponseEntity<?> reopenAttendanceInASession(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return attendanceService.reopenAttendanceInASession(reqBody);
     }
     //</editor-fold>
 
@@ -1473,24 +1629,4 @@ public class RestApi {
         return fireBaseService.upload(base64, id);
     }
     //</editor-fold>
-    /*
-    @RequestMapping(value = "/token", method = RequestMethod.POST)
-    public String sendPnsToDevice(@RequestBody NotificationRequestDto notificationRequestDto) {
-        return notificationService.sendPnsToDevice(notificationRequestDto);
-    }
-
-    @PostMapping("/subscribe")
-    public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
-        notificationService.subscribeToTopic(subscriptionRequestDto);
-    }
-
-    @PostMapping("/unsubscribe")
-    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
-        notificationService.unsubscribeFromTopic(subscriptionRequestDto);
-    }
-
-    @PostMapping("/topic")
-    public String sendPnsToTopic(@RequestBody NotificationRequestDto notificationRequestDto) {
-        return notificationService.sendPnsToTopic(notificationRequestDto);
-    }*/
 }

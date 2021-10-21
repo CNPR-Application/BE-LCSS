@@ -1,12 +1,17 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Account;
+import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.Session;
 import cnpr.lcss.dao.Teacher;
 import cnpr.lcss.model.TeacherDto;
 import cnpr.lcss.model.TeachingBranchBasicInfoDto;
 import cnpr.lcss.model.TeachingSubjectBasicInfoDto;
+import cnpr.lcss.repository.AccountRepository;
 import cnpr.lcss.repository.TeacherRepository;
 import cnpr.lcss.repository.TeachingBranchRepository;
 import cnpr.lcss.repository.TeachingSubjectRepository;
+import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +33,8 @@ public class TeacherService {
     TeachingBranchRepository teachingBranchRepository;
     @Autowired
     TeachingSubjectRepository teachingSubjectRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     //<editor-fold desc="Mapping Teaching Branch And Teaching Subject To Teacher">
     private List<TeacherDto> mapTeachingBranchAndTeachingSubjectToTeacher(Page<Teacher> teacherPage) {
@@ -106,6 +113,44 @@ public class TeacherService {
             }
             //</editor-fold>
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.15-delete-teacher">
+    public ResponseEntity<?> deleteTeacher(String username) throws Exception {
+        try {
+            Account account = accountRepository.findOneByUsername(username);
+            if (account == null) {
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
+            } else {
+                Teacher teacher = account.getTeacher();
+                Boolean teacherClassAbleToDelete = true;
+                // check each class of this teacher,
+                // is there any class with status waiting or studying,
+                // if so, it should not be deleted
+                List<Session> sessionList = teacher.getSessionList();
+                for (Session session : sessionList) {
+                    Class aClass = session.getAClass();
+                    if (aClass.getStatus().matches(Constant.CLASS_STATUS_WAITING)
+                            || aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING))
+                        teacherClassAbleToDelete = false;
+                }
+                if (!teacherClassAbleToDelete) {
+                    throw new IllegalArgumentException(Constant.ERROR_DELETE_TEACHER_CLASS);
+                }
+
+                if (teacherClassAbleToDelete) {
+                    account.setIsAvailable(false);
+                    accountRepository.save(account);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

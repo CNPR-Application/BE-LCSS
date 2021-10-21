@@ -137,20 +137,19 @@ public class NotificationService {
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime today = ZonedDateTime.now(zoneId);
             try {
+                //first loop to first user who has token to send Noti first
                 for (String user : usernameList) {
-                    //get an account from username
                     Account receiver = accountRepository.findOneByUsername(user);
-                    Notification newNoti = new Notification();
-                    newNoti.setSenderUsername(senderUsername.toLowerCase());
-                    newNoti.setReceiverUsername(receiver);
-                    newNoti.setTitle(title.trim());
-                    newNoti.setBody(body.trim());
-                    newNoti.setIsRead(Boolean.FALSE);
-                    newNoti.setCreatingDate(Date.from(today.toInstant()));
-                    newNoti.setLastModified(Date.from(today.toInstant()));
-                    // Send notification to token's device
-                    // who has token's device will get a noti
+                    //users have token
                     if (receiver.getToken() != null) {
+                        Notification newNoti = new Notification();
+                        newNoti.setSenderUsername(senderUsername.toLowerCase());
+                        newNoti.setReceiverUsername(receiver);
+                        newNoti.setTitle(title.trim());
+                        newNoti.setBody(body.trim());
+                        newNoti.setIsRead(Boolean.FALSE);
+                        newNoti.setCreatingDate(Date.from(today.toInstant()));
+                        newNoti.setLastModified(Date.from(today.toInstant()));
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(receiver.getToken())
                                 .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
@@ -163,8 +162,25 @@ public class NotificationService {
                         } catch (Exception e) {
                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
                         }
+
+                        notificationRepository.save(newNoti);
                     }
-                    notificationRepository.save(newNoti);
+                }
+                //second loop to find users dont have token to store noti in db
+                for (String user : usernameList) {
+                    Account receiver = accountRepository.findOneByUsername(user);
+                    //users dont have token
+                    if (receiver.getToken() == null) {
+                        Notification newNoti = new Notification();
+                        newNoti.setSenderUsername(senderUsername.toLowerCase());
+                        newNoti.setReceiverUsername(receiver);
+                        newNoti.setTitle(title.trim());
+                        newNoti.setBody(body.trim());
+                        newNoti.setIsRead(Boolean.FALSE);
+                        newNoti.setCreatingDate(Date.from(today.toInstant()));
+                        newNoti.setLastModified(Date.from(today.toInstant()));
+                        notificationRepository.save(newNoti);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -178,7 +194,7 @@ public class NotificationService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="15.03-Create Notification For Person">
+    //<editor-fold desc="15.03-create-notification-for-a-person">
     public ResponseEntity<?> createNotificationForPerson(HashMap<String, Object> reqBody) throws Exception {
         try {
             String senderUsername = (String) reqBody.get("senderUsername");
@@ -245,17 +261,18 @@ public class NotificationService {
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime today = ZonedDateTime.now(zoneId);
             try {
+                //first loop to first user who has token to send Noti first
                 for (Account staff : staffList) {
-                    Notification newNotification = new Notification();
-                    newNotification.setSenderUsername(senderUsername.toLowerCase());
-                    newNotification.setReceiverUsername(staff);
-                    newNotification.setTitle(title.trim());
-                    newNotification.setBody(body.trim());
-                    newNotification.setIsRead(Boolean.FALSE);
-                    newNotification.setCreatingDate(Date.from(today.toInstant()));
-                    newNotification.setLastModified(Date.from(today.toInstant()));
-                    // Send notification to token's device
                     if (staff.getToken() != null) {
+                        Notification newNotification = new Notification();
+                        newNotification.setSenderUsername(senderUsername.toLowerCase());
+                        newNotification.setReceiverUsername(staff);
+                        newNotification.setTitle(title.trim());
+                        newNotification.setBody(body.trim());
+                        newNotification.setIsRead(Boolean.FALSE);
+                        newNotification.setCreatingDate(Date.from(today.toInstant()));
+                        newNotification.setLastModified(Date.from(today.toInstant()));
+                        // Send notification to token's device
                         Message message = com.google.firebase.messaging.Message.builder()
                                 .setToken(staff.getToken())
                                 .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
@@ -268,8 +285,24 @@ public class NotificationService {
                         } catch (Exception e) {
                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
                         }
+                        notificationRepository.save(newNotification);
                     }
-                    notificationRepository.save(newNotification);
+
+                }
+                //second loop to find users dont have token to store noti in db
+                for (Account staff : staffList) {
+                    //users dont have token
+                    if (staff.getToken() == null) {
+                        Notification newNoti = new Notification();
+                        newNoti.setSenderUsername(senderUsername.toLowerCase());
+                        newNoti.setReceiverUsername(staff);
+                        newNoti.setTitle(title.trim());
+                        newNoti.setBody(body.trim());
+                        newNoti.setIsRead(Boolean.FALSE);
+                        newNoti.setCreatingDate(Date.from(today.toInstant()));
+                        newNoti.setLastModified(Date.from(today.toInstant()));
+                        notificationRepository.save(newNoti);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -13,6 +13,9 @@ public class AllStudentAttendanceInASessionDto {
     private int attendanceId;
     private Date checkingDate;
     private String status;
+    private Boolean isReopen;
+    private Date closingDate;
+    private String reopenReason;
     private int sessionId;
     private int studentInClassId;
     private String studentUsername;

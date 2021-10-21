@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +78,7 @@ public class ClassService {
     //</editor-fold>
 
     //<editor-fold desc="Convert CN to 1">
-    private String[] convertDowToInteger(String[] daysOfWeek) {
+    public String[] convertDowToInteger(String[] daysOfWeek) {
         String[] daysOfWeekCopy = new String[daysOfWeek.length];
         // Copy the old one to the new one
         System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
@@ -91,7 +93,7 @@ public class ClassService {
     //</editor-fold>
 
     //<editor-fold desc="Is Days In Shift">
-    private boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
+    public boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
         return Arrays.stream(convertDowToInteger(daysOfWeek))
                 .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
     }
@@ -295,7 +297,7 @@ public class ClassService {
                 //initial a arraylist to store classIDs
                 List<Integer> list = new ArrayList();
                 //with status: studying and finished
-                if (status.matches("studying") || status.matches("finished")) {
+                if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_FINISHED)) {
                     //get a list student in class by student Id
                     List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
                     //get a classIDList by Student In Class list
@@ -669,6 +671,46 @@ public class ClassService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
+    public void scanAndUpdateClasses() throws Exception {
+        ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+
+        /**
+         * UPDATE CLASS STATUS
+         * Classes which last Session is over → Class_Status = FINISHED
+         */
+        try {
+            List<Class> studyingClassList = classRepository.findByStatus(Constant.CLASS_STATUS_STUDYING);
+            for (Class aClass : studyingClassList) {
+                if (currentDate.compareTo(ZonedDateTime.ofInstant(aClass.getSessionList().get(studyingClassList.size()).getEndTime().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
+                    aClass.setStatus(Constant.CLASS_STATUS_FINISHED);
+                }
+            }
+            classRepository.saveAll(studyingClassList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
+        }
+
+        /**
+         * UPDATE ATTENDANCE ISREOPEN
+         * Attendances which Closing_Date is over → Attendance_Reopen = FALSE
+         */
+        try {
+            List<Attendance> isReopenAttendanceList = attendanceRepository.findByIsReopenIsTrue();
+            for (Attendance attendance : isReopenAttendanceList) {
+                if (currentDate.compareTo(ZonedDateTime.ofInstant(attendance.getClosingDate().toInstant(), ZoneId.of(Constant.TIMEZONE))) > 0) {
+                    attendance.setIsReopen(Boolean.FALSE);
+                }
+            }
+            attendanceRepository.saveAll(isReopenAttendanceList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
     //</editor-fold>
