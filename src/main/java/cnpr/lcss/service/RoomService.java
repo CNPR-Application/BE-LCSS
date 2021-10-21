@@ -87,7 +87,7 @@ public class RoomService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.03 update Room">
+    //<editor-fold desc="14.03-update-room">
     public ResponseEntity<?> updateRoom(HashMap<String, String> reqBody) throws Exception {
         try {
             int roomId = Integer.parseInt(reqBody.get("roomId"));
@@ -98,15 +98,16 @@ public class RoomService {
                 throw new IllegalArgumentException(Constant.INVALID_ROOM_ID);
             } else {
                 room.setRoomName(roomName);
-                //check if isAvailable is being send, if not, not update isAvailable
-                if (isAvailable.matches("true") || isAvailable .matches("false"))
+                // check if isAvailable is being sent, if not, not update isAvailable
+                if (isAvailable.matches("true") || isAvailable.matches("false")) {
                     room.setIsAvailable(Boolean.valueOf(isAvailable));
-                roomRepository.save(room);
-                return ResponseEntity.ok(Boolean.TRUE);
+                    roomRepository.save(room);
+                }
             }
+            return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>

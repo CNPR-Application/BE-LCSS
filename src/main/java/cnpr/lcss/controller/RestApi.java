@@ -10,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -1513,7 +1512,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.03 Update Room">
+    //<editor-fold desc="14.03-update-room">
 
     /**
      * @param reqBody
