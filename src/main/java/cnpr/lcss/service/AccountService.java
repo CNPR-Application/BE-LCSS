@@ -829,4 +829,27 @@ public class AccountService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="Delete Staff or Manager">
+    public ResponseEntity<?> deleteStaffOrManager(String userName) throws Exception {
+        try {
+            Account delAccount = accountRepository.findOneByUsername(userName);
+            if (delAccount == null) {
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
+            } else {
+                if (delAccount.getIsAvailable() && (delAccount.getRole().getRoleId().matches(Constant.ROLE_STAFF)
+                        || delAccount.getRole().getRoleId().matches(Constant.ROLE_MANAGER))) {
+                    delAccount.setIsAvailable(false);
+                    accountRepository.save(delAccount);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    return ResponseEntity.ok(Boolean.FALSE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
