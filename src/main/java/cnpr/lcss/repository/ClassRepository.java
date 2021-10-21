@@ -72,4 +72,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                     "where c.class_id = :classId"
     )
     List<Class> findStudentByClassId(@Param(value = "classId") int classId);
+
+    @Query("select c from Class c where c.status = ?1")
+    List<Class> findByStatus(String status);
 }

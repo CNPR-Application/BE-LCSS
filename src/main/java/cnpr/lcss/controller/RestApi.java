@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,8 @@ public class RestApi {
     NotificationService notificationService;
     @Autowired
     StudentService studentService;
+    @Autowired
+    StaffService staffService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -64,7 +68,7 @@ public class RestApi {
     @RequestMapping(value = "/")
 
     public String welcome() {
-        return "Welcome to LCSS - Language Center Support System!";
+        return "Welcome to LCSS - Language Center Support System!\n" + ZonedDateTime.now();
     }
     //</editor-fold>
 
@@ -325,6 +329,22 @@ public class RestApi {
     @RequestMapping(value = "/teachers/{username}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteTeacher(@PathVariable String username) throws Exception {
         return teacherService.deleteTeacher(username);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.16-delete-staff">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.16-delete-staff
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/staffs/{username}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStaffOrManager(@PathVariable String username) throws Exception {
+        return staffService.deleteStaffOrManager(username);
     }
     //</editor-fold>
 
@@ -1092,6 +1112,19 @@ public class RestApi {
     @RequestMapping(value = "/student-feedback-class/{studentUsername}", method = RequestMethod.GET)
     public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(@PathVariable(value = "studentUsername") String studentUsername) throws Exception {
         return classService.getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(studentUsername);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
+
+    /**
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
+     */
+    @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
+    public void scanAndUpdateClasses() throws Exception {
+        classService.scanAndUpdateClasses();
     }
     //</editor-fold>
 
