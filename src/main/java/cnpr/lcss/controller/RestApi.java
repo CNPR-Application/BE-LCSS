@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -1110,6 +1111,19 @@ public class RestApi {
     @RequestMapping(value = "/student-feedback-class/{studentUsername}", method = RequestMethod.GET)
     public ResponseEntity<?> getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(@PathVariable(value = "studentUsername") String studentUsername) throws Exception {
         return classService.getAllClassesHasNotGotFeedbackFromStudentByStudentUsername(studentUsername);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
+
+    /**
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
+     */
+    @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
+    public void scanAndUpdateClasses() throws Exception {
+        classService.scanAndUpdateClasses();
     }
     //</editor-fold>
 

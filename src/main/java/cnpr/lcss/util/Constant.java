@@ -295,9 +295,9 @@ public class Constant {
      * -----OTHERS-----
      */
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public static final String TIME_PATTERN = "HH:mm";
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final String DAY_END = " 11:59:59";
     public static final String DAY_START = " 00:00:00";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
@@ -305,10 +305,11 @@ public class Constant {
     public static final String INVALID_BIRTHDAY = "Invalid birthday!";
     public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
     public static final String INVALID_NAME = "Null or empty or unreal name!";
-    public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
     public static final String INVALID_PARENT_PHONE_PATTERN = "Invalid parent phone!";
+    public static final String INVALID_PHONE_PATTERN = "Invalid phone!";
     public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     public static final String NAME_PATTERN = "[A-Za-z ]*";
+    public static final String NOT_AVAILABLE_INFO = "N/A";
     public static final String NUMBERS = "1234567890";
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
@@ -317,7 +318,7 @@ public class Constant {
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
-    public static final String NOT_AVAILABLE_INFO = "N/A";
+    public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     //</editor-fold>
 }

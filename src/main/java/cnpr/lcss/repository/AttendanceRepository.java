@@ -60,4 +60,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     @Query("select a from Attendance a where a.session.sessionId = ?1")
     List<Attendance> findBySession_SessionId(Integer sessionId);
+
+    @Query("select a from Attendance a where a.isReopen = true")
+    List<Attendance> findByIsReopenIsTrue();
 }
