@@ -53,6 +53,8 @@ public class RestApi {
     NotificationService notificationService;
     @Autowired
     StudentService studentService;
+    @Autowired
+    StaffService staffService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -340,7 +342,7 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/staff/{username}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStaffOrManager(@PathVariable String username) throws Exception {
-        return accountService.deleteStaffOrManager(username);
+        return staffService.deleteStaffOrManager(username);
     }
     //</editor-fold>
 
