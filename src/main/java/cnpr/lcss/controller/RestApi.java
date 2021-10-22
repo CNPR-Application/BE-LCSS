@@ -1523,7 +1523,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/rooms", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
+    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, Object> reqBody) throws Exception {
         return roomService.updateRoom(reqBody);
     }
     //</editor-fold>
