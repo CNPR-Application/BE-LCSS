@@ -110,4 +110,22 @@ public class RoomService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="14.04-create-new-room">
+    public ResponseEntity<?> createNewRoom(HashMap<String, String> reqBody) throws Exception {
+        try {
+            int branchId = Integer.parseInt(reqBody.get("branchId"));
+            int roomName = Integer.parseInt(reqBody.get("roomName"));
+            Room room = new Room();
+            room.setRoomName(roomName);
+            room.setBranch(branchRepository.findByBranchId(branchId));
+            room.setIsAvailable(true);
+            roomRepository.save(room);
+            return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
