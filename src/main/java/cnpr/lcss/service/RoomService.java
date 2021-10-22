@@ -1,7 +1,8 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.*;
-import cnpr.lcss.dao.Class;
+import cnpr.lcss.dao.Room;
+import cnpr.lcss.dao.Session;
+import cnpr.lcss.dao.Shift;
 import cnpr.lcss.model.RoomAndBranchDto;
 import cnpr.lcss.model.RoomDto;
 import cnpr.lcss.repository.BranchRepository;
@@ -128,13 +129,13 @@ public class RoomService {
                 /**
                  * check from today onwards, if there is no session, it can be deleted
                  */
-                boolean roomAbleToDelete=true;
-                List<Session> sessionList=sessionRepository.findAllByRoom_RoomId(roomId);
+                boolean roomAbleToDelete = true;
+                List<Session> sessionList = sessionRepository.findAllByRoom_RoomId(roomId);
                 SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
                 Date datetimeStart = sdf.parse(LocalDate.now() + Constant.DAY_START);
-                for (Session session : sessionList){
-                    if(session.getEndTime().after(datetimeStart)||session.getEndTime().equals(datetimeStart)){
-                        roomAbleToDelete=false;
+                for (Session session : sessionList) {
+                    if (session.getEndTime().after(datetimeStart) || session.getEndTime().equals(datetimeStart)) {
+                        roomAbleToDelete = false;
                     }
                 }
                 if (roomAbleToDelete) {
