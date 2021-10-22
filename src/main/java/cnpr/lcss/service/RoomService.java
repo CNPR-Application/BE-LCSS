@@ -100,7 +100,7 @@ public class RoomService {
             return ResponseEntity.ok(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(Boolean.FALSE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>
