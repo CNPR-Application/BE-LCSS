@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@EnableScheduling
 public class RestApi {
     @Autowired
     AccountService accountService;
@@ -57,6 +58,8 @@ public class RestApi {
     StudentService studentService;
     @Autowired
     StaffService staffService;
+    @Autowired
+    SchedulerService schedulerService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -174,7 +177,6 @@ public class RestApi {
 
     /**
      * @param username
-     * @param insAcc
      * @return
      * @throws Exception
      * @apiNote 1.06-update-account
@@ -1115,6 +1117,18 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
+
+    /**
+     * @throws Exception
+     * @author LamHNT - 2021.10.21
+     * @apiNote 9.12-scan-all-classes-to-update-class-status-to-finished
+     */
+    public void scanAndUpdateClasses() {
+        schedulerService.scanAndUpdateClasses();
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
@@ -1495,6 +1509,22 @@ public class RestApi {
                                                               @RequestParam(value = "shiftId") int shiftId,
                                                               @RequestParam String openingDate) throws Exception {
         return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="14.03-update-room">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 14.03 update room
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
+        return roomService.updateRoom(reqBody);
     }
     //</editor-fold>
 
