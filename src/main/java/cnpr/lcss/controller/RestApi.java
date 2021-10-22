@@ -1550,6 +1550,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="14.05-delete-room">
+
+    /**
+     * @param roomId
+     * @return
+     * @throws Exception
+     * @apiNote 14.05-delete-room
+     * @author HuuNT - 2021.10.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteRoom(@RequestParam(value = "roomId") int roomId) throws Exception {
+        return roomService.deleteRoom(roomId);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------NOTIFICATION--------------------------------
      */

@@ -48,4 +48,6 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
                     "and ses.teacher_id = ?3 " +
                     "order by ses.start_time ASC")
     List<Session> findByStartTimeAndEndTimeAndTeacherId(Date srchStartTime, Date srchEndTime, int teacherId);
+
+    List<Session> findAllByRoom_RoomId(int roomId);
 }

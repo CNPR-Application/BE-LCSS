@@ -181,6 +181,7 @@ public class Constant {
     // Error Message
     public static final String ERROR_GET_ROOM_ID = "Unable to get Room ID!";
     public static final String INVALID_ROOM_ID = "Room ID not exist!";
+    public static final String ERROR_DELETE_ROOM_SESSION = "Can not delete Room because Room's Sessions are still available!";
     //</editor-fold>
 
     //<editor-fold desc="Session">

@@ -1,11 +1,12 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Room;
-import cnpr.lcss.dao.Shift;
+import cnpr.lcss.dao.*;
+import cnpr.lcss.dao.Class;
 import cnpr.lcss.model.RoomAndBranchDto;
 import cnpr.lcss.model.RoomDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.RoomRepository;
+import cnpr.lcss.repository.SessionRepository;
 import cnpr.lcss.repository.ShiftRepository;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +33,8 @@ public class RoomService {
     RoomRepository roomRepository;
     @Autowired
     ShiftRepository shiftRepository;
+    @Autowired
+    SessionRepository sessionRepository;
 
     //<editor-fold desc="14.01-get-available-rooms-for-opening-class">
 
@@ -105,6 +111,40 @@ public class RoomService {
                 }
             }
             return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="14.05-delete-room">
+    public ResponseEntity<?> deleteRoom(int roomId) throws Exception {
+        try {
+            Room room = roomRepository.findByRoomId(roomId);
+            if (room == null) {
+                throw new IllegalArgumentException(Constant.INVALID_ROOM_ID);
+            } else {
+                /**
+                 * check from today onwards, if there is no session, it can be deleted
+                 */
+                boolean roomAbleToDelete=true;
+                List<Session> sessionList=sessionRepository.findAllByRoom_RoomId(roomId);
+                SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
+                Date datetimeStart = sdf.parse(LocalDate.now() + Constant.DAY_START);
+                for (Session session : sessionList){
+                    if(session.getEndTime().after(datetimeStart)||session.getEndTime().equals(datetimeStart)){
+                        roomAbleToDelete=false;
+                    }
+                }
+                if (roomAbleToDelete) {
+                    room.setIsAvailable(false);
+                    roomRepository.save(room);
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    throw new IllegalArgumentException(Constant.ERROR_DELETE_ROOM_SESSION);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
