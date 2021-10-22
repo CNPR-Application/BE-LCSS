@@ -112,7 +112,7 @@ public class RoomService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.04 Create New Room">
+    //<editor-fold desc="14.04-create-new-room">
     public ResponseEntity<?> createNewRoom(HashMap<String, String> reqBody) throws Exception {
         try {
             int branchId = Integer.parseInt(reqBody.get("branchId"));
