@@ -99,8 +99,9 @@ public class RoomService {
             } else {
                 room.setRoomName(roomName);
                 // check if isAvailable is being sent, if not, not update isAvailable
-                if (isAvailable == Boolean.FALSE || isAvailable == Boolean.TRUE)
+                if (isAvailable != null) {
                     room.setIsAvailable(Boolean.valueOf(isAvailable));
+                }
                 roomRepository.save(room);
             }
             return ResponseEntity.ok(Boolean.TRUE);
