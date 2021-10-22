@@ -18,6 +18,7 @@ import java.util.List;
 @Table(name = "room")
 public class Room implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
     private Integer roomId;
     @Column(name = "room_name")

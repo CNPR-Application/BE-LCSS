@@ -1512,22 +1512,6 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="14.03-update-room">
-
-    /**
-     * @param reqBody
-     * @return
-     * @throws Exception
-     * @apiNote 14.03 update room
-     * @author HuuNT - 2021.10.21
-     */
-    @CrossOrigin
-    @RequestMapping(value = "/rooms", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
-        return roomService.updateRoom(reqBody);
-    }
-    //</editor-fold>
-
     //<editor-fold desc="14.02-get-all-room-in-branch">
 
     /**
@@ -1547,6 +1531,38 @@ public class RestApi {
                                                        @RequestParam(value = "pageNo") int pageNo,
                                                        @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return roomService.getAvailableRoomsInBranch(branchId, isAvailable, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="14.03-update-room">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 14.03 update room
+     * @author HuuNT - 2021.10.21
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateRoom(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return roomService.updateRoom(reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="14.04-create-new-room">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 14.04 - Create New Room
+     * @author HuuNT - 2021.10.22
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/rooms", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewRoom(@RequestBody HashMap<String, String> reqBody) throws Exception {
+        return roomService.createNewRoom(reqBody);
     }
     //</editor-fold>
 
