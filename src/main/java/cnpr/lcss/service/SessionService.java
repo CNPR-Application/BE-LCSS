@@ -2,10 +2,7 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Class;
 import cnpr.lcss.dao.*;
-import cnpr.lcss.model.SessionClassDto;
-import cnpr.lcss.model.SessionResponseDto;
-import cnpr.lcss.model.StudentScheduleDto;
-import cnpr.lcss.model.TeacherScheduleDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +108,10 @@ public class SessionService {
                 List<StudentScheduleDto> studentScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
-                mapObj.put(cursor.getDayOfWeek().name(), studentScheduleDtoList);
+                DateAndStudentScheduleDto dateAndStudentScheduleDto = new DateAndStudentScheduleDto();
+                dateAndStudentScheduleDto.setDatetime(Date.from(cursor.toInstant()));
+                dateAndStudentScheduleDto.setStudentSessionList(studentScheduleDtoList);
+                mapObj.put(cursor.getDayOfWeek().name(), dateAndStudentScheduleDto);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
