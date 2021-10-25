@@ -290,7 +290,8 @@ public class Constant {
      * -----TEACHING SUBJECT-----
      */
     // Error Message
-    public static final String EXISTED_TEACHING_SUBJECT = "This subject is already taken!";
+    public static final String EXISTED_TEACHING_SUBJECT = "This Teaching Subject is already taken!";
+    public static final String UNABLE_TO_DELETE_TEACHING_SUBJECT = "This Teaching Subject is UNABLE to delete!";
     //</editor-fold>
 
     //<editor-fold desc="Others">

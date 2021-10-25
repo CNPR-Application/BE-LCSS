@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +38,31 @@ public class TeachingSubjectService {
                         .stream().map(teachingSubject -> teachingSubject.convertToTeachingSubjectDto()).collect(Collectors.toList());
             }
             return ResponseEntity.status(HttpStatus.OK).body(teachingSubjectList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="6.03-delete-teaching-subject">
+    public ResponseEntity<?> deleteTeachingSubject(HashMap<String, Object> reqBody) throws Exception {
+        try {
+            String teacherUsername = reqBody.get("teacherUsername").toString();
+            Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
+
+            Collection<String> statusUnableToDelete = new ArrayList<>();
+            statusUnableToDelete.add(Constant.CLASS_STATUS_WAITING);
+            statusUnableToDelete.add(Constant.CLASS_STATUS_STUDYING);
+
+            List<TeachingSubject> teachingSubjectUnableToDelete = teachingSubjectRepository
+                    .findByTeacher_Account_UsernameAndSubject_SubjectIdAndSubject_ClassList_StatusIn(teacherUsername, subjectId, statusUnableToDelete);
+            if (!teachingSubjectUnableToDelete.isEmpty()) {
+                throw new Exception(Constant.UNABLE_TO_DELETE_TEACHING_SUBJECT);
+            } else {
+                teachingSubjectRepository.delete(teachingSubjectRepository.findBySubject_SubjectId(subjectId));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

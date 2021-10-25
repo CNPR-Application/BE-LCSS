@@ -784,6 +784,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="6.03-delete-teaching-subject">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.25
+     * @apiNote 6.03-delete-teaching-subject
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teaching-subjects", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteTeachingSubject(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return teachingSubjectService.deleteTeachingSubject(reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="6.04-create-new-teaching-subject">
 
     /**
