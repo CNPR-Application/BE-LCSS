@@ -1,5 +1,6 @@
 package cnpr.lcss.repository;
 
+import cnpr.lcss.dao.Student;
 import cnpr.lcss.dao.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,4 +53,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     Page<Teacher> findDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 
     boolean existsByAccount_Username(String username);
+
+    @Query("select distinct t from Teacher t left join t.teachingBranchList teachingBranchList where teachingBranchList.branch.branchId =?1 and t.account.isAvailable = ?2 and t.account.phone like %?3% and t.account.name like %?4%")
+    Page<Teacher> findTeacherByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(int branchId, boolean isAvailable,String phone, String name, Pageable pageable);
 }

@@ -352,6 +352,32 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available">
+
+    /**
+     *
+     * @param branchId
+     * @param isAvailable
+     * @param phone
+     * @param name
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @author HuuNT - 2021.10.25
+     * @apiNote 1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available
+     * @throws Exception
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers-in-branch", params = "phone",method = RequestMethod.GET)
+    public ResponseEntity<?> searchTeacherInBranchByPhoneAndNameAndIsAvailable(@RequestParam(value = "branchId") int branchId,
+                                                                               @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                                               @RequestParam(value = "phone") String phone,
+                                                                               @RequestParam(value = "name") String name,
+                                                                               @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return accountService.searchTeacherInBranchByPhoneAndNameAndIsAvailable(branchId, isAvailable, phone, name, pageNo, pageSize);
+    }
+    //</editor-fold>
     /**
      * -------------------------------BRANCH--------------------------------
      */

@@ -830,4 +830,31 @@ public class AccountService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available">
+    public ResponseEntity<?> searchTeacherInBranchByPhoneAndNameAndIsAvailable(int branchId, boolean isAvailable, String phone, String name, int pageNo, int pageSize) {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Page<Teacher> teacherPage = teacherRepository.findTeacherByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable,phone,name, pageable);
+            List<TeacherInBranchDto> teacherInBranchDtos = teacherPage.getContent().stream().map(teacher -> teacher.convertToTeacherInBranchDto()).collect(Collectors.toList());
+            for (TeacherInBranchDto teacher : teacherInBranchDtos) {
+                teacher.setTeacherStartingDate(teachingBranchRepository
+                        .findByBranch_BranchIdAndTeacher_TeacherId(branchId, teacher.getTeacherId()).getStartingDate());
+                teacher.setTeachingSubjectList(subjectRepository
+                        .findDistinctByTeachingSubjectList_Teacher_TeacherId(teacher.getTeacherId()).stream()
+                        .map(subject -> subject.convertToSubjectBasicInfoDto()).collect(Collectors.toList()));
+            }
+            int pageTotal = teacherPage.getTotalPages();
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("teacherResponseDtos", teacherInBranchDtos);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
 }
