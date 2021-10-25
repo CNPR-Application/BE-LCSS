@@ -298,8 +298,11 @@ public class RestApi {
      * @author HuuNT - 2021.10.12
      */
     @CrossOrigin
-    @RequestMapping(value = "/students", method = RequestMethod.GET)
-    public ResponseEntity<?> findStudentInABranch(int branchId, boolean isAvailable, int pageNo, int pageSize) throws Exception {
+    @RequestMapping(value = "/student", method = RequestMethod.GET)
+    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId")int branchId,
+                                                  @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                  @RequestParam(value = "pageNo")int pageNo,
+                                                  @RequestParam(value = "pageSize")int pageSize) throws Exception {
         return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
