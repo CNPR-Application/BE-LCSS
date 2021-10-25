@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.TeachingSubjectBasicInfoDto;
+import cnpr.lcss.model.TeachingSubjectDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,16 @@ public class TeachingSubject implements Serializable {
         dto.setSubjectId(subject.getSubjectId());
         dto.setSubjectName(subject.getSubjectName());
 
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to TeachingSubjectDto">
+    public TeachingSubjectDto convertToTeachingSubjectDto() {
+        TeachingSubjectDto dto = new TeachingSubjectDto();
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectCode(subject.getSubjectCode());
+        dto.setSubjectName(subject.getSubjectName());
         return dto;
     }
     //</editor-fold>

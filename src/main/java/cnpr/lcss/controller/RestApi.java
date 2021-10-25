@@ -768,6 +768,22 @@ public class RestApi {
      * -------------------------------TEACHING SUBJECT-------------------------------
      */
 
+    //<editor-fold desc="6.02-search-teaching-subject-by-teacher-username-and-is-available">
+
+    /**
+     * @param teacherUsername
+     * @return
+     * @throws Exception
+     * @apiNote 6.02-search-teaching-subject-by-teacher-username-and-is-available
+     * @author LamHNT - 2021.10.25
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teaching-subjects", params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchTeachingSubjectByTeacherUsernameAndIsAvailable(@RequestParam(value = "teacherUsername") String teacherUsername) throws Exception {
+        return teachingSubjectService.searchTeachingSubjectByTeacherUsernameAndIsAvailable(teacherUsername);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="6.04-create-new-teaching-subject">
 
     /**

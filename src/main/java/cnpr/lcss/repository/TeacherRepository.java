@@ -50,4 +50,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
     @Query("select distinct t from Teacher t left join t.teachingBranchList teachingBranchList where teachingBranchList.branch.branchId = ?1 and t.account.isAvailable = ?2")
     Page<Teacher> findDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
+
+    boolean existsByAccount_Username(String username);
 }
