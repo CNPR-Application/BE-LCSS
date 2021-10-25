@@ -355,7 +355,6 @@ public class RestApi {
     //<editor-fold desc="1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available">
 
     /**
-     *
      * @param branchId
      * @param isAvailable
      * @param phone
@@ -363,12 +362,12 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
+     * @throws Exception
      * @author HuuNT - 2021.10.25
      * @apiNote 1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available
-     * @throws Exception
      */
     @CrossOrigin
-    @RequestMapping(value = "/teachers-in-branch", params = "phone",method = RequestMethod.GET)
+    @RequestMapping(value = "/teachers-in-branch", params = "phone", method = RequestMethod.GET)
     public ResponseEntity<?> searchTeacherInBranchByPhoneAndNameAndIsAvailable(@RequestParam(value = "branchId") int branchId,
                                                                                @RequestParam(value = "isAvailable") boolean isAvailable,
                                                                                @RequestParam(value = "phone") String phone,
@@ -378,6 +377,7 @@ public class RestApi {
         return accountService.searchTeacherInBranchByPhoneAndNameAndIsAvailable(branchId, isAvailable, phone, name, pageNo, pageSize);
     }
     //</editor-fold>
+
     /**
      * -------------------------------BRANCH--------------------------------
      */

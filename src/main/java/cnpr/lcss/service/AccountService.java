@@ -834,7 +834,7 @@ public class AccountService {
     public ResponseEntity<?> searchTeacherInBranchByPhoneAndNameAndIsAvailable(int branchId, boolean isAvailable, String phone, String name, int pageNo, int pageSize) {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Page<Teacher> teacherPage = teacherRepository.findTeacherByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable,phone,name, pageable);
+            Page<Teacher> teacherPage = teacherRepository.findTeacherByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable, phone, name, pageable);
             List<TeacherInBranchDto> teacherInBranchDtos = teacherPage.getContent().stream().map(teacher -> teacher.convertToTeacherInBranchDto()).collect(Collectors.toList());
             for (TeacherInBranchDto teacher : teacherInBranchDtos) {
                 teacher.setTeacherStartingDate(teachingBranchRepository
@@ -847,8 +847,8 @@ public class AccountService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
-            mapObj.put("teacherResponseDtos", teacherInBranchDtos);
+            mapObj.put("totalPage", pageTotal);
+            mapObj.put("teacherList", teacherInBranchDtos);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -856,5 +856,4 @@ public class AccountService {
         }
     }
     //</editor-fold>
-
 }
