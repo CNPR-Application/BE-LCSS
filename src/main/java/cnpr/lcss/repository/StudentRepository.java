@@ -33,4 +33,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     boolean existsByAccount_Username(String username);
 
     Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
+
+    Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(int branchId, boolean isAvailable,String phone, String name, Pageable pageable);
 }

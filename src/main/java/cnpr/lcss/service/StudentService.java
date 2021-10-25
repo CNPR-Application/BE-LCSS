@@ -99,4 +99,25 @@ public class StudentService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="1.17-search-student-by-name-and-phone">
+    public ResponseEntity<?> searchStudentInBranchByPhoneAndNameAndIsAvailable(int branchId, boolean isAvailable, String phone, String name, int pageNo, int pageSize) {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Page<Student> studentList = studentRepository.findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable,phone,name, pageable);
+            List<StudentDto> studentDtoList = studentList.getContent().stream().map(student -> student.convertToDto()).collect(Collectors.toList());
+            int pageTotal = studentList.getTotalPages();
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("studentResponseDtos", studentDtoList);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
 }
