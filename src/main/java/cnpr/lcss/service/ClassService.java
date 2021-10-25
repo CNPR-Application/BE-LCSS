@@ -297,7 +297,7 @@ public class ClassService {
                 //initial a arraylist to store classIDs
                 List<Integer> list = new ArrayList();
                 //with status: studying and finished
-                if (status.matches(Constant.CLASS_STATUS_STUDYING)) {
+                if (status.matches(Constant.CLASS_STATUS_STUDYING)|| status.matches(Constant.CLASS_STATUS_FINISHED) ) {
                     //get a list student in class by student Id
                     List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
                     //get a classIDList by Student In Class list
