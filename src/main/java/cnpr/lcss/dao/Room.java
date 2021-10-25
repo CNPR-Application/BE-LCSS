@@ -22,7 +22,7 @@ public class Room implements Serializable {
     @Column(name = "room_id")
     private Integer roomId;
     @Column(name = "room_name")
-    private int roomName;
+    private String roomName;
     @Column(name = "is_available")
     private boolean isAvailable;
 

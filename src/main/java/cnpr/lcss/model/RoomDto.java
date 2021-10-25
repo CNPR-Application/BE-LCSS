@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class RoomDto {
     private int roomId;
-    private int roomName;
+    private String roomName;
 }

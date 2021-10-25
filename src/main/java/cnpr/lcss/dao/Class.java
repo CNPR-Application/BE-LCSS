@@ -81,7 +81,7 @@ public class Class implements Serializable {
             dto.setRoomName(room.getRoomName());
         } else {
             dto.setRoomId(0);
-            dto.setRoomName(0);
+            dto.setRoomName(null);
         }
         return dto;
     }
@@ -112,7 +112,9 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        dto.setRoomId(room.getRoomId());
+        if(room!=null) {
+            dto.setRoomId(room.getRoomId());
+        }
         return dto;
     }
     //</editor-fold>

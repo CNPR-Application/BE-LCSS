@@ -263,11 +263,13 @@ public class ClassService {
                         aClass.setTeacherName(teacher.getAccount().getName());
                     }
                     //ROOM
-                    //find room by ID
-                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
-                    //room name and ID
-                    aClass.setRoomName(room.getRoomName());
-                    aClass.setRoomId(room.getRoomId());
+                    //find room by ID with class status not equal WAITING
+                    if(!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
+                        Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                        //room name and ID
+                        aClass.setRoomName(room.getRoomName());
+                        aClass.setRoomId(room.getRoomId());
+                    }
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
