@@ -22,6 +22,6 @@ public class ClassTeacherSearchDto {
     private String branchName;
     private int shiftId;
     private String shiftDescription;
-    private int roomName;
+    private String roomName;
     private Integer roomId;
 }

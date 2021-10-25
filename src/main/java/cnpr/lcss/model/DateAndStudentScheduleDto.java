@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RoomAndBranchDto {
-    private int roomId;
-    private String roomName;
-    private int branchId;
+public class DateAndStudentScheduleDto {
+    Date datetime;
+    List<StudentScheduleDto> studentSessionList;
 }

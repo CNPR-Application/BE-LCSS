@@ -104,4 +104,30 @@ public class AttendanceService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="12.04-reopen-attendance-in-a-session">
+    public ResponseEntity<?> reopenAttendanceInASession(HashMap<String, Object> reqBody) throws Exception {
+        try {
+            Integer sessionId = (Integer) reqBody.get("sessionId");
+            String reopenReason = (String) reqBody.get("reopenReason");
+            if (reopenReason == null || reopenReason.isEmpty()) {
+                reopenReason = Constant.NOT_AVAILABLE_INFO;
+            }
+
+            ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+            List<Attendance> attendanceListInASession = attendanceRepository.findBySession_SessionId(sessionId);
+            for (Attendance attendance : attendanceListInASession) {
+                attendance.setIsReopen(Boolean.TRUE);
+                attendance.setClosingDate(Date.from(currentDate.plusDays(1).toInstant()));
+                attendance.setReopenReason(reopenReason);
+            }
+            attendanceRepository.saveAll(attendanceListInASession);
+
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }

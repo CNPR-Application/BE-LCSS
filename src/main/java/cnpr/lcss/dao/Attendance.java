@@ -24,6 +24,12 @@ public class Attendance implements Serializable {
     private String status;
     @Column(name = "checking_date")
     private Date checkingDate;
+    @Column(name = "is_reopen")
+    private Boolean isReopen;
+    @Column(name = "closing_date")
+    private Date closingDate;
+    @Column(name = "reopen_reason")
+    private String reopenReason;
 
     @ManyToOne
     @JoinColumn(name = "session_id")
@@ -39,7 +45,20 @@ public class Attendance implements Serializable {
                 "attendanceId=" + attendanceId +
                 ", status='" + status + '\'' +
                 ", checkingDate=" + checkingDate +
+                ", isReopen=" + isReopen +
+                ", closingDate=" + closingDate +
+                ", reopenReason='" + reopenReason + '\'' +
                 '}';
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Modify isReopen Getter & Setter">
+    public Boolean getIsReopen() {
+        return isReopen;
+    }
+
+    public void setIsReopen(Boolean isReopen) {
+        this.isReopen = isReopen;
     }
     //</editor-fold>
 
@@ -62,6 +81,9 @@ public class Attendance implements Serializable {
         dto.setAttendanceId(attendanceId);
         dto.setCheckingDate(checkingDate);
         dto.setStatus(status);
+        dto.setIsReopen(isReopen);
+        dto.setClosingDate(closingDate);
+        dto.setReopenReason(reopenReason);
         dto.setSessionId(session.getSessionId());
         dto.setStudentInClassId(studentInClass.getStudentInClassId());
         dto.setStudentUsername(studentInClass.getStudent().getAccount().getUsername());

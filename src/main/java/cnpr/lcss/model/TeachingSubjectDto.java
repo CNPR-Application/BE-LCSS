@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RoomAndBranchDto {
-    private int roomId;
-    private String roomName;
-    private int branchId;
+public class TeachingSubjectDto {
+    private Integer subjectId;
+    private String subjectCode;
+    private String subjectName;
 }

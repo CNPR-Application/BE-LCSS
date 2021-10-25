@@ -142,13 +142,12 @@ public class SubjectService {
 
     //<editor-fold desc="4.05-delete-subject">
     public ResponseEntity<?> deleteSubjectBySubjectId(int subjectId) throws Exception {
-
         try {
             if (!subjectRepository.existsById(subjectId)) {
                 throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
             } else {
                 Subject deleteSubject = subjectRepository.findBySubjectId(subjectId);
-                if (deleteSubject.getIsAvailable()) {
+                if (deleteSubject.getIsAvailable() && deleteSubject.getClassList().isEmpty()) {
                     List<SubjectDetail> subjectDetailList = subjectDetailRepository.findSubjectDetailBySubject_SubjectId(subjectId);
                     for (SubjectDetail subjectDetail : subjectDetailList) {
                         subjectDetail.setIsAvailable(false);
