@@ -100,6 +100,7 @@ public class Session implements Serializable {
         dto.setSubjectName(aClass.getSubject().getSubjectName());
         dto.setTeacherId(teacher.getTeacherId());
         dto.setTeacherName(teacher.getAccount().getName());
+        dto.setTeacherPhone(teacher.getAccount().getPhone());
         dto.setTeacherImage(teacher.getAccount().getImage());
         dto.setRoomName(room.getRoomName());
         return dto;
