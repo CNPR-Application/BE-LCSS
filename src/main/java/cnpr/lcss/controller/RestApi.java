@@ -352,6 +352,32 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.17-search-student-by-name-and-phone">
+
+    /**
+     * @param branchId
+     * @param isAvailable
+     * @param phone
+     * @param name
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.10.25
+     * @apiNote 1.17-search-student-by-name-phone
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/students", params = "branchId", method = RequestMethod.GET)
+    public ResponseEntity<?> searchStudentInBranchByPhoneAndNameAndIsAvailable(@RequestParam(value = "branchId") int branchId,
+                                                                               @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                                               @RequestParam(value = "phone") String phone,
+                                                                               @RequestParam(value = "name") String name,
+                                                                               @RequestParam(value = "pageNo") int pageNo,
+                                                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return studentService.searchStudentInBranchByPhoneAndNameAndIsAvailable(branchId, isAvailable, phone, name, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="1.18-search-teacher-by-branch-id-and-phone-and-name-and-is-available">
 
     /**
