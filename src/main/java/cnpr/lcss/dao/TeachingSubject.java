@@ -28,12 +28,11 @@ public class TeachingSubject implements Serializable {
     private Subject subject;
 
     //<editor-fold desc="Modify toString">
+
     @Override
     public String toString() {
         return "TeachingSubject{" +
                 "id=" + id +
-                ", teacher=" + teacher +
-                ", subject=" + subject +
                 '}';
     }
     //</editor-fold>

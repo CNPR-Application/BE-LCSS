@@ -57,7 +57,7 @@ public class TeachingSubjectService {
             if (!teachingSubjectUnableToDelete.isEmpty()) {
                 throw new Exception(Constant.UNABLE_TO_DELETE_TEACHING_SUBJECT);
             } else {
-                teachingSubjectRepository.delete(teachingSubjectRepository.findBySubject_SubjectId(subjectId));
+                teachingSubjectRepository.delete(teachingSubjectRepository.findByTeacher_Account_UsernameAndSubject_SubjectId(teacherUsername, subjectId));
             }
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
