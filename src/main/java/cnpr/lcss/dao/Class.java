@@ -112,7 +112,9 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        dto.setRoomId(room.getRoomId());
+        if(room!=null) {
+            dto.setRoomId(room.getRoomId());
+        }
         return dto;
     }
     //</editor-fold>
