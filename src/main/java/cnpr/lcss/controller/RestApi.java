@@ -373,7 +373,7 @@ public class RestApi {
                                                                                @RequestParam(value = "isAvailable") boolean isAvailable,
                                                                                @RequestParam(value = "phone") String phone,
                                                                                @RequestParam(value = "name") String name,
-                                                                               @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                                                                               @RequestParam(value = "pageNo") int pageNo,
                                                                                @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentService.searchStudentInBranchByPhoneAndNameAndIsAvailable(branchId, isAvailable, phone, name, pageNo, pageSize);
     }
