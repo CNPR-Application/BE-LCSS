@@ -104,14 +104,14 @@ public class StudentService {
     public ResponseEntity<?> searchStudentInBranchByPhoneAndNameAndIsAvailable(int branchId, boolean isAvailable, String phone, String name, int pageNo, int pageSize) {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Page<Student> studentList = studentRepository.findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable,phone,name, pageable);
+            Page<Student> studentList = studentRepository.findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(branchId, isAvailable, phone, name, pageable);
             List<StudentDto> studentDtoList = studentList.getContent().stream().map(student -> student.convertToDto()).collect(Collectors.toList());
             int pageTotal = studentList.getTotalPages();
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
             mapObj.put("pageTotal", pageTotal);
-            mapObj.put("studentResponseDtos", studentDtoList);
+            mapObj.put("studentList", studentDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,5 +119,4 @@ public class StudentService {
         }
     }
     //</editor-fold>
-
 }

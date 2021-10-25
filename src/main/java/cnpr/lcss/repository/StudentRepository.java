@@ -30,9 +30,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             "WHERE s.account.username = :studentUsername")
     Student findByStudent_StudentUsername(@Param(value = "studentUsername") String studentUsername);
 
-    boolean existsByAccount_Username(String username);
-
     Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 
-    Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(int branchId, boolean isAvailable,String phone, String name, Pageable pageable);
+    Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(int branchId, boolean isAvailable, String phone, String name, Pageable pageable);
 }
