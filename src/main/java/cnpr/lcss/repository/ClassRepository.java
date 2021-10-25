@@ -72,4 +72,8 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                     "where c.class_id = :classId"
     )
     List<Class> findStudentByClassId(@Param(value = "classId") int classId);
+
+    @Query(value = "select c.classId from Subject as s join Class c on s.subjectId = c.subject.subjectId join TeachingSubject ts on s.subjectId = ts.subject.subjectId join Teacher t on ts.teacher.teacherId = t.teacherId where t.account.username = 'ngagv000006'")
+    List<Integer> findAllByTeacherUsername(String username);
+    //, c.className, s.subjectId, s.subjectName, c.status, t.account.username, t.teacherId
 }

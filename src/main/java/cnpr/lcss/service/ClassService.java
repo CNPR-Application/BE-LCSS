@@ -303,6 +303,9 @@ public class ClassService {
                         list.add(session.getAClass().getClassId());
                     }
                 }
+                if (status.equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || status.equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
+                     list=classRepository.findAllByTeacherUsername(username);
+                }
 
                 //Get classes with CLASSID LIST and STATUS
                 Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
