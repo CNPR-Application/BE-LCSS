@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Table(name = "teaching_subject")
 public class TeachingSubject implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -24,6 +25,17 @@ public class TeachingSubject implements Serializable {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    //<editor-fold desc="Modify toString">
+    @Override
+    public String toString() {
+        return "TeachingSubject{" +
+                "id=" + id +
+                ", teacher=" + teacher +
+                ", subject=" + subject +
+                '}';
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert to TeachingSubjectBasicInfoDto">
     public TeachingSubjectBasicInfoDto convertToTeachingBranchBasicInfoDto() {

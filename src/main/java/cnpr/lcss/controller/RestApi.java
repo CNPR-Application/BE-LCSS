@@ -60,6 +60,8 @@ public class RestApi {
     StaffService staffService;
     @Autowired
     SchedulerService schedulerService;
+    @Autowired
+    TeachingSubjectService teachingSubjectService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -759,6 +761,26 @@ public class RestApi {
     public ResponseEntity<?> updateSubjectDetail(@PathVariable int subjectDetailId,
                                                  @RequestBody Map<String, String> subjectDetailUpdateRequestDto) throws Exception {
         return subjectDetailService.updateSubjectDetail(subjectDetailId, subjectDetailUpdateRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------TEACHING SUBJECT-------------------------------
+     */
+
+    //<editor-fold desc="6.04-create-new-teaching-subject">
+
+    /**
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @author LamHNT - 2021.10.25
+     * @apiNote 6.04-create-new-teaching-subject
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teaching-subjects", method = RequestMethod.POST)
+    public ResponseEntity<?> createNewTeachingSubject(@RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return teachingSubjectService.createNewTeachingSubject(reqBody);
     }
     //</editor-fold>
 

@@ -290,6 +290,7 @@ public class Constant {
      * -----TEACHING SUBJECT-----
      */
     // Error Message
+    public static final String EXISTED_TEACHING_SUBJECT = "This subject is already taken!";
     //</editor-fold>
 
     //<editor-fold desc="Others">
