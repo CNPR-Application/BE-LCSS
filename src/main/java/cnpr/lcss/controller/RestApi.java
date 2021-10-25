@@ -839,16 +839,18 @@ public class RestApi {
     //<editor-fold desc="6.03-delete-teaching-subject">
 
     /**
-     * @param reqBody
+     * @param teacherUsername
+     * @param subjectId
      * @return
      * @throws Exception
      * @author LamHNT - 2021.10.25
      * @apiNote 6.03-delete-teaching-subject
      */
     @CrossOrigin
-    @RequestMapping(value = "/teaching-subjects", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteTeachingSubject(@RequestBody HashMap<String, Object> reqBody) throws Exception {
-        return teachingSubjectService.deleteTeachingSubject(reqBody);
+    @RequestMapping(value = "/teaching-subjects/{teacherUsername}/{subjectId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteTeachingSubject(@PathVariable(value = "teacherUsername") String teacherUsername,
+                                                   @PathVariable(value = "subjectId") int subjectId) throws Exception {
+        return teachingSubjectService.deleteTeachingSubject(teacherUsername, subjectId);
     }
     //</editor-fold>
 

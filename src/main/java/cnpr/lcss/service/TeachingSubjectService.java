@@ -46,11 +46,8 @@ public class TeachingSubjectService {
     //</editor-fold>
 
     //<editor-fold desc="6.03-delete-teaching-subject">
-    public ResponseEntity<?> deleteTeachingSubject(HashMap<String, Object> reqBody) throws Exception {
+    public ResponseEntity<?> deleteTeachingSubject(String teacherUsername, Integer subjectId) throws Exception {
         try {
-            String teacherUsername = reqBody.get("teacherUsername").toString();
-            Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
-
             Collection<String> statusUnableToDelete = new ArrayList<>();
             statusUnableToDelete.add(Constant.CLASS_STATUS_WAITING);
             statusUnableToDelete.add(Constant.CLASS_STATUS_STUDYING);
