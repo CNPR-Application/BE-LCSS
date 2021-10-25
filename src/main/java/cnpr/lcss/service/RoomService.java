@@ -98,7 +98,7 @@ public class RoomService {
     public ResponseEntity<?> updateRoom(HashMap<String, Object> reqBody) throws Exception {
         try {
             int roomId = (int) reqBody.get("roomId");
-            int roomName = (int) reqBody.get("roomName");
+            String roomName = (String) reqBody.get("roomName");
             Boolean isAvailable = (Boolean) reqBody.get("isAvailable");
             Room room = roomRepository.findByRoomId(roomId);
             if (room == null) {
@@ -123,7 +123,7 @@ public class RoomService {
     public ResponseEntity<?> createNewRoom(HashMap<String, String> reqBody) throws Exception {
         try {
             int branchId = Integer.parseInt(reqBody.get("branchId"));
-            int roomName = Integer.parseInt(reqBody.get("roomName"));
+            String roomName = reqBody.get("roomName");
             Room room = new Room();
             room.setRoomName(roomName);
             room.setBranch(branchRepository.findByBranchId(branchId));

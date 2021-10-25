@@ -81,7 +81,7 @@ public class Class implements Serializable {
             dto.setRoomName(room.getRoomName());
         } else {
             dto.setRoomId(0);
-            dto.setRoomName(0);
+            dto.setRoomName(null);
         }
         return dto;
     }

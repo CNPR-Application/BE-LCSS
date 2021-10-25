@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class RoomAndBranchDto {
     private int roomId;
-    private int roomName;
+    private String roomName;
     private int branchId;
 }
