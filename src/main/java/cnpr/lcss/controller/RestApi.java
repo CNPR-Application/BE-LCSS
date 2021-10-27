@@ -120,7 +120,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.03 - Search Account By Name and Paging">
+    //<editor-fold desc="1.03-search-account-like-name">
 
     /**
      * @param name
@@ -299,10 +299,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/student", method = RequestMethod.GET)
-    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId")int branchId,
+    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId") int branchId,
                                                   @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                  @RequestParam(value = "pageNo")int pageNo,
-                                                  @RequestParam(value = "pageSize")int pageSize) throws Exception {
+                                                  @RequestParam(value = "pageNo") int pageNo,
+                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
