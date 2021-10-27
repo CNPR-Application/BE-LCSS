@@ -706,7 +706,7 @@ public class AccountService {
                     updateAccount.getStudent().setParentName(parentName.trim());
                 }
                 if (parentPhone != null && !parentPhone.isEmpty() && !parentPhone.equals(updateAccount.getStudent().getParentPhone())) {
-                    updateAccount.getStudent().setParentPhone(phone.trim());
+                    updateAccount.getStudent().setParentPhone(parentPhone.trim());
                 }
             }
             //</editor-fold>
