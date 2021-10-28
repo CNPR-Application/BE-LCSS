@@ -1,5 +1,9 @@
 package cnpr.lcss.util;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 public class Constant {
     //<editor-fold desc="Account">
     /**
@@ -324,5 +328,19 @@ public class Constant {
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
+    public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
+    //</editor-fold>
+
+    //<editor-fold desc="Conversion">
+
+    /**
+     * -----CONVERSION-----
+     */
+    //<editor-fold desc="Convert to UTC+7 TimeZone">
+    public static Date convertToUTC7TimeZone(Date insDate) {
+        ZonedDateTime date = ZonedDateTime.ofInstant(insDate.toInstant(), ZoneId.of(TIMEZONE)).plusHours(PLUS_HOUR_FROM_UTC_TO_UTC7);
+        return Date.from(date.toInstant());
+    }
+    //</editor-fold>
     //</editor-fold>
 }
