@@ -108,10 +108,10 @@ public class SessionService {
                 List<StudentScheduleDto> studentScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
-                DateAndStudentScheduleDto dateAndStudentScheduleDto = new DateAndStudentScheduleDto();
-                dateAndStudentScheduleDto.setDatetime(Date.from(cursor.toInstant()));
-                dateAndStudentScheduleDto.setStudentSessionList(studentScheduleDtoList);
-                mapObj.put(cursor.getDayOfWeek().name(), dateAndStudentScheduleDto);
+                DateAndScheduleDto dateAndScheduleDto = new DateAndScheduleDto();
+                dateAndScheduleDto.setDatetime(Date.from(cursor.toInstant()));
+                dateAndScheduleDto.setSessionList(studentScheduleDtoList);
+                mapObj.put(cursor.getDayOfWeek().name(), dateAndScheduleDto);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
@@ -135,7 +135,10 @@ public class SessionService {
                 List<TeacherScheduleDto> teacherScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndTeacherId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insTeacher)
                         .stream().map(session -> session.convertToTeacherScheduleDto()).collect(Collectors.toList());
-                mapObj.put(cursor.getDayOfWeek().name(), teacherScheduleDtoList);
+                DateAndScheduleDto dateAndTeacherSchedule = new DateAndScheduleDto();
+                dateAndTeacherSchedule.setDatetime(Date.from(cursor.toInstant()));
+                dateAndTeacherSchedule.setSessionList(teacherScheduleDtoList);
+                mapObj.put(cursor.getDayOfWeek().name(), dateAndTeacherSchedule);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);

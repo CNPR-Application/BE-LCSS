@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DateAndStudentScheduleDto {
+public class DateAndScheduleDto {
     Date datetime;
-    List<StudentScheduleDto> studentSessionList;
+    List<?> sessionList;
 }
