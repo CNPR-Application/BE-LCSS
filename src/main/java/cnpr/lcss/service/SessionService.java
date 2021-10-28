@@ -109,7 +109,7 @@ public class SessionService {
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
                 DateAndScheduleDto dateAndStudentScheduleDto = new DateAndScheduleDto();
-                dateAndStudentScheduleDto.setDatetime(Date.from(cursor.toInstant()));
+                dateAndStudentScheduleDto.setDatetime(Constant.convertToUTC7TimeZone(Date.from(cursor.toInstant())));
                 dateAndStudentScheduleDto.setSessionList(studentScheduleDtoList);
                 mapObj.put(cursor.getDayOfWeek().name(), dateAndStudentScheduleDto);
                 cursor = cursor.plusDays(1);
