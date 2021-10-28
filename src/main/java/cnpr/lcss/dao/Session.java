@@ -4,6 +4,7 @@ import cnpr.lcss.model.SessionClassDto;
 import cnpr.lcss.model.SessionResponseDto;
 import cnpr.lcss.model.StudentScheduleDto;
 import cnpr.lcss.model.TeacherScheduleDto;
+import cnpr.lcss.util.Constant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -82,8 +83,8 @@ public class Session implements Serializable {
         dto.setTeacherImage(teacher.getAccount().getImage());
         dto.setRoomId(room.getRoomId());
         dto.setRoomName(room.getRoomName());
-        dto.setStartTime(startTime);
-        dto.setEndTime(endTime);
+        dto.setStartTime(Constant.convertToUTC7TimeZone(startTime));
+        dto.setEndTime(Constant.convertToUTC7TimeZone(endTime));
         return dto;
     }
     //</editor-fold>

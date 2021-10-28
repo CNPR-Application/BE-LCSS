@@ -81,12 +81,12 @@ public class SessionService {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Page<Session> page = sessionRepository.findByaClass_ClassId(classId, pageable);
             List<Session> sessionList = page.getContent();
-            List<SessionClassDto> sessionClassDtos = sessionList.stream().map(session -> session.convertToSessionClassDto()).collect(Collectors.toList());
-            int pageTotal = page.getTotalPages();
+            List<SessionClassDto> sessionClassDtos = sessionList.stream()
+                    .map(session -> session.convertToSessionClassDto()).collect(Collectors.toList());
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
-            mapObj.put("sessionClassList", sessionClassDtos);
+            mapObj.put("totalPage", page.getTotalPages());
+            mapObj.put("sessionList", sessionClassDtos);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
