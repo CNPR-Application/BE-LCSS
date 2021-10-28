@@ -93,8 +93,8 @@ public class Session implements Serializable {
     public StudentScheduleDto convertToStudentScheduleDto() {
         StudentScheduleDto dto = new StudentScheduleDto();
         dto.setSessionId(sessionId);
-        dto.setStartTime(startTime);
-        dto.setEndTime(endTime);
+        dto.setStartTime(Constant.convertToUTC7TimeZone(startTime));
+        dto.setEndTime(Constant.convertToUTC7TimeZone(endTime));
         dto.setClassId(aClass.getClassId());
         dto.setClassName(aClass.getClassName());
         dto.setSubjectId(aClass.getSubject().getSubjectId());
