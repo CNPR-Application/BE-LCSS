@@ -608,7 +608,7 @@ public class AccountService {
                         throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
                     }
                 } else {
-                    student.setParentPhone(newAcc.getParentPhone());
+                    throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
                 }
                 Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
                 student.setAccount(accountStudent);
