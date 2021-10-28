@@ -44,6 +44,17 @@ public class Session implements Serializable {
     @JsonIgnore
     private List<Attendance> attendanceList;
 
+    //<editor-fold desc="Modify toString">
+    @Override
+    public String toString() {
+        return "Session{" +
+                "sessionId=" + sessionId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Convert to SessionResponseDto">
     public SessionResponseDto convertToSessionResponseDto() {
         SessionResponseDto dto = new SessionResponseDto();
@@ -57,20 +68,9 @@ public class Session implements Serializable {
         dto.setTeacherImage(teacher.getAccount().getImage());
         dto.setRoomId(room.getRoomId());
         dto.setRoomName(room.getRoomName());
-        dto.setStartTime(startTime);
-        dto.setEndTime(endTime);
+        dto.setStartTime(Constant.convertToUTC7TimeZone(startTime));
+        dto.setEndTime(Constant.convertToUTC7TimeZone(endTime));
         return dto;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Modify toString">
-    @Override
-    public String toString() {
-        return "Session{" +
-                "sessionId=" + sessionId +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                '}';
     }
     //</editor-fold>
 
@@ -93,8 +93,8 @@ public class Session implements Serializable {
     public StudentScheduleDto convertToStudentScheduleDto() {
         StudentScheduleDto dto = new StudentScheduleDto();
         dto.setSessionId(sessionId);
-        dto.setStartTime(startTime);
-        dto.setEndTime(endTime);
+        dto.setStartTime(Constant.convertToUTC7TimeZone(startTime));
+        dto.setEndTime(Constant.convertToUTC7TimeZone(endTime));
         dto.setClassId(aClass.getClassId());
         dto.setClassName(aClass.getClassName());
         dto.setSubjectId(aClass.getSubject().getSubjectId());
@@ -112,8 +112,8 @@ public class Session implements Serializable {
     public TeacherScheduleDto convertToTeacherScheduleDto() {
         TeacherScheduleDto dto = new TeacherScheduleDto();
         dto.setSessionId(sessionId);
-        dto.setStartTime(startTime);
-        dto.setEndTime(endTime);
+        dto.setStartTime(Constant.convertToUTC7TimeZone(startTime));
+        dto.setEndTime(Constant.convertToUTC7TimeZone(endTime));
         dto.setClassId(aClass.getClassId());
         dto.setClassName(aClass.getClassName());
         dto.setSubjectId(aClass.getSubject().getSubjectId());
