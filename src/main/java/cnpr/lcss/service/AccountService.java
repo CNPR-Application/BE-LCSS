@@ -605,7 +605,7 @@ public class AccountService {
                     if (newAcc.getParentPhone().matches(Constant.PHONE_PATTERN)) {
                         student.setParentPhone(newAcc.getParentPhone());
                     } else {
-                        throw new Exception(Constant.INVALID_PHONE_PATTERN);
+                        throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
                     }
                 } else {
                     student.setParentPhone(newAcc.getParentPhone());
@@ -706,7 +706,11 @@ public class AccountService {
                     updateAccount.getStudent().setParentName(parentName.trim());
                 }
                 if (parentPhone != null && !parentPhone.isEmpty() && !parentPhone.equals(updateAccount.getStudent().getParentPhone())) {
-                    updateAccount.getStudent().setParentPhone(parentPhone.trim());
+                    if (!parentPhone.matches(Constant.PHONE_PATTERN)) {
+                        throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
+                    } else {
+                        updateAccount.getStudent().setParentPhone(parentPhone.trim());
+                    }
                 }
             }
             //</editor-fold>
