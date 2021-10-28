@@ -108,10 +108,10 @@ public class SessionService {
                 List<StudentScheduleDto> studentScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
-                DateAndScheduleDto dateAndScheduleDto = new DateAndScheduleDto();
-                dateAndScheduleDto.setDatetime(Date.from(cursor.toInstant()));
-                dateAndScheduleDto.setSessionList(studentScheduleDtoList);
-                mapObj.put(cursor.getDayOfWeek().name(), dateAndScheduleDto);
+                DateAndScheduleDto dateAndStudentScheduleDto = new DateAndScheduleDto();
+                dateAndStudentScheduleDto.setDatetime(Date.from(cursor.toInstant()));
+                dateAndStudentScheduleDto.setSessionList(studentScheduleDtoList);
+                mapObj.put(cursor.getDayOfWeek().name(), dateAndStudentScheduleDto);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
