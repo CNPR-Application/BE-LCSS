@@ -152,31 +152,21 @@ public class SessionService {
     //<editor-fold desc="11.08-update-session-in-class">
     public ResponseEntity<?> updateSessionInClass(HashMap<String, Object> reqBody) throws Exception {
         try {
-            int sessionId = (int) reqBody.get("sessionId");
-            int classId = (int) reqBody.get("classId");
-            Integer newRoomId = (Integer) reqBody.get("newRoomId");
-            Boolean changeAllRoom = (Boolean) reqBody.get("changeAllRoom");
-            if (changeAllRoom == null) {
-                changeAllRoom = Boolean.FALSE;
-            }
-            Integer newTeacherId = (Integer) reqBody.get("newTeacherId");
-            Boolean changeAllTeacher = (Boolean) reqBody.get("changeAllTeacher");
-            if (changeAllTeacher == null) {
-                changeAllTeacher = Boolean.FALSE;
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
-            Date newStartTime = (Date) sdf.parse((String) reqBody.get("newStartTime"));
-            Boolean changeAllTime = (Boolean) reqBody.get("changeAllTime");
-            if (changeAllTime == null) {
-                changeAllTime = Boolean.FALSE;
-            }
-            Integer newShiftId = (Integer) reqBody.get("newShiftId");
+            Integer sessionId = Integer.parseInt(reqBody.get("sessionId").toString());
+            Integer classId = Integer.parseInt(reqBody.get("classId").toString());
+            Integer newRoomId = Integer.parseInt(reqBody.get("newRoomId").toString());
+            Boolean changeAllRoom = Boolean.valueOf(reqBody.get("changeAllRoom").toString());
+            Integer newTeacherId = Integer.parseInt(reqBody.get("newTeacherId").toString());
+            Boolean changeAllTeacher = Boolean.valueOf(reqBody.get("changeAllTeacher").toString());
+            String insNewStartTime = reqBody.get("newStartTime").toString();
+            Boolean changeAllTime = Boolean.valueOf(reqBody.get("changeAllTime").toString());
+            Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
             Session updateSession = sessionRepository.findBySessionId(sessionId);
             Class updateClass = classRepository.getById(classId);
             List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(classId);
 
-            // CASE 1: Update Session with new Room ID
+            //<editor-fold desc="CASE 1: Update Session with new Room ID">
             if (newRoomId != null) {
                 Room updateRoom = roomRepository.getById(newRoomId);
                 if (changeAllRoom) {
@@ -189,8 +179,9 @@ public class SessionService {
                     sessionRepository.save(updateSession);
                 }
             }
+            //</editor-fold>
 
-            // CASE 2: Update Session with new Teacher ID
+            //<editor-fold desc="CASE 2: Update Session with new Teacher ID">
             if (newTeacherId != null) {
                 Teacher updateTeacher = teacherRepository.findByTeacherId(newTeacherId);
                 if (changeAllTeacher) {
@@ -203,9 +194,12 @@ public class SessionService {
                     sessionRepository.save(updateSession);
                 }
             }
+            //</editor-fold>
 
-            // CASE 3: Update Session with new Start Time
-            if (newStartTime != null) {
+            //<editor-fold desc="CASE 3: Update Session with new Start Time">
+            if (!insNewStartTime.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
+                Date newStartTime = sdf.parse(insNewStartTime);
                 if (changeAllTime) {
                     String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
                     String[] daysOfWeek = updateClass.getShift().getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
@@ -325,6 +319,7 @@ public class SessionService {
                     }
                 }
             }
+            //</editor-fold>
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
