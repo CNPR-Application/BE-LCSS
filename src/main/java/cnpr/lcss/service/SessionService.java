@@ -136,7 +136,7 @@ public class SessionService {
                         .findByStartTimeAndEndTimeAndTeacherId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insTeacher)
                         .stream().map(session -> session.convertToTeacherScheduleDto()).collect(Collectors.toList());
                 DateAndScheduleDto dateAndTeacherSchedule = new DateAndScheduleDto();
-                dateAndTeacherSchedule.setDatetime(Date.from(cursor.toInstant()));
+                dateAndTeacherSchedule.setDatetime(Constant.convertToUTC7TimeZone(Date.from(cursor.toInstant())));
                 dateAndTeacherSchedule.setSessionList(teacherScheduleDtoList);
                 mapObj.put(cursor.getDayOfWeek().name(), dateAndTeacherSchedule);
                 cursor = cursor.plusDays(1);
