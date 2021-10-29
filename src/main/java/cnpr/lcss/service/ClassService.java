@@ -59,6 +59,7 @@ public class ClassService {
         for (ClassDto aClass : classDtoList) {
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
+                aClass.setTeacherUsername(null);
                 aClass.setTeacherName(null);
                 int numberOfStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
                 aClass.setNumberOfStudent(numberOfStudent);
@@ -67,6 +68,7 @@ public class ClassService {
                 List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                 Teacher teacher = sessionList.get(0).getTeacher();
                 aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherUsername(teacher.getAccount().getUsername());
                 aClass.setTeacherName(teacher.getAccount().getName());
                 int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
