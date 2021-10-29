@@ -155,12 +155,6 @@ public class TeacherService {
     //</editor-fold>
 
     //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
-
-    /**
-     * Find Rooms by Branch ID and Shift ID
-     * Which are Available from the Date (openingDate)
-     * In order to select rooms for class that about to start
-     */
     public ResponseEntity<?> getAvailableTeachersForOpeningClass(int branchId, int shiftId, String openingDate,int subjectId) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
