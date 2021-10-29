@@ -154,20 +154,21 @@ public class SessionService {
         try {
             Integer sessionId = Integer.parseInt(reqBody.get("sessionId").toString());
             Integer classId = Integer.parseInt(reqBody.get("classId").toString());
-            Integer newRoomId = Integer.parseInt(reqBody.get("newRoomId").toString());
+            Session updateSession = sessionRepository.findBySessionId(sessionId);
+            Class updateClass = classRepository.getById(classId);
+            List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(classId);
+            String insNewRoomId = reqBody.get("newRoomId").toString();
             Boolean changeAllRoom = Boolean.valueOf(reqBody.get("changeAllRoom").toString());
-            Integer newTeacherId = Integer.parseInt(reqBody.get("newTeacherId").toString());
+            String insNewTeacherId = reqBody.get("newTeacherId").toString();
             Boolean changeAllTeacher = Boolean.valueOf(reqBody.get("changeAllTeacher").toString());
             String insNewStartTime = reqBody.get("newStartTime").toString();
             Boolean changeAllTime = Boolean.valueOf(reqBody.get("changeAllTime").toString());
             Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
-            Session updateSession = sessionRepository.findBySessionId(sessionId);
-            Class updateClass = classRepository.getById(classId);
-            List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(classId);
-
             //<editor-fold desc="CASE 1: Update Session with new Room ID">
-            if (newRoomId != null) {
+            Integer newRoomId;
+            if (!insNewRoomId.equals(Constant.NUMBER_ZERO)) {
+                newRoomId = Integer.parseInt(insNewRoomId);
                 Room updateRoom = roomRepository.getById(newRoomId);
                 if (changeAllRoom) {
                     for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
@@ -178,11 +179,15 @@ public class SessionService {
                     updateSession.setRoom(roomRepository.findByRoomId(newRoomId));
                     sessionRepository.save(updateSession);
                 }
+            } else {
+                newRoomId = sessionList.get(sessionList.indexOf(updateSession)).getRoom().getRoomId();
             }
             //</editor-fold>
 
             //<editor-fold desc="CASE 2: Update Session with new Teacher ID">
-            if (newTeacherId != null) {
+            Integer newTeacherId;
+            if (!insNewTeacherId.equals(Constant.NUMBER_ZERO)) {
+                newTeacherId = Integer.parseInt(insNewTeacherId);
                 Teacher updateTeacher = teacherRepository.findByTeacherId(newTeacherId);
                 if (changeAllTeacher) {
                     for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
@@ -193,13 +198,16 @@ public class SessionService {
                     updateSession.setTeacher(teacherRepository.findByTeacherId(newTeacherId));
                     sessionRepository.save(updateSession);
                 }
+            } else {
+                newTeacherId = sessionList.get(sessionList.indexOf(updateSession)).getTeacher().getTeacherId();
             }
             //</editor-fold>
 
             //<editor-fold desc="CASE 3: Update Session with new Start Time">
-            if (!insNewStartTime.isEmpty()) {
+            Date newStartTime = new Date();
+            if (!insNewStartTime.equals(Constant.NUMBER_ZERO)) {
                 SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
-                Date newStartTime = sdf.parse(insNewStartTime);
+                newStartTime = sdf.parse(insNewStartTime);
                 if (changeAllTime) {
                     String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
                     String[] daysOfWeek = updateClass.getShift().getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
@@ -244,8 +252,8 @@ public class SessionService {
                             }
                             attendanceRepository.saveAll(attendanceList);
                         }
-                    } else {
-                        if (newShiftId == null) {
+                    } else { // New Start Time is NOT a day in Shift
+                        if (newShiftId == 0) {
                             throw new Exception(Constant.INVALID_NEW_SHIFT_ID);
                         } else {
                             String newStartTime_startTime = LocalTime.of(newStartTime.getHours(), newStartTime.getMinutes())
@@ -318,6 +326,8 @@ public class SessionService {
                         attendanceRepository.saveAll(attendanceList);
                     }
                 }
+            } else {
+                newStartTime = sessionList.get(sessionList.indexOf(updateSession)).getStartTime();
             }
             //</editor-fold>
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);

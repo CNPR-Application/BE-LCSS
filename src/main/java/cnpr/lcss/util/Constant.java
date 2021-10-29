@@ -319,6 +319,7 @@ public class Constant {
     public static final String NAME_PATTERN = "[A-Za-z ]*";
     public static final String NOT_AVAILABLE_INFO = "N/A";
     public static final String NUMBERS = "1234567890";
+    public static final String NUMBER_ZERO = "0";
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
     public static final String SPECIAL_CHARACTERS = "!@#$";
