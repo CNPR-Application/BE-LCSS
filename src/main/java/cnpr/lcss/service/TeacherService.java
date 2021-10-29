@@ -32,6 +32,7 @@ public class TeacherService {
     BranchRepository branchRepository;
     @Autowired
     ShiftRepository shiftRepository;
+
     //<editor-fold desc="Mapping Teaching Branch And Teaching Subject To Teacher">
     private List<TeacherDto> mapTeachingBranchAndTeachingSubjectToTeacher(Page<Teacher> teacherPage) {
         List<TeacherDto> teacherDtoList = teacherPage.getContent().stream().map(teacher -> teacher.convertToTeacherDto()).collect(Collectors.toList());
@@ -155,7 +156,7 @@ public class TeacherService {
     //</editor-fold>
 
     //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
-    public ResponseEntity<?> getAvailableTeachersForOpeningClass(int branchId, int shiftId, String openingDate,int subjectId) throws Exception {
+    public ResponseEntity<?> getAvailableTeachersForOpeningClass(int branchId, int shiftId, String openingDate, int subjectId) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
@@ -164,7 +165,7 @@ public class TeacherService {
             String datetimeStart, dateTimeEnd;
             try {
                 Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
-                if(insShift==null)
+                if (insShift == null)
                     throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
                 datetimeStart = openingDate + " " + insShift.getTimeStart() + ":00";
                 dateTimeEnd = openingDate + " " + insShift.getTimeEnd() + ":00";
@@ -173,7 +174,7 @@ public class TeacherService {
                 throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
             }
 
-            List<Teacher> teacherQuery = teacherRepository.findAvailableTeachersForOpeningClass(branchId,datetimeStart,dateTimeEnd,subjectId);
+            List<Teacher> teacherQuery = teacherRepository.findAvailableTeachersForOpeningClass(branchId, datetimeStart, dateTimeEnd, subjectId);
             List<TeacherBasisDetailDto> teacherBasisDetailDtoList = teacherQuery.stream().map(Teacher::convertToTeacherBasisDetailDto).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("teacherList", teacherBasisDetailDtoList);

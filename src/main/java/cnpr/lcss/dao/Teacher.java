@@ -58,7 +58,7 @@ public class Teacher implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Modify toString()">
+    //<editor-fold desc="Modify toString">
     @Override
     public String toString() {
         return "Teacher{" +
@@ -106,6 +106,7 @@ public class Teacher implements Serializable {
         return dto;
     }
     //</editor-fold>
+
     //<editor-fold desc="Convert to TeacherBasisDetailDto">
     public TeacherBasisDetailDto convertToTeacherBasisDetailDto() {
         TeacherBasisDetailDto dto = new TeacherBasisDetailDto();

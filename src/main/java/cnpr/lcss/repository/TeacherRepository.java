@@ -74,6 +74,4 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
                                                        @Param(value = "dateTimeStart") String dateTimeStart,
                                                        @Param(value = "dateTimeEnd") String dateTimeEnd,
                                                        @Param(value = "subjectId") int subjectId);
-
-
 }
