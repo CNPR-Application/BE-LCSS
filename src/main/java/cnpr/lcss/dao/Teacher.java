@@ -1,5 +1,7 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.RoomAndBranchDto;
+import cnpr.lcss.model.TeacherBasisDetailDto;
 import cnpr.lcss.model.TeacherDto;
 import cnpr.lcss.model.TeacherInBranchDto;
 import cnpr.lcss.util.Constant;
@@ -101,6 +103,16 @@ public class Teacher implements Serializable {
         dto.setAccountCreatingDate(account.getCreatingDate());
         dto.setTeacherExperience(experience);
         dto.setTeacherRating(calculateRating(rating));
+        return dto;
+    }
+    //</editor-fold>
+    //<editor-fold desc="Convert to TeacherBasisDetailDto">
+    public TeacherBasisDetailDto convertToTeacherBasisDetailDto() {
+        TeacherBasisDetailDto dto = new TeacherBasisDetailDto();
+        dto.setTeacherId(teacherId);
+        dto.setTeacherName(account.getName());
+        dto.setTeacherUsername(account.getUsername());
+        dto.setTeacherImage(account.getImage());
         return dto;
     }
     //</editor-fold>

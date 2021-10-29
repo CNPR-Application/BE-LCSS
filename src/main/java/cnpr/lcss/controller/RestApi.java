@@ -407,6 +407,28 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
+    /**
+     *
+     * @param branchId
+     * @param shiftId
+     * @param openingDate
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 1.19-get-available-teacher-for-opening-class
+     * @author HuuNT - 2021.10.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers/{branchId}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableTeachersOpeningClass(@PathVariable int branchId,
+                                                              @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam String openingDate,
+                                                              @RequestParam(value = "subjectId") int subjectId) throws Exception {
+        return teacherService.getAvailableTeachersForOpeningClass(branchId, shiftId, openingDate,subjectId);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------BRANCH--------------------------------
      */
