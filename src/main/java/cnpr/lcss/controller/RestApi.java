@@ -120,7 +120,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.03 - Search Account By Name and Paging">
+    //<editor-fold desc="1.03-search-account-like-name">
 
     /**
      * @param name
@@ -299,10 +299,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/student", method = RequestMethod.GET)
-    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId")int branchId,
+    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId") int branchId,
                                                   @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                  @RequestParam(value = "pageNo")int pageNo,
-                                                  @RequestParam(value = "pageSize")int pageSize) throws Exception {
+                                                  @RequestParam(value = "pageNo") int pageNo,
+                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -404,6 +404,28 @@ public class RestApi {
                                                                                @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
                                                                                @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return accountService.searchTeacherInBranchByPhoneAndNameAndIsAvailable(branchId, isAvailable, phone, name, pageNo, pageSize);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
+
+    /**
+     * @param branchId
+     * @param shiftId
+     * @param openingDate
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 1.19-get-available-teacher-for-opening-class
+     * @author HuuNT - 2021.10.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers/{branchId}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableTeachersOpeningClass(@PathVariable int branchId,
+                                                              @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam String openingDate,
+                                                              @RequestParam(value = "subjectId") int subjectId) throws Exception {
+        return teacherService.getAvailableTeachersForOpeningClass(branchId, shiftId, openingDate, subjectId);
     }
     //</editor-fold>
 

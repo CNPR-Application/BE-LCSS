@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DateAndStudentScheduleDto {
-    Date datetime;
-    List<StudentScheduleDto> studentSessionList;
+public class TeacherBasisDetailDto {
+    private Integer teacherId;
+    private String teacherName;
+    private String teacherUsername;
+    private String teacherImage;
 }

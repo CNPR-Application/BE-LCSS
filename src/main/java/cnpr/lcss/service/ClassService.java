@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +59,7 @@ public class ClassService {
         for (ClassDto aClass : classDtoList) {
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
+                aClass.setTeacherUsername(null);
                 aClass.setTeacherName(null);
                 int numberOfStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
                 aClass.setNumberOfStudent(numberOfStudent);
@@ -64,6 +68,7 @@ public class ClassService {
                 List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                 Teacher teacher = sessionList.get(0).getTeacher();
                 aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherUsername(teacher.getAccount().getUsername());
                 aClass.setTeacherName(teacher.getAccount().getName());
                 int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
@@ -94,6 +99,73 @@ public class ClassService {
     public boolean isDaysInShift(String[] daysOfWeek, Calendar calendar) {
         return Arrays.stream(convertDowToInteger(daysOfWeek))
                 .anyMatch(dayOfWeek -> calendar.get(Calendar.DAY_OF_WEEK) == Integer.valueOf(dayOfWeek));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Create a new Class">
+    public Integer createANewClass(ClassRequestDto insClass) throws Exception {
+        ZonedDateTime today = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+        Class newClass = new Class();
+
+        newClass.setClassName(insClass.getClassName());
+        // Default Status for new Class - "waiting"
+        newClass.setStatus(Constant.CLASS_STATUS_WAITING);
+        newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
+        newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
+        // Slot of Class = Slot of inserted Subject
+        newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
+        /**
+         * Check compatibility of subject's slot per week & shift's day of week
+         * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+         * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+         * Else throw new Exception
+         */
+        int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
+        String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
+        if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
+                || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
+            newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
+        } else {
+            throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
+        }
+        // Check whether Opening Date is a day in Shift
+        if (insClass.getOpeningDate() != null
+                && !ZonedDateTime.ofInstant(insClass.getOpeningDate().toInstant(), ZoneId.of(Constant.TIMEZONE)).isBefore(today)) {
+            Date openingDate = insClass.getOpeningDate();
+            // Sunday = 0
+            int openingDayOfWeek = openingDate.getDay() + 1;
+            Shift shift = shiftRepository.findShiftByShiftId(insClass.getShiftId());
+            String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+            shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
+            boolean coincidence = false;
+            for (String day : shiftDaysOfWeek) {
+                if (day.equalsIgnoreCase(Integer.toString(openingDayOfWeek))) {
+                    coincidence = true;
+                }
+            }
+            if (!coincidence) {
+                throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
+            }
+            // Set time start as same as time start of shift
+            openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
+            newClass.setOpeningDate(openingDate);
+        } else {
+            throw new ValidationException(Constant.INVALID_OPENING_DATE);
+        }
+        // Creator is Account-Username
+        newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
+        newClass.setRoom(null);
+
+        // Get Booking ID
+        int classId;
+        try {
+            Class aClass = classRepository.save(newClass);
+            classId = aClass.getClassId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(Constant.ERROR_GET_CLASS_ID);
+        }
+        return classId;
     }
     //</editor-fold>
 
@@ -264,7 +336,7 @@ public class ClassService {
                     }
                     //ROOM
                     //find room by ID with class status not equal WAITING
-                    if(!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
+                    if (!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
                         Room room = roomRepository.findByRoomId(aClass.getRoomId());
                         //room name and ID
                         aClass.setRoomName(room.getRoomName());
@@ -349,7 +421,7 @@ public class ClassService {
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+            /*Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
             Date today = calendar.getTime();
             Class newClass = new Class();
 
@@ -360,12 +432,10 @@ public class ClassService {
             newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
             // Slot of Class = Slot of inserted Subject
             newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
-            /**
-             * Check compatibility of subject's slot per week & shift's day of week
-             * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
-             * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
-             * Else throw new Exception
-             */
+            // Check compatibility of subject's slot per week & shift's day of week
+            // If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+            // Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+            // Else throw new Exception
             int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
             String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
             if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
@@ -409,11 +479,9 @@ public class ClassService {
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(Constant.ERROR_GET_CLASS_ID);
-            }
-
+            }*/
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
-            mapObj.put("classId", classId);
-
+            mapObj.put("classId", createANewClass(insClass));
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -530,16 +598,30 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomId = (int) reqBody.get("roomId");
-        int teacherId = (int) reqBody.get("teacherId");
-        int classId = (int) reqBody.get("classId");
-        String creator = (String) reqBody.get("creator");
+        String className = reqBody.get("className").toString();
+        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_PATTERN);
+        Date openingDate = sdf.parse(reqBody.get("openingDate").toString());
+        Integer branchId = Integer.parseInt(reqBody.get("branchId").toString());
+        Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
+        Integer shiftId = Integer.parseInt(reqBody.get("shiftId").toString());
+        String roomName = reqBody.get("roomName").toString();
+        Integer teacherId = Integer.parseInt(reqBody.get("teacherId").toString());
+        String creator = reqBody.get("creator").toString();
         List<Integer> bookingIdList = (List<Integer>) reqBody.get("bookingIdList");
 
         try {
+            ClassRequestDto newClass = new ClassRequestDto();
+            newClass.setClassName(className);
+            newClass.setOpeningDate(openingDate);
+            newClass.setBranchId(branchId);
+            newClass.setSubjectId(subjectId);
+            newClass.setShiftId(shiftId);
+            newClass.setCreator(creator);
+            Integer newClassId = createANewClass(newClass);
+
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomId(roomId);
-            Class activateClass = classRepository.findClassByClassId(classId);
+            Room room = roomRepository.findByRoomName(roomName);
+            Class activateClass = classRepository.findClassByClassId(newClassId);
 
             try {
                 for (int bookingId : bookingIdList) {
@@ -559,6 +641,7 @@ public class ClassService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
             }
 
@@ -573,6 +656,7 @@ public class ClassService {
                 activateClass.setStaff(staffRepository.findByAccount_Username(classCreator));
                 classRepository.save(activateClass);
             } catch (Exception e) {
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.INVALID_CLASS_CREATOR);
             }
 
@@ -619,6 +703,7 @@ public class ClassService {
                 sessionRepository.saveAll(sessionList);
             } catch (Exception e) {
                 e.printStackTrace();
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
             }
 
@@ -630,9 +715,12 @@ public class ClassService {
                 for (StudentInClass studentInClass : studentInClassList) {
                     for (Session session : sessionList) {
                         Attendance attendance = new Attendance();
-                        attendance.setSession(session);
                         attendance.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
                         attendance.setCheckingDate(session.getStartTime());
+                        attendance.setIsReopen(Boolean.FALSE);
+                        attendance.setClosingDate(null);
+                        attendance.setReopenReason(null);
+                        attendance.setSession(session);
                         attendance.setStudentInClass(studentInClass);
                         attendanceRepository.save(attendance);
                     }
@@ -648,7 +736,7 @@ public class ClassService {
             activateClass.setStatus(Constant.CLASS_STATUS_STUDYING);
             classRepository.save(activateClass);
 
-            return ResponseEntity.ok(true);
+            return ResponseEntity.ok(newClassId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

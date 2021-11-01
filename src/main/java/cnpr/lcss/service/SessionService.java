@@ -81,12 +81,12 @@ public class SessionService {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Page<Session> page = sessionRepository.findByaClass_ClassId(classId, pageable);
             List<Session> sessionList = page.getContent();
-            List<SessionClassDto> sessionClassDtos = sessionList.stream().map(session -> session.convertToSessionClassDto()).collect(Collectors.toList());
-            int pageTotal = page.getTotalPages();
+            List<SessionClassDto> sessionClassDtos = sessionList.stream()
+                    .map(session -> session.convertToSessionClassDto()).collect(Collectors.toList());
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
-            mapObj.put("sessionClassList", sessionClassDtos);
+            mapObj.put("totalPage", page.getTotalPages());
+            mapObj.put("sessionList", sessionClassDtos);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,9 +108,9 @@ public class SessionService {
                 List<StudentScheduleDto> studentScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndStudentId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insStudent)
                         .stream().map(session -> session.convertToStudentScheduleDto()).collect(Collectors.toList());
-                DateAndStudentScheduleDto dateAndStudentScheduleDto = new DateAndStudentScheduleDto();
-                dateAndStudentScheduleDto.setDatetime(Date.from(cursor.toInstant()));
-                dateAndStudentScheduleDto.setStudentSessionList(studentScheduleDtoList);
+                DateAndScheduleDto dateAndStudentScheduleDto = new DateAndScheduleDto();
+                dateAndStudentScheduleDto.setDatetime(Constant.convertToUTC7TimeZone(Date.from(cursor.toInstant())));
+                dateAndStudentScheduleDto.setSessionList(studentScheduleDtoList);
                 mapObj.put(cursor.getDayOfWeek().name(), dateAndStudentScheduleDto);
                 cursor = cursor.plusDays(1);
             }
@@ -135,7 +135,10 @@ public class SessionService {
                 List<TeacherScheduleDto> teacherScheduleDtoList = sessionRepository
                         .findByStartTimeAndEndTimeAndTeacherId(getStartTimeOfTheDate(cursor), getEndTimeOfTheDate(cursor), insTeacher)
                         .stream().map(session -> session.convertToTeacherScheduleDto()).collect(Collectors.toList());
-                mapObj.put(cursor.getDayOfWeek().name(), teacherScheduleDtoList);
+                DateAndScheduleDto dateAndTeacherSchedule = new DateAndScheduleDto();
+                dateAndTeacherSchedule.setDatetime(Constant.convertToUTC7TimeZone(Date.from(cursor.toInstant())));
+                dateAndTeacherSchedule.setSessionList(teacherScheduleDtoList);
+                mapObj.put(cursor.getDayOfWeek().name(), dateAndTeacherSchedule);
                 cursor = cursor.plusDays(1);
             }
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
@@ -149,32 +152,23 @@ public class SessionService {
     //<editor-fold desc="11.08-update-session-in-class">
     public ResponseEntity<?> updateSessionInClass(HashMap<String, Object> reqBody) throws Exception {
         try {
-            int sessionId = (int) reqBody.get("sessionId");
-            int classId = (int) reqBody.get("classId");
-            Integer newRoomId = (Integer) reqBody.get("newRoomId");
-            Boolean changeAllRoom = (Boolean) reqBody.get("changeAllRoom");
-            if (changeAllRoom == null) {
-                changeAllRoom = Boolean.FALSE;
-            }
-            Integer newTeacherId = (Integer) reqBody.get("newTeacherId");
-            Boolean changeAllTeacher = (Boolean) reqBody.get("changeAllTeacher");
-            if (changeAllTeacher == null) {
-                changeAllTeacher = Boolean.FALSE;
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
-            Date newStartTime = (Date) sdf.parse((String) reqBody.get("newStartTime"));
-            Boolean changeAllTime = (Boolean) reqBody.get("changeAllTime");
-            if (changeAllTime == null) {
-                changeAllTime = Boolean.FALSE;
-            }
-            Integer newShiftId = (Integer) reqBody.get("newShiftId");
-
+            Integer sessionId = Integer.parseInt(reqBody.get("sessionId").toString());
+            Integer classId = Integer.parseInt(reqBody.get("classId").toString());
             Session updateSession = sessionRepository.findBySessionId(sessionId);
             Class updateClass = classRepository.getById(classId);
             List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(classId);
+            String insNewRoomId = reqBody.get("newRoomId").toString();
+            Boolean changeAllRoom = Boolean.valueOf(reqBody.get("changeAllRoom").toString());
+            String insNewTeacherId = reqBody.get("newTeacherId").toString();
+            Boolean changeAllTeacher = Boolean.valueOf(reqBody.get("changeAllTeacher").toString());
+            String insNewStartTime = reqBody.get("newStartTime").toString();
+            Boolean changeAllTime = Boolean.valueOf(reqBody.get("changeAllTime").toString());
+            Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
-            // CASE 1: Update Session with new Room ID
-            if (newRoomId != null) {
+            //<editor-fold desc="CASE 1: Update Session with new Room ID">
+            Integer newRoomId;
+            if (!insNewRoomId.equals(Constant.NUMBER_ZERO)) {
+                newRoomId = Integer.parseInt(insNewRoomId);
                 Room updateRoom = roomRepository.getById(newRoomId);
                 if (changeAllRoom) {
                     for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
@@ -185,10 +179,15 @@ public class SessionService {
                     updateSession.setRoom(roomRepository.findByRoomId(newRoomId));
                     sessionRepository.save(updateSession);
                 }
+            } else {
+                newRoomId = sessionList.get(sessionList.indexOf(updateSession)).getRoom().getRoomId();
             }
+            //</editor-fold>
 
-            // CASE 2: Update Session with new Teacher ID
-            if (newTeacherId != null) {
+            //<editor-fold desc="CASE 2: Update Session with new Teacher ID">
+            Integer newTeacherId;
+            if (!insNewTeacherId.equals(Constant.NUMBER_ZERO)) {
+                newTeacherId = Integer.parseInt(insNewTeacherId);
                 Teacher updateTeacher = teacherRepository.findByTeacherId(newTeacherId);
                 if (changeAllTeacher) {
                     for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
@@ -199,10 +198,16 @@ public class SessionService {
                     updateSession.setTeacher(teacherRepository.findByTeacherId(newTeacherId));
                     sessionRepository.save(updateSession);
                 }
+            } else {
+                newTeacherId = sessionList.get(sessionList.indexOf(updateSession)).getTeacher().getTeacherId();
             }
+            //</editor-fold>
 
-            // CASE 3: Update Session with new Start Time
-            if (newStartTime != null) {
+            //<editor-fold desc="CASE 3: Update Session with new Start Time">
+            Date newStartTime = new Date();
+            if (!insNewStartTime.equals(Constant.NUMBER_ZERO)) {
+                SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
+                newStartTime = sdf.parse(insNewStartTime);
                 if (changeAllTime) {
                     String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
                     String[] daysOfWeek = updateClass.getShift().getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
@@ -247,8 +252,8 @@ public class SessionService {
                             }
                             attendanceRepository.saveAll(attendanceList);
                         }
-                    } else {
-                        if (newShiftId == null) {
+                    } else { // New Start Time is NOT a day in Shift
+                        if (newShiftId == 0) {
                             throw new Exception(Constant.INVALID_NEW_SHIFT_ID);
                         } else {
                             String newStartTime_startTime = LocalTime.of(newStartTime.getHours(), newStartTime.getMinutes())
@@ -321,7 +326,10 @@ public class SessionService {
                         attendanceRepository.saveAll(attendanceList);
                     }
                 }
+            } else {
+                newStartTime = sessionList.get(sessionList.indexOf(updateSession)).getStartTime();
             }
+            //</editor-fold>
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();

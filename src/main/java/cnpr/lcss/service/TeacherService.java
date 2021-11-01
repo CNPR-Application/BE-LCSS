@@ -1,16 +1,9 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Account;
+import cnpr.lcss.dao.*;
 import cnpr.lcss.dao.Class;
-import cnpr.lcss.dao.Session;
-import cnpr.lcss.dao.Teacher;
-import cnpr.lcss.model.TeacherDto;
-import cnpr.lcss.model.TeachingBranchBasicInfoDto;
-import cnpr.lcss.model.TeachingSubjectBasicInfoDto;
-import cnpr.lcss.repository.AccountRepository;
-import cnpr.lcss.repository.TeacherRepository;
-import cnpr.lcss.repository.TeachingBranchRepository;
-import cnpr.lcss.repository.TeachingSubjectRepository;
+import cnpr.lcss.model.*;
+import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +28,10 @@ public class TeacherService {
     TeachingSubjectRepository teachingSubjectRepository;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    BranchRepository branchRepository;
+    @Autowired
+    ShiftRepository shiftRepository;
 
     //<editor-fold desc="Mapping Teaching Branch And Teaching Subject To Teacher">
     private List<TeacherDto> mapTeachingBranchAndTeachingSubjectToTeacher(Page<Teacher> teacherPage) {
@@ -151,6 +148,37 @@ public class TeacherService {
                     return ResponseEntity.ok(Boolean.FALSE);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
+    public ResponseEntity<?> getAvailableTeachersForOpeningClass(int branchId, int shiftId, String openingDate, int subjectId) throws Exception {
+        try {
+            if (!branchRepository.existsById(branchId)) {
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
+            }
+
+            String datetimeStart, dateTimeEnd;
+            try {
+                Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
+                if (insShift == null)
+                    throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
+                datetimeStart = openingDate + " " + insShift.getTimeStart() + ":00";
+                dateTimeEnd = openingDate + " " + insShift.getTimeEnd() + ":00";
+            } catch (IllegalArgumentException iae) {
+                iae.printStackTrace();
+                throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
+            }
+
+            List<Teacher> teacherQuery = teacherRepository.findAvailableTeachersForOpeningClass(branchId, datetimeStart, dateTimeEnd, subjectId);
+            List<TeacherBasisDetailDto> teacherBasisDetailDtoList = teacherQuery.stream().map(Teacher::convertToTeacherBasisDetailDto).collect(Collectors.toList());
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            mapObj.put("teacherList", teacherBasisDetailDtoList);
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

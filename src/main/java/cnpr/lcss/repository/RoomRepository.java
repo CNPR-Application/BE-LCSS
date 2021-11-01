@@ -14,6 +14,9 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     Room findByRoomId(int roomId);
 
+    @Query("select r from Room r where r.roomName = ?1")
+    Room findByRoomName(String roomName);
+
     @Query(
             nativeQuery = true,
             value = "SELECT DISTINCT r.room_id, r.room_name, r.is_available, r.branch_id " +
