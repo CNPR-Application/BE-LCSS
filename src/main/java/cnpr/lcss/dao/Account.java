@@ -85,7 +85,8 @@ public class Account implements Serializable {
                 '}';
     }
     //</editor-fold>
-    //<editor-fold desc="Convert To Account By Role DTO">
+
+    //<editor-fold desc="Convert to AccountByRoleDto">
     public AccountByRoleDto convertToAccountDto() {
         AccountByRoleDto accountDto = new AccountByRoleDto();
         accountDto.setUsername(username);
@@ -93,5 +94,4 @@ public class Account implements Serializable {
         return accountDto;
     }
     //</editor-fold>
-
 }

@@ -864,14 +864,13 @@ public class AccountService {
     //<editor-fold desc="1.20-get-account-by-role-and-branch-and-isAvailable">
     public ResponseEntity<?> getAccountByRoleAndIsAvalableInBranch(int branchId, String role, boolean isAvailable) throws Exception {
         try {
-            if(branchRepository.existsBranchByBranchId(branchId)){
-                List<Account> accountList=accountRepository.findAllByStaff_Branch_BranchIdAndRole_RoleIdAndIsAvailable(branchId,role,isAvailable);
-                List<AccountByRoleDto> accountDtos=accountList.stream().map(account -> account.convertToAccountDto()).collect(Collectors.toList());
+            if (branchRepository.existsBranchByBranchId(branchId)) {
+                List<Account> accountList = accountRepository.findAllByStaff_Branch_BranchIdAndRole_RoleIdAndIsAvailable(branchId, role, isAvailable);
+                List<AccountByRoleDto> accountDtos = accountList.stream().map(account -> account.convertToAccountDto()).collect(Collectors.toList());
                 Map<String, Object> mapObj = new LinkedHashMap<>();
                 mapObj.put("accountList", accountDtos);
                 return ResponseEntity.ok(mapObj);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
         } catch (Exception e) {
