@@ -429,6 +429,17 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.20-get-account-by-role-and-branch-and-isAvailable">
+    /**
+     *
+     * @param branchId
+     * @param role
+     * @param isAvailable
+     * @return
+     * @throws Exception
+     * @apiNote 1.20-get-account-by-role-and-branch-and-isAvailable
+     * @author HuuNT - 2021.11.1
+     */
     @CrossOrigin
     @RequestMapping(value = "/accounts-by-role", method = RequestMethod.GET)
     public ResponseEntity<?> searchInfoByUsername(@RequestParam(value = "branchId") int branchId,
@@ -436,6 +447,7 @@ public class RestApi {
                                                   @RequestParam(value = "isAvailable") boolean isAvailable) throws Exception {
         return accountService.getAccountByRoleAndIsAvalableInBranch(branchId,role,isAvailable);
     }
+    //</editor-fold>
 
     /**
      * -------------------------------BRANCH--------------------------------

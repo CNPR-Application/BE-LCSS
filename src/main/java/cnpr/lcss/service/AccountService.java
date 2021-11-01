@@ -861,6 +861,7 @@ public class AccountService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.20-get-account-by-role-and-branch-and-isAvailable">
     public ResponseEntity<?> getAccountByRoleAndIsAvalableInBranch(int branchId, String role, boolean isAvailable) throws Exception {
         try {
             if(branchRepository.existsBranchByBranchId(branchId)){
@@ -878,4 +879,5 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 }
