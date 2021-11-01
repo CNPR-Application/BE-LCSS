@@ -296,7 +296,10 @@ public class ClassService {
                 Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
                 //initial a arraylist to store classIDs
                 List<Integer> list = new ArrayList();
-                //with status: studying and finished
+                /**
+                 * ONLY STATUS: STUDYING AND FINISHED
+                 * Classes which status: Waiting dont have teacher yet, then it can be canceled (change status)
+                 */
                 if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_FINISHED)) {
                     //get a list student in class by student Id
                     List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
@@ -305,10 +308,6 @@ public class ClassService {
                         list.add(session.getAClass().getClassId());
                     }
                 }
-                if (status.equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || status.equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
-                    list = classRepository.findAllByTeacherUsername(username);
-                }
-
                 //Get classes with CLASSID LIST and STATUS
                 Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
                 List<ClassTeacherSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToTeacherSearchDto()).collect(Collectors.toList());
