@@ -604,7 +604,7 @@ public class ClassService {
         Integer branchId = Integer.parseInt(reqBody.get("branchId").toString());
         Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
         Integer shiftId = Integer.parseInt(reqBody.get("shiftId").toString());
-        String roomName = reqBody.get("roomName").toString();
+        Integer roomId = Integer.parseInt(reqBody.get("roomId").toString());
         Integer teacherId = Integer.parseInt(reqBody.get("teacherId").toString());
         String creator = reqBody.get("creator").toString();
         List<Integer> bookingIdList = (List<Integer>) reqBody.get("bookingIdList");
@@ -620,7 +620,7 @@ public class ClassService {
             Integer newClassId = createANewClass(newClass);
 
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
-            Room room = roomRepository.findByRoomName(roomName);
+            Room room = roomRepository.findByRoomId(roomId);
             Class activateClass = classRepository.findClassByClassId(newClassId);
 
             try {
