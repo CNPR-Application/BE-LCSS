@@ -1,5 +1,8 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.AccountByRoleDto;
+import cnpr.lcss.model.AccountDto;
+import cnpr.lcss.model.BookingSearchResponseDto;
 import cnpr.lcss.model.TeacherInBranchDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -80,6 +83,13 @@ public class Account implements Serializable {
                 ", creatingDate=" + creatingDate +
                 ", token='" + token + '\'' +
                 '}';
+    }
+    //</editor-fold>
+    public AccountByRoleDto convertToAccountDto() {
+        AccountByRoleDto accountDto = new AccountByRoleDto();
+        accountDto.setUsername(username);
+        accountDto.setName(name);
+        return accountDto;
     }
     //</editor-fold>
 }

@@ -429,6 +429,14 @@ public class RestApi {
     }
     //</editor-fold>
 
+    @CrossOrigin
+    @RequestMapping(value = "/accounts-by-role", method = RequestMethod.GET)
+    public ResponseEntity<?> searchInfoByUsername(@RequestParam(value = "branchId") int branchId,
+                                                  @RequestParam(value = "role") String role,
+                                                  @RequestParam(value = "isAvailable") boolean isAvailable) throws Exception {
+        return accountService.getAccountByRoleAndIsAvalableInBranch(branchId,role,isAvailable);
+    }
+
     /**
      * -------------------------------BRANCH--------------------------------
      */
