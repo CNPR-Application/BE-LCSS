@@ -53,4 +53,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
             "and a.role.roleId = ?1 " +
             "and a.student.branch.branchId = ?2")
     List<Account> findAvailableStudentByBranchId(String roleId, int branchId);
+
+    List<Account> findAllByStaff_Branch_BranchIdAndRole_RoleIdAndIsAvailable(int branchId, String role, boolean isAvailable);
 }
