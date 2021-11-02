@@ -55,4 +55,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     @Query("select distinct s from Subject s left join s.teachingSubjectList teachingSubjectList where teachingSubjectList.teacher.teacherId = ?1")
     List<Subject> findDistinctByTeachingSubjectList_Teacher_TeacherId(int teacherId);
+
+    @Query("select distinct s from Subject s left join s.teachingSubjectList teachingSubjectList where teachingSubjectList.teacher.account.username = ?1")
+    Page<Subject> findDistinctByTeachingSubjectList_Account_TeacherUsername(String teacherUsername, Pageable pageable);
 }

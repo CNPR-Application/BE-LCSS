@@ -787,6 +787,25 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="4.08-get-subject-of-teacher">
+    /**
+     *
+     * @param teacherUsername
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 4.08-get-subject-of-teacher
+     * @author HuuNT - 2021.11.02
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "teacherUsername",method = RequestMethod.GET)
+    public ResponseEntity<?> searchSubjectOfTeacher(@RequestParam(value = "teacherUsername") String teacherUsername,
+                                                                       @RequestParam(value = "pageNo") int pageNo,
+                                                                       @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return subjectService.searchSubjectOfTeacher(teacherUsername,pageNo,pageSize);
+    }
+    //</editor-fold>
     /**
      * -------------------------------SUBJECT DETAIL--------------------------------
      */
