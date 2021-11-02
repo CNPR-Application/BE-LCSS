@@ -267,18 +267,14 @@ public class SubjectService {
             Page<Subject> subjectList = subjectRepository.findDistinctByTeachingSubjectList_Account_TeacherUsername(teacherUsername,pageable);
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
-
             for (SubjectSearchDto subject : subjectDtoList) {
                 subject.setRating(calculateRating(subject.getRating()));
             }
-
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
             mapObj.put("pageTotal", pageTotal);
-            mapObj.put("subjectsResponseDtos", subjectDtoList);
-
+            mapObj.put("subjectsList", subjectDtoList);
             return ResponseEntity.ok(mapObj);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
