@@ -148,6 +148,8 @@ public class Constant {
      */
     // Constant value
     public static final String ACCOUNT_SYSTEM = "system";
+    public static final String FEEDBACK_TITLE = "BẠN CÓ HÀI LÒNG VỚI LỚP '%s'?";
+    public static final String FEEDBACK_BODY = "Vui lòng để lại đánh giá về lớp '%s' để trung tâm cải thiện chất lượng giảng dạy. Cám ơn bạn!";
     // Error Message
     public static final String ERROR_GENERATE_NOTIFICATION = "Error at Generate Notifications!";
     //</editor-fold>
