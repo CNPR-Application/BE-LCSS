@@ -32,7 +32,7 @@ public class SubjectService {
     //<editor-fold desc="Calculate Rating">
     private String calculateRating(String rating) {
         DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
-        String[] arrOfInpStr = rating.split("/");
+        String[] arrOfInpStr = rating.split(Constant.SYMBOL_SLASH);
         double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
         String finalResult = df.format(result);
         return finalResult;
@@ -44,23 +44,19 @@ public class SubjectService {
 
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Map<String, Object> mapObj = new LinkedHashMap<>();
-
             Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-            List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
-            int pageTotal = subjectList.getTotalPages();
-
+            List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream()
+                    .map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             for (SubjectSearchDto subject : subjectDtoList) {
                 subject.setRating(calculateRating(subject.getRating()));
             }
-
+            Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("pageTotal", subjectList.getTotalPages());
             mapObj.put("subjectsResponseDtos", subjectDtoList);
 
             return ResponseEntity.ok(mapObj);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -259,21 +255,19 @@ public class SubjectService {
 
     //<editor-fold desc="4.08-get-subject-of-teacher">
     public ResponseEntity<?> searchSubjectOfTeacher(String teacherUsername, int pageNo, int pageSize) {
-
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-            Map<String, Object> mapObj = new LinkedHashMap<>();
-
-            Page<Subject> subjectList = subjectRepository.findDistinctByTeachingSubjectList_Account_TeacherUsername(teacherUsername,pageable);
+            Page<Subject> subjectList = subjectRepository.findDistinctByTeachingSubjectList_Account_TeacherUsername(teacherUsername, pageable);
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream().map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
             for (SubjectSearchDto subject : subjectDtoList) {
                 subject.setRating(calculateRating(subject.getRating()));
             }
+            Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
-            mapObj.put("subjectsList", subjectDtoList);
+            mapObj.put("totalPage", pageTotal);
+            mapObj.put("subjectList", subjectDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
