@@ -883,8 +883,8 @@ public class AccountService {
     //<editor-fold desc="1.21-forgot-password">
     public ResponseEntity<?> forgotPassword(String username) throws Exception {
         try {
-            Account account=accountRepository.findOneByUsername(username);
-            if (account !=null) {
+            Account account = accountRepository.findOneByUsername(username);
+            if (account != null) {
                 boolean checkGmail = false;
                 SendEmailService sendEmailService = new SendEmailService();
                 checkGmail = sendEmailService.sendForgotMail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());

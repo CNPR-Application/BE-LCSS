@@ -328,6 +328,9 @@ public class Constant {
     public static final String SYMBOL_COLON = ":";
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
+    public static final String SYSTEM_MAIL_PASSWORD = "lcss@123";
+    public static final String SYSTEM_MAIL_USERNAME = "lcssfall2021";
+    public static final String SYSTEM_NAME = "LCSS - LANGUAGE CENTER SUPPORT SYSTEM";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;

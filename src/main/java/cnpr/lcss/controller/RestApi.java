@@ -450,8 +450,8 @@ public class RestApi {
     //</editor-fold>
 
     //<editor-fold desc="1.21-forgot-password">
+
     /**
-     *
      * @param username
      * @return
      * @throws Exception
@@ -464,6 +464,7 @@ public class RestApi {
         return accountService.forgotPassword(username);
     }
     //</editor-fold>
+    
     /**
      * -------------------------------BRANCH--------------------------------
      */
@@ -821,7 +822,7 @@ public class RestApi {
         return subjectService.searchSubjectOfTeacher(teacherUsername, pageNo, pageSize);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------SUBJECT DETAIL--------------------------------
      */
