@@ -879,4 +879,27 @@ public class AccountService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="1.21-forgot-password">
+    public ResponseEntity<?> forgotPassword(String username) throws Exception {
+        try {
+            Account account=accountRepository.findOneByUsername(username);
+            if (account !=null) {
+                boolean checkGmail = false;
+                SendEmailService sendEmailService = new SendEmailService();
+                checkGmail = sendEmailService.sendForgotMail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+                if (checkGmail) {
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    throw new Exception(Constant.ERROR_EMAIL_SENDING);
+                }
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
