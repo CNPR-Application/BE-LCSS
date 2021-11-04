@@ -1860,6 +1860,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.07-send-noti-and-email-to-group-person">
+
+    /**
+     *
+     * @param notiAndEmailToGroupRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 15.07-send-noti-and-email-to-group-person
+     * @author HuuNT - 2021.11.04
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-group", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationAndSendEmailToGroup(@RequestBody NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
+        return notificationService.createNotificationAndSendEmailToGroup(notiAndEmailToGroupRequestDto);
+    }
+    //</editor-fold>
     /**
      * -------------------------------FIREBASE--------------------------------
      **/

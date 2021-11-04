@@ -4,7 +4,10 @@ import cnpr.lcss.dao.Account;
 import cnpr.lcss.dao.Notification;
 import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.dao.Teacher;
+import cnpr.lcss.model.NotiAndEmailToGroupRequestDto;
 import cnpr.lcss.model.NotificationDto;
+import cnpr.lcss.model.UpdateAttendanceDto;
+import cnpr.lcss.model.UserArrayInNotificationToGroupDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import com.google.firebase.FirebaseApp;
@@ -355,6 +358,92 @@ public class NotificationService {
         }
     }
     //</editor-fold>
+
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> createNotificationAndSendEmailToGroup(NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
+        try {
+            /**
+             * FOR NOTI
+             */
+            String senderUsername =  notiAndEmailToGroupRequestDto.getSenderUsername();
+            if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
+                if (!accountRepository.existsByUsername(senderUsername)) {
+                    throw new Exception(Constant.INVALID_USERNAME);
+                }
+            }
+            String title = notiAndEmailToGroupRequestDto.getTitle();
+            String body = notiAndEmailToGroupRequestDto.getBody();
+            /**
+             * FOR Email
+             */
+            String className=notiAndEmailToGroupRequestDto.getClassName();
+            String subjectName= notiAndEmailToGroupRequestDto.getSubjectName();
+            String oldOpeningDate = notiAndEmailToGroupRequestDto.getOldOpeningDate();
+            String newOpeningDate =notiAndEmailToGroupRequestDto.getNewOpeningDate();
+            ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
+            ZonedDateTime today = ZonedDateTime.now(zoneId);
+            /**
+             * dùng list user gửi notification ( nội dung: title,body FE gửi )
+             *
+             * sau đó gửi email cho từng người list username đó (nội dung:
+             */
+            for(UserArrayInNotificationToGroupDto userArrayInNotificationToGroupDto: notiAndEmailToGroupRequestDto.getUserArrayInNotificationToGroupDtoList()){
+                String username=userArrayInNotificationToGroupDto.getUsername();
+
+                 String name=userArrayInNotificationToGroupDto.getName();
+                 String bookingDate=userArrayInNotificationToGroupDto.getBookingDate();
+                 Account account=accountRepository.findOneByUsername(username);
+                /**
+                 * SEND NOTI TO EACH USER IN USERLIST and Save Noti
+                 */
+                //
+                if(account !=null){
+                     if (account.getToken() != null) {
+                         Notification newNotification = new Notification();
+                         newNotification.setSenderUsername(senderUsername.toLowerCase());
+                         newNotification.setReceiverUsername(account);
+                         newNotification.setTitle(title.trim());
+                         newNotification.setBody(body.trim());
+                         newNotification.setIsRead(Boolean.FALSE);
+                         newNotification.setCreatingDate(Date.from(today.toInstant()));
+                         newNotification.setLastModified(Date.from(today.toInstant()));
+                         // Send notification to token's device
+                         Message message = com.google.firebase.messaging.Message.builder()
+                                 .setToken(account.getToken())
+                                 .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
+                                 .putData("content", newNotification.getTitle())
+                                 .putData("body", newNotification.getBody())
+                                 .build();
+                         String response = "";
+                         try {
+                             response = FirebaseMessaging.getInstance().send(message);
+                         } catch (Exception e) {
+                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                         }
+                         notificationRepository.save(newNotification);
+                     }
+                 }
+                 else{
+                     throw new Exception(Constant.INVALID_USERNAME);
+                 }
+                /**
+                 *SEND EMAIL TO PERSON
+                 */
+                boolean checkGmail = false;
+                SendEmailService sendEmailService = new SendEmailService();
+                checkGmail = sendEmailService.sendMailToGroup(account.getEmail(), account.getName(),className,subjectName,bookingDate,oldOpeningDate,newOpeningDate);
+                if (checkGmail=false) {
+                    throw new Exception(Constant.ERROR_EMAIL_SENDING);
+            }
+        }
+            //out of loop return true
+            return ResponseEntity.ok(Boolean.TRUE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
 
 
