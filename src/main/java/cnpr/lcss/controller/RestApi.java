@@ -464,7 +464,7 @@ public class RestApi {
         return accountService.forgotPassword(username);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------BRANCH--------------------------------
      */
@@ -1879,7 +1879,6 @@ public class RestApi {
     //<editor-fold desc="15.07-send-noti-and-email-to-group-person">
 
     /**
-     *
      * @param notiAndEmailToGroupRequestDto
      * @return
      * @throws Exception
@@ -1892,6 +1891,7 @@ public class RestApi {
         return notificationService.createNotificationAndSendEmailToGroup(notiAndEmailToGroupRequestDto);
     }
     //</editor-fold>
+
     /**
      * -------------------------------FIREBASE--------------------------------
      **/

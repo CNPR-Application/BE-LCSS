@@ -338,6 +338,11 @@ public class Constant {
             + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
             + "\n\nChúc bạn một ngày vui vẻ!"
             + "\n\nCNPR.";
+    public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Cám ơn anh chị đã đăng ký vào khóa học %s môn %s của trung tâm CNPR vào ngày %s vừa qua. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n" +
+            "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm !\n" +
+            "\n" +
+            "Chân thành cám ơn,\n" +
+            "CNPR.";
     public static final String SYSTEM_MAIL_PASSWORD = "lcss@123";
     public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
     public static final String SYSTEM_MAIL_USERNAME = "lcssfall2021";

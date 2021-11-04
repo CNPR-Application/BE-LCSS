@@ -1,7 +1,6 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.util.Constant;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -88,12 +87,8 @@ public class SendEmailService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.07 send-noti-and-email-to-group-person">
     public boolean sendMailToGroup(String userGmail, String accountName,String className,String subjectName, String bookingDate,String oldOpeningDate, String newOpeningDate) throws AuthenticationFailedException {
-
-        final String branchName = "LCSS-LANGUAGE CENTER SUPPORT SYSTEM";
-        final String username = "lcssfall2021";
-        final String password = "lcss@123";
-
         boolean result = false;
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -104,25 +99,20 @@ public class SendEmailService {
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(Constant.SYSTEM_MAIL_USERNAME, Constant.SYSTEM_MAIL_PASSWORD);
                     }
                 });
 
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(userGmail, branchName));
+            message.setFrom(new InternetAddress(userGmail, Constant.SYSTEM_NAME));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("Kính gửi: Anh/chị "+accountName+",");
-            message.setText("Cám ơn anh chị đã đăng ký vào khóa học "+className+" môn "+subjectName+" của trung tâm CNPR vào ngày "+bookingDate+" vừa qua. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày "+oldOpeningDate+" như dự tính.\n" +
-                    "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày "+newOpeningDate+". Mong quý học viên thông cảm !\n" +
-                    "\n" +
-                    "Chân thành cám ơn,\n" +
-                    "CNPR.");
-
+            message.setSubject("Kính gửi: Anh/chị " + accountName + ",");
+            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP, className, subjectName, bookingDate, oldOpeningDate, newOpeningDate));
             Transport.send(message);
             result = true;
             return result;
@@ -131,4 +121,5 @@ public class SendEmailService {
             throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
         }
     }
+    //</editor-fold>
 }
