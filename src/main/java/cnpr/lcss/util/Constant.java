@@ -340,6 +340,12 @@ public class Constant {
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
     // Minimum six characters, at least one letter and one number
     public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+    public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
+    public static final String SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT = "Tài khoản đăng nhập của bạn là: %s"
+            + "\n\nMật khẩu: %s"
+            + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
+            + "\n\nChúc bạn một ngày vui vẻ!"
+            + "\n\nCNPR.";
     //</editor-fold>
 
     //<editor-fold desc="Conversion">
