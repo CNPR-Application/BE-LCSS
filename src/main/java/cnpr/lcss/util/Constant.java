@@ -335,8 +335,8 @@ public class Constant {
     public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
-    //Minimum six characters, at least one letter and one number:
-    public static final String PASSWORD_PATTERN= "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+    // Minimum six characters, at least one letter and one number
+    public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
     //</editor-fold>
 
     //<editor-fold desc="Conversion">
