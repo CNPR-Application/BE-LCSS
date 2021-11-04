@@ -67,6 +67,9 @@ public class Constant {
     public static final String INVALID_TEACHER_EXP = "Null or empty experience!";
     public static final String INVALID_USERNAME = "Username not exist!";
     public static final String PASSWORD_NOT_MATCH = "Password not match!";
+    public static final String INVALID_PASSWORD_PATTERN = "Password must has minimum six characters, at least one letter and one number!";
+    public static final String OLDPASSWORD_MATCH_NEWPASSWORD = "New password matched Old password! Please try new password";
+    public static final String RENEWPASSWORD_NOT_MATCH_NEWPASSWORD = "Re new password did not match new password! Please try again";
     //</editor-fold>
 
     //<editor-fold desc="Attendance">
@@ -335,6 +338,8 @@ public class Constant {
     public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
+    // Minimum six characters, at least one letter and one number
+    public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
     //</editor-fold>
 
     //<editor-fold desc="Conversion">

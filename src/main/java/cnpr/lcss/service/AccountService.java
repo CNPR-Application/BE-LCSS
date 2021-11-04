@@ -781,24 +781,29 @@ public class AccountService {
     //<editor-fold desc="1.09-change-password">
     public ResponseEntity<?> changePassword(String username, HashMap<String, Object> reqBody) throws Exception {
         try {
-
             Account account = accountRepository.findOneByUsername(username);
-            if (account.equals(null))
+            if (account.equals(null)) {
                 throw new Exception(Constant.INVALID_USERNAME);
-            String newPassword = (String) reqBody.get("newPassword");
+            }
             String oldPassword = (String) reqBody.get("oldPassword");
+            String newPassword = (String) reqBody.get("newPassword");
             String reNewPassword = (String) reqBody.get("reNewPassword");
             if (!oldPassword.matches(account.getPassword())) {
                 throw new Exception(Constant.PASSWORD_NOT_MATCH);
             }
-            if (!newPassword.matches(oldPassword) && reNewPassword.matches(newPassword)) {
+            if (!newPassword.matches(Constant.PASSWORD_PATTERN)) {
+                throw new Exception((Constant.INVALID_PASSWORD_PATTERN));
+            }
+            if (newPassword.matches(oldPassword)) {
+                throw new Exception(Constant.OLDPASSWORD_MATCH_NEWPASSWORD);
+            }
+            if (reNewPassword.matches(newPassword)) {
                 account.setPassword(newPassword);
                 accountRepository.save(account);
                 return ResponseEntity.ok(Boolean.TRUE);
             } else {
-                return ResponseEntity.ok(Boolean.FALSE);
+                throw new Exception((Constant.RENEWPASSWORD_NOT_MATCH_NEWPASSWORD));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
