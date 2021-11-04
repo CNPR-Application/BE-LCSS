@@ -449,6 +449,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.21-forgot-password">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.21-forgot-password
+     * @author HuuNT - 2021.11.04
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.PUT)
+    public ResponseEntity<?> forgotPassword(@RequestParam(value = "username") String username) throws Exception {
+        return accountService.forgotPassword(username);
+    }
+    //</editor-fold>
+    
     /**
      * -------------------------------BRANCH--------------------------------
      */
@@ -806,7 +822,7 @@ public class RestApi {
         return subjectService.searchSubjectOfTeacher(teacherUsername, pageNo, pageSize);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------SUBJECT DETAIL--------------------------------
      */
