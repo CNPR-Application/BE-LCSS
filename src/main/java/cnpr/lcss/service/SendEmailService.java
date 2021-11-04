@@ -35,14 +35,8 @@ public class SendEmailService {
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("Chào mừng bạn đến với trung tâm CNPR!");
-            message.setText("Tài khoản đăng nhập của bạn là: " + accountUsername
-                    + "\n\nMật khẩu: " + accountPassword
-                    + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
-                    + "\n\nChúc bạn một ngày vui vẻ!"
-                    + "\n\nCNPR.");
-//            message.setSubject(Constant.SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT);
-//            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT, accountUsername, accountPassword));
+            message.setSubject(Constant.SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT);
+            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT, accountUsername, accountPassword));
 
             Transport.send(message);
             result = true;
