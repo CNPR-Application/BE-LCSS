@@ -1,10 +1,12 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
+import cnpr.lcss.dao.Room;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.CurriculumDto;
 import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
+import cnpr.lcss.model.RoomAndBranchDto;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectRepository;
 import cnpr.lcss.util.Constant;
@@ -67,7 +69,9 @@ public class CurriculumService {
     //<editor-fold desc="Get Curriculum Details by Curriculum Id">
     public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
         try {
-            return ResponseEntity.ok(curriculumRepository.findOneByCurriculumId(curriculumId));
+            Curriculum curriculum = curriculumRepository.findOneByCurriculumId(curriculumId);
+            CurriculumDto curriculumDto = curriculum.convertToDto();
+            return ResponseEntity.ok(curriculumDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
