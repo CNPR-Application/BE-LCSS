@@ -6,8 +6,6 @@ import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.dao.Teacher;
 import cnpr.lcss.model.NotiAndEmailToGroupRequestDto;
 import cnpr.lcss.model.NotificationDto;
-import cnpr.lcss.model.UpdateAttendanceDto;
-import cnpr.lcss.model.UserArrayInNotificationToGroupDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import com.google.firebase.FirebaseApp;
@@ -359,6 +357,7 @@ public class NotificationService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="15.07-send-noti-and-email-to-group-person">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> createNotificationAndSendEmailToGroup(NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
         try {
@@ -377,7 +376,6 @@ public class NotificationService {
              * FOR Email
              */
             String className=notiAndEmailToGroupRequestDto.getClassName();
-            String subjectName= notiAndEmailToGroupRequestDto.getSubjectName();
             String oldOpeningDate = notiAndEmailToGroupRequestDto.getOldOpeningDate();
             String newOpeningDate =notiAndEmailToGroupRequestDto.getNewOpeningDate();
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
@@ -387,21 +385,17 @@ public class NotificationService {
              *
              * sau đó gửi email cho từng người list username đó (nội dung:
              */
-            for(UserArrayInNotificationToGroupDto userArrayInNotificationToGroupDto: notiAndEmailToGroupRequestDto.getUserArrayInNotificationToGroupDtoList()){
-                String username=userArrayInNotificationToGroupDto.getUsername();
-
-                 String name=userArrayInNotificationToGroupDto.getName();
-                 String bookingDate=userArrayInNotificationToGroupDto.getBookingDate();
-                 Account account=accountRepository.findOneByUsername(username);
+            for (String username : notiAndEmailToGroupRequestDto.getUsername()) {
+                Account account = accountRepository.findOneByUsername(username);
                 /**
                  * SEND NOTI TO EACH USER IN USERLIST and Save Noti
                  */
                 //
-                if(account !=null){
-                     if (account.getToken() != null) {
-                         Notification newNotification = new Notification();
-                         newNotification.setSenderUsername(senderUsername.toLowerCase());
-                         newNotification.setReceiverUsername(account);
+                if (account != null) {
+                    if (account.getToken() != null) {
+                        Notification newNotification = new Notification();
+                        newNotification.setSenderUsername(senderUsername.toLowerCase());
+                        newNotification.setReceiverUsername(account);
                          newNotification.setTitle(title.trim());
                          newNotification.setBody(body.trim());
                          newNotification.setIsRead(Boolean.FALSE);
@@ -431,7 +425,7 @@ public class NotificationService {
                  */
                 boolean checkGmail = false;
                 SendEmailService sendEmailService = new SendEmailService();
-                checkGmail = sendEmailService.sendMailToGroup(account.getEmail(), account.getName(),className,subjectName,bookingDate,oldOpeningDate,newOpeningDate);
+                checkGmail = sendEmailService.sendMailToGroup(account.getEmail(), account.getName(), className, oldOpeningDate, newOpeningDate);
                 if (checkGmail=false) {
                     throw new Exception(Constant.ERROR_EMAIL_SENDING);
             }
@@ -444,6 +438,7 @@ public class NotificationService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 }
 
 

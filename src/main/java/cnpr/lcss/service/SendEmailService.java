@@ -88,7 +88,7 @@ public class SendEmailService {
     //</editor-fold>
 
     //<editor-fold desc="15.07 send-noti-and-email-to-group-person">
-    public boolean sendMailToGroup(String userGmail, String accountName,String className,String subjectName, String bookingDate,String oldOpeningDate, String newOpeningDate) throws AuthenticationFailedException {
+    public boolean sendMailToGroup(String userGmail, String accountName, String className, String oldOpeningDate, String newOpeningDate) throws AuthenticationFailedException {
         boolean result = false;
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -111,8 +111,8 @@ public class SendEmailService {
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("Kính gửi: Anh/chị " + accountName + ",");
-            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP, className, subjectName, bookingDate, oldOpeningDate, newOpeningDate));
+            message.setSubject(Constant.SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP);
+            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP, accountName, className, oldOpeningDate, newOpeningDate));
             Transport.send(message);
             result = true;
             return result;

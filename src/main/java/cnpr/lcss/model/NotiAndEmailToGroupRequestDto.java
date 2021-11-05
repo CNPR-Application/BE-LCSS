@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class NotiAndEmailToGroupRequestDto {
-    List<UserArrayInNotificationToGroupDto> userArrayInNotificationToGroupDtoList;
+    List<String> username;
     private String senderUsername;
     private String title;
     private String body;
