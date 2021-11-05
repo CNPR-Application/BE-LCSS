@@ -69,8 +69,8 @@ public class CurriculumService {
     //<editor-fold desc="Get Curriculum Details by Curriculum Id">
     public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
         try {
-            Curriculum curriculum= curriculumRepository.findOneByCurriculumId(curriculumId);
-            CurriculumDto curriculumDto=curriculum.convertToDto();
+            Curriculum curriculum = curriculumRepository.findOneByCurriculumId(curriculumId);
+            CurriculumDto curriculumDto = curriculum.convertToDto();
             return ResponseEntity.ok(curriculumDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
