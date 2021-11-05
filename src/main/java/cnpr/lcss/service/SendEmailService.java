@@ -104,7 +104,6 @@ public class SendEmailService {
                 });
 
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(userGmail, Constant.SYSTEM_NAME));
             message.setRecipients(

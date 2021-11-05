@@ -307,7 +307,6 @@ public class Constant {
     /**
      * -----OTHERS-----
      */
-    // Minimum six characters, at least one letter and one number
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 55 18 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -326,6 +325,7 @@ public class Constant {
     public static final String NOT_AVAILABLE_INFO = "N/A";
     public static final String NUMBERS = "1234567890";
     public static final String NUMBER_ZERO = "0";
+    // Minimum six characters, at least one letter and one number
     public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
@@ -340,7 +340,7 @@ public class Constant {
             + "\n\nCNPR.";
     public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Thân gửi bạn %s,\n" +
             "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n" +
-            "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm !\n" +
+            "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n" +
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";

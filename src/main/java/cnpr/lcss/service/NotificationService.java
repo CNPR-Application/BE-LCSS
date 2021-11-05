@@ -361,10 +361,8 @@ public class NotificationService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> createNotificationAndSendEmailToGroup(NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
         try {
-            /**
-             * FOR NOTI
-             */
-            String senderUsername =  notiAndEmailToGroupRequestDto.getSenderUsername();
+            // For Notification
+            String senderUsername = notiAndEmailToGroupRequestDto.getSenderUsername();
             if (!senderUsername.equalsIgnoreCase(Constant.ACCOUNT_SYSTEM)) {
                 if (!accountRepository.existsByUsername(senderUsername)) {
                     throw new Exception(Constant.INVALID_USERNAME);
@@ -372,67 +370,52 @@ public class NotificationService {
             }
             String title = notiAndEmailToGroupRequestDto.getTitle();
             String body = notiAndEmailToGroupRequestDto.getBody();
-            /**
-             * FOR Email
-             */
-            String className=notiAndEmailToGroupRequestDto.getClassName();
+            // For Email
+            String className = notiAndEmailToGroupRequestDto.getClassName();
             String oldOpeningDate = notiAndEmailToGroupRequestDto.getOldOpeningDate();
-            String newOpeningDate =notiAndEmailToGroupRequestDto.getNewOpeningDate();
+            String newOpeningDate = notiAndEmailToGroupRequestDto.getNewOpeningDate();
             ZoneId zoneId = ZoneId.of(Constant.TIMEZONE);
             ZonedDateTime today = ZonedDateTime.now(zoneId);
-            /**
-             * dùng list user gửi notification ( nội dung: title,body FE gửi )
-             *
-             * sau đó gửi email cho từng người list username đó (nội dung:
-             */
+
             for (String username : notiAndEmailToGroupRequestDto.getUsername()) {
                 Account account = accountRepository.findOneByUsername(username);
-                /**
-                 * SEND NOTI TO EACH USER IN USERLIST and Save Noti
-                 */
-                //
                 if (account != null) {
                     if (account.getToken() != null) {
                         Notification newNotification = new Notification();
                         newNotification.setSenderUsername(senderUsername.toLowerCase());
                         newNotification.setReceiverUsername(account);
-                         newNotification.setTitle(title.trim());
-                         newNotification.setBody(body.trim());
-                         newNotification.setIsRead(Boolean.FALSE);
-                         newNotification.setCreatingDate(Date.from(today.toInstant()));
-                         newNotification.setLastModified(Date.from(today.toInstant()));
-                         // Send notification to token's device
-                         Message message = com.google.firebase.messaging.Message.builder()
-                                 .setToken(account.getToken())
-                                 .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
-                                 .putData("content", newNotification.getTitle())
-                                 .putData("body", newNotification.getBody())
-                                 .build();
-                         String response = "";
-                         try {
-                             response = FirebaseMessaging.getInstance().send(message);
-                         } catch (Exception e) {
-                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
-                         }
-                         notificationRepository.save(newNotification);
-                     }
-                 }
-                 else{
-                     throw new Exception(Constant.INVALID_USERNAME);
-                 }
-                /**
-                 *SEND EMAIL TO PERSON
-                 */
+                        newNotification.setTitle(title.trim());
+                        newNotification.setBody(body.trim());
+                        newNotification.setIsRead(Boolean.FALSE);
+                        newNotification.setCreatingDate(Date.from(today.toInstant()));
+                        newNotification.setLastModified(Date.from(today.toInstant()));
+                        // Send notification to token's device
+                        Message message = com.google.firebase.messaging.Message.builder()
+                                .setToken(account.getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(newNotification.getTitle(), newNotification.getBody()))
+                                .putData("content", newNotification.getTitle())
+                                .putData("body", newNotification.getBody())
+                                .build();
+                        String response = "";
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (Exception e) {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + " " + response);
+                        }
+                        notificationRepository.save(newNotification);
+                    }
+                } else {
+                    throw new Exception(Constant.INVALID_USERNAME);
+                }
+
                 boolean checkGmail = false;
                 SendEmailService sendEmailService = new SendEmailService();
                 checkGmail = sendEmailService.sendMailToGroup(account.getEmail(), account.getName(), className, oldOpeningDate, newOpeningDate);
-                if (checkGmail=false) {
+                if (checkGmail = false) {
                     throw new Exception(Constant.ERROR_EMAIL_SENDING);
+                }
             }
-        }
-            //out of loop return true
             return ResponseEntity.ok(Boolean.TRUE);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
