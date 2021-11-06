@@ -9,6 +9,7 @@ import cnpr.lcss.repository.ClassRepository;
 import cnpr.lcss.repository.NotificationRepository;
 import cnpr.lcss.util.Constant;
 import com.google.common.collect.Iterables;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -36,6 +37,7 @@ public class SchedulerService {
     AttendanceRepository attendanceRepository;
     @Autowired
     NotificationRepository notificationRepository;
+    FirebaseApp firebaseApp;
 
     //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
     @Scheduled(cron = Constant.CRON_EVERY_DAY_AT_MIDNIGHT, zone = Constant.TIMEZONE)
@@ -74,20 +76,22 @@ public class SchedulerService {
                 newNoti.setCreatingDate(Date.from(currentDate.toInstant()));
                 newNoti.setLastModified(Date.from(currentDate.toInstant()));
                 if (sic.getStudent().getAccount() != null) {
-                    Message message = com.google.firebase.messaging.Message.builder()
-                            .setToken(sic.getStudent().getAccount().getToken())
-                            .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
-                            .putData("content", newNoti.getTitle())
-                            .putData("body", newNoti.getBody())
-                            .build();
-                    String response = "";
-                    try {
-                        response = FirebaseMessaging.getInstance().send(message);
-                    } catch (FirebaseMessagingException e) {
-                        e.printStackTrace();
+                    if (sic.getStudent().getAccount().getToken() != null) {
+                        Message message = Message.builder()
+                                .setToken(sic.getStudent().getAccount().getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
+                                .putData("content", newNoti.getTitle())
+                                .putData("body", newNoti.getBody())
+                                .build();
+                        String response = "";
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (FirebaseMessagingException e) {
+                            e.printStackTrace();
+                        }
+                        notificationRepository.save(newNoti);
                     }
                 }
-                notificationRepository.save(newNoti);
             }
         }
         //</editor-fold>
