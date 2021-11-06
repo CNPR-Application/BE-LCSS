@@ -55,4 +55,12 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     List<Account> findAvailableStudentByBranchId(String roleId, int branchId);
 
     List<Account> findAllByStaff_Branch_BranchIdAndRole_RoleIdAndIsAvailable(int branchId, String role, boolean isAvailable);
+
+    @Query(nativeQuery = true,
+            value = "select a.* " +
+                    "from account as a " +
+                    "join student s on a.username = s.student_username " +
+                    "join student_in_class sic on s.student_id = sic.student_id " +
+                    "where sic.student_class_id = ?1")
+    Account findByStudentInClass_Id(Integer id);
 }

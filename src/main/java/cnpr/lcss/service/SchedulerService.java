@@ -1,12 +1,8 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Attendance;
+import cnpr.lcss.dao.*;
 import cnpr.lcss.dao.Class;
-import cnpr.lcss.dao.Notification;
-import cnpr.lcss.dao.StudentInClass;
-import cnpr.lcss.repository.AttendanceRepository;
-import cnpr.lcss.repository.ClassRepository;
-import cnpr.lcss.repository.NotificationRepository;
+import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import com.google.common.collect.Iterables;
 import com.google.firebase.FirebaseApp;
@@ -32,11 +28,15 @@ import java.util.List;
 @EnableScheduling
 public class SchedulerService {
     @Autowired
-    ClassRepository classRepository;
+    AccountRepository accountRepository;
     @Autowired
     AttendanceRepository attendanceRepository;
     @Autowired
+    ClassRepository classRepository;
+    @Autowired
     NotificationRepository notificationRepository;
+    @Autowired
+    StudentInClassRepository studentInClassRepository;
     FirebaseApp firebaseApp;
 
     //<editor-fold desc="9.12-scan-all-classes-to-update-class-status-to-finished">
@@ -65,33 +65,34 @@ public class SchedulerService {
          * send Notifications to all Students belong to that class to remind feedback
          */
         for (Class aClass : justFinishedClassList) {
-            List<StudentInClass> studentInClassList = aClass.getStudentInClassList();
+            List<StudentInClass> studentInClassList = studentInClassRepository.findStudentsByClassId(aClass.getClassId());
             for (StudentInClass sic : studentInClassList) {
-                Notification newNoti = new Notification();
-                newNoti.setSenderUsername(Constant.ACCOUNT_SYSTEM);
-                newNoti.setReceiverUsername(sic.getStudent().getAccount());
-                newNoti.setTitle(String.format(Constant.FEEDBACK_TITLE, aClass.getClassName()));
-                newNoti.setBody(String.format(Constant.FEEDBACK_BODY, aClass.getClassName()));
-                newNoti.setIsRead(Boolean.FALSE);
-                newNoti.setCreatingDate(Date.from(currentDate.toInstant()));
-                newNoti.setLastModified(Date.from(currentDate.toInstant()));
-                if (sic.getStudent().getAccount() != null) {
-                    if (sic.getStudent().getAccount().getToken() != null) {
-                        Message message = Message.builder()
-                                .setToken(sic.getStudent().getAccount().getToken())
-                                .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
-                                .putData("content", newNoti.getTitle())
-                                .putData("body", newNoti.getBody())
-                                .build();
-                        String response = "";
-                        try {
-                            response = FirebaseMessaging.getInstance().send(message);
-                        } catch (FirebaseMessagingException e) {
-                            e.printStackTrace();
-                        }
-                        notificationRepository.save(newNoti);
+                Account acc = accountRepository.findByStudentInClass_Id(sic.getStudentInClassId());
+                if (acc.getToken() != null) {
+                    Notification newNoti = new Notification();
+                    newNoti.setSenderUsername(Constant.ACCOUNT_SYSTEM);
+                    newNoti.setReceiverUsername(acc);
+                    newNoti.setTitle(String.format(Constant.FEEDBACK_TITLE, aClass.getClassName()));
+                    newNoti.setBody(String.format(Constant.FEEDBACK_BODY, aClass.getClassName()));
+                    newNoti.setIsRead(Boolean.FALSE);
+                    newNoti.setCreatingDate(Date.from(currentDate.toInstant()));
+                    newNoti.setLastModified(Date.from(currentDate.toInstant()));
+
+                    Message message = com.google.firebase.messaging.Message.builder()
+                            .setToken(acc.getToken())
+                            .setNotification(new com.google.firebase.messaging.Notification(newNoti.getTitle(), newNoti.getBody()))
+                            .putData("content", newNoti.getTitle())
+                            .putData("body", newNoti.getBody())
+                            .build();
+                    String response = "";
+                    try {
+                        response = FirebaseMessaging.getInstance().send(message);
+                    } catch (FirebaseMessagingException e) {
+                        e.printStackTrace();
                     }
+                    notificationRepository.save(newNoti);
                 }
+
             }
         }
         //</editor-fold>
