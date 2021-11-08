@@ -53,8 +53,8 @@ public class SubjectService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", subjectList.getTotalPages());
-            mapObj.put("subjectsResponseDtos", subjectDtoList);
+            mapObj.put("totalPage", subjectList.getTotalPages());
+            mapObj.put("subjectsResponseDto", subjectDtoList);
 
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
@@ -65,28 +65,35 @@ public class SubjectService {
     //</editor-fold>
 
     //<editor-fold desc="4.03-search-subject-by-curriculum-id">
-    public SubjectPagingResponseDto findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+    public ResponseEntity<?> findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo, int pageSize) {
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+            Page<Subject> page = subjectRepository.findByCurriculum_CurriculumIdAndIsAvailable(keyword, isAvailable, pageable);
+            List<Subject> subjectList = page.getContent();
+            List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
+            int pageTotal = page.getTotalPages();
 
-        Page<Subject> page = subjectRepository.findByCurriculum_CurriculumIdAndIsAvailable(keyword, isAvailable, pageable);
-        List<Subject> subjectList = page.getContent();
-        List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        for (SubjectDto subject : subjectDtoList) {
-            subject.setRating(calculateRating(subject.getRating()));
+            for (SubjectDto subject : subjectDtoList) {
+                subject.setRating(calculateRating(subject.getRating()));
+            }
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("totalPage", pageTotal);
+            mapObj.put("subjectsResponseDto", subjectDtoList);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        SubjectPagingResponseDto subjectPagingResponseDto = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
-
-        return subjectPagingResponseDto;
     }
     //</editor-fold>
 
     //<editor-fold desc="4.02-search-subject-by-subject-code">
-    public SubjectPagingResponseDto findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
+    public ResponseEntity<?> findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
+        try{
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
+        Map<String, Object> mapObj = new LinkedHashMap<>();
         Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
         List<Subject> subjectList = page.getContent();
         List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
@@ -95,10 +102,15 @@ public class SubjectService {
         for (SubjectDto subject : subjectDtoList) {
             subject.setRating(calculateRating(subject.getRating()));
         }
-
-        SubjectPagingResponseDto subPgResDtos = new SubjectPagingResponseDto(pageNo, pageSize, pageTotal, subjectDtoList);
-
-        return subPgResDtos;
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", pageTotal);
+        mapObj.put("subjectsResponseDto", subjectDtoList);
+        return ResponseEntity.ok(mapObj);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
     }
     //</editor-fold>
 

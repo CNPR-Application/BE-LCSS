@@ -22,7 +22,9 @@ public class SubjectDto {
     private int slot;
     private int slotPerWeek;
     private String rating;
-    private Curriculum curriculum;
+    private int curriculumId;
+    private String curriculumCode;
+    private String curriculumName;
 
     //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {

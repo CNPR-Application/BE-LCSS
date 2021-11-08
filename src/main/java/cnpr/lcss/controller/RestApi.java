@@ -707,7 +707,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByCode(@RequestParam(value = "code") String keyword,
+    public ResponseEntity<?> searchSubjectByCode(@RequestParam(value = "code") String keyword,
                                                         @RequestParam(value = "isAvailable") boolean isAvailable,
                                                         @RequestParam(value = "pageNo") int pageNo,
                                                         @RequestParam(value = "pageSize") int pageSize) {
@@ -728,7 +728,7 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "curriculumId", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
+    public ResponseEntity<?> searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
                                                                 @RequestParam(value = "isAvailable") boolean isAvailable,
                                                                 @RequestParam(value = "pageNo") int pageNo,
                                                                 @RequestParam(value = "pageSize") int pageSize) {
