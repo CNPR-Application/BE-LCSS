@@ -708,9 +708,9 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
     public ResponseEntity<?> searchSubjectByCode(@RequestParam(value = "code") String keyword,
-                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                        @RequestParam(value = "pageNo") int pageNo,
-                                                        @RequestParam(value = "pageSize") int pageSize) {
+                                                 @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                 @RequestParam(value = "pageNo") int pageNo,
+                                                 @RequestParam(value = "pageSize") int pageSize) {
 
         return subjectService.findBySubjectCodeAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
@@ -729,9 +729,9 @@ public class RestApi {
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "curriculumId", method = RequestMethod.GET)
     public ResponseEntity<?> searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
-                                                                @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                                @RequestParam(value = "pageNo") int pageNo,
-                                                                @RequestParam(value = "pageSize") int pageSize) {
+                                                         @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                         @RequestParam(value = "pageSize") int pageSize) {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>

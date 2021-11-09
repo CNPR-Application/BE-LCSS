@@ -91,26 +91,26 @@ public class SubjectService {
 
     //<editor-fold desc="4.02-search-subject-by-subject-code">
     public ResponseEntity<?> findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo, int pageSize) {
-        try{
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        Map<String, Object> mapObj = new LinkedHashMap<>();
-        Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
-        List<Subject> subjectList = page.getContent();
-        List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
+        try {
+            Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+            Map<String, Object> mapObj = new LinkedHashMap<>();
+            Page<Subject> page = subjectRepository.findBySubjectCodeContainingIgnoreCaseAndIsAvailable(code, isAvailable, pageable);
+            List<Subject> subjectList = page.getContent();
+            List<SubjectDto> subjectDtoList = subjectList.stream().map(subject -> subject.convertToDto()).collect(Collectors.toList());
+            int pageTotal = page.getTotalPages();
 
-        for (SubjectDto subject : subjectDtoList) {
-            subject.setRating(calculateRating(subject.getRating()));
+            for (SubjectDto subject : subjectDtoList) {
+                subject.setRating(calculateRating(subject.getRating()));
+            }
+            mapObj.put("pageNo", pageNo);
+            mapObj.put("pageSize", pageSize);
+            mapObj.put("totalPage", pageTotal);
+            mapObj.put("subjectsResponseDto", subjectDtoList);
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        mapObj.put("pageNo", pageNo);
-        mapObj.put("pageSize", pageSize);
-        mapObj.put("totalPage", pageTotal);
-        mapObj.put("subjectsResponseDto", subjectDtoList);
-        return ResponseEntity.ok(mapObj);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    }
     }
     //</editor-fold>
 
