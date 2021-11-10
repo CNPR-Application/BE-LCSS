@@ -2,7 +2,6 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Shift;
 import cnpr.lcss.model.ShiftDto;
-import cnpr.lcss.model.ShiftPagingResponseDto;
 import cnpr.lcss.model.ShiftRequestDto;
 import cnpr.lcss.repository.ShiftRepository;
 import cnpr.lcss.util.Constant;
@@ -16,9 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,19 +97,16 @@ public class ShiftService {
     //</editor-fold>
 
     //<editor-fold desc="13.02-search-shift-by-dow-and-by-time-start-containing">
-    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, int pageNo, int pageSize) {
-
+    public ResponseEntity<?> searchShiftByDayOfWeekContainingOrTimeStartContaining(String dayOfWeek, String timeStart, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<Shift> page = shiftRepository.findShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageable);
-        List<Shift> shiftList = page.getContent();
-        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
-
-        int pageTotal = page.getTotalPages();
-
-        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
-
-        return shiftPagingResponseDto;
+        List<ShiftDto> shiftDtoList = page.getContent().stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("shiftDtos", shiftDtoList);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 
@@ -140,16 +134,16 @@ public class ShiftService {
     //</editor-fold>
 
     //<editor-fold desc="13.05-get-all-shift-by-isAvailable">
-    public ShiftPagingResponseDto findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
-
+    public ResponseEntity<?> findAllShiftByIsAvailable(boolean isAvailable, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         Page<Shift> page = shiftRepository.findByIsAvailable(isAvailable, pageable);
-        List<Shift> shiftList = page.getContent();
-        List<ShiftDto> shiftDtoList = shiftList.stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        ShiftPagingResponseDto shiftPagingResponseDto = new ShiftPagingResponseDto(shiftDtoList, pageNo, pageSize, pageTotal);
-        return shiftPagingResponseDto;
+        List<ShiftDto> shiftDtoList = page.getContent().stream().map(shift -> shift.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("shiftDtos", shiftDtoList);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 

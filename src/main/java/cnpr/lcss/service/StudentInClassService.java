@@ -4,7 +4,6 @@ import cnpr.lcss.dao.StudentInClass;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.Teacher;
 import cnpr.lcss.model.FeedbackDto;
-import cnpr.lcss.model.StudentInClassSearchPagingResponseDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
@@ -111,19 +110,17 @@ public class StudentInClassService {
     //</editor-fold>
 
     //<editor-fold desc="10.04-get-student-in-class-by-class-id">
-    public StudentInClassSearchPagingResponseDto findStudentInClassByClassId(int classId, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
+    public ResponseEntity<?> findStudentInClassByClassId(int classId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<StudentInClass> page = studentInClassRepository.findStudentInClassByaClass_ClassId(classId, pageable);
-        List<StudentInClass> studentInClasses = page.getContent();
-        List<StudentInClassSearchResponseDto> studentInClassSearchResponseDtos = studentInClasses.stream().map(studentInClass -> studentInClass.convertToSearchDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        StudentInClassSearchPagingResponseDto studentInClassSearchPagingResponseDto = new StudentInClassSearchPagingResponseDto(pageNo, pageSize, pageTotal, studentInClassSearchResponseDtos);
-
-        return studentInClassSearchPagingResponseDto;
+        List<StudentInClassSearchResponseDto> responseDtos = page.getContent().stream()
+                .map(studentInClass -> studentInClass.convertToSearchDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("studentInClassSearchResponseDtos", responseDtos);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 

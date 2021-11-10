@@ -206,18 +206,15 @@ public class AccountService {
     //<editor-fold desc="1.02-search-account-like-username-paging">
     public ResponseEntity<?> searchAccountLikeUsernamePaging(String role, String keyword, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         try {
-            // Check Role existence
-            if (role.equalsIgnoreCase(Constant.ROLE_ADMIN) || role.equalsIgnoreCase(Constant.ROLE_MANAGER) || role.equalsIgnoreCase(Constant.ROLE_STAFF)
-                    || role.equalsIgnoreCase(Constant.ROLE_TEACHER) || role.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                // pageNo starts at 0
-                // always set first page = 1 ---> pageNo - 1
+            if (role.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || role.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || role.equalsIgnoreCase(Constant.ROLE_STAFF)
+                    || role.equalsIgnoreCase(Constant.ROLE_TEACHER)
+                    || role.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                 Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
                 Page<Account> page = accountRepository.findByRole_RoleIdAndUsernameContainingAndIsAvailable(role, keyword, isAvailable, pageable);
-                int totalPage = page.getTotalPages();
                 List<Account> accountList = page.getContent();
                 List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
-                AccountResponsePagingDto accountResponsePagingDto = new AccountResponsePagingDto();
 
                 for (Account account : accountList) {
                     Account acc = accountRepository.findOneByUsername(account.getUsername());
@@ -271,12 +268,12 @@ public class AccountService {
                     accountResponseDtoList.add(accDto);
                 }
 
-                accountResponsePagingDto.setPageNo(pageNo);
-                accountResponsePagingDto.setPageSize(pageSize);
-                accountResponsePagingDto.setTotalPage(totalPage);
-                accountResponsePagingDto.setAccountResponseDtoList(accountResponseDtoList);
-
-                return ResponseEntity.status(HttpStatus.OK).body(accountResponsePagingDto);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("totalPage", page.getTotalPages());
+                mapObj.put("accountResponseDtoList", accountResponseDtoList);
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
             }
@@ -301,7 +298,6 @@ public class AccountService {
                 int totalPage = page.getTotalPages();
                 List<Account> accountList = page.getContent();
                 List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
-                AccountResponsePagingDto accountResponsePagingDto = new AccountResponsePagingDto();
 
                 for (Account account : accountList) {
                     Account acc = accountRepository.findOneByUsername(account.getUsername());
@@ -355,12 +351,12 @@ public class AccountService {
                     accountResponseDtoList.add(accDto);
                 }
 
-                accountResponsePagingDto.setPageNo(pageNo);
-                accountResponsePagingDto.setPageSize(pageSize);
-                accountResponsePagingDto.setTotalPage(totalPage);
-                accountResponsePagingDto.setAccountResponseDtoList(accountResponseDtoList);
-
-                return ResponseEntity.status(HttpStatus.OK).body(accountResponsePagingDto);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("totalPage", page.getTotalPages());
+                mapObj.put("accountResponseDtoList", accountResponseDtoList);
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
             }

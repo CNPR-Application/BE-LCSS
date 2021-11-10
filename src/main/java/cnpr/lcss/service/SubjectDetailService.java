@@ -3,7 +3,6 @@ package cnpr.lcss.service;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.dao.SubjectDetail;
 import cnpr.lcss.model.SubjectDetailDto;
-import cnpr.lcss.model.SubjectDetailPagingResponseDto;
 import cnpr.lcss.model.SubjectDetailRequestDto;
 import cnpr.lcss.repository.SubjectDetailRepository;
 import cnpr.lcss.repository.SubjectRepository;
@@ -17,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,19 +30,16 @@ public class SubjectDetailService {
     SubjectRepository subjectRepository;
 
     //<editor-fold desc="5.01-search-subject-detail-by-subject-id">
-    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
+    public ResponseEntity<?> findSubjectDetailBySubjectId(int subjectId, boolean isAvailable, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<SubjectDetail> page = subjectDetailRepository.findSubjectDetailBySubjectIdAndIsAvailable(subjectId, isAvailable, pageable);
-        List<SubjectDetail> subjectDetailList = page.getContent();
-        List<SubjectDetailDto> subjectDetailDtoList = subjectDetailList.stream().map(subjectDetail -> subjectDetail.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        SubjectDetailPagingResponseDto subDetailPgResDto = new SubjectDetailPagingResponseDto(pageNo, pageSize, pageTotal, subjectDetailDtoList);
-
-        return subDetailPgResDto;
+        List<SubjectDetailDto> subjectDetailDtoList = page.getContent().stream().map(subjectDetail -> subjectDetail.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("subjectDetailDtoList", subjectDetailDtoList);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 

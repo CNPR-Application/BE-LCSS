@@ -107,6 +107,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
+     * @author LamHNT - 2021.11.10
      * @apiNote 1.02-search-account-like-username-paging
      */
     @CrossOrigin
@@ -832,14 +833,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 5.01-search-subject-detail-by-subject-id
-     * @author LamHNT - 2021.06.18
+     * @author LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
-    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
-                                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                                       @RequestParam(value = "pageNo") int pageNo,
-                                                                       @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                          @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                          @RequestParam(value = "pageNo") int pageNo,
+                                                          @RequestParam(value = "pageSize") int pageSize) {
         return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1035,7 +1036,7 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
-    //<editor-fold desc="8.01-search booking by classID and status in a branch">
+    //<editor-fold desc="8.01-search-booking-by-class-id-and-status-in-a-branch">
 
     /**
      * @param classId
@@ -1052,7 +1053,7 @@ public class RestApi {
                                                                    @RequestParam(value = "status") String status,
                                                                    @RequestParam(value = "pageNo") int pageNo,
                                                                    @RequestParam(value = "pageSize") int pageSize) {
-        return bookingService.findBookingByClassIdandPhoneAndStatus(classId, status, pageNo, pageSize);
+        return bookingService.findBookingByClassIdAndPhoneAndStatus(classId, status, pageNo, pageSize);
     }
     //</editor-fold>
 
@@ -1107,7 +1108,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.06-Update Booking">
+    //<editor-fold desc="8.06-update-booking">
 
     /**
      * @param bookingId
@@ -1362,13 +1363,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 10.04-get-student-in-class-by-class-id
-     * @author HuuNT - 2021.07.19
+     * @author HuuNT - 2021.07.19 | LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/student-in-class", method = RequestMethod.GET)
-    public StudentInClassSearchPagingResponseDto getStudentInClass(@RequestParam(value = "classId") int classId,
-                                                                   @RequestParam(value = "pageNo") int pageNo,
-                                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+    public ResponseEntity<?> getStudentInClass(@RequestParam(value = "classId") int classId,
+                                               @RequestParam(value = "pageNo") int pageNo,
+                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1593,14 +1594,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 13.02-search-shift-by-dow-and-by-time-start-containing
-     * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
+     * @author HuuNT - 2021.06.24 | LamHNT - 2021.06.26
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts", params = "dayOfWeek", method = RequestMethod.GET)
-    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
-                                                                                        @RequestParam(value = "timeStart") String timeStart,
-                                                                                        @RequestParam(value = "pageNo") int pageNo,
-                                                                                        @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
+                                                                                   @RequestParam(value = "timeStart") String timeStart,
+                                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                                   @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.searchShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1647,13 +1648,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 13.05-get-all-shift-by-isAvailable
-     * @author HuuNT 2021-06-26
+     * @author HuuNT 2021.06.26 | LamHNT 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
-    public ShiftPagingResponseDto getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
-                                                           @RequestParam(value = "pageNo") int pageNo,
-                                                           @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
