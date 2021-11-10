@@ -477,15 +477,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 2.01-search-branch-by-branch-name
-     * @author HuuNT - 2021.06.09
+     * @author HuuNT - 2021.06.09 | LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
-    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
-                                                      @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                      @RequestParam(value = "pageNo") int pageNo,
-                                                      @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                @RequestParam(value = "pageNo") int pageNo,
+                                                @RequestParam(value = "pageSize") int pageSize) {
         return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -573,11 +572,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
-    public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
-                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchCurriculumByName(@RequestParam(value = "name") String keyword,
+                                                    @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return curriculumService.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -594,11 +592,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
-    public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
-                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchCurriculumByCode(@RequestParam(value = "code") String keyword,
+                                                    @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return curriculumService.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -963,22 +960,22 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @author HuuNT 2021-07-08
+     * @author HuuNT 2021.07.08 | LamHNT 2021.11.10
      * @apiNote 7.01-search-guest-by-branchid-and-name
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", method = RequestMethod.GET)
-    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndName(@RequestParam(value = "branchId") int branchId,
-                                                                              @RequestParam(value = "name") String name,
-                                                                              @RequestParam(value = "phone") String phone,
-                                                                              @RequestParam(value = "curriculumName") String curriculumName,
-                                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                                              @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findGuestByBranchIdAndName(@RequestParam(value = "branchId") int branchId,
+                                                        @RequestParam(value = "name") String name,
+                                                        @RequestParam(value = "phone") String phone,
+                                                        @RequestParam(value = "curriculumName") String curriculumName,
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndCustomerName(branchId, name, phone, curriculumName, pageNo, pageSize);
     }
     //</editor-fold>
 
-    //<editor-fold desc="7.05-search guest by status">
+    //<editor-fold desc="7.05-search-guest-by-status">
 
     /**
      * @param branchId
@@ -987,14 +984,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 7.05-search Guest by Status
-     * @author HuuNT - 2021.07-09
+     * @author HuuNT - 2021.07.09 | LamHNT 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", params = "status", method = RequestMethod.GET)
-    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
-                                                                                @RequestParam(value = "status") String status,
-                                                                                @RequestParam(value = "pageNo") int pageNo,
-                                                                                @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
+                                                          @RequestParam(value = "status") String status,
+                                                          @RequestParam(value = "pageNo") int pageNo,
+                                                          @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndStatus(branchId, status, pageNo, pageSize);
     }
     //</editor-fold>

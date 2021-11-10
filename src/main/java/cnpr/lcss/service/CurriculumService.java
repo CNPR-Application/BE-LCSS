@@ -1,12 +1,9 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Curriculum;
-import cnpr.lcss.dao.Room;
 import cnpr.lcss.dao.Subject;
 import cnpr.lcss.model.CurriculumDto;
-import cnpr.lcss.model.CurriculumPagingResponseDto;
 import cnpr.lcss.model.CurriculumRequestDto;
-import cnpr.lcss.model.RoomAndBranchDto;
 import cnpr.lcss.repository.CurriculumRepository;
 import cnpr.lcss.repository.SubjectRepository;
 import cnpr.lcss.util.Constant;
@@ -19,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,41 +26,37 @@ public class CurriculumService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    //<editor-fold desc="Find Curriculums by Curriculum Name LIKE keyword">
-    public CurriculumPagingResponseDto findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
+    //<editor-fold desc="3.01-search-curriculum-by-curriculum-name">
+    public ResponseEntity<?> findByCurriculumNameContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<Curriculum> page = curriculumRepository.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-        List<Curriculum> curriculumList = page.getContent();
-        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
-
-        return curPgResDtos;
+        List<CurriculumDto> curriculumDtoList = page.getContent().stream()
+                .map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("curriculumResponseDtos", curriculumDtoList);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 
-    //<editor-fold desc="Find Curriculums by Curriculum Code LIKE keyword">
-    public CurriculumPagingResponseDto findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
+    //<editor-fold desc="3.02-search-curriculum-by-curriculum-code">
+    public ResponseEntity<?> findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<Curriculum> page = curriculumRepository.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-        List<Curriculum> curriculumList = page.getContent();
-        List<CurriculumDto> curriculumDtoList = curriculumList.stream().map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        CurriculumPagingResponseDto curPgResDtos = new CurriculumPagingResponseDto(pageNo, pageSize, pageTotal, curriculumDtoList);
-
-        return curPgResDtos;
+        List<CurriculumDto> curriculumDtoList = page.getContent().stream()
+                .map(curriculum -> curriculum.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("curriculumResponseDtos", curriculumDtoList);
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 
-    //<editor-fold desc="Get Curriculum Details by Curriculum Id">
+    //<editor-fold desc="3.03-get-curriculum-details-by-curriculum-id">
     public ResponseEntity<?> findOneByCurriculumId(int curriculumId) throws Exception {
         try {
             Curriculum curriculum = curriculumRepository.findOneByCurriculumId(curriculumId);
@@ -78,7 +68,7 @@ public class CurriculumService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Delete Curriculum by Curriculum ID">
+    //<editor-fold desc="3.04-delete-curriculum-by-curriculum-id">
 
     /**
      * Delete Curriculum by Curriculum Id.
@@ -132,7 +122,7 @@ public class CurriculumService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Create new Curriculum">
+    //<editor-fold desc="3.05-create-curriculum">
     @Transactional
     public ResponseEntity<?> createNewCurriculum(CurriculumRequestDto newCur) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
@@ -167,7 +157,7 @@ public class CurriculumService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Update Curriculum by Curriculum id">
+    //<editor-fold desc="3.06-edit-curriculum-by-curriculum-id">
     public ResponseEntity<?> updateCurriculum(int curId, CurriculumRequestDto insCur) throws Exception {
         try {
             if (!curriculumRepository.existsById(curId)) {

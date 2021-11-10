@@ -1,7 +1,6 @@
 package cnpr.lcss.service;
 
 import cnpr.lcss.dao.Branch;
-import cnpr.lcss.model.BranchPagingResponseDto;
 import cnpr.lcss.model.BranchRequestDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.util.Constant;
@@ -14,27 +13,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
 public class BranchService {
-
     @Autowired
     BranchRepository branchRepository;
 
-    //<editor-fold desc="Find Branch by Branch Name LIKE keyword And Is Available (true/false)">
-    public BranchPagingResponseDto findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
+    //<editor-fold desc="2.01-search-branch-by-branch-name">
+    public ResponseEntity<?> findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
         Page<Branch> page = branchRepository.findByBranchNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageable);
-        List<Branch> branchList = page.getContent();
-        int pageTotal = page.getTotalPages();
-
-        BranchPagingResponseDto branchPagingResponseDto = new BranchPagingResponseDto(pageNo, pageSize, pageTotal, branchList);
-
-        return branchPagingResponseDto;
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("branchResponseDtos", page.getContent());
+        return ResponseEntity.ok(mapObj);
     }
     //</editor-fold>
 
