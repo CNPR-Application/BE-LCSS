@@ -142,8 +142,6 @@ public class CurriculumService {
                     insCur.setDescription(newCur.getDescription().trim());
                     insCur.setCreatingDate(creatingDate);
                     insCur.setIsAvailable(Boolean.TRUE);
-                    insCur.setImage(newCur.getImage().trim());
-                    insCur.setLinkClip(newCur.getLinkClip().trim());
                     insCur.setLearningOutcome(newCur.getLearningOutcome().trim());
 
                     curriculumRepository.save(insCur);
@@ -171,8 +169,6 @@ public class CurriculumService {
                 // KEEP THE CREATING DATE
                 updateCur.setCreatingDate(updateCur.getCreatingDate());
                 updateCur.setIsAvailable(insCur.getIsAvailable());
-                updateCur.setImage(insCur.getImage().trim());
-                updateCur.setLinkClip(insCur.getLinkClip().trim());
                 updateCur.setLearningOutcome(insCur.getLearningOutcome().trim());
 
                 curriculumRepository.save(updateCur);

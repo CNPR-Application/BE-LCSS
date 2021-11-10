@@ -30,10 +30,6 @@ public class Curriculum implements Serializable {
     private Date creatingDate;
     @Column(name = "is_available")
     private Boolean isAvailable;
-    @Column(name = "image")
-    private String image;
-    @Column(name = "link_clip")
-    private String linkClip;
     @Column(name = "learning_outcome")
     private String learningOutcome;
 
@@ -52,7 +48,7 @@ public class Curriculum implements Serializable {
 
     //<editor-fold desc="Convert to CurriculumDto">
     public CurriculumDto convertToDto() {
-        CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, image, linkClip, learningOutcome);
+        CurriculumDto curriculumDto = new CurriculumDto(curriculumId, curriculumCode, curriculumName, description, creatingDate, isAvailable, learningOutcome);
         return curriculumDto;
     }
     //</editor-fold>

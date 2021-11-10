@@ -32,7 +32,6 @@ import java.util.UUID;
 
 @Service
 public class FirebaseService {
-
     StorageOptions storageOptions;
     @Autowired
     CurriculumRepository curriculumRepository;
@@ -93,19 +92,6 @@ public class FirebaseService {
         fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
         String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
         file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
-
-        if (imageRequestDto.getKeyword().matches(Constant.CURRICULUM)) {
-            int idCurInsert = Integer.parseInt(id);
-            if (curriculumRepository.existsByCurriculumId(idCurInsert)) {
-                Curriculum insCur = curriculumRepository.findOneByCurriculumId(idCurInsert);
-                insCur.setImage(TEMP_URL);
-                curriculumRepository.save(insCur);
-                result = true;
-
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
-            }
-        }
 
         if (imageRequestDto.getKeyword().matches(Constant.AVATAR)) {
             if (accountRepository.existsByUsername(id)) {
