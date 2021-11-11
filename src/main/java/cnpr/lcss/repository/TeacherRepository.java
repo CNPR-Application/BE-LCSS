@@ -74,4 +74,23 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
                                                        @Param(value = "dateTimeStart") String dateTimeStart,
                                                        @Param(value = "dateTimeEnd") String dateTimeEnd,
                                                        @Param(value = "subjectId") int subjectId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select distinct t.teacher_id " +
+                    "from teacher as t " +
+                    "join session s on t.teacher_id = s.teacher_id " +
+                    "where s.class_id = ?1"
+    )
+    Integer findTeacherIdByClassId(Integer classId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select distinct a.name " +
+                    "from teacher as t " +
+                    "join session s on t.teacher_id = s.teacher_id " +
+                    "join account a on t.teacher_username = a.username " +
+                    "where s.class_id = ?1"
+    )
+    String findTeacherNameByClassId(Integer classId);
 }

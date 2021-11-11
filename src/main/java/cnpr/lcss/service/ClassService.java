@@ -358,6 +358,40 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.04-search-class-detail-by-class-id">
+    public ResponseEntity<?> searchClassDetailByClassId(Integer classId) throws Exception {
+        try {
+            if (!classRepository.existsById(classId)) {
+                throw new Exception(Constant.INVALID_CLASS_ID);
+            } else {
+                Class aClass = classRepository.findClassByClassId(classId);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("classId", aClass.getClassId());
+                mapObj.put("className", aClass.getClassName());
+                mapObj.put("openingDate", aClass.getOpeningDate());
+                mapObj.put("status", aClass.getStatus());
+                mapObj.put("slot", aClass.getSlot());
+                mapObj.put("subjectId", aClass.getSubject().getSubjectId());
+                mapObj.put("subjectName", aClass.getSubject().getSubjectName());
+                mapObj.put("branchId", aClass.getBranch().getBranchId());
+                mapObj.put("branchName", aClass.getBranch().getBranchName());
+                mapObj.put("shiftId", aClass.getShift().getShiftId());
+                mapObj.put("shiftDescription", shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShift().getShiftId())
+                        + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShift().getShiftId())
+                        + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShift().getShiftId()) + ")");
+                mapObj.put("teacherId", teacherRepository.findTeacherIdByClassId(aClass.getClassId()));
+                mapObj.put("teacherName", teacherRepository.findTeacherNameByClassId(aClass.getClassId()));
+                mapObj.put("roomNo", roomRepository.findRoomIdByClassId(aClass.getClassId()));
+                mapObj.put("numberOfStudent", studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.05_search_class_of_teacher_by_username">
     public ResponseEntity<?> searchClassByTeacherUsernameAndStatusPaging(String username, String status, int pageNo, int pageSize) throws Exception {
         try {

@@ -78,4 +78,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     @Query("select c from Class c where c.status = ?1")
     List<Class> findByStatus(String status);
+
+    @Query("select c from Class c where c.classId = ?1")
+    Class findByClassId(int classId);
 }

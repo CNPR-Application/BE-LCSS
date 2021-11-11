@@ -1200,6 +1200,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.04-search-class-detail-by-class-id">
+
+    /**
+     * @param classId
+     * @return
+     * @throws Exception
+     * @apiNote 9.04-search-class-detail-by-class-id
+     * @author LamHNT - 2021.11.11
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassDetailByClassId(@PathVariable(value = "classId") Integer classId) throws Exception {
+        return classService.searchClassDetailByClassId(classId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.05-search-class-of-teacher-by-username">
 
     /**

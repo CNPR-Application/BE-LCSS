@@ -1,5 +1,8 @@
 package cnpr.lcss.util;
 
+import cnpr.lcss.repository.ShiftRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
