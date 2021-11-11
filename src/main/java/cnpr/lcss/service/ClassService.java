@@ -382,7 +382,15 @@ public class ClassService {
                 mapObj.put("teacherId", teacherRepository.findTeacherIdByClassId(aClass.getClassId()));
                 mapObj.put("teacherName", teacherRepository.findTeacherNameByClassId(aClass.getClassId()));
                 mapObj.put("roomNo", roomRepository.findRoomIdByClassId(aClass.getClassId()));
-                mapObj.put("numberOfStudent", studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId()));
+                int numberofStudent=0;
+                if(aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING)||aClass.getStatus().matches(Constant.CLASS_STATUS_FINISHED)){
+                    numberofStudent=studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                }
+                if(aClass.getStatus().matches(Constant.CLASS_STATUS_WAITING)||aClass.getStatus().matches(Constant.CLASS_STATUS_CANCELED)){
+                    numberofStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
+
+                }
+                mapObj.put("numberOfStudent", numberofStudent);
                 return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             }
         } catch (Exception e) {
