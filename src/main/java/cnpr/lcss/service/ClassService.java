@@ -566,8 +566,9 @@ public class ClassService {
                 }
                 // Opening Date
                 try {
-                    if (openingDate != null && openingDate.compareTo(editClass.getOpeningDate()) >= 0
-                            && openingDate.after(Date.from(currentDate.toInstant()))) {
+                    if (openingDate != null
+                            && (openingDate.compareTo(editClass.getOpeningDate()) >= 0)
+                            && (openingDate.compareTo(Date.from(currentDate.toInstant())) >= 0)) {
                         // Check whether Opening Date is a day in Shift
                         // Sunday = 0
                         int openingDayOfWeek = openingDate.getDay() + 1;
