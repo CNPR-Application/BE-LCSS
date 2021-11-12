@@ -534,6 +534,7 @@ public class ClassService {
     //<editor-fold desc="9.07-edit-class">
     public ResponseEntity<?> editClass(int classId, Map<String, Object> reqBody) throws Exception {
         try {
+            ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
             // Find Class by Class ID
             Class editClass = classRepository.findClassByClassId(classId);
 
@@ -565,7 +566,8 @@ public class ClassService {
                 }
                 // Opening Date
                 try {
-                    if (openingDate != null && openingDate.compareTo(editClass.getOpeningDate()) >= 0) {
+                    if (openingDate != null && openingDate.compareTo(editClass.getOpeningDate()) >= 0
+                            && openingDate.after(Date.from(currentDate.toInstant()))) {
                         // Check whether Opening Date is a day in Shift
                         // Sunday = 0
                         int openingDayOfWeek = openingDate.getDay() + 1;
