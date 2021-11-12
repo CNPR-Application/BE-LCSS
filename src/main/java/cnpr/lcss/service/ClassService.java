@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -535,16 +534,22 @@ public class ClassService {
     //<editor-fold desc="9.07-edit-class">
     public ResponseEntity<?> editClass(int classId, Map<String, Object> reqBody) throws Exception {
         try {
+            // Find Class by Class ID
+            Class editClass = classRepository.findClassByClassId(classId);
+
             // Get RequestBody
             String className = (String) reqBody.get("className");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String reqDate = (String) reqBody.get("openingDate");
-            Date openingDate = sdf.parse(reqDate);
+            Date openingDate;
+            if (reqDate == null) {
+                openingDate = editClass.getOpeningDate();
+            } else {
+                openingDate = sdf.parse(reqDate);
+            }
             Integer roomId = (Integer) reqBody.get("roomId");
             String status = (String) reqBody.get("status");
 
-            // Find Class by Class ID
-            Class editClass = classRepository.findClassByClassId(classId);
 
             /**
              * If status = waiting
