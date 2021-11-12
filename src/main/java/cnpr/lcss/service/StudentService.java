@@ -42,7 +42,7 @@ public class StudentService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("studentResponseDtos", studentDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class StudentService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("studentList", studentDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

@@ -61,7 +61,7 @@ public class BookingService {
             if (classId != 0) {
                 bookingList = bookingRepository.findBookingByaClass_ClassIdAndStatusContainingAllIgnoreCase(classId, status, pageable);
                 pageTotal = bookingList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
             }
             //Case 2
@@ -69,7 +69,7 @@ public class BookingService {
             if (classId == 0) {
                 bookingList = bookingRepository.findBookingByStatusContainingAllIgnoreCase(status, pageable);
                 pageTotal = bookingList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
             }
             return ResponseEntity.ok(mapObj);
@@ -94,7 +94,7 @@ public class BookingService {
             //get booking by username
             bookingList = bookingRepository.findBookingByStudent_Account_Username(studentUsername, pageable);
             pageTotal = bookingList.getTotalPages();
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("classList", autoMapping(bookingList));
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

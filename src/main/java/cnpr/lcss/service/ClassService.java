@@ -194,55 +194,55 @@ public class ClassService {
             if (branchId != 0 && subjectId != 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectId(branchId, subjectId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 2
             if (branchId != 0 && subjectId != 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftId(branchId, subjectId, shiftId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 3
             if (branchId != 0 && subjectId != 0 && shiftId != 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(branchId, subjectId, shiftId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 4
             if (branchId != 0 && subjectId != 0 && shiftId == 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndStatusContainingAllIgnoreCase(branchId, subjectId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 5
             if (branchId != 0 && subjectId == 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndShift_ShiftId(branchId, shiftId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 6
             if (branchId != 0 && subjectId == 0 && shiftId != 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndShift_ShiftIdAndStatusContainingAllIgnoreCase(branchId, shiftId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 7
             if (branchId != 0 && subjectId == 0 && shiftId == 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
-                mapObj.put("pageTotal", classList.getTotalPages());
+                mapObj.put("totalPage", classList.getTotalPages());
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 8
             if (branchId != 0 && subjectId == 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchId(branchId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
 
@@ -264,7 +264,7 @@ public class ClassService {
                 Page<Class> classList = classRepository.findClassByBranch_BranchIdAndStatus(branchId, status, pageable);
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", classList.getTotalPages());
+                mapObj.put("totalPage", classList.getTotalPages());
                 mapObj.put("classList", autoMapping(classList));
                 return ResponseEntity.ok(mapObj);
             } else {
@@ -344,7 +344,7 @@ public class ClassService {
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", classSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
@@ -446,7 +446,7 @@ public class ClassService {
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", classSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
