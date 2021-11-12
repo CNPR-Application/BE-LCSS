@@ -129,7 +129,6 @@ public class SubjectService {
                 mapObj.put("creatingDate", subject.getCreatingDate());
                 mapObj.put("description", subject.getDescription());
                 mapObj.put("isAvailable", subject.getIsAvailable());
-                mapObj.put("image", subject.getImage());
                 mapObj.put("slot", subject.getSlot());
                 mapObj.put("slotPerWeek", subject.getSlotPerWeek());
                 mapObj.put("rating", calculateRating(subject.getRating()));
@@ -208,7 +207,6 @@ public class SubjectService {
                     insSub.setCreatingDate(creatingDate);
                     insSub.setDescription(newSub.getDescription().trim());
                     insSub.setIsAvailable(Boolean.TRUE);
-                    insSub.setImage(newSub.getImage().trim());
                     insSub.setCurriculum(curriculumRepository.findOneByCurriculumId(newSub.getCurriculumId()));
                     insSub.setSlot(newSub.getSlot());
                     insSub.setSlotPerWeek(newSub.getSlotPerWeek());
@@ -241,21 +239,17 @@ public class SubjectService {
                 throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
             } else {
                 Subject updateSubject = subjectRepository.findBySubjectId(subId);
-
                 updateSubject.setSubjectName(insSub.getSubjectName().trim());
                 updateSubject.setPrice(insSub.getPrice());
                 updateSubject.setDescription(insSub.getDescription().trim());
                 // KEEP THE CREATING DATE
                 updateSubject.setCreatingDate(updateSubject.getCreatingDate());
                 updateSubject.setIsAvailable(insSub.getIsAvailable());
-                updateSubject.setImage(insSub.getImage().trim());
                 updateSubject.setSlot(insSub.getSlot());
                 updateSubject.setSlotPerWeek(insSub.getSlotPerWeek());
                 updateSubject.setRating(insSub.getRating());
                 updateSubject.setCurriculum(curriculumRepository.findOneByCurriculumId(insSub.getCurriculumId()));
-
                 subjectRepository.save(updateSubject);
-
                 return ResponseEntity.ok(Boolean.TRUE);
             }
         } catch (Exception e) {

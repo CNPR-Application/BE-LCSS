@@ -17,7 +17,6 @@ public class SubjectSearchDto {
     private Date creatingDate;
     private String description;
     private boolean isAvailable;
-    private String image;
     private int slot;
     private int slotPerWeek;
     private String rating;

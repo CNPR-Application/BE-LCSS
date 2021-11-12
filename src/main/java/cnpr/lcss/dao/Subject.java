@@ -34,8 +34,6 @@ public class Subject implements Serializable {
     private String description;
     @Column(name = "is_available")
     private boolean isAvailable;
-    @Column(name = "image")
-    private String image;
     @Column(name = "slot")
     private int slot;
     @Column(name = "slot_per_week")
@@ -62,7 +60,6 @@ public class Subject implements Serializable {
         this.creatingDate = creatingDate;
         this.description = description;
         this.isAvailable = isAvailable;
-        this.image = image;
         this.slot = slot;
         this.slotPerWeek = slotPerWeek;
         this.rating = rating;
@@ -90,7 +87,6 @@ public class Subject implements Serializable {
                 ", creatingDate=" + creatingDate +
                 ", description='" + description + '\'' +
                 ", isAvailable=" + isAvailable +
-                ", image='" + image + '\'' +
                 ", slot=" + slot +
                 ", slotPerWeek=" + slotPerWeek +
                 ", rating='" + rating + '\'' +
@@ -100,14 +96,14 @@ public class Subject implements Serializable {
 
     //<editor-fold desc="Convert to SubjectDto">
     public SubjectDto convertToDto() {
-        SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
+        SubjectDto subjectDto = new SubjectDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
         return subjectDto;
     }
     //</editor-fold>
 
     //<editor-fold desc="Convert to SearchDto">
     public SubjectSearchDto convertToSearchDto() {
-        SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, image, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
+        SubjectSearchDto subjectSearchDto = new SubjectSearchDto(subjectId, subjectCode, subjectName, price, creatingDate, description, isAvailable, slot, slotPerWeek, rating, curriculum.getCurriculumId(), curriculum.getCurriculumCode(), curriculum.getCurriculumName());
         return subjectSearchDto;
     }
     //</editor-fold>

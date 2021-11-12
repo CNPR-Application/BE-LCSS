@@ -104,18 +104,6 @@ public class FirebaseService {
             }
         }
 
-        if (imageRequestDto.getKeyword().matches(Constant.SUBJECT)) {
-            int idSubIns = Integer.parseInt(id);
-            if (subjectRepository.existsSubjectBySubjectId(idSubIns)) {
-                Subject insSub = subjectRepository.findBySubjectId(idSubIns);
-                insSub.setImage(TEMP_URL);
-                subjectRepository.save(insSub);
-                result = true;
-
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
-            }
-        }
         ImageResponseDTO imageResponseDTO = new ImageResponseDTO(result, TEMP_URL);
         return imageResponseDTO;
     }
