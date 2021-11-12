@@ -570,7 +570,7 @@ public class ClassService {
                         // Sunday = 0
                         int openingDayOfWeek = openingDate.getDay() + 1;
                         Shift shift = shiftRepository.findShiftByShiftId(editClass.getShift().getShiftId());
-                        String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+                        String[] shiftDaysOfWeek = shift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
                         shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
                         boolean coincidence = false;
                         for (String day : shiftDaysOfWeek) {
