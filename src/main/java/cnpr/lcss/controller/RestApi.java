@@ -1282,7 +1282,7 @@ public class RestApi {
      * @author LamHNT - 2021.11.16
      */
     @CrossOrigin
-    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.PATCH)
     public ResponseEntity<?> deleteClass(@PathVariable(value = "classId") Integer classId,
                                          @RequestBody HashMap<String, Object> reqBody) throws Exception {
         return classService.deleteClass(classId, reqBody);
