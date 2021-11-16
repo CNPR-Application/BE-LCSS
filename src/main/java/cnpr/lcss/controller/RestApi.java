@@ -1272,6 +1272,23 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.08-delete-class">
+
+    /**
+     * @param classId
+     * @return
+     * @throws Exception
+     * @apiNote 9.08-delete-class
+     * @author LamHNT - 2021.11.16
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteClass(@PathVariable(value = "classId") Integer classId,
+                                         @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return classService.deleteClass(classId, reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.09-get-classes-statistic">
 
     /**

@@ -32,6 +32,8 @@ public class Class implements Serializable {
     private String status;
     @Column(name = "slot")
     private int slot;
+    @Column(name = "canceled_reason")
+    private String canceledReason;
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
@@ -96,6 +98,7 @@ public class Class implements Serializable {
                 ", openingDate=" + openingDate +
                 ", status='" + status + '\'' +
                 ", slot=" + slot +
+                ", canceledReason='" + canceledReason + '\'' +
                 '}';
     }
     //</editor-fold>

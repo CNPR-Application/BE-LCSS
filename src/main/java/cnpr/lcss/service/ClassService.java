@@ -614,6 +614,34 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.08-delete-class">
+    public ResponseEntity<?> deleteClass(Integer classId, HashMap<String, Object> reqBody) throws Exception {
+        try {
+            if (!classRepository.existsById(classId)) {
+                throw new Exception(Constant.INVALID_CLASS_ID);
+            }
+            Class delClass = classRepository.findClassByClassId(classId);
+            String delReason = (String) reqBody.get("reason");
+            if (delReason == null || delReason.isEmpty()) {
+                throw new Exception(Constant.INVALID_DELETE_CLASS_REASON);
+            }
+
+            if (delClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)
+                    && bookingRepository.countBookingByClassId(classId) == 0) {
+                delClass.setStatus(Constant.CLASS_STATUS_CANCELED);
+                delClass.setCanceledReason(delReason.trim());
+                classRepository.save(delClass);
+            } else {
+                throw new Exception(Constant.ERROR_DELETE_CLASS);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.09-get-classes-statistic">
     public ResponseEntity<?> getClassesStatistic(int branchId) throws Exception {
         /**
