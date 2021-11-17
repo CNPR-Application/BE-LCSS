@@ -1,5 +1,6 @@
 package cnpr.lcss.util;
 
+import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -365,5 +366,20 @@ public class Constant {
         return Date.from(date.toInstant());
     }
     // </editor-fold>
+
+    //<editor-fold desc="Calculate Rating">
+    public static String calculateRating(String rating) {
+        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
+        String[] arrOfInpStr = rating.split(Constant.SYMBOL_SLASH);
+        String finalResult;
+        if (arrOfInpStr[0].equals(Constant.NUMBER_ZERO) && arrOfInpStr[1].equals(Constant.NUMBER_ZERO)) {
+            finalResult = Constant.NUMBER_ZERO;
+        } else {
+            double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
+            finalResult = df.format(result);
+        }
+        return finalResult;
+    }
+    //</editor-fold>
     // </editor-fold>
 }

@@ -39,25 +39,8 @@ public class SubjectService {
     @Autowired
     CurriculumRepository curriculumRepository;
 
-    // <editor-fold desc="Calculate Rating">
-    private String calculateRating(String rating) {
-        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
-        String[] arrOfInpStr = rating.split(Constant.SYMBOL_SLASH);
-        String finalResult;
-        if (arrOfInpStr[0].equals(Constant.NUMBER_ZERO) && arrOfInpStr[1].equals(Constant.NUMBER_ZERO)) {
-            finalResult = Constant.NUMBER_ZERO;
-        } else {
-            double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
-            finalResult = df.format(result);
-        }
-        return finalResult;
-    }
-    // </editor-fold>
-
     // <editor-fold desc="4.01-search-subject-by-subject-name">
-    public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo,
-            int pageSize) {
-
+    public ResponseEntity<?> findBySubjectNameContainsAndIsAvailable(String keyword, boolean isAvailable, int pageNo, int pageSize) {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Page<Subject> subjectList = subjectRepository.findBySubjectNameContainingIgnoreCaseAndIsAvailable(keyword,
@@ -65,7 +48,7 @@ public class SubjectService {
             List<SubjectSearchDto> subjectDtoList = subjectList.getContent().stream()
                     .map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             for (SubjectSearchDto subject : subjectDtoList) {
-                subject.setRating(calculateRating(subject.getRating()));
+                subject.setRating(Constant.calculateRating(subject.getRating()));
             }
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
@@ -83,7 +66,7 @@ public class SubjectService {
 
     // <editor-fold desc="4.03-search-subject-by-curriculum-id">
     public ResponseEntity<?> findSubjectByCurriculumIdAndAndIsAvailable(int keyword, boolean isAvailable, int pageNo,
-            int pageSize) {
+                                                                        int pageSize) {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -95,7 +78,7 @@ public class SubjectService {
             int pageTotal = page.getTotalPages();
 
             for (SubjectDto subject : subjectDtoList) {
-                subject.setRating(calculateRating(subject.getRating()));
+                subject.setRating(Constant.calculateRating(subject.getRating()));
             }
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
@@ -111,7 +94,7 @@ public class SubjectService {
 
     // <editor-fold desc="4.02-search-subject-by-subject-code">
     public ResponseEntity<?> findBySubjectCodeAndIsAvailable(String code, boolean isAvailable, int pageNo,
-            int pageSize) {
+                                                             int pageSize) {
         try {
             Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
             Map<String, Object> mapObj = new LinkedHashMap<>();
@@ -123,7 +106,7 @@ public class SubjectService {
             int pageTotal = page.getTotalPages();
 
             for (SubjectDto subject : subjectDtoList) {
-                subject.setRating(calculateRating(subject.getRating()));
+                subject.setRating(Constant.calculateRating(subject.getRating()));
             }
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
@@ -154,7 +137,7 @@ public class SubjectService {
                 mapObj.put("isAvailable", subject.getIsAvailable());
                 mapObj.put("slot", subject.getSlot());
                 mapObj.put("slotPerWeek", subject.getSlotPerWeek());
-                mapObj.put("rating", calculateRating(subject.getRating()));
+                mapObj.put("rating", Constant.calculateRating(subject.getRating()));
                 mapObj.put("curriculumId", subject.getCurriculum().getCurriculumId());
                 mapObj.put("curriculumCode", subject.getCurriculum().getCurriculumCode());
                 mapObj.put("curriculumName", subject.getCurriculum().getCurriculumName());
@@ -294,7 +277,7 @@ public class SubjectService {
                     .map(subject -> subject.convertToSearchDto()).collect(Collectors.toList());
             int pageTotal = subjectList.getTotalPages();
             for (SubjectSearchDto subject : subjectDtoList) {
-                subject.setRating(calculateRating(subject.getRating()));
+                subject.setRating(Constant.calculateRating(subject.getRating()));
             }
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);

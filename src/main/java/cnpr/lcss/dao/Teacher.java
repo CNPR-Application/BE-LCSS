@@ -56,17 +56,6 @@ public class Teacher implements Serializable {
     }
     // </editor-fold>
 
-    // <editor-fold desc="Calculate Rating">
-    private String calculateRating(String rating) {
-        DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
-        String[] arrOfInpStr = rating.split(Constant.SYMBOL_HYPHEN);
-        String finalResult;
-        double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
-        finalResult = df.format(result);
-        return finalResult;
-    }
-    // </editor-fold>
-
     // <editor-fold desc="Modify toString">
     @Override
     public String toString() {
@@ -81,7 +70,7 @@ public class Teacher implements Serializable {
         dto.setTeacherId(teacherId);
         dto.setUsername(account.getUsername());
         dto.setExperience(experience);
-        dto.setRating(calculateRating(rating));
+        dto.setRating(Constant.calculateRating(rating));
         dto.setName(account.getName());
         dto.setAddress(account.getAddress());
         dto.setEmail(account.getEmail());
@@ -108,7 +97,7 @@ public class Teacher implements Serializable {
         dto.setRole(account.getRole().getRoleId());
         dto.setAccountCreatingDate(account.getCreatingDate());
         dto.setTeacherExperience(experience);
-        dto.setTeacherRating(calculateRating(rating));
+        dto.setTeacherRating(Constant.calculateRating(rating));
         return dto;
     }
     // </editor-fold>
