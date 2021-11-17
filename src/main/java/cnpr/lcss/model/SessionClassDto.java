@@ -13,6 +13,7 @@ public class SessionClassDto {
     private int sessionId;
     private int teacherId;
     private String teacherName;
+    private String teacherUsername;
     private String teacherImage;
     private int roomId;
     private String roomName;
