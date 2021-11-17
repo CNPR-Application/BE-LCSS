@@ -848,7 +848,7 @@ public class ClassService {
     public ResponseEntity<?> getTeacherClassesStatistic(String teacherUsername) throws Exception {
         HashMap<String, Object> mapObj = new LinkedHashMap<>();
         try {
-            Account account= accountRepository.findOneByUsername(teacherUsername);
+            Account account = accountRepository.findOneByUsername(teacherUsername);
             List<Integer> list = new ArrayList();
             if (account != null) {
                 List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(account.getTeacher().getTeacherId());
@@ -857,8 +857,8 @@ public class ClassService {
                 }
                 //temporary set waiting class is 0
                 mapObj.put("waitingClass", 0);
-                mapObj.put("studyingClass", classRepository.countClassByClassIdIsInAndStatus(list,Constant.CLASS_STATUS_STUDYING));
-                mapObj.put("finishedClass", classRepository.countClassByClassIdIsInAndStatus(list,Constant.CLASS_STATUS_FINISHED));
+                mapObj.put("studyingClass", classRepository.countClassByClassIdIsInAndStatus(list, Constant.CLASS_STATUS_STUDYING));
+                mapObj.put("finishedClass", classRepository.countClassByClassIdIsInAndStatus(list, Constant.CLASS_STATUS_FINISHED));
             } else {
                 throw new Exception(Constant.INVALID_USERNAME);
             }
