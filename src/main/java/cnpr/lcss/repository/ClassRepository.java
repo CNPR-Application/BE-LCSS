@@ -56,6 +56,8 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     Page<Class> findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(List<Integer> list, String status, Pageable pageable);
 
+    int countClassByClassIdIsInAndStatus(List<Integer> list, String status);
+
     @Query("select distinct c from Class c " +
             "join c.studentInClassList studentInClassList " +
             "join c.sessionList sessionList " +
