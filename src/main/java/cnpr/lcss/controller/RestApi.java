@@ -1349,6 +1349,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.13-class-static-teacher">
+
+    /**
+     *
+     * @param teacherUsername
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.11.17
+     * @apiNote 9.13-class-static-teacher
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes-status",params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> getTeacherClassesStatistic(@RequestParam(value = "teacherUsername") String teacherUsername)throws Exception {
+        return classService.getTeacherClassesStatistic(teacherUsername);
+    }
+    //</editor-fold>
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

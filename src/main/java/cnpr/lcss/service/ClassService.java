@@ -844,4 +844,28 @@ public class ClassService {
         }
     }
     //</editor-fold>
+
+    public ResponseEntity<?> getTeacherClassesStatistic(String teacherUsername) throws Exception {
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        try {
+            Account account= accountRepository.findOneByUsername(teacherUsername);
+            List<Integer> list = new ArrayList();
+            if (account != null) {
+                List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(account.getTeacher().getTeacherId());
+                for (Session session : sessionList) {
+                    list.add(session.getAClass().getClassId());
+                }
+                //temporary set waiting class is 0
+                mapObj.put("waitingClass", 0);
+                mapObj.put("studyingClass", classRepository.countClassByClassIdIsInAndStatus(list,Constant.CLASS_STATUS_STUDYING));
+                mapObj.put("finishedClass", classRepository.countClassByClassIdIsInAndStatus(list,Constant.CLASS_STATUS_FINISHED));
+            } else {
+                throw new Exception(Constant.INVALID_USERNAME);
+            }
+            return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
