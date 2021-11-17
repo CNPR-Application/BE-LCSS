@@ -1,6 +1,19 @@
 package cnpr.lcss.dao;
 
-import cnpr.lcss.model.RoomAndBranchDto;
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import cnpr.lcss.model.TeacherBasisDetailDto;
 import cnpr.lcss.model.TeacherDto;
 import cnpr.lcss.model.TeacherInBranchDto;
@@ -8,11 +21,6 @@ import cnpr.lcss.util.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,36 +48,34 @@ public class Teacher implements Serializable {
     @OneToMany(mappedBy = "teacher")
     private List<TeachingSubject> teachingSubjectList;
 
-    //<editor-fold desc="Modify Constructor">
+    // <editor-fold desc="Modify Constructor">
     public Teacher(String experience, String rating, Account account) {
         this.experience = experience;
         this.rating = rating;
         this.account = account;
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Calculate Rating">
+    // <editor-fold desc="Calculate Rating">
     private String calculateRating(String rating) {
         DecimalFormat df = new DecimalFormat(Constant.RATING_PATTERN);
-        String[] arrOfInpStr = rating.split("/");
+        String[] arrOfInpStr = rating.split(Constant.SYMBOL_HYPHEN);
+        String finalResult;
         double result = Double.parseDouble(arrOfInpStr[0]) / Double.parseDouble(arrOfInpStr[1]);
-        String finalResult = df.format(result);
+        finalResult = df.format(result);
         return finalResult;
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Modify toString">
+    // <editor-fold desc="Modify toString">
     @Override
     public String toString() {
-        return "Teacher{" +
-                "teacherId=" + teacherId +
-                ", experience='" + experience + '\'' +
-                ", rating='" + rating + '\'' +
-                '}';
+        return "Teacher{" + "teacherId=" + teacherId + ", experience='" + experience + '\'' + ", rating='" + rating
+                + '\'' + '}';
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Convert to TeacherDto">
+    // <editor-fold desc="Convert to TeacherDto">
     public TeacherDto convertToTeacherDto() {
         TeacherDto dto = new TeacherDto();
         dto.setTeacherId(teacherId);
@@ -86,9 +92,9 @@ public class Teacher implements Serializable {
         dto.setCreatingDate(account.getCreatingDate());
         return dto;
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Convert to TeacherInBranchDto">
+    // <editor-fold desc="Convert to TeacherInBranchDto">
     public TeacherInBranchDto convertToTeacherInBranchDto() {
         TeacherInBranchDto dto = new TeacherInBranchDto();
         dto.setTeacherId(teacherId);
@@ -105,9 +111,9 @@ public class Teacher implements Serializable {
         dto.setTeacherRating(calculateRating(rating));
         return dto;
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Convert to TeacherBasisDetailDto">
+    // <editor-fold desc="Convert to TeacherBasisDetailDto">
     public TeacherBasisDetailDto convertToTeacherBasisDetailDto() {
         TeacherBasisDetailDto dto = new TeacherBasisDetailDto();
         dto.setTeacherId(teacherId);
@@ -116,5 +122,5 @@ public class Teacher implements Serializable {
         dto.setTeacherImage(account.getImage());
         return dto;
     }
-    //</editor-fold>
+    // </editor-fold>
 }

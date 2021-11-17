@@ -1,11 +1,10 @@
 package cnpr.lcss.model;
 
-import cnpr.lcss.dao.Curriculum;
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor

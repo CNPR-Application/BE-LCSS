@@ -1,14 +1,11 @@
 package cnpr.lcss.util;
 
-import cnpr.lcss.repository.ShiftRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class Constant {
-    //<editor-fold desc="Account">
+    // <editor-fold desc="Account">
     /**
      * -----ACCOUNT-----
      */
@@ -73,9 +70,9 @@ public class Constant {
     public static final String INVALID_PASSWORD_PATTERN = "Password must has minimum six characters, at least one letter and one number!";
     public static final String OLDPASSWORD_MATCH_NEWPASSWORD = "New password matched Old password! Please try new password";
     public static final String RENEWPASSWORD_NOT_MATCH_NEWPASSWORD = "Re new password did not match new password! Please try again";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Attendance">
+    // <editor-fold desc="Attendance">
     /**
      * -----ATTENDANCE-----
      */
@@ -86,9 +83,9 @@ public class Constant {
     // Error Message
     public static final String ERROR_INSERT_TO_ATTENDANCE = "Error at insert Student to Attendance!";
     public static final String INVALID_ATTENDANCE_STATUS = "Invalid Attendance Status [absent | not yet | present]!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Booking">
+    // <editor-fold desc="Booking">
     /**
      * -----BOOKING-----
      */
@@ -101,9 +98,9 @@ public class Constant {
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
     public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled/processed!";
     public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Branch">
+    // <editor-fold desc="Branch">
     /**
      * -----BRANCH-----
      */
@@ -112,9 +109,9 @@ public class Constant {
     public static final String INVALID_BRANCH_AVAILABLE = "Branch not available!";
     public static final String DUPLICATE_BRANCH_ID = "Duplicate Branch ID!";
     public static final String DUPLICATE_BRANCH_NAME = "Duplicate Branch Name!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Class">
+    // <editor-fold desc="Class">
     /**
      * -----CLASS-----
      */
@@ -137,9 +134,9 @@ public class Constant {
     public static final String INVALID_OPENING_DATE = "Null or invalid opening day!";
     public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";
     public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Curriculum">
+    // <editor-fold desc="Curriculum">
     /**
      * -----CURRICULUM-----
      */
@@ -148,9 +145,9 @@ public class Constant {
     public static final String DUPLICATE_CURRICULUM_NAME = "Duplicate Curriculum Name!";
     public static final String INVALID_CURRICULUM_ID = "Curriculum ID not exist!";
     public static final String UNABLE_TO_DELETE_CURRICULUM_ = "Curriculum has available Subjects. Unable to delete!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Notification">
+    // <editor-fold desc="Notification">
     /**
      * Notification
      */
@@ -160,9 +157,9 @@ public class Constant {
     public static final String FEEDBACK_BODY = "Vui lòng để lại đánh giá về lớp '%s' để trung tâm cải thiện chất lượng giảng dạy. Cám ơn bạn!";
     // Error Message
     public static final String ERROR_GENERATE_NOTIFICATION = "Error at Generate Notifications!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Firebase">
+    // <editor-fold desc="Firebase">
     /**
      * -----FIREBASE-----
      */
@@ -172,9 +169,9 @@ public class Constant {
     public static final String CURRICULUM = "curriculum";
     public static final String AVATAR = "avatar";
     public static final String SUBJECT = "subject";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Registering Guest">
+    // <editor-fold desc="Registering Guest">
     /**
      * -----REGISTERING GUEST-----
      */
@@ -186,9 +183,9 @@ public class Constant {
     public static final String INVALID_CITY = "Invalid city!";
     public static final String INVALID_GUEST_ID = "Guest ID not exist!";
     public static final String INVALID_GUEST_STATUS = "Guest Status must be pending/contacted/canceled!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Room">
+    // <editor-fold desc="Room">
     /**
      * -----ROOM-----
      */
@@ -196,18 +193,18 @@ public class Constant {
     public static final String ERROR_GET_ROOM_ID = "Unable to get Room ID!";
     public static final String INVALID_ROOM_ID = "Room ID not exist!";
     public static final String ERROR_DELETE_ROOM_SESSION = "Can not delete Room because Room's Sessions are still available!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Session">
+    // <editor-fold desc="Session">
     /**
      * -----SESSION-----
      */
     // Error Message
     public static final String ERROR_GENERATE_SESSIONS = "Error at Generate Sessions!";
     public static final String INVALID_NEW_SESSION = "New Start Time already existed in Session List!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Shift">
+    // <editor-fold desc="Shift">
     /**
      * -----SHIFT-----
      */
@@ -225,16 +222,16 @@ public class Constant {
     public static final String INVALID_SHIFT_ID = "Shift ID not exist!";
     public static final String TIME_END_PATTERN_ERROR = "TimeEnd must be [09:30, 11:00, 15:30, 17:00, 19:30, 21:00]!";
     public static final String TIME_START_PATTERN_ERROR = "TimeStart must be [08:00, 09:30, 14:00, 15:30, 18:00, 19:30]!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Staff">
+    // <editor-fold desc="Staff">
     /**
      * -----STAFF-----
      */
     // Error Message
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Student">
+    // <editor-fold desc="Student">
     /**
      * -----STUDENT-----
      */
@@ -243,17 +240,17 @@ public class Constant {
     public static final String INVALID_STUDENT_USERNAME = "Student Username not exist!";
     public static final String ERROR_DELETE_STUDENT_BOOKING = "CAN NOT DELETE STUDENT BECAUSE STUDENT'S BOOKING IS PAID!";
     public static final String ERROR_DELETE_STUDENT_CLASS = "CAN NOT DELETE STUDENT BECAUSE STUDENT'S CLASS IS WAITING/STUDYING!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Student In Class">
+    // <editor-fold desc="Student In Class">
     /**
      * -----STUDENT IN CLASS-----
      */
     // Error Message
     public static final String ERROR_SAVE_STUDENT_IN_CLASS = "Save student in class FAILED!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Subject">
+    // <editor-fold desc="Subject">
     /**
      * -----SUBJECT-----
      */
@@ -268,9 +265,9 @@ public class Constant {
     public static final String INVALID_SUBJECT_PRICE = "Subject Price must be GREATER or EQUAL to 0!";
     public static final String INVALID_SUBJECT_SLOT = "Subject's Slot must be GREATER than 0!";
     public static final String INVALID_SUBJECT_SLOT_PER_WEEK = "Subject's Slot Per Week must be GREATER than 0!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Subject Detail">
+    // <editor-fold desc="Subject Detail">
     /**
      * -----SUBJECT DETAIL-----
      */
@@ -279,9 +276,9 @@ public class Constant {
     public static final String INVALID_SUBJECT_DETAIL_ID = "Subject Detail ID not exist!";
     public static final String INVALID_WEEK_NUM = "Number of weeks must be GREATER than 0!";
     public static final String INVALID_WEEK_NUM_LIMIT = "Number of weeks for this Subject is at their limit!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Teacher">
+    // <editor-fold desc="Teacher">
     /**
      * -----TEACHER-----
      */
@@ -290,25 +287,25 @@ public class Constant {
     // Error Message
     public static final String ERROR_GENERATE_TEACHER_RATING = "Generate teacher rating FAILED!";
     public static final String ERROR_DELETE_TEACHER_CLASS = "CAN NOT DELETE TEACHER BECAUSE TEACHER'S CLASS IS WAITING/STUDYING!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Teaching Branch">
+    // <editor-fold desc="Teaching Branch">
     /**
      * -----TEACHING BRANCH-----
      */
     // Error Message
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Teaching Subject">
+    // <editor-fold desc="Teaching Subject">
     /**
      * -----TEACHING SUBJECT-----
      */
     // Error Message
     public static final String EXISTED_TEACHING_SUBJECT = "This Teaching Subject is already taken!";
     public static final String UNABLE_TO_DELETE_TEACHING_SUBJECT = "This Teaching Subject is UNABLE to delete!";
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Others">
+    // <editor-fold desc="Others">
     /**
      * -----OTHERS-----
      */
@@ -339,16 +336,12 @@ public class Constant {
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
     public static final String SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT = "Tài khoản đăng nhập của bạn là: %s"
-            + "\n\nMật khẩu: %s"
-            + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
-            + "\n\nChúc bạn một ngày vui vẻ!"
-            + "\n\nCNPR.";
-    public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Thân gửi bạn %s,\n" +
-            "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n" +
-            "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n" +
-            "\n" +
-            "Chân thành cám ơn,\n" +
-            "CNPR.";
+            + "\n\nMật khẩu: %s" + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
+            + "\n\nChúc bạn một ngày vui vẻ!" + "\n\nCNPR.";
+    public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Thân gửi bạn %s,\n"
+            + "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n"
+            + "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n"
+            + "\n" + "Chân thành cám ơn,\n" + "CNPR.";
     public static final String SYSTEM_MAIL_PASSWORD = "lcss@123";
     public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
     public static final String SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP = "THÔNG BÁO DỜI LỊCH KHAI GIẢNG!";
@@ -358,18 +351,19 @@ public class Constant {
     public static final String TIME_PATTERN = "HH:mm";
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Conversion">
+    // <editor-fold desc="Conversion">
 
     /**
      * -----CONVERSION-----
      */
-    //<editor-fold desc="Convert to UTC+7 TimeZone">
+    // <editor-fold desc="Convert to UTC+7 TimeZone">
     public static Date convertToUTC7TimeZone(Date insDate) {
-        ZonedDateTime date = ZonedDateTime.ofInstant(insDate.toInstant(), ZoneId.of(TIMEZONE)).plusHours(PLUS_HOUR_FROM_UTC_TO_UTC7);
+        ZonedDateTime date = ZonedDateTime.ofInstant(insDate.toInstant(), ZoneId.of(TIMEZONE))
+                .plusHours(PLUS_HOUR_FROM_UTC_TO_UTC7);
         return Date.from(date.toInstant());
     }
-    //</editor-fold>
-    //</editor-fold>
+    // </editor-fold>
+    // </editor-fold>
 }
