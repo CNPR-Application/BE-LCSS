@@ -845,6 +845,7 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.13-class-static-teacher">
     public ResponseEntity<?> getTeacherClassesStatistic(String teacherUsername) throws Exception {
         HashMap<String, Object> mapObj = new LinkedHashMap<>();
         try {
@@ -868,4 +869,5 @@ public class ClassService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    //</editor-fold>
 }

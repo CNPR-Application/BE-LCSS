@@ -308,7 +308,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.14 Delete Student">
+    //<editor-fold desc="1.14-delete-student">
 
     /**
      * @param username

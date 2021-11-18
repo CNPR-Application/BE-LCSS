@@ -52,7 +52,7 @@ public class StudentService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.14 Delete Student">
+    //<editor-fold desc="1.14-delete-student">
     public ResponseEntity<?> deleteStudent(String username) throws Exception {
         try {
             Account account = accountRepository.findOneByUsername(username);
