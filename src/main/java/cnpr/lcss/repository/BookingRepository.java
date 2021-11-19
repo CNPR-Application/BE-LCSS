@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -38,4 +39,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findBookingByaClass_ClassIdAndStatusContainingAllIgnoreCase(int classId, String status, Pageable pageable);
 
     Page<Booking> findBookingByStatusContainingAllIgnoreCase(String status, Pageable pageable);
+
+    int countDistinctByPayingDateIsGreaterThanEqual(Date date);
 }

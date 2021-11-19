@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -93,4 +94,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
                     "where s.class_id = ?1"
     )
     String findTeacherNameByClassId(Integer classId);
+
+    int countTeacherByAccount_CreatingDateIsGreaterThanEqual(Date date);
 }

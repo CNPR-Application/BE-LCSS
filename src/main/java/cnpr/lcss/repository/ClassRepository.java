@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -83,4 +84,6 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     @Query("select c from Class c where c.classId = ?1")
     Class findByClassId(int classId);
+
+    int countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(int branchId, List<String> status, Date date);
 }

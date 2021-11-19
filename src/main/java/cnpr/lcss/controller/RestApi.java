@@ -62,6 +62,8 @@ public class RestApi {
     SchedulerService schedulerService;
     @Autowired
     TeachingSubjectService teachingSubjectService;
+    @Autowired
+    StatisticService statisticService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -1935,6 +1937,29 @@ public class RestApi {
     @RequestMapping(value = "/notification-to-group", method = RequestMethod.POST)
     public ResponseEntity<?> createNotificationAndSendEmailToGroup(@RequestBody NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
         return notificationService.createNotificationAndSendEmailToGroup(notiAndEmailToGroupRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------STATISTIC--------------------------------
+     **/
+
+    //<editor-fold desc="16.07-get-manager-statistic">
+
+    /**
+     * @param date
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 16.07-get-manager-statistic
+     * @author HuuNT - 2021.11.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/manager-statistic", method = RequestMethod.GET)
+    public ResponseEntity<?> getManagerStatistic(@RequestParam(value = "date")
+                                                 @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date date,
+                                                 @RequestParam(value = "branchId") int branchId) throws Exception {
+        return statisticService.getManagerStatistic(date, branchId);
     }
     //</editor-fold>
 
