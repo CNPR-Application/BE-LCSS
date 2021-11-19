@@ -14,5 +14,5 @@ public interface RegisteringGuestRepository extends JpaRepository<RegisteringGue
 
     Page<RegisteringGuest> findRegisteringGuestByBranch_BranchIdAndStatusContaining(int branchId, String status, Pageable pageable);
 
-    int countDistinctByBookingDateIsGreaterThanEqual(Date date);
+    int countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(Date date, int branchId);
 }

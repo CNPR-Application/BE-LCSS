@@ -40,5 +40,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Page<Booking> findBookingByStatusContainingAllIgnoreCase(String status, Pageable pageable);
 
-    int countDistinctByPayingDateIsGreaterThanEqual(Date date);
+    int countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(Date date, int bracnhId);
 }

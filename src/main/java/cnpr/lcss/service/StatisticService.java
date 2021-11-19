@@ -1,5 +1,7 @@
 package cnpr.lcss.service;
 
+import cnpr.lcss.dao.Account;
+import cnpr.lcss.dao.Student;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class StatisticService {
     TeacherRepository teacherRepository;
     @Autowired
     BranchRepository branchRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     //<editor-fold desc="16.07-get-manager-statistic-in-month">
     public ResponseEntity<?> getManagerStatistic(Date date, int branchId) throws Exception {
@@ -44,10 +48,21 @@ public class StatisticService {
              * newTeacher: teacher have account creating date from insertDate
              */
 
-            int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqual(date);
-            int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqual(date);
-            int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqual(date);
-            int newTeacher = teacherRepository.countTeacherByAccount_CreatingDateIsGreaterThanEqual(date);
+            int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date,branchId);
+            int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date,branchId);
+            List<Account> studentList=accountRepository.findAvailableStudentByBranchId(Constant.ROLE_STUDENT,branchId);
+            List<String> usernameStudentList = new ArrayList<>();
+            for (Account account: studentList) {
+                usernameStudentList.add(account.getUsername());
+            }
+            int newStudent = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameStudentList,date,Constant.ROLE_STUDENT);
+
+            List<Account> teacherList=accountRepository.findAvailableTeacherByBranchId(Constant.ROLE_TEACHER,branchId);
+            List<String> usernameTeacherList = new ArrayList<>();
+            for (Account account: teacherList) {
+                usernameTeacherList.add(account.getUsername());
+            }
+            int newTeacher = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameTeacherList,date,Constant.ROLE_TEACHER);
 
             //Set a new Date= insertDate with a Date = 01 to count from that Month
             Date classDate = date;
