@@ -22,11 +22,16 @@ public class StatisticService {
     StudentRepository studentRepository;
     @Autowired
     TeacherRepository teacherRepository;
+    @Autowired
+    BranchRepository branchRepository;
 
     //<editor-fold desc="16.07-get-manager-statistic-in-month">
     public ResponseEntity<?> getManagerStatistic(Date date, int branchId) throws Exception {
         try {
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
+            if (!branchRepository.existsById(branchId)) {
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
+            }
             List<String> status = new ArrayList<>();
             status.add(Constant.CLASS_STATUS_STUDYING);
             status.add(Constant.CLASS_STATUS_FINISHED);
