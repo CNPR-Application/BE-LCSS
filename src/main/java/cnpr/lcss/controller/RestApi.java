@@ -1963,6 +1963,23 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="16.08-get-admin-statistic-in-month">
+
+    /**
+     * @param date
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.11.19
+     * @apiNote 16.08-get-admin-statistic-in-month
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin-statistic", method = RequestMethod.GET)
+    public ResponseEntity<?> getAdminStatistic(@RequestParam(value = "date")
+                                               @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date date) throws Exception {
+        return statisticService.getAdminStatistic(date);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------FIREBASE--------------------------------
      **/
