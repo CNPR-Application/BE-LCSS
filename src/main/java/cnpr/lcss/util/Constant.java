@@ -311,6 +311,9 @@ public class Constant {
     /**
      * -----OTHERS-----
      */
+    public static final String URL_LOGIN = "/login";
+    public static final String URL_FORGOT_PASSWORD = "/forgot-password";
+    public static final String URL_GUESTS = "/guest**";
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

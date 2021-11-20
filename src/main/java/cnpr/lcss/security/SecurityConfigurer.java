@@ -1,6 +1,7 @@
 package cnpr.lcss.security;
 
 import cnpr.lcss.service.AccountService;
+import cnpr.lcss.util.Constant;
 import cnpr.lcss.util.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +41,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/", "/login").permitAll()
+                .authorizeRequests()
+                .antMatchers(Constant.URL_LOGIN, Constant.URL_FORGOT_PASSWORD, Constant.URL_GUESTS)
+                .permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
