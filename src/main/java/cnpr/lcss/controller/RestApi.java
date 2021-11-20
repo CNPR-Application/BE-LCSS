@@ -1944,7 +1944,7 @@ public class RestApi {
      * -------------------------------STATISTIC--------------------------------
      **/
 
-    //<editor-fold desc="16.07-get-manager-statistic">
+    //<editor-fold desc="16.07-get-manager-statistic-in-month">
 
     /**
      * @param date

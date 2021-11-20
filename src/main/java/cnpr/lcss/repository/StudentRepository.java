@@ -12,7 +12,6 @@ import java.util.Date;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
-
     @Query("SELECT s.parentName FROM Student s WHERE s.account.username = :username")
     String findParentNameByStudentUsername(@Param("username") String studentUsername);
 
