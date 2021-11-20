@@ -311,9 +311,7 @@ public class Constant {
     /**
      * -----OTHERS-----
      */
-    public static final String URL_LOGIN = "/login";
-    public static final String URL_FORGOT_PASSWORD = "/forgot-password";
-    public static final String URL_GUESTS = "/guest**";
+    // String
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -332,23 +330,15 @@ public class Constant {
     public static final String NOT_AVAILABLE_INFO = "N/A";
     public static final String NUMBERS = "1234567890";
     public static final String NUMBER_ZERO = "0";
-    // Minimum six characters, at least one letter and one number
-    public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+    public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$"; // Minimum six characters, at least one letter and one number
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
-    public static final String STRING_AUTHORIZATION = "Authorization";
     public static final String SECRET_KEY = "LCSS_FA21#CNPR";
     public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String STRING_AUTHORIZATION = "Authorization";
     public static final String SYMBOL_COLON = ":";
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
-    public static final String SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT = "Tài khoản đăng nhập của bạn là: %s"
-            + "\n\nMật khẩu: %s" + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
-            + "\n\nChúc bạn một ngày vui vẻ!" + "\n\nCNPR.";
-    public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Thân gửi bạn %s,\n"
-            + "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n"
-            + "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n"
-            + "\n" + "Chân thành cám ơn,\n" + "CNPR.";
     public static final String SYSTEM_MAIL_PASSWORD = "lcss@123";
     public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
     public static final String SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP = "THÔNG BÁO DỜI LỊCH KHAI GIẢNG!";
@@ -356,8 +346,20 @@ public class Constant {
     public static final String SYSTEM_NAME = "LCSS - LANGUAGE CENTER SUPPORT SYSTEM";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String TIME_PATTERN = "HH:mm";
+    public static final String URL_FORGOT_PASSWORD = "/forgot-password";
+    public static final String URL_GUESTS = "/guest**";
+    public static final String URL_LOGIN = "/login";
+    // Number
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
+    // Message
+    public static final String SYSTEM_MAIL_CONTENT_CREATE_NEW_ACOUNT = "Tài khoản đăng nhập của bạn là: %s"
+            + "\n\nMật khẩu: %s" + "\n\nHãy nhớ đổi mật khẩu ngay lần đăng nhập đầu tiên nhé!"
+            + "\n\nChúc bạn một ngày vui vẻ!" + "\n\nCNPR.";
+    public static final String SYSTEM_MAIL_CONTENT_SEND_NOTI_EMAIL_TO_GROUP = "Thân gửi bạn %s,\n"
+            + "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n"
+            + "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n"
+            + "\n" + "Chân thành cám ơn,\n" + "CNPR.";
     // </editor-fold>
 
     // <editor-fold desc="Conversion">
