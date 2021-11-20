@@ -10,7 +10,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class LoginResponseDto {
-
     private String name;
     private String address;
     private String email;

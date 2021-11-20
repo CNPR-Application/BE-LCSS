@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
 @Service
 public class StatisticService {
     @Autowired
@@ -30,11 +29,9 @@ public class StatisticService {
     @Autowired
     AccountRepository accountRepository;
 
-
     //<editor-fold desc="16.07-get-manager-statistic-in-month">
     public ResponseEntity<?> getManagerStatistic(Date date, int branchId) throws Exception {
         try {
-            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             if (!branchRepository.existsById(branchId)) {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
@@ -50,27 +47,28 @@ public class StatisticService {
              * newTeacher: teacher have account creating date from insertDate
              */
 
-            int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date,branchId);
-            int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date,branchId);
-            List<Account> studentList=accountRepository.findAvailableStudentByBranchId(Constant.ROLE_STUDENT,branchId);
+            int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
+            int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
+            List<Account> studentList = accountRepository.findAvailableStudentByBranchId(Constant.ROLE_STUDENT, branchId);
             List<String> usernameStudentList = new ArrayList<>();
-            for (Account account: studentList) {
+            for (Account account : studentList) {
                 usernameStudentList.add(account.getUsername());
             }
-            int newStudent = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameStudentList,date,Constant.ROLE_STUDENT);
+            int newStudent = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameStudentList, date, Constant.ROLE_STUDENT);
 
-            List<Account> teacherList=accountRepository.findAvailableTeacherByBranchId(Constant.ROLE_TEACHER,branchId);
+            List<Account> teacherList = accountRepository.findAvailableTeacherByBranchId(Constant.ROLE_TEACHER, branchId);
             List<String> usernameTeacherList = new ArrayList<>();
-            for (Account account: teacherList) {
+            for (Account account : teacherList) {
                 usernameTeacherList.add(account.getUsername());
             }
-            int newTeacher = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameTeacherList,date,Constant.ROLE_TEACHER);
+            int newTeacher = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameTeacherList, date, Constant.ROLE_TEACHER);
 
             //Set a new Date= insertDate with a Date = 01 to count from that Month
             Date classDate = date;
             classDate.setDate(01);
 
             int newClass = classRepository.countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(branchId, status, classDate);
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
 
             mapObj.put("newClass", newClass);
             mapObj.put("newBooking", newBooking);
@@ -89,7 +87,6 @@ public class StatisticService {
     //<editor-fold desc="16.08-get-admin-statistic-">
     public ResponseEntity<?> getAdminStatistic(Date date) throws Exception {
         try {
-            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             List<Branch> branchList = branchRepository.findAll();
             List<AdminStatisticInMonthResponse> adminStatisticInMonthResponsesList = new ArrayList<>();
             int totalNewClass = 0;
@@ -143,6 +140,7 @@ public class StatisticService {
                 totalNewTeacher += newTeacher;
             }
 
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("branchesStatisticResponseDtoList", adminStatisticInMonthResponsesList);
             mapObj.put("totalNewClass", totalNewClass);
             mapObj.put("totalNewBooking", totalNewBooking);
