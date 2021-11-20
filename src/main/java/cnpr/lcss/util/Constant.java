@@ -67,6 +67,7 @@ public class Constant {
     public static final String INVALID_TEACHER_BIRTHDAY = "Teacher must OLDER or EQUAL to 15!";
     public static final String INVALID_TEACHER_EXP = "Null or empty experience!";
     public static final String INVALID_USERNAME = "Username not exist!";
+    public static final String INVALID_USERNAME_OR_PASSWORD = "Invalid Username or Password!";
     public static final String PASSWORD_NOT_MATCH = "Password not match!";
     public static final String INVALID_PASSWORD_PATTERN = "Password must has minimum six characters, at least one letter and one number!";
     public static final String OLDPASSWORD_MATCH_NEWPASSWORD = "New password matched Old password! Please try new password";
@@ -332,6 +333,8 @@ public class Constant {
     public static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
+    public static final String STRING_AUTHORIZATION = "Authorization";
+    public static final String SECRET_KEY = "LCSS_FA21#CNPR";
     public static final String SPECIAL_CHARACTERS = "!@#$";
     public static final String SYMBOL_COLON = ":";
     public static final String SYMBOL_HYPHEN = "-";

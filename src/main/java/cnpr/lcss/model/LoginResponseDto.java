@@ -27,4 +27,5 @@ public class LoginResponseDto {
     // role: Teacher
     private String experience;
     private String rating;
+    private String jwt;
 }

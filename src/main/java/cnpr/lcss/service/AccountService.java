@@ -4,12 +4,20 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
+import cnpr.lcss.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +29,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class AccountService {
+public class AccountService implements UserDetailsService {
+    @Autowired
+    JwtUtil jwtUtil;
+    @Autowired
+    AuthenticationManager authenticationManager;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -38,6 +50,14 @@ public class AccountService {
     SubjectRepository subjectRepository;
     @Autowired
     RoleRepository roleRepository;
+
+    //<editor-fold desc="Load user by Username">
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account acc = accountRepository.findOneByUsername(username);
+        return new User(acc.getUsername(), acc.getPassword(), new ArrayList<>());
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert Vietnamese characters to ASCII">
     public static String convertToASCII(String str) throws UnsupportedEncodingException {
@@ -126,78 +146,79 @@ public class AccountService {
     //<editor-fold desc="1.01-check-login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
-
         try {
-            if (loginRequest.getUsername() == null || loginRequest.getUsername().isEmpty()
-                    || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
-                throw new NullPointerException();
-            } else {
-                if (accountRepository.existsById(loginRequest.getUsername())) {
-                    Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+                );
+            } catch (BadCredentialsException e) {
+                throw new Exception(Constant.INVALID_USERNAME_OR_PASSWORD, e);
+            }
 
-                    // Check whether account is available or not
-                    if (!acc.getIsAvailable()) {
-                        throw new Exception(Constant.INVALID_IS_AVAILABLE);
-                    }
+            final UserDetails userDetails = loadUserByUsername(loginRequest.getUsername());
+            final String jwt = jwtUtil.generateToken(userDetails);
 
-                    String accUsername = acc.getUsername();
-                    if (acc.getPassword().equals(loginRequest.getPassword())) {
-                        loginResponseDto.setName(acc.getName());
-                        loginResponseDto.setAddress(acc.getAddress());
-                        loginResponseDto.setEmail(acc.getEmail());
-                        loginResponseDto.setBirthday(acc.getBirthday());
-                        loginResponseDto.setPhone(acc.getPhone());
-                        loginResponseDto.setImage(acc.getImage());
-                        loginResponseDto.setRole(acc.getRole().getRoleId());
-                        loginResponseDto.setCreatingDate(acc.getCreatingDate());
+            Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
 
-                        // Return Branch Id, Branch Name
-                        // Role: Admin, Manager, Staff
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
-                                || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
-                            loginResponseDto.setBranchId(staffRepository.findBranchIdByStaffUsername(accUsername));
-                            loginResponseDto.setBranchName(staffRepository.findBranchNameByStaffUsername(accUsername));
-                        } // Role: Teacher
-                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
-                            loginResponseDto.setBranchId(teacherRepository.findBranchIdByTeacherUsername(accUsername));
-                            loginResponseDto.setBranchName(teacherRepository.findBranchNameByTeacherUsername(accUsername));
-                        } // Role: Student
-                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                            loginResponseDto.setBranchId(studentRepository.findBranchIdByStudentUsername(accUsername));
-                            loginResponseDto.setBranchName(studentRepository.findBranchNameByStudentUsername(accUsername));
-                        } else {
-                            throw new Exception();
-                        }
+            // Check whether account is available or not
+            if (!acc.getIsAvailable()) {
+                throw new Exception(Constant.INVALID_IS_AVAILABLE);
+            }
 
-                        // Return Parent's information
-                        // Role: Student
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                            loginResponseDto.setParentName(studentRepository.findParentNameByStudentUsername(accUsername));
-                            loginResponseDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(accUsername));
-                        } else {
-                            loginResponseDto.setParentName(null);
-                            loginResponseDto.setParentPhone(null);
-                        }
+            String accUsername = acc.getUsername();
+            if (acc.getPassword().equals(loginRequest.getPassword())) {
+                loginResponseDto.setName(acc.getName());
+                loginResponseDto.setAddress(acc.getAddress());
+                loginResponseDto.setEmail(acc.getEmail());
+                loginResponseDto.setBirthday(acc.getBirthday());
+                loginResponseDto.setPhone(acc.getPhone());
+                loginResponseDto.setImage(acc.getImage());
+                loginResponseDto.setRole(acc.getRole().getRoleId());
+                loginResponseDto.setCreatingDate(acc.getCreatingDate());
 
-                        // Return Experience, Rating
-                        // Role: Teacher
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
-                            loginResponseDto.setExperience(teacherRepository.findExperienceByTeacherUsername(accUsername));
-                            loginResponseDto.setRating(teacherRepository.findRatingByTeacherUsername(accUsername));
-                        } else {
-                            loginResponseDto.setExperience(null);
-                            loginResponseDto.setRating(null);
-                        }
-                        return ResponseEntity.ok(loginResponseDto);
-                    } else {
-                        throw new Exception(Constant.PASSWORD_NOT_MATCH);
-                    }
+                // Return Branch Id, Branch Name
+                // Role: Admin, Manager, Staff
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
+                        || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
+                    loginResponseDto.setBranchId(staffRepository.findBranchIdByStaffUsername(accUsername));
+                    loginResponseDto.setBranchName(staffRepository.findBranchNameByStaffUsername(accUsername));
+                } // Role: Teacher
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                    loginResponseDto.setBranchId(teacherRepository.findBranchIdByTeacherUsername(accUsername));
+                    loginResponseDto.setBranchName(teacherRepository.findBranchNameByTeacherUsername(accUsername));
+                } // Role: Student
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                    loginResponseDto.setBranchId(studentRepository.findBranchIdByStudentUsername(accUsername));
+                    loginResponseDto.setBranchName(studentRepository.findBranchNameByStudentUsername(accUsername));
                 } else {
-                    throw new Exception(Constant.INVALID_USERNAME);
+                    throw new Exception();
                 }
+
+                // Return Parent's information
+                // Role: Student
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                    loginResponseDto.setParentName(studentRepository.findParentNameByStudentUsername(accUsername));
+                    loginResponseDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(accUsername));
+                } else {
+                    loginResponseDto.setParentName(null);
+                    loginResponseDto.setParentPhone(null);
+                }
+
+                // Return Experience, Rating
+                // Role: Teacher
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                    loginResponseDto.setExperience(teacherRepository.findExperienceByTeacherUsername(accUsername));
+                    loginResponseDto.setRating(teacherRepository.findRatingByTeacherUsername(accUsername));
+                } else {
+                    loginResponseDto.setExperience(null);
+                    loginResponseDto.setRating(null);
+                }
+                loginResponseDto.setJwt(jwt);
+                return ResponseEntity.ok(loginResponseDto);
+            } else {
+                throw new Exception(Constant.PASSWORD_NOT_MATCH);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
