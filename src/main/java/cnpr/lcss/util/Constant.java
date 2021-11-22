@@ -346,9 +346,17 @@ public class Constant {
     public static final String SYSTEM_NAME = "LCSS - LANGUAGE CENTER SUPPORT SYSTEM";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String TIME_PATTERN = "HH:mm";
+    // URL
+    public static final String URL_BRANCH = "/admin/branches**";
+    public static final String URL_CLASS = "/classes**";
+    public static final String URL_CLASS_FILTER = "/classes/**";
+    public static final String URL_CURRICULUM = "/curriculums**";
     public static final String URL_FORGOT_PASSWORD = "/forgot-password";
-    public static final String URL_GUESTS = "/guest**";
+    public static final String URL_GUESTS = "/guests**";
     public static final String URL_LOGIN = "/login";
+    public static final String URL_SHIFT = "/shifts**";
+    public static final String URL_SUBJECT = "/subjects**";
+    public static final String URL_SUBJECT_DETAIL = "/subjects/details**";
     // Number
     public static final int NO_OF_RATING_PPL_ADD_ON = 1;
     public static final long PLUS_HOUR_FROM_UTC_TO_UTC7 = 7;
