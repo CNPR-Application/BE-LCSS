@@ -21,13 +21,13 @@ public class StatisticService {
     @Autowired
     RegisteringGuestRepository registeringGuestRepository;
     @Autowired
-    StudentRepository studentRepository;
-    @Autowired
-    TeacherRepository teacherRepository;
-    @Autowired
     BranchRepository branchRepository;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    TeacherRepository teacherRepository;
 
     //<editor-fold desc="16.07-get-manager-statistic-in-month">
     public ResponseEntity<?> getManagerStatistic(Date date, int branchId) throws Exception {
@@ -49,19 +49,8 @@ public class StatisticService {
 
             int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
             int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
-            List<Account> studentList = accountRepository.findAvailableStudentByBranchId(Constant.ROLE_STUDENT, branchId);
-            List<String> usernameStudentList = new ArrayList<>();
-            for (Account account : studentList) {
-                usernameStudentList.add(account.getUsername());
-            }
-            int newStudent = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameStudentList, date, Constant.ROLE_STUDENT);
-
-            List<Account> teacherList = accountRepository.findAvailableTeacherByBranchId(Constant.ROLE_TEACHER, branchId);
-            List<String> usernameTeacherList = new ArrayList<>();
-            for (Account account : teacherList) {
-                usernameTeacherList.add(account.getUsername());
-            }
-            int newTeacher = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameTeacherList, date, Constant.ROLE_TEACHER);
+            int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date,branchId,Boolean.TRUE);
+            long newTeacher =teacherRepository.countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(branchId,date,Boolean.TRUE);
 
             //Set a new Date= insertDate with a Date = 01 to count from that Month
             Date classDate = date;
@@ -105,20 +94,11 @@ public class StatisticService {
                 List<String> status = new ArrayList<>();
                 status.add(Constant.CLASS_STATUS_STUDYING);
                 status.add(Constant.CLASS_STATUS_FINISHED);
+
                 int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
                 int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
-                List<Account> studentList = accountRepository.findAvailableStudentByBranchId(Constant.ROLE_STUDENT, branchId);
-                List<String> usernameStudentList = new ArrayList<>();
-                for (Account account : studentList) {
-                    usernameStudentList.add(account.getUsername());
-                }
-                int newStudent = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameStudentList, date, Constant.ROLE_STUDENT);
-                List<Account> teacherList = accountRepository.findAvailableTeacherByBranchId(Constant.ROLE_TEACHER, branchId);
-                List<String> usernameTeacherList = new ArrayList<>();
-                for (Account account : teacherList) {
-                    usernameTeacherList.add(account.getUsername());
-                }
-                int newTeacher = accountRepository.countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(usernameTeacherList, date, Constant.ROLE_TEACHER);
+                int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date,branchId,Boolean.TRUE );
+                long newTeacher = teacherRepository.countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(branchId,date,Boolean.TRUE);
 
                 //Set a new Date= insertDate with a Date = 01 to count from that Month
                 Date classDate = date;

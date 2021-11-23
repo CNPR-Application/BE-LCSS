@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -64,6 +63,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
                     "join student_in_class sic on s.student_id = sic.student_id " +
                     "where sic.student_class_id = ?1")
     Account findByStudentInClass_Id(Integer id);
-
-    int countAccountByUsernameIsInAndCreatingDateIsGreaterThanEqualAndRole_RoleId(List<String> username, Date date, String role);
 }

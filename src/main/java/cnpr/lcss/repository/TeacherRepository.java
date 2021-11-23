@@ -95,5 +95,11 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     )
     String findTeacherNameByClassId(Integer classId);
 
-    int countTeacherByAccount_CreatingDateIsGreaterThanEqual(Date date);
+    @Query("select count(t) from Teacher t left join t.teachingBranchList teachingBranchList " +
+            "inner join Account as a " +
+            "on a.username=t.account.username " +
+            "where teachingBranchList.branch.branchId =?1 " +
+            "and a.creatingDate >= ?2 " +
+            "and a.isAvailable = ?3")
+    long countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(int branchId, Date date, boolean isAvailable);
 }
