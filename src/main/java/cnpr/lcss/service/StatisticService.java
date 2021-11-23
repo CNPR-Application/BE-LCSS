@@ -42,7 +42,7 @@ public class StatisticService {
             /** count
              * newClass: studying/finished classes have opening dates from insertDate
              * newBooking : booking have payingDate from insertDate
-             * newRegisteredInfo: registerinfo have bookingDate from insertDate
+             * newRegisteredInfo: register info have bookingDate from insertDate
              * newStudent: student have account creating date from insertDate
              * newTeacher: teacher have account creating date from insertDate
              */
@@ -50,7 +50,6 @@ public class StatisticService {
             int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
             int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
             int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date,branchId,Boolean.TRUE);
-            long newTeacher =teacherRepository.countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(branchId,date,Boolean.TRUE);
 
             //Set a new Date= insertDate with a Date = 01 to count from that Month
             Date classDate = date;
@@ -63,7 +62,6 @@ public class StatisticService {
             mapObj.put("newBooking", newBooking);
             mapObj.put("newRegisteredInfo", newRegisteredInfo);
             mapObj.put("newStudent", newStudent);
-            mapObj.put("newTeacher", newTeacher);
 
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
         } catch (Exception e) {
