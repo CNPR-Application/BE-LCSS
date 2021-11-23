@@ -351,7 +351,7 @@ public class Constant {
     public static final String URL_CLASS = "/classes**";
     public static final String URL_CLASS_FILTER = "/classes/**";
     public static final String URL_CURRICULUM = "/curriculums**";
-    public static final String URL_FORGOT_PASSWORD = "/forgot-password";
+    public static final String URL_FORGOT_PASSWORD = "/forgot-password**";
     public static final String URL_GUESTS = "/guests**";
     public static final String URL_LOGIN = "/login";
     public static final String URL_SHIFT = "/shifts**";
