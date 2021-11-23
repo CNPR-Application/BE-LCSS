@@ -70,12 +70,8 @@ public class SendEmailService {
                     Message.RecipientType.TO,
                     InternetAddress.parse(userGmail)
             );
-            message.setSubject("Chào, " + accountName);
-            message.setText("Hệ thống trung tâm ngoại ngữ CNPR chúng tôi vừa nhận được yêu cầu khôi phục mật khẩu từ bạn với tài khoản " + accountUsername + ", " + " mật khẩu của bạn là: " + accountPassword + ".\n" +
-                    "\n" +
-                    "\n" +
-                    "Chân thành cám ơn,\n" +
-                    "CNPR.");
+            message.setSubject(Constant.SYSTEM_MAIL_SUBJECT_FORGOT_PASSWORD);
+            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD,accountName,accountUsername,accountPassword));
 
             Transport.send(message);
             result = true;
