@@ -21,6 +21,7 @@ import java.util.Map;
 
 @RestController
 @EnableScheduling
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class RestApi {
     @Autowired
     AccountService accountService;
@@ -989,7 +990,7 @@ public class RestApi {
      * @apiNote 7.05-search Guest by Status
      * @author HuuNT - 2021.07.09 | LamHNT 2021.11.10
      */
-    @CrossOrigin
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/guests", params = "status", method = {RequestMethod.GET, RequestMethod.OPTIONS})
     public ResponseEntity<?> findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
                                                           @RequestParam(value = "status") String status,
