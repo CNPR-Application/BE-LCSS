@@ -102,4 +102,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             "and a.creatingDate >= ?2 " +
             "and a.isAvailable = ?3")
     long countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(int branchId, Date date, boolean isAvailable);
+
+    @Query("select count(t) from Teacher t left join t.teachingBranchList teachingBranchList where teachingBranchList.branch.branchId = ?1 and t.account.isAvailable = ?2")
+    int countDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable);
 }

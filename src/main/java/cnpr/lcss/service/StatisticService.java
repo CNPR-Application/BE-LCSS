@@ -1,6 +1,5 @@
 package cnpr.lcss.service;
 
-import cnpr.lcss.dao.Account;
 import cnpr.lcss.dao.Branch;
 import cnpr.lcss.model.AdminStatisticInMonthResponse;
 import cnpr.lcss.repository.*;
@@ -44,24 +43,32 @@ public class StatisticService {
              * newBooking : booking have payingDate from insertDate
              * newRegisteredInfo: register info have bookingDate from insertDate
              * newStudent: student have account creating date from insertDate
-             * newTeacher: teacher have account creating date from insertDate
              */
 
             int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
             int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
-            int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date,branchId,Boolean.TRUE);
+            int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date, branchId, Boolean.TRUE);
 
             //Set a new Date= insertDate with a Date = 01 to count from that Month
             Date classDate = date;
             classDate.setDate(01);
 
             int newClass = classRepository.countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(branchId, status, classDate);
-            HashMap<String, Object> mapObj = new LinkedHashMap<>();
 
+            int totalClass = classRepository.countDistinctByBranch_BranchId(branchId);
+            int totalBooking = bookingRepository.countBookingByBranch_BranchId(branchId);
+            int totalRegisteredInfo = registeringGuestRepository.countRegisteringGuestByBranch_BranchId(branchId);
+            int totalStudent = studentRepository.countStudentByBranch_BranchIdAndAccount_IsAvailable(branchId, Boolean.TRUE);
+
+            HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("newClass", newClass);
             mapObj.put("newBooking", newBooking);
             mapObj.put("newRegisteredInfo", newRegisteredInfo);
             mapObj.put("newStudent", newStudent);
+            mapObj.put("totalClass", totalClass);
+            mapObj.put("totalBooking", totalBooking);
+            mapObj.put("totalRegisteredInfo", totalRegisteredInfo);
+            mapObj.put("totalStudent", totalStudent);
 
             return ResponseEntity.status(HttpStatus.OK).body(mapObj);
         } catch (Exception e) {
@@ -85,9 +92,7 @@ public class StatisticService {
             for (Branch branch : branchList) {
                 int branchId = branch.getBranchId();
                 //get each branch statistic and add to Response List
-                AdminStatisticInMonthResponse adminStatisticInMonthResponse = new AdminStatisticInMonthResponse();
-                adminStatisticInMonthResponse.setBranchId(branchId);
-                adminStatisticInMonthResponse.setBranchName(branch.getBranchName());
+
 
                 List<String> status = new ArrayList<>();
                 status.add(Constant.CLASS_STATUS_STUDYING);
@@ -95,19 +100,33 @@ public class StatisticService {
 
                 int newBooking = bookingRepository.countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
                 int newRegisteredInfo = registeringGuestRepository.countDistinctByBookingDateIsGreaterThanEqualAndBranch_BranchId(date, branchId);
-                int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date,branchId,Boolean.TRUE );
-                long newTeacher = teacherRepository.countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(branchId,date,Boolean.TRUE);
+                int newStudent = studentRepository.countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(date, branchId, Boolean.TRUE);
+                long newTeacher = teacherRepository.countTeacherByBranch_BranchIdAndAccount_CreatingDateIsGreaterThanEqualAndAccount_IsAvailable(branchId, date, Boolean.TRUE);
 
                 //Set a new Date= insertDate with a Date = 01 to count from that Month
                 Date classDate = date;
                 classDate.setDate(01);
                 int newClass = classRepository.countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(branchId, status, classDate);
 
+                int totalClass = classRepository.countDistinctByBranch_BranchId(branchId);
+                int totalBooking = bookingRepository.countBookingByBranch_BranchId(branchId);
+                int totalRegisteredInfo = registeringGuestRepository.countRegisteringGuestByBranch_BranchId(branchId);
+                int totalStudent = studentRepository.countStudentByBranch_BranchIdAndAccount_IsAvailable(branchId, Boolean.TRUE);
+                int totalTeacher = teacherRepository.countDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(branchId, Boolean.TRUE);
+                AdminStatisticInMonthResponse adminStatisticInMonthResponse = new AdminStatisticInMonthResponse();
+                adminStatisticInMonthResponse.setBranchId(branchId);
+                adminStatisticInMonthResponse.setBranchName(branch.getBranchName());
                 adminStatisticInMonthResponse.setNewClass(newClass);
                 adminStatisticInMonthResponse.setNewBooking(newBooking);
                 adminStatisticInMonthResponse.setNewRegisteredInfo(newRegisteredInfo);
                 adminStatisticInMonthResponse.setNewStudent(newStudent);
                 adminStatisticInMonthResponse.setNewTeacher(newTeacher);
+                adminStatisticInMonthResponse.setTotalClass(totalClass);
+                adminStatisticInMonthResponse.setTotalBooking(totalBooking);
+                adminStatisticInMonthResponse.setTotalRegisteredInfo(totalRegisteredInfo);
+                adminStatisticInMonthResponse.setTotalStudent(totalStudent);
+                adminStatisticInMonthResponse.setTotalTeacher(totalTeacher);
+
                 adminStatisticInMonthResponsesList.add(adminStatisticInMonthResponse);
 
                 //count total for a center

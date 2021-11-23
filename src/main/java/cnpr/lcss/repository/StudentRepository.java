@@ -37,4 +37,5 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     int countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(Date date, int branchId, boolean isAvailable);
 
+    int countStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable);
 }

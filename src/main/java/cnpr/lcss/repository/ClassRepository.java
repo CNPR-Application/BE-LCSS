@@ -67,23 +67,10 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "and studentInClassList.teacherRating = 0")
     List<Class> findClassesNeedFeedback(Integer id, String status);
 
-    @Query(
-            nativeQuery = true,
-            value = "select c.class_id, c.status, sic.student_id " +
-                    "from class as c " +
-                    "join student_in_class as sic on c.class_id = sic.class_id " +
-                    "where c.class_id = :classId"
-    )
-    List<Class> findStudentByClassId(@Param(value = "classId") int classId);
-
-    @Query(value = "select c.classId from Subject as s join Class c on s.subjectId = c.subject.subjectId join TeachingSubject ts on s.subjectId = ts.subject.subjectId join Teacher t on ts.teacher.teacherId = t.teacherId where t.account.username =:username")
-    List<Integer> findAllByTeacherUsername(String username);
-
     @Query("select c from Class c where c.status = ?1")
     List<Class> findByStatus(String status);
 
-    @Query("select c from Class c where c.classId = ?1")
-    Class findByClassId(int classId);
-
     int countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(int branchId, List<String> status, Date date);
+
+    int countDistinctByBranch_BranchId(int branchId);
 }
