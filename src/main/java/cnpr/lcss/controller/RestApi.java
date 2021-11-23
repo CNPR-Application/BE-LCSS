@@ -990,7 +990,7 @@ public class RestApi {
      * @author HuuNT - 2021.07.09 | LamHNT 2021.11.10
      */
     @CrossOrigin
-    @RequestMapping(value = "/guests", params = "status", method = RequestMethod.GET)
+    @RequestMapping(value = "/guests", params = "status", method = {RequestMethod.GET, RequestMethod.OPTIONS})
     public ResponseEntity<?> findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
                                                           @RequestParam(value = "status") String status,
                                                           @RequestParam(value = "pageNo") int pageNo,
