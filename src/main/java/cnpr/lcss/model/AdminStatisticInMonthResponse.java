@@ -14,6 +14,11 @@ public class AdminStatisticInMonthResponse {
     private int newBooking;
     private int newRegisteredInfo;
     private int newStudent;
-    private int newTeacher;
+    private long newTeacher;
+    private int totalClass;
+    private int totalBooking;
+    private int totalRegisteredInfo;
+    private int totalStudent;
+    private int totalTeacher;
 
 }

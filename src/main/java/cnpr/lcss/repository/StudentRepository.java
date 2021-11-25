@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT s.parentName FROM Student s WHERE s.account.username = :username")
@@ -32,4 +34,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 
     Page<Student> findStudentByBranch_BranchIdAndAccount_IsAvailableAndAccount_PhoneContainingIgnoreCaseAndAccount_NameContainingIgnoreCase(int branchId, boolean isAvailable, String phone, String name, Pageable pageable);
+
+    int countStudentByAccount_CreatingDateIsGreaterThanEqualAndBranch_BranchIdAndAccount_IsAvailable(Date date, int branchId, boolean isAvailable);
+
+    int countStudentByBranch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable);
 }
