@@ -57,12 +57,12 @@ public class SessionService {
     //</editor-fold>
 
     //<editor-fold desc="11.03-view-schedule">
-    public ResponseEntity<?> viewSchedule(String date) throws Exception {
+    public ResponseEntity<?> viewSchedule(String date, int branchId) throws Exception {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
             Date datetimeStart = sdf.parse(date + Constant.DAY_START);
             Date datetimeEnd = sdf.parse(date + Constant.DAY_END);
-            List<Session> sessions = sessionRepository.findByStartTimeAndAClass_Status(datetimeStart, datetimeEnd, Constant.CLASS_STATUS_STUDYING);
+            List<Session> sessions = sessionRepository.findSessionByDateAndBranchIdAndStatus(datetimeStart, datetimeEnd, Constant.CLASS_STATUS_STUDYING, branchId);
             List<SessionResponseDto> sessionList = sessions.stream().map(Session::convertToSessionResponseDto).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("sessionList", sessionList);

@@ -1459,8 +1459,9 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
-    public ResponseEntity<?> viewSchedule(@RequestParam String date) throws Exception {
-        return sessionService.viewSchedule(date);
+    public ResponseEntity<?> viewSchedule(@RequestParam(value = "date") String date,
+                                          @RequestParam(value = "branchId") int branchId) throws Exception {
+        return sessionService.viewSchedule(date, branchId);
     }
     //</editor-fold>
 
