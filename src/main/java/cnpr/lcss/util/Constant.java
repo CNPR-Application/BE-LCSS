@@ -370,7 +370,7 @@ public class Constant {
             + "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n"
             + "\n" + "Chân thành cám ơn,\n" + "CNPR.";
     public static final String SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD= "Chào %s,\n"
-            +"\nHệ thống trung tâm ngoại ngữ CNPR chúng tôi vừa nhận được yêu cầu khôi phục mật khẩu từ bạn với tài khoản %s, mật khẩu của bạn là: %s.\n" +
+            +"\nHệ thống trung tâm ngoại ngữ CNPR chúng tôi vừa nhận được yêu cầu khôi phục mật khẩu từ bạn với tài khoản %s, mật khẩu của bạn là: %s\n" +
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";
