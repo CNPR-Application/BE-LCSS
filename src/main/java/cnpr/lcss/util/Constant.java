@@ -319,6 +319,7 @@ public class Constant {
     public static final String DAY_END = " 11:59:59";
     public static final String DAY_START = " 00:00:00";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
+    public static final String ERROR_SENDING_EMAIL = "Email Authenticated Failed Exception";
     public static final String INVALID_ADDRESS = "Null or empty address!";
     public static final String INVALID_BIRTHDAY = "Invalid birthday!";
     public static final String INVALID_EMAIL_PATTERN = "Invalid email!";
@@ -341,8 +342,8 @@ public class Constant {
     public static final String SYMBOL_SLASH = "/";
     public static final String SYSTEM_MAIL_PASSWORD = "CNPR2021";
     public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
-    public static final String SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP = "THÔNG BÁO DỜI LỊCH KHAI GIẢNG!";
     public static final String SYSTEM_MAIL_SUBJECT_FORGOT_PASSWORD = "THÔNG BÁO KHÔI PHỤC MẬT KHẨU";
+    public static final String SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP = "THÔNG BÁO DỜI LỊCH KHAI GIẢNG!";
     public static final String SYSTEM_MAIL_USERNAME = "cnpr2021";
     public static final String SYSTEM_NAME = "LCSS - LANGUAGE CENTER SUPPORT SYSTEM";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";

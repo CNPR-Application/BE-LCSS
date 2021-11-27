@@ -42,7 +42,7 @@ public class SendEmailService {
             return result;
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
+            throw new AuthenticationFailedException(Constant.ERROR_SENDING_EMAIL);
         }
     }
     //</editor-fold>
@@ -71,14 +71,14 @@ public class SendEmailService {
                     InternetAddress.parse(userGmail)
             );
             message.setSubject(Constant.SYSTEM_MAIL_SUBJECT_FORGOT_PASSWORD);
-            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD,accountName,accountUsername,accountPassword));
+            message.setText(String.format(Constant.SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD, accountName, accountUsername, accountPassword));
 
             Transport.send(message);
             result = true;
             return result;
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
+            throw new AuthenticationFailedException(Constant.ERROR_SENDING_EMAIL);
         }
     }
     //</editor-fold>
@@ -113,7 +113,7 @@ public class SendEmailService {
             return result;
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            throw new AuthenticationFailedException("USERNAME AND PASSWORD NOT ACCEPT");
+            throw new AuthenticationFailedException(Constant.ERROR_SENDING_EMAIL);
         }
     }
     //</editor-fold>
