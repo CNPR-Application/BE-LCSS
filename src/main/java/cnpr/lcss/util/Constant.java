@@ -339,11 +339,11 @@ public class Constant {
     public static final String SYMBOL_COLON = ":";
     public static final String SYMBOL_HYPHEN = "-";
     public static final String SYMBOL_SLASH = "/";
-    public static final String SYSTEM_MAIL_PASSWORD = "lcss@123";
+    public static final String SYSTEM_MAIL_PASSWORD = "CNPR2021";
     public static final String SYSTEM_MAIL_SUBJECT_CREATE_NEW_ACOUNT = "Chào mừng bạn đến với trung tâm CNPR!";
     public static final String SYSTEM_MAIL_SUBJECT_SEND_NOTI_MAIL_TO_GROUP = "THÔNG BÁO DỜI LỊCH KHAI GIẢNG!";
-    public static final String SYSTEM_MAIL_SUBJECT_FORGOT_PASSWORD= "THÔNG BÁO KHÔI PHỤC MẬT KHẨU";
-    public static final String SYSTEM_MAIL_USERNAME = "lcssfall2021";
+    public static final String SYSTEM_MAIL_SUBJECT_FORGOT_PASSWORD = "THÔNG BÁO KHÔI PHỤC MẬT KHẨU";
+    public static final String SYSTEM_MAIL_USERNAME = "cnpr2021";
     public static final String SYSTEM_NAME = "LCSS - LANGUAGE CENTER SUPPORT SYSTEM";
     public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String TIME_PATTERN = "HH:mm";
@@ -369,8 +369,8 @@ public class Constant {
             + "\nCám ơn bạn đã đăng ký vào khóa học %s của trung tâm CNPR. Sau khi nhận đơn đăng ký, trung tâm đã xử lý và mong muốn khai giảng lớp vào ngày %s như dự tính.\n\n"
             + "Tuy nhiên, do tình hình dịch bệnh, hiện lớp vẫn chưa đủ học viên đăng ký, trung tâm muốn thông báo sẽ dời khai giảng sang ngày %s. Mong quý học viên thông cảm!\n"
             + "\n" + "Chân thành cám ơn,\n" + "CNPR.";
-    public static final String SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD= "Chào %s,\n"
-            +"\nHệ thống trung tâm ngoại ngữ CNPR chúng tôi vừa nhận được yêu cầu khôi phục mật khẩu từ bạn với tài khoản %s, mật khẩu của bạn là: %s\n" +
+    public static final String SYSTEM_MAIL_CONTENT_FORGOT_PASSWORD = "Chào %s,\n"
+            + "\nHệ thống trung tâm ngoại ngữ CNPR chúng tôi vừa nhận được yêu cầu khôi phục mật khẩu từ bạn với tài khoản %s, mật khẩu của bạn là: %s\n" +
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";
