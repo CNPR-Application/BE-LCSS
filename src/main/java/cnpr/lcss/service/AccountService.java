@@ -583,14 +583,7 @@ public class AccountService implements UserDetailsService {
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
-            boolean checkGmail = false;
-            SendEmailService sendEmailService = new SendEmailService();
-            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
-            if (checkGmail) {
-                accountRepository.save(accTmp);
-            } else {
-                throw new Exception(Constant.ERROR_EMAIL_SENDING);
-            }
+            accountRepository.save(accTmp);
 
             // Branch ID
             // Check Branch ID existence
@@ -647,6 +640,11 @@ public class AccountService implements UserDetailsService {
                     throw new Exception(Constant.INVALID_TEACHER_EXP);
                 }
             }
+
+            SendEmailService sendEmailService = new SendEmailService();
+//            boolean checkGmail = false;
+//            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
             mapObj.put("username", accTmp.getUsername());
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
