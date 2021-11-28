@@ -44,7 +44,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(Constant.URL_BRANCH, Constant.URL_CLASS, Constant.URL_CLASS_FILTER,
                         Constant.URL_CURRICULUM, Constant.URL_FORGOT_PASSWORD, Constant.URL_GUESTS,
-                        Constant.URL_LOGIN, Constant.URL_SHIFT, Constant.URL_SUBJECT, Constant.URL_SUBJECT_DETAIL)
+                        Constant.URL_LOGIN, Constant.URL_SHIFT, Constant.URL_SUBJECT, Constant.URL_SUBJECT_DETAIL,
+                        "/accounts", "/notification-to-group")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
