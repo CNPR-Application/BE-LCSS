@@ -611,10 +611,12 @@ public class AccountService implements UserDetailsService {
                 student.setParentName(newAcc.getParentName());
 
                 // Insert Parent's phone
-                if (newAcc.getParentPhone().matches(Constant.PHONE_PATTERN)) {
-                    student.setParentPhone(newAcc.getParentPhone());
-                } else {
-                    throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
+                if (newAcc.getParentPhone() != null && !newAcc.getParentPhone().isEmpty()) {
+                    if (newAcc.getParentPhone().matches(Constant.PHONE_PATTERN)) {
+                        student.setParentPhone(newAcc.getParentPhone());
+                    } else {
+                        throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
+                    }
                 }
                 Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
                 student.setAccount(accountStudent);
