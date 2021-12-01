@@ -117,7 +117,9 @@ public class Class implements Serializable {
         }
         return dto;
     }
+
     //</editor-fold>
+
     //<editor-fold desc="Convert to ClassSearchDto">
     public ClassStudentSearchDto convertToStudentSearchDto() {
         ClassStudentSearchDto dto = new ClassStudentSearchDto();
@@ -130,7 +132,7 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        if(room!=null) {
+        if (room != null) {
             dto.setRoomId(room.getRoomId());
         }
         return dto;
