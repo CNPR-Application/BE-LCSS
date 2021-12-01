@@ -73,4 +73,6 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     int countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(int branchId, List<String> status, Date date);
 
     int countDistinctByBranch_BranchId(int branchId);
+
+    List<Class> findClassByStatusAndSubject_PriceAndBranch_BranchId(String status, float price, int branchId);
 }

@@ -1366,6 +1366,26 @@ public class RestApi {
         return classService.getTeacherClassesStatistic(teacherUsername);
     }
     //</editor-fold>
+
+    //<editor-fold desc="9.15-search-class-to-suspend">
+
+    /**
+     * @param status
+     * @param price
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.12.01
+     * @apiNote 9.15-search-class-to-suspend
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/class-suspend", method = RequestMethod.GET)
+    public ResponseEntity<?> getClassToSuspend(@RequestParam(value = "status") String status,
+                                               @RequestParam(value = "price") float price,
+                                               @RequestParam(value = "branchId") int branchId) throws Exception {
+        return classService.getClassToSuspend(status, price, branchId);
+    }
+    //</editor-fold>
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

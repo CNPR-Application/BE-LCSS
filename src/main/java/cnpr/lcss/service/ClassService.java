@@ -870,4 +870,25 @@ public class ClassService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="9.15-search-class-to-suspend">
+    public ResponseEntity<?> getClassToSuspend(String status, float price, int branchId) throws Exception {
+        try {
+
+            if (!branchRepository.existsBranchByBranchId(branchId))
+                throw new Exception(Constant.INVALID_BRANCH_ID);
+            if (price < 0)
+                throw new Exception(Constant.INVALID_SUBJECT_PRICE);
+            if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_WAITING)) {
+                List<ClassSearchToSuspend> classList = classRepository.findClassByStatusAndSubject_PriceAndBranch_BranchId(status, price, branchId).stream().map(aClass -> aClass.convertToSearchToSuspendDto()).collect(Collectors.toList());
+                return ResponseEntity.status(HttpStatus.OK).body(classList);
+            } else {
+                throw new Exception(Constant.INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }

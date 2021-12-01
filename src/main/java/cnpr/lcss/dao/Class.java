@@ -1,9 +1,6 @@
 package cnpr.lcss.dao;
 
-import cnpr.lcss.model.ClassDto;
-import cnpr.lcss.model.ClassNeedsFeedbackDto;
-import cnpr.lcss.model.ClassSearchDto;
-import cnpr.lcss.model.ClassTeacherSearchDto;
+import cnpr.lcss.model.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -151,6 +148,26 @@ public class Class implements Serializable {
         dto.setClassSlot(slot);
         dto.setSubjectId(subject.getSubjectId());
         dto.setBranchId(branch.getBranchId());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to SuspendSearchDto">
+    public ClassSearchToSuspend convertToSearchToSuspendDto() {
+        ClassSearchToSuspend dto = new ClassSearchToSuspend();
+        dto.setClassId(classId);
+        dto.setClassName(className);
+        dto.setOpeningDate(openingDate);
+        dto.setStatus(status);
+        dto.setSlot(slot);
+        dto.setSubjectId(subject.getSubjectId());
+        dto.setSubjectName(subject.getSubjectName());
+        dto.setShiftId(shift.getShiftId());
+        dto.setShiftDescription(shift.getDayOfWeek() + " (" + shift.getTimeStart() + "-" + shift.getTimeEnd() + ")");
+        if (room != null) {
+            dto.setRoomId(room.getRoomId());
+            dto.setRoomName(room.getRoomName());
+        }
         return dto;
     }
     //</editor-fold>

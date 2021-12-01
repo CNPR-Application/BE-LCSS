@@ -136,6 +136,7 @@ public class Constant {
     public static final String INVALID_OPENING_DATE = "Null or invalid opening day!";
     public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";
     public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
+    public static final String INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING = "Class status must be waiting and studying!";
     // </editor-fold>
 
     // <editor-fold desc="Curriculum">
