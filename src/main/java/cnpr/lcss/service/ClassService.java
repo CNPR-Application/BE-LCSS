@@ -307,9 +307,9 @@ public class ClassService {
                 }
                 //Get classes with CLASSID LIST and STATUS
                 Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
-                List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
+                List<ClassStudentSearchDto> classStudentSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToStudentSearchDto()).collect(Collectors.toList());
                 int pageTotal = classList.getTotalPages();
-                for (ClassSearchDto aClass : classSearchDtoList) {
+                for (ClassStudentSearchDto aClass : classStudentSearchDtoList) {
                     // Subject Name
                     aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
                     // Branch Name
@@ -341,11 +341,15 @@ public class ClassService {
                         aClass.setRoomName(room.getRoomName());
                         aClass.setRoomId(room.getRoomId());
                     }
+                    StudentInClass studentInClass = studentInClassRepository.findByStudent_IdAndAClass_ClassId(student.getId(), aClass.getClassId());
+                    aClass.setSuspend(studentInClass.isSuspend());
+                    aClass.setStudentInClassId(studentInClass.getStudentInClassId());
                 }
+
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
                 mapObj.put("totalPage", pageTotal);
-                mapObj.put("classList", classSearchDtoList);
+                mapObj.put("classList", classStudentSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
                 throw new ValidationException(Constant.INVALID_USERNAME);

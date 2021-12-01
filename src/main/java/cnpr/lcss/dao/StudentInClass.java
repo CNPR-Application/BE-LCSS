@@ -27,8 +27,8 @@ public class StudentInClass implements Serializable {
     private double subjectRating;
     @Column(name = "feedback")
     private String feedback;
-    @Column(name = "subspend")
-    private boolean subspend;
+    @Column(name = "suspend")
+    private boolean suspend;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
