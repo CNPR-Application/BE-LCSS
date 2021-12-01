@@ -32,7 +32,6 @@ import java.util.UUID;
 
 @Service
 public class FirebaseService {
-
     StorageOptions storageOptions;
     @Autowired
     CurriculumRepository curriculumRepository;
@@ -94,19 +93,6 @@ public class FirebaseService {
         String TEMP_URL = this.uploadFile(file, fileName);                               // to get uploaded file link
         file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
 
-        if (imageRequestDto.getKeyword().matches(Constant.CURRICULUM)) {
-            int idCurInsert = Integer.parseInt(id);
-            if (curriculumRepository.existsByCurriculumId(idCurInsert)) {
-                Curriculum insCur = curriculumRepository.findOneByCurriculumId(idCurInsert);
-                insCur.setImage(TEMP_URL);
-                curriculumRepository.save(insCur);
-                result = true;
-
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_CURRICULUM_ID);
-            }
-        }
-
         if (imageRequestDto.getKeyword().matches(Constant.AVATAR)) {
             if (accountRepository.existsByUsername(id)) {
                 Account account = accountRepository.findOneByUsername(id);
@@ -118,18 +104,6 @@ public class FirebaseService {
             }
         }
 
-        if (imageRequestDto.getKeyword().matches(Constant.SUBJECT)) {
-            int idSubIns = Integer.parseInt(id);
-            if (subjectRepository.existsSubjectBySubjectId(idSubIns)) {
-                Subject insSub = subjectRepository.findBySubjectId(idSubIns);
-                insSub.setImage(TEMP_URL);
-                subjectRepository.save(insSub);
-                result = true;
-
-            } else {
-                throw new IllegalArgumentException(Constant.INVALID_SUBJECT_ID);
-            }
-        }
         ImageResponseDTO imageResponseDTO = new ImageResponseDTO(result, TEMP_URL);
         return imageResponseDTO;
     }

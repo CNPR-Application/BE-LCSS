@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,7 @@ public class ClassService {
         for (ClassDto aClass : classDtoList) {
             if (aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_CANCELED)) {
                 aClass.setTeacherId(0);
+                aClass.setTeacherUsername(null);
                 aClass.setTeacherName(null);
                 int numberOfStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
                 aClass.setNumberOfStudent(numberOfStudent);
@@ -64,6 +67,7 @@ public class ClassService {
                 List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(aClass.getClassId());
                 Teacher teacher = sessionList.get(0).getTeacher();
                 aClass.setTeacherId(teacher.getTeacherId());
+                aClass.setTeacherUsername(teacher.getAccount().getUsername());
                 aClass.setTeacherName(teacher.getAccount().getName());
                 int numberOfStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
                 aClass.setNumberOfStudent(numberOfStudent);
@@ -97,6 +101,73 @@ public class ClassService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Create a new Class">
+    public Integer createANewClass(ClassRequestDto insClass) throws Exception {
+        ZonedDateTime today = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+        Class newClass = new Class();
+
+        newClass.setClassName(insClass.getClassName());
+        // Default Status for new Class - "waiting"
+        newClass.setStatus(Constant.CLASS_STATUS_WAITING);
+        newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
+        newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
+        // Slot of Class = Slot of inserted Subject
+        newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
+        /**
+         * Check compatibility of subject's slot per week & shift's day of week
+         * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+         * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+         * Else throw new Exception
+         */
+        int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
+        String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
+        if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
+                || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
+            newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
+        } else {
+            throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
+        }
+        // Check whether Opening Date is a day in Shift
+        if (insClass.getOpeningDate() != null
+                && !ZonedDateTime.ofInstant(insClass.getOpeningDate().toInstant(), ZoneId.of(Constant.TIMEZONE)).isBefore(today)) {
+            Date openingDate = insClass.getOpeningDate();
+            // Sunday = 0
+            int openingDayOfWeek = openingDate.getDay() + 1;
+            Shift shift = shiftRepository.findShiftByShiftId(insClass.getShiftId());
+            String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+            shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
+            boolean coincidence = false;
+            for (String day : shiftDaysOfWeek) {
+                if (day.equalsIgnoreCase(Integer.toString(openingDayOfWeek))) {
+                    coincidence = true;
+                }
+            }
+            if (!coincidence) {
+                throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
+            }
+            // Set time start as same as time start of shift
+            openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
+            newClass.setOpeningDate(openingDate);
+        } else {
+            throw new ValidationException(Constant.INVALID_OPENING_DATE);
+        }
+        // Creator is Account-Username
+        newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
+        newClass.setRoom(null);
+
+        // Get Booking ID
+        int classId;
+        try {
+            Class aClass = classRepository.save(newClass);
+            classId = aClass.getClassId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(Constant.ERROR_GET_CLASS_ID);
+        }
+        return classId;
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.01-search-class-by-subject-id-shift-id-status-paging">
     public ResponseEntity<?> searchAllClassByBranchIdAndSubjectIdAndShiftIdAndStatusPaging(int branchId, int subjectId, int shiftId, String status, int pageNo, int pageSize) throws Exception {
         HashMap<String, Object> mapObj = new LinkedHashMap();
@@ -123,55 +194,55 @@ public class ClassService {
             if (branchId != 0 && subjectId != 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectId(branchId, subjectId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 2
             if (branchId != 0 && subjectId != 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftId(branchId, subjectId, shiftId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 3
             if (branchId != 0 && subjectId != 0 && shiftId != 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndShift_ShiftIdAndStatusContainingIgnoreCase(branchId, subjectId, shiftId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 4
             if (branchId != 0 && subjectId != 0 && shiftId == 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndSubject_SubjectIdAndStatusContainingAllIgnoreCase(branchId, subjectId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 5
             if (branchId != 0 && subjectId == 0 && shiftId != 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchIdAndShift_ShiftId(branchId, shiftId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 6
             if (branchId != 0 && subjectId == 0 && shiftId != 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndShift_ShiftIdAndStatusContainingAllIgnoreCase(branchId, shiftId, status, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 7
             if (branchId != 0 && subjectId == 0 && shiftId == 0 && !status.isEmpty() && status != null) {
                 classList = classRepository.findByBranch_BranchIdAndStatusContainingAllIgnoreCase(branchId, status, pageable);
-                mapObj.put("pageTotal", classList.getTotalPages());
+                mapObj.put("totalPage", classList.getTotalPages());
                 mapObj.put("classList", autoMapping(classList));
             }
             // CASE 8
             if (branchId != 0 && subjectId == 0 && shiftId == 0 && (status.isEmpty() || status == null)) {
                 classList = classRepository.findByBranch_BranchId(branchId, pageable);
                 pageTotal = classList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(classList));
             }
 
@@ -193,7 +264,7 @@ public class ClassService {
                 Page<Class> classList = classRepository.findClassByBranch_BranchIdAndStatus(branchId, status, pageable);
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", classList.getTotalPages());
+                mapObj.put("totalPage", classList.getTotalPages());
                 mapObj.put("classList", autoMapping(classList));
                 return ResponseEntity.ok(mapObj);
             } else {
@@ -236,9 +307,9 @@ public class ClassService {
                 }
                 //Get classes with CLASSID LIST and STATUS
                 Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
-                List<ClassStudentSearchDto> classStudentSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToStudentSearchDto()).collect(Collectors.toList());
+                List<ClassSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToSearchDto()).collect(Collectors.toList());
                 int pageTotal = classList.getTotalPages();
-                for (ClassStudentSearchDto aClass : classStudentSearchDtoList) {
+                for (ClassSearchDto aClass : classSearchDtoList) {
                     // Subject Name
                     aClass.setSubjectName(subjectRepository.findSubject_SubjectNameBySubjectId(aClass.getSubjectId()));
                     // Branch Name
@@ -264,21 +335,62 @@ public class ClassService {
                     }
                     //ROOM
                     //find room by ID with class status not equal WAITING
-                    if(!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
+                    if (!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
                         Room room = roomRepository.findByRoomId(aClass.getRoomId());
                         //room name and ID
                         aClass.setRoomName(room.getRoomName());
                         aClass.setRoomId(room.getRoomId());
                     }
-                    aClass.setSubspend();
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", pageTotal);
-                mapObj.put("classList", classStudentSearchDtoList);
+                mapObj.put("totalPage", pageTotal);
+                mapObj.put("classList", classSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
                 throw new ValidationException(Constant.INVALID_USERNAME);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.04-search-class-detail-by-class-id">
+    public ResponseEntity<?> searchClassDetailByClassId(Integer classId) throws Exception {
+        try {
+            if (!classRepository.existsById(classId)) {
+                throw new Exception(Constant.INVALID_CLASS_ID);
+            } else {
+                Class aClass = classRepository.findClassByClassId(classId);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("classId", aClass.getClassId());
+                mapObj.put("className", aClass.getClassName());
+                mapObj.put("openingDate", aClass.getOpeningDate());
+                mapObj.put("status", aClass.getStatus());
+                mapObj.put("slot", aClass.getSlot());
+                mapObj.put("subjectId", aClass.getSubject().getSubjectId());
+                mapObj.put("subjectName", aClass.getSubject().getSubjectName());
+                mapObj.put("branchId", aClass.getBranch().getBranchId());
+                mapObj.put("branchName", aClass.getBranch().getBranchName());
+                mapObj.put("shiftId", aClass.getShift().getShiftId());
+                mapObj.put("shiftDescription", shiftRepository.findShift_DayOfWeekByShiftId(aClass.getShift().getShiftId())
+                        + " (" + shiftRepository.findShift_TimeStartByShiftId(aClass.getShift().getShiftId())
+                        + "-" + shiftRepository.findShift_TimeEndByShiftId(aClass.getShift().getShiftId()) + ")");
+                mapObj.put("teacherId", teacherRepository.findTeacherIdByClassId(aClass.getClassId()));
+                mapObj.put("teacherName", teacherRepository.findTeacherNameByClassId(aClass.getClassId()));
+                mapObj.put("roomNo", roomRepository.findRoomIdByClassId(aClass.getClassId()));
+                int numberofStudent = 0;
+                if (aClass.getStatus().matches(Constant.CLASS_STATUS_STUDYING) || aClass.getStatus().matches(Constant.CLASS_STATUS_FINISHED)) {
+                    numberofStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(aClass.getClassId());
+                }
+                if (aClass.getStatus().matches(Constant.CLASS_STATUS_WAITING) || aClass.getStatus().matches(Constant.CLASS_STATUS_CANCELED)) {
+                    numberofStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(aClass.getClassId(), Constant.BOOKING_STATUS_PAID);
+
+                }
+                mapObj.put("numberOfStudent", numberofStudent);
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -297,7 +409,10 @@ public class ClassService {
                 Teacher teacher = teacherRepository.findTeacherByAccount_Username(username);
                 //initial a arraylist to store classIDs
                 List<Integer> list = new ArrayList();
-                //with status: studying and finished
+                /**
+                 * ONLY STATUS: STUDYING AND FINISHED
+                 * Classes which status: Waiting dont have teacher yet, then it can be canceled (change status)
+                 */
                 if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_FINISHED)) {
                     //get a list student in class by student Id
                     List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(teacher.getTeacherId());
@@ -306,7 +421,6 @@ public class ClassService {
                         list.add(session.getAClass().getClassId());
                     }
                 }
-
                 //Get classes with CLASSID LIST and STATUS
                 Page<Class> classList = classRepository.findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(list, status, pageable);
                 List<ClassTeacherSearchDto> classSearchDtoList = classList.getContent().stream().map(aClass -> aClass.convertToTeacherSearchDto()).collect(Collectors.toList());
@@ -323,14 +437,16 @@ public class ClassService {
                     aClass.setShiftDescription(description);
                     //ROOM
                     //find room by ID
-                    Room room = roomRepository.findByRoomId(aClass.getRoomId());
-                    //room name and ID
-                    aClass.setRoomName(room.getRoomName());
-                    aClass.setRoomId(room.getRoomId());
+                    if (!aClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)) {
+                        Room room = roomRepository.findByRoomId(aClass.getRoomId());
+                        //room name and ID
+                        aClass.setRoomName(room.getRoomName());
+                        aClass.setRoomId(room.getRoomId());
+                    }
                 }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", classSearchDtoList);
                 return ResponseEntity.ok(mapObj);
             } else {
@@ -346,7 +462,7 @@ public class ClassService {
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
+            /*Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
             Date today = calendar.getTime();
             Class newClass = new Class();
 
@@ -357,12 +473,10 @@ public class ClassService {
             newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
             // Slot of Class = Slot of inserted Subject
             newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
-            /**
-             * Check compatibility of subject's slot per week & shift's day of week
-             * If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
-             * Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
-             * Else throw new Exception
-             */
+            // Check compatibility of subject's slot per week & shift's day of week
+            // If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
+            // Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
+            // Else throw new Exception
             int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
             String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
             if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
@@ -406,11 +520,9 @@ public class ClassService {
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(Constant.ERROR_GET_CLASS_ID);
-            }
-
+            }*/
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
-            mapObj.put("classId", classId);
-
+            mapObj.put("classId", createANewClass(insClass));
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
@@ -422,16 +534,23 @@ public class ClassService {
     //<editor-fold desc="9.07-edit-class">
     public ResponseEntity<?> editClass(int classId, Map<String, Object> reqBody) throws Exception {
         try {
+            ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+            // Find Class by Class ID
+            Class editClass = classRepository.findClassByClassId(classId);
+
             // Get RequestBody
             String className = (String) reqBody.get("className");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String reqDate = (String) reqBody.get("openingDate");
-            Date openingDate = sdf.parse(reqDate);
+            Date openingDate;
+            if (reqDate == null) {
+                openingDate = editClass.getOpeningDate();
+            } else {
+                openingDate = sdf.parse(reqDate);
+            }
             Integer roomId = (Integer) reqBody.get("roomId");
             String status = (String) reqBody.get("status");
 
-            // Find Class by Class ID
-            Class editClass = classRepository.findClassByClassId(classId);
 
             /**
              * If status = waiting
@@ -447,12 +566,14 @@ public class ClassService {
                 }
                 // Opening Date
                 try {
-                    if (openingDate != null && openingDate.compareTo(editClass.getOpeningDate()) >= 0) {
+                    if (openingDate != null
+                            && (openingDate.compareTo(editClass.getOpeningDate()) >= 0)
+                            && (openingDate.compareTo(Date.from(currentDate.toInstant())) >= 0)) {
                         // Check whether Opening Date is a day in Shift
                         // Sunday = 0
                         int openingDayOfWeek = openingDate.getDay() + 1;
                         Shift shift = shiftRepository.findShiftByShiftId(editClass.getShift().getShiftId());
-                        String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
+                        String[] shiftDaysOfWeek = shift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
                         shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
                         boolean coincidence = false;
                         for (String day : shiftDaysOfWeek) {
@@ -486,6 +607,34 @@ public class ClassService {
             }
             classRepository.save(editClass);
             return ResponseEntity.ok(Boolean.TRUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.08-delete-class">
+    public ResponseEntity<?> deleteClass(Integer classId, HashMap<String, Object> reqBody) throws Exception {
+        try {
+            if (!classRepository.existsById(classId)) {
+                throw new Exception(Constant.INVALID_CLASS_ID);
+            }
+            Class delClass = classRepository.findClassByClassId(classId);
+            String delReason = (String) reqBody.get("reason");
+            if (delReason == null || delReason.isEmpty()) {
+                throw new Exception(Constant.INVALID_DELETE_CLASS_REASON);
+            }
+
+            if (delClass.getStatus().equalsIgnoreCase(Constant.CLASS_STATUS_WAITING)
+                    && bookingRepository.countBookingByClassId(classId) == 0) {
+                delClass.setStatus(Constant.CLASS_STATUS_CANCELED);
+                delClass.setCanceledReason(delReason.trim());
+                classRepository.save(delClass);
+            } else {
+                throw new Exception(Constant.ERROR_DELETE_CLASS);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -527,16 +676,30 @@ public class ClassService {
     //<editor-fold desc="9.10-activate-class">
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> activateClass(Map<String, Object> reqBody) throws Exception {
-        int roomId = (int) reqBody.get("roomId");
-        int teacherId = (int) reqBody.get("teacherId");
-        int classId = (int) reqBody.get("classId");
-        String creator = (String) reqBody.get("creator");
+        String className = reqBody.get("className").toString();
+        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_PATTERN);
+        Date openingDate = sdf.parse(reqBody.get("openingDate").toString());
+        Integer branchId = Integer.parseInt(reqBody.get("branchId").toString());
+        Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
+        Integer shiftId = Integer.parseInt(reqBody.get("shiftId").toString());
+        Integer roomId = Integer.parseInt(reqBody.get("roomId").toString());
+        Integer teacherId = Integer.parseInt(reqBody.get("teacherId").toString());
+        String creator = reqBody.get("creator").toString();
         List<Integer> bookingIdList = (List<Integer>) reqBody.get("bookingIdList");
 
         try {
+            ClassRequestDto newClass = new ClassRequestDto();
+            newClass.setClassName(className);
+            newClass.setOpeningDate(openingDate);
+            newClass.setBranchId(branchId);
+            newClass.setSubjectId(subjectId);
+            newClass.setShiftId(shiftId);
+            newClass.setCreator(creator);
+            Integer newClassId = createANewClass(newClass);
+
             Teacher teacher = teacherRepository.findByTeacherId(teacherId);
             Room room = roomRepository.findByRoomId(roomId);
-            Class activateClass = classRepository.findClassByClassId(classId);
+            Class activateClass = classRepository.findClassByClassId(newClassId);
 
             try {
                 for (int bookingId : bookingIdList) {
@@ -556,6 +719,7 @@ public class ClassService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
             }
 
@@ -570,6 +734,7 @@ public class ClassService {
                 activateClass.setStaff(staffRepository.findByAccount_Username(classCreator));
                 classRepository.save(activateClass);
             } catch (Exception e) {
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.INVALID_CLASS_CREATOR);
             }
 
@@ -616,6 +781,7 @@ public class ClassService {
                 sessionRepository.saveAll(sessionList);
             } catch (Exception e) {
                 e.printStackTrace();
+                classRepository.delete(activateClass);
                 throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
             }
 
@@ -627,9 +793,12 @@ public class ClassService {
                 for (StudentInClass studentInClass : studentInClassList) {
                     for (Session session : sessionList) {
                         Attendance attendance = new Attendance();
-                        attendance.setSession(session);
                         attendance.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
                         attendance.setCheckingDate(session.getStartTime());
+                        attendance.setIsReopen(Boolean.FALSE);
+                        attendance.setClosingDate(null);
+                        attendance.setReopenReason(null);
+                        attendance.setSession(session);
                         attendance.setStudentInClass(studentInClass);
                         attendanceRepository.save(attendance);
                     }
@@ -645,7 +814,7 @@ public class ClassService {
             activateClass.setStatus(Constant.CLASS_STATUS_STUDYING);
             classRepository.save(activateClass);
 
-            return ResponseEntity.ok(true);
+            return ResponseEntity.ok(newClassId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -669,6 +838,32 @@ public class ClassService {
                 dto.setStudentInClassId(studentInClassRepository.findByStudent_IdAndAClass_ClassId(studentId, dto.getClassId()).getStudentInClassId());
             }
             return ResponseEntity.status(HttpStatus.OK).body(classList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.13-class-static-teacher">
+    public ResponseEntity<?> getTeacherClassesStatistic(String teacherUsername) throws Exception {
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        try {
+            Account account = accountRepository.findOneByUsername(teacherUsername);
+            List<Integer> list = new ArrayList();
+            if (account != null) {
+                List<Session> sessionList = sessionRepository.findSessionByTeacher_TeacherId(account.getTeacher().getTeacherId());
+                for (Session session : sessionList) {
+                    list.add(session.getAClass().getClassId());
+                }
+                //temporary set waiting class is 0
+                mapObj.put("waitingClass", 0);
+                mapObj.put("studyingClass", classRepository.countClassByClassIdIsInAndStatus(list, Constant.CLASS_STATUS_STUDYING));
+                mapObj.put("finishedClass", classRepository.countClassByClassIdIsInAndStatus(list, Constant.CLASS_STATUS_FINISHED));
+            } else {
+                throw new Exception(Constant.INVALID_USERNAME);
+            }
+            return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

@@ -1,14 +1,22 @@
 package cnpr.lcss.dao;
 
-import cnpr.lcss.model.TeacherInBranchDto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import cnpr.lcss.model.AccountByRoleDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,7 +62,7 @@ public class Account implements Serializable {
     @JoinColumn(name = "role")
     private Role role;
 
-    //<editor-fold desc="Modify isAvailable">
+    // <editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -62,24 +70,24 @@ public class Account implements Serializable {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="Modify toString()">
+    // <editor-fold desc="Modify toString()">
     @Override
     public String toString() {
-        return "Account{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", birthday=" + birthday +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", image='" + image + '\'' +
-                ", isAvailable=" + isAvailable +
-                ", creatingDate=" + creatingDate +
-                ", token='" + token + '\'' +
-                '}';
+        return "Account{" + "username='" + username + '\'' + ", password='" + password + '\'' + ", name='" + name + '\''
+                + ", birthday=" + birthday + ", address='" + address + '\'' + ", phone='" + phone + '\'' + ", email='"
+                + email + '\'' + ", image='" + image + '\'' + ", isAvailable=" + isAvailable + ", creatingDate="
+                + creatingDate + ", token='" + token + '\'' + '}';
     }
-    //</editor-fold>
+    // </editor-fold>
+
+    // <editor-fold desc="Convert to AccountByRoleDto">
+    public AccountByRoleDto convertToAccountDto() {
+        AccountByRoleDto accountDto = new AccountByRoleDto();
+        accountDto.setUsername(username);
+        accountDto.setName(name);
+        return accountDto;
+    }
+    // </editor-fold>
 }

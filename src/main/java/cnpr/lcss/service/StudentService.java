@@ -42,7 +42,7 @@ public class StudentService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("studentResponseDtos", studentDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
@@ -52,7 +52,7 @@ public class StudentService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.14 Delete Student">
+    //<editor-fold desc="1.14-delete-student">
     public ResponseEntity<?> deleteStudent(String username) throws Exception {
         try {
             Account account = accountRepository.findOneByUsername(username);
@@ -110,7 +110,7 @@ public class StudentService {
             Map<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("pageNo", pageNo);
             mapObj.put("pageSize", pageSize);
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("studentList", studentDtoList);
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

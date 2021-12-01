@@ -46,8 +46,8 @@ public class BookingService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.01_search_booking_by_classId_and_status_in_aBranch">
-    public ResponseEntity<?> findBookingByClassIdandPhoneAndStatus(int classId, String status, int pageNo, int pageSize) {
+    //<editor-fold desc="8.01-search-booking-by-class-id-and-status-in-a-branch">
+    public ResponseEntity<?> findBookingByClassIdAndPhoneAndStatus(int classId, String status, int pageNo, int pageSize) {
         // pageNo starts at 0
         // always set first page = 1 ---> pageNo - 1
         HashMap<String, Object> mapObj = new LinkedHashMap();
@@ -61,7 +61,7 @@ public class BookingService {
             if (classId != 0) {
                 bookingList = bookingRepository.findBookingByaClass_ClassIdAndStatusContainingAllIgnoreCase(classId, status, pageable);
                 pageTotal = bookingList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
             }
             //Case 2
@@ -69,7 +69,7 @@ public class BookingService {
             if (classId == 0) {
                 bookingList = bookingRepository.findBookingByStatusContainingAllIgnoreCase(status, pageable);
                 pageTotal = bookingList.getTotalPages();
-                mapObj.put("pageTotal", pageTotal);
+                mapObj.put("totalPage", pageTotal);
                 mapObj.put("classList", autoMapping(bookingList));
             }
             return ResponseEntity.ok(mapObj);
@@ -94,7 +94,7 @@ public class BookingService {
             //get booking by username
             bookingList = bookingRepository.findBookingByStudent_Account_Username(studentUsername, pageable);
             pageTotal = bookingList.getTotalPages();
-            mapObj.put("pageTotal", pageTotal);
+            mapObj.put("totalPage", pageTotal);
             mapObj.put("classList", autoMapping(bookingList));
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {

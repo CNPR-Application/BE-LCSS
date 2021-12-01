@@ -1,6 +1,7 @@
 package cnpr.lcss.dao;
 
 import cnpr.lcss.model.NotificationDto;
+import cnpr.lcss.util.Constant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,7 +50,14 @@ public class Notification implements Serializable {
 
     //<editor-fold desc="Convert to NotificationDto">
     public NotificationDto convertToNotificationDto() {
-        NotificationDto notificationDto = new NotificationDto(id, senderUsername, receiverUsername.getUsername(), title, body, isRead, creatingDate, lastModified);
+        NotificationDto notificationDto = new
+                NotificationDto(
+                id,
+                senderUsername,
+                receiverUsername.getUsername(),
+                title, body, isRead,
+                Constant.convertToUTC7TimeZone(creatingDate),
+                Constant.convertToUTC7TimeZone(creatingDate));
         return notificationDto;
     }
     //</editor-fold>

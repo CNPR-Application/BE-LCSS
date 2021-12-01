@@ -23,6 +23,6 @@ public class SubjectDetailDto {
     }
 
     public void setIsAvailable(boolean isAvailable) {
-        isAvailable = isAvailable;
+        this.isAvailable = isAvailable;
     }
 }

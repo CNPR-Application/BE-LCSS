@@ -4,12 +4,20 @@ import cnpr.lcss.dao.*;
 import cnpr.lcss.model.*;
 import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
+import cnpr.lcss.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +29,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class AccountService {
+public class AccountService implements UserDetailsService {
+    @Autowired
+    JwtUtil jwtUtil;
+    @Autowired
+    AuthenticationManager authenticationManager;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -38,6 +50,14 @@ public class AccountService {
     SubjectRepository subjectRepository;
     @Autowired
     RoleRepository roleRepository;
+
+    //<editor-fold desc="Load user by Username">
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account acc = accountRepository.findOneByUsername(username);
+        return new User(acc.getUsername(), acc.getPassword(), new ArrayList<>());
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Convert Vietnamese characters to ASCII">
     public static String convertToASCII(String str) throws UnsupportedEncodingException {
@@ -123,101 +143,99 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.01 Check login">
+    //<editor-fold desc="1.01-check-login">
     public ResponseEntity<?> checkLogin(LoginRequestDto loginRequest) throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
-
         try {
-            if (loginRequest.getUsername() == null || loginRequest.getUsername().isEmpty()
-                    || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
-                throw new NullPointerException();
-            } else {
-                if (accountRepository.existsById(loginRequest.getUsername())) {
-                    Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+                );
+            } catch (BadCredentialsException e) {
+                throw new Exception(Constant.INVALID_USERNAME_OR_PASSWORD, e);
+            }
 
-                    // Check whether account is available or not
-                    if (!acc.getIsAvailable()) {
-                        throw new Exception(Constant.INVALID_IS_AVAILABLE);
-                    }
+            final UserDetails userDetails = loadUserByUsername(loginRequest.getUsername());
+            final String jwt = jwtUtil.generateToken(userDetails);
 
-                    String accUsername = acc.getUsername();
-                    if (acc.getPassword().equals(loginRequest.getPassword())) {
-                        loginResponseDto.setName(acc.getName());
-                        loginResponseDto.setAddress(acc.getAddress());
-                        loginResponseDto.setEmail(acc.getEmail());
-                        loginResponseDto.setBirthday(acc.getBirthday());
-                        loginResponseDto.setPhone(acc.getPhone());
-                        loginResponseDto.setImage(acc.getImage());
-                        loginResponseDto.setRole(acc.getRole().getRoleId());
-                        loginResponseDto.setCreatingDate(acc.getCreatingDate());
+            Account acc = accountRepository.findOneByUsername(loginRequest.getUsername());
 
-                        // Return Branch Id, Branch Name
-                        // Role: Admin, Manager, Staff
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
-                                || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
-                            loginResponseDto.setBranchId(staffRepository.findBranchIdByStaffUsername(accUsername));
-                            loginResponseDto.setBranchName(staffRepository.findBranchNameByStaffUsername(accUsername));
-                        } // Role: Teacher
-                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
-                            loginResponseDto.setBranchId(teacherRepository.findBranchIdByTeacherUsername(accUsername));
-                            loginResponseDto.setBranchName(teacherRepository.findBranchNameByTeacherUsername(accUsername));
-                        } // Role: Student
-                        else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                            loginResponseDto.setBranchId(studentRepository.findBranchIdByStudentUsername(accUsername));
-                            loginResponseDto.setBranchName(studentRepository.findBranchNameByStudentUsername(accUsername));
-                        } else {
-                            throw new Exception();
-                        }
+            // Check whether account is available or not
+            if (!acc.getIsAvailable()) {
+                throw new Exception(Constant.INVALID_IS_AVAILABLE);
+            }
 
-                        // Return Parent's information
-                        // Role: Student
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                            loginResponseDto.setParentName(studentRepository.findParentNameByStudentUsername(accUsername));
-                            loginResponseDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(accUsername));
-                        } else {
-                            loginResponseDto.setParentName(null);
-                            loginResponseDto.setParentPhone(null);
-                        }
+            String accUsername = acc.getUsername();
+            if (acc.getPassword().equals(loginRequest.getPassword())) {
+                loginResponseDto.setName(acc.getName());
+                loginResponseDto.setAddress(acc.getAddress());
+                loginResponseDto.setEmail(acc.getEmail());
+                loginResponseDto.setBirthday(acc.getBirthday());
+                loginResponseDto.setPhone(acc.getPhone());
+                loginResponseDto.setImage(acc.getImage());
+                loginResponseDto.setRole(acc.getRole().getRoleId());
+                loginResponseDto.setCreatingDate(acc.getCreatingDate());
 
-                        // Return Experience, Rating
-                        // Role: Teacher
-                        if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
-                            loginResponseDto.setExperience(teacherRepository.findExperienceByTeacherUsername(accUsername));
-                            loginResponseDto.setRating(teacherRepository.findRatingByTeacherUsername(accUsername));
-                        } else {
-                            loginResponseDto.setExperience(null);
-                            loginResponseDto.setRating(null);
-                        }
-                        return ResponseEntity.ok(loginResponseDto);
-                    } else {
-                        throw new Exception(Constant.PASSWORD_NOT_MATCH);
-                    }
+                // Return Branch Id, Branch Name
+                // Role: Admin, Manager, Staff
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_MANAGER) || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STAFF)
+                        || acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_ADMIN)) {
+                    loginResponseDto.setBranchId(staffRepository.findBranchIdByStaffUsername(accUsername));
+                    loginResponseDto.setBranchName(staffRepository.findBranchNameByStaffUsername(accUsername));
+                } // Role: Teacher
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                    loginResponseDto.setBranchId(teacherRepository.findBranchIdByTeacherUsername(accUsername));
+                    loginResponseDto.setBranchName(teacherRepository.findBranchNameByTeacherUsername(accUsername));
+                } // Role: Student
+                else if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                    loginResponseDto.setBranchId(studentRepository.findBranchIdByStudentUsername(accUsername));
+                    loginResponseDto.setBranchName(studentRepository.findBranchNameByStudentUsername(accUsername));
                 } else {
-                    throw new Exception(Constant.INVALID_USERNAME);
+                    throw new Exception();
                 }
+
+                // Return Parent's information
+                // Role: Student
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_STUDENT)) {
+                    loginResponseDto.setParentName(studentRepository.findParentNameByStudentUsername(accUsername));
+                    loginResponseDto.setParentPhone(studentRepository.findParentPhoneByStudentUsername(accUsername));
+                } else {
+                    loginResponseDto.setParentName(null);
+                    loginResponseDto.setParentPhone(null);
+                }
+
+                // Return Experience, Rating
+                // Role: Teacher
+                if (acc.getRole().getRoleId().equalsIgnoreCase(Constant.ROLE_TEACHER)) {
+                    loginResponseDto.setExperience(teacherRepository.findExperienceByTeacherUsername(accUsername));
+                    loginResponseDto.setRating(teacherRepository.findRatingByTeacherUsername(accUsername));
+                } else {
+                    loginResponseDto.setExperience(null);
+                    loginResponseDto.setRating(null);
+                }
+                loginResponseDto.setJwt(jwt);
+                return ResponseEntity.ok(loginResponseDto);
+            } else {
+                throw new Exception(Constant.PASSWORD_NOT_MATCH);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.02 Search Account Like Username and Paging">
+    //<editor-fold desc="1.02-search-account-like-username-paging">
     public ResponseEntity<?> searchAccountLikeUsernamePaging(String role, String keyword, boolean isAvailable, int pageNo, int pageSize) throws Exception {
         try {
-            // Check Role existence
-            if (role.equalsIgnoreCase(Constant.ROLE_ADMIN) || role.equalsIgnoreCase(Constant.ROLE_MANAGER) || role.equalsIgnoreCase(Constant.ROLE_STAFF)
-                    || role.equalsIgnoreCase(Constant.ROLE_TEACHER) || role.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
-                // pageNo starts at 0
-                // always set first page = 1 ---> pageNo - 1
+            if (role.equalsIgnoreCase(Constant.ROLE_ADMIN)
+                    || role.equalsIgnoreCase(Constant.ROLE_MANAGER)
+                    || role.equalsIgnoreCase(Constant.ROLE_STAFF)
+                    || role.equalsIgnoreCase(Constant.ROLE_TEACHER)
+                    || role.equalsIgnoreCase(Constant.ROLE_STUDENT)) {
                 Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
                 Page<Account> page = accountRepository.findByRole_RoleIdAndUsernameContainingAndIsAvailable(role, keyword, isAvailable, pageable);
-                int totalPage = page.getTotalPages();
                 List<Account> accountList = page.getContent();
                 List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
-                AccountResponsePagingDto accountResponsePagingDto = new AccountResponsePagingDto();
 
                 for (Account account : accountList) {
                     Account acc = accountRepository.findOneByUsername(account.getUsername());
@@ -271,12 +289,12 @@ public class AccountService {
                     accountResponseDtoList.add(accDto);
                 }
 
-                accountResponsePagingDto.setPageNo(pageNo);
-                accountResponsePagingDto.setPageSize(pageSize);
-                accountResponsePagingDto.setTotalPage(totalPage);
-                accountResponsePagingDto.setAccountResponseDtoList(accountResponseDtoList);
-
-                return ResponseEntity.status(HttpStatus.OK).body(accountResponsePagingDto);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("totalPage", page.getTotalPages());
+                mapObj.put("accountResponseDtoList", accountResponseDtoList);
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
             }
@@ -287,7 +305,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.03 Search Account Like Name">
+    //<editor-fold desc="1.03-search-account-like-name">
     public ResponseEntity<?> searchAccountLikeNamePaging(String role, String keyword, int pageNo, int pageSize) throws Exception {
         try {
             // Check Role existence
@@ -301,7 +319,6 @@ public class AccountService {
                 int totalPage = page.getTotalPages();
                 List<Account> accountList = page.getContent();
                 List<AccountResponseDto> accountResponseDtoList = new ArrayList<>();
-                AccountResponsePagingDto accountResponsePagingDto = new AccountResponsePagingDto();
 
                 for (Account account : accountList) {
                     Account acc = accountRepository.findOneByUsername(account.getUsername());
@@ -355,12 +372,12 @@ public class AccountService {
                     accountResponseDtoList.add(accDto);
                 }
 
-                accountResponsePagingDto.setPageNo(pageNo);
-                accountResponsePagingDto.setPageSize(pageSize);
-                accountResponsePagingDto.setTotalPage(totalPage);
-                accountResponsePagingDto.setAccountResponseDtoList(accountResponseDtoList);
-
-                return ResponseEntity.status(HttpStatus.OK).body(accountResponsePagingDto);
+                HashMap<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("pageNo", pageNo);
+                mapObj.put("pageSize", pageSize);
+                mapObj.put("totalPage", page.getTotalPages());
+                mapObj.put("accountResponseDtoList", accountResponseDtoList);
+                return ResponseEntity.status(HttpStatus.OK).body(mapObj);
             } else {
                 throw new Exception(Constant.INVALID_ROLE);
             }
@@ -371,7 +388,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.04 Search Information by Username">
+    //<editor-fold desc="1.04-search-info-by-username">
     public ResponseEntity<?> searchInfoByUsername(String username) throws Exception {
         try {
             if (accountRepository.existsByUsername(username)) {
@@ -439,7 +456,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.05 Create New Account">
+    //<editor-fold desc="1.05-create-new-account">
     @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<?> createNewAccount(NewAccountRequestDto newAcc) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
@@ -566,14 +583,7 @@ public class AccountService {
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
-            boolean checkGmail = false;
-            SendEmailService sendEmailService = new SendEmailService();
-            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
-            if (checkGmail) {
-                accountRepository.save(accTmp);
-            } else {
-                throw new Exception(Constant.ERROR_EMAIL_SENDING);
-            }
+            accountRepository.save(accTmp);
 
             // Branch ID
             // Check Branch ID existence
@@ -605,10 +615,8 @@ public class AccountService {
                     if (newAcc.getParentPhone().matches(Constant.PHONE_PATTERN)) {
                         student.setParentPhone(newAcc.getParentPhone());
                     } else {
-                        throw new Exception(Constant.INVALID_PHONE_PATTERN);
+                        throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
                     }
-                } else {
-                    student.setParentPhone(newAcc.getParentPhone());
                 }
                 Account accountStudent = accountRepository.findOneByUsername(accTmp.getUsername());
                 student.setAccount(accountStudent);
@@ -634,6 +642,11 @@ public class AccountService {
                     throw new Exception(Constant.INVALID_TEACHER_EXP);
                 }
             }
+
+            SendEmailService sendEmailService = new SendEmailService();
+//            boolean checkGmail = false;
+//            checkGmail = sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+            sendEmailService.sendGmail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
             mapObj.put("username", accTmp.getUsername());
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
@@ -643,7 +656,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.06 Update Account">
+    //<editor-fold desc="1.06-update-account">
     public ResponseEntity<?> updateAccount(String username, HashMap<String, Object> reqBody) throws Exception {
         try {
             String name = (String) reqBody.get("name");
@@ -706,7 +719,11 @@ public class AccountService {
                     updateAccount.getStudent().setParentName(parentName.trim());
                 }
                 if (parentPhone != null && !parentPhone.isEmpty() && !parentPhone.equals(updateAccount.getStudent().getParentPhone())) {
-                    updateAccount.getStudent().setParentPhone(phone.trim());
+                    if (!parentPhone.matches(Constant.PHONE_PATTERN)) {
+                        throw new Exception(Constant.INVALID_PARENT_PHONE_PATTERN);
+                    } else {
+                        updateAccount.getStudent().setParentPhone(parentPhone.trim());
+                    }
                 }
             }
             //</editor-fold>
@@ -728,7 +745,7 @@ public class AccountService {
     }
 //</editor-fold>
 
-    //<editor-fold desc="1.07 Update Role">
+    //<editor-fold desc="1.07-update-role">
     public ResponseEntity<?> updateRole(String username, String role) throws Exception {
         try {
             Role userRole = roleRepository.findByRoleIdAllIgnoreCase(role);
@@ -752,7 +769,7 @@ public class AccountService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.08 Delete Account by UserName">
+    //<editor-fold desc="1.08-delete-account">
     public ResponseEntity<?> deleteByUserName(String userName) throws Exception {
         try {
             if (!accountRepository.existsByUsername(userName)) {
@@ -777,24 +794,29 @@ public class AccountService {
     //<editor-fold desc="1.09-change-password">
     public ResponseEntity<?> changePassword(String username, HashMap<String, Object> reqBody) throws Exception {
         try {
-
             Account account = accountRepository.findOneByUsername(username);
-            if (account.equals(null))
+            if (account.equals(null)) {
                 throw new Exception(Constant.INVALID_USERNAME);
-            String newPassword = (String) reqBody.get("newPassword");
+            }
             String oldPassword = (String) reqBody.get("oldPassword");
+            String newPassword = (String) reqBody.get("newPassword");
             String reNewPassword = (String) reqBody.get("reNewPassword");
             if (!oldPassword.matches(account.getPassword())) {
                 throw new Exception(Constant.PASSWORD_NOT_MATCH);
             }
-            if (!newPassword.matches(oldPassword) && reNewPassword.matches(newPassword)) {
+            if (!newPassword.matches(Constant.PASSWORD_PATTERN)) {
+                throw new Exception((Constant.INVALID_PASSWORD_PATTERN));
+            }
+            if (newPassword.matches(oldPassword)) {
+                throw new Exception(Constant.OLDPASSWORD_MATCH_NEWPASSWORD);
+            }
+            if (reNewPassword.matches(newPassword)) {
                 account.setPassword(newPassword);
                 accountRepository.save(account);
                 return ResponseEntity.ok(Boolean.TRUE);
             } else {
-                return ResponseEntity.ok(Boolean.FALSE);
+                throw new Exception((Constant.RENEWPASSWORD_NOT_MATCH_NEWPASSWORD));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -850,6 +872,48 @@ public class AccountService {
             mapObj.put("totalPage", pageTotal);
             mapObj.put("teacherList", teacherInBranchDtos);
             return ResponseEntity.ok(mapObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.20-get-account-by-role-and-branch-and-isAvailable">
+    public ResponseEntity<?> getAccountByRoleAndIsAvalableInBranch(int branchId, String role, boolean isAvailable) throws Exception {
+        try {
+            if (branchRepository.existsBranchByBranchId(branchId)) {
+                List<Account> accountList = accountRepository.findAllByStaff_Branch_BranchIdAndRole_RoleIdAndIsAvailable(branchId, role, isAvailable);
+                List<AccountByRoleDto> accountDtos = accountList.stream().map(account -> account.convertToAccountDto()).collect(Collectors.toList());
+                Map<String, Object> mapObj = new LinkedHashMap<>();
+                mapObj.put("accountList", accountDtos);
+                return ResponseEntity.ok(mapObj);
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.21-forgot-password">
+    public ResponseEntity<?> forgotPassword(String username) throws Exception {
+        try {
+            Account account = accountRepository.findOneByUsername(username);
+            if (account != null) {
+                boolean checkGmail = false;
+                SendEmailService sendEmailService = new SendEmailService();
+                checkGmail = sendEmailService.sendForgotMail(account.getEmail(), account.getName(), account.getUsername(), account.getPassword());
+                if (checkGmail) {
+                    return ResponseEntity.ok(Boolean.TRUE);
+                } else {
+                    throw new Exception(Constant.ERROR_EMAIL_SENDING);
+                }
+            } else {
+                throw new IllegalArgumentException(Constant.INVALID_USERNAME);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

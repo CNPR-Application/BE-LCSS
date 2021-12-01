@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ShiftPagingResponseDto {
-
-    List<ShiftDto> shiftDtos;
-    private int pageNo;
-    private int pageSize;
-    private int pageTotal;
+public class DateAndScheduleDto {
+    Date datetime;
+    List<?> sessionList;
 }
-

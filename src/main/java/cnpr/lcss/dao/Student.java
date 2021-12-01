@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "student")
 public class Student implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
     private Integer id;
     @Column(name = "parent_phone")
@@ -68,6 +68,4 @@ public class Student implements Serializable {
                 '}';
     }
     //</editor-fold>
-
-
 }

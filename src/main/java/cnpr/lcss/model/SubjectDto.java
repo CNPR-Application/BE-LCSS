@@ -1,11 +1,10 @@
 package cnpr.lcss.model;
 
-import cnpr.lcss.dao.Curriculum;
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +17,12 @@ public class SubjectDto {
     private Date creatingDate;
     private String description;
     private boolean isAvailable;
-    private String image;
     private int slot;
     private int slotPerWeek;
     private String rating;
-    private Curriculum curriculum;
+    private int curriculumId;
+    private String curriculumCode;
+    private String curriculumName;
 
     //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {

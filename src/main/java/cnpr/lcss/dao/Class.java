@@ -29,6 +29,8 @@ public class Class implements Serializable {
     private String status;
     @Column(name = "slot")
     private int slot;
+    @Column(name = "canceled_reason")
+    private String canceledReason;
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
@@ -93,6 +95,7 @@ public class Class implements Serializable {
                 ", openingDate=" + openingDate +
                 ", status='" + status + '\'' +
                 ", slot=" + slot +
+                ", canceledReason='" + canceledReason + '\'' +
                 '}';
     }
     //</editor-fold>
@@ -109,7 +112,7 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        if(room!=null) {
+        if (room != null) {
             dto.setRoomId(room.getRoomId());
         }
         return dto;
@@ -146,7 +149,9 @@ public class Class implements Serializable {
         dto.setSubjectPrice(subject.getPrice());
         dto.setBranchId(branch.getBranchId());
         dto.setShiftId(shift.getShiftId());
-        dto.setRoomId(room.getRoomId());
+        if (room != null) {
+            dto.setRoomId(room.getRoomId());
+        }
         return dto;
     }
     //</editor-fold>

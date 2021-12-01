@@ -10,7 +10,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class LoginResponseDto {
-
     private String name;
     private String address;
     private String email;
@@ -28,4 +27,5 @@ public class LoginResponseDto {
     // role: Teacher
     private String experience;
     private String rating;
+    private String jwt;
 }

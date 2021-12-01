@@ -13,7 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.threeten.bp.temporal.ChronoField;
 
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -115,6 +117,7 @@ public class AttendanceService {
             }
 
             ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of(Constant.TIMEZONE));
+            currentDate = currentDate.withHour(23).withMinute(59).withSecond(59).withNano(LocalTime.MAX.getNano());
             List<Attendance> attendanceListInASession = attendanceRepository.findBySession_SessionId(sessionId);
             for (Attendance attendance : attendanceListInASession) {
                 attendance.setIsReopen(Boolean.TRUE);

@@ -17,6 +17,7 @@ public class StudentScheduleDto {
     private String subjectName;
     private Integer teacherId;
     private String teacherName;
+    private String teacherPhone;
     private String teacherImage;
     private String roomName;
     private Date startTime;

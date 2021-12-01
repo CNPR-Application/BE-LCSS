@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -56,6 +57,8 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     Page<Class> findClassByClassIdIsInAndStatusOrderByOpeningDateDesc(List<Integer> list, String status, Pageable pageable);
 
+    int countClassByClassIdIsInAndStatus(List<Integer> list, String status);
+
     @Query("select distinct c from Class c " +
             "join c.studentInClassList studentInClassList " +
             "join c.sessionList sessionList " +
@@ -64,15 +67,10 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "and studentInClassList.teacherRating = 0")
     List<Class> findClassesNeedFeedback(Integer id, String status);
 
-    @Query(
-            nativeQuery = true,
-            value = "select c.class_id, c.status, sic.student_id " +
-                    "from class as c " +
-                    "join student_in_class as sic on c.class_id = sic.class_id " +
-                    "where c.class_id = :classId"
-    )
-    List<Class> findStudentByClassId(@Param(value = "classId") int classId);
-
     @Query("select c from Class c where c.status = ?1")
     List<Class> findByStatus(String status);
+
+    int countDistinctByBranch_BranchIdAndStatusIsInAndOpeningDateGreaterThanEqual(int branchId, List<String> status, Date date);
+
+    int countDistinctByBranch_BranchId(int branchId);
 }

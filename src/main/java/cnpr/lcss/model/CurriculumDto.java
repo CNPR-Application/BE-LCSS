@@ -10,20 +10,15 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 public class CurriculumDto {
-
     private int curriculumId;
     private String curriculumCode;
     private String curriculumName;
     private String description;
     private Date creatingDate;
     private Boolean isAvailable;
-    private String image;
-    private String linkClip;
     private String learningOutcome;
 
-    /**
-     * --- modify getter & setter ---
-     */
+    //<editor-fold desc="Modify isAvailable">
     public boolean getIsAvailable() {
         return isAvailable;
     }
@@ -31,4 +26,5 @@ public class CurriculumDto {
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+    //</editor-fold>
 }

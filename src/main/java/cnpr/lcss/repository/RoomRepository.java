@@ -14,6 +14,9 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     Room findByRoomId(int roomId);
 
+    @Query("select r from Room r left join r.classList classList where classList.classId = ?1")
+    Room findByClassList_ClassId(int classId);
+
     @Query(
             nativeQuery = true,
             value = "SELECT DISTINCT r.room_id, r.room_name, r.is_available, r.branch_id " +
@@ -29,4 +32,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
                                                  @Param(value = "dateTimeEnd") String dateTimeEnd);
 
     Page<Room> findAllByBranch_BranchIdAndAndIsAvailable(int branchId, boolean isAvailable, Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "select distinct r.room_id " +
+                    "from room as r " +
+                    "join class c on r.room_id = c.room_id " +
+                    "where c.class_id = ?1"
+    )
+    Integer findRoomIdByClassId(Integer classId);
 }

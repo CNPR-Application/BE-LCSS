@@ -2,7 +2,6 @@ package cnpr.lcss.service;
 
 import cnpr.lcss.dao.RegisteringGuest;
 import cnpr.lcss.model.RegisteringGuestRequestDto;
-import cnpr.lcss.model.RegisteringGuestSearchPagingResponseDto;
 import cnpr.lcss.model.RegisteringGuestSearchResponseDto;
 import cnpr.lcss.repository.BranchRepository;
 import cnpr.lcss.repository.CurriculumRepository;
@@ -18,14 +17,11 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.bind.ValidationException;
 import java.text.Normalizer;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class RegisteringGuestService {
-
     @Autowired
     CurriculumRepository curriculumRepository;
     @Autowired
@@ -41,7 +37,37 @@ public class RegisteringGuestService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Create New Registering Guest">
+    //<editor-fold desc="7.01-search-guest-by-branchid-and-name">
+    public ResponseEntity<?> findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName, String phone, String curriculumName, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId, customerName, phone, curriculumName, pageable);
+        List<RegisteringGuestSearchResponseDto> responseDtos = page.getContent().stream()
+                .map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("registeringGuestSearchResponseDtos", responseDtos);
+        return ResponseEntity.ok(mapObj);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="7.05-search-guest-by-status">
+    public ResponseEntity<?> findRegisterGuestByBranchIdAndStatus(int branchId, String status, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndStatusContaining(branchId, status, pageable);
+        List<RegisteringGuestSearchResponseDto> responseDtos = page.getContent().stream()
+                .map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
+        HashMap<String, Object> mapObj = new LinkedHashMap<>();
+        mapObj.put("pageNo", pageNo);
+        mapObj.put("pageSize", pageSize);
+        mapObj.put("totalPage", page.getTotalPages());
+        mapObj.put("registeringGuestSearchResponseDtos", responseDtos);
+        return ResponseEntity.ok(mapObj);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="7.07-register-guest">
     public ResponseEntity<?> createNewRegisteringGuest(RegisteringGuestRequestDto insGuest) throws Exception {
         try {
             RegisteringGuest newGuest = new RegisteringGuest();
@@ -107,7 +133,7 @@ public class RegisteringGuestService {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Update Guest (status)">
+    //<editor-fold desc="7.08-update-guest">
     public ResponseEntity<?> updateGuest(int guestId, Map<String, String> cussAtt) throws Exception {
         try {
             String status = cussAtt.get("status");
@@ -132,40 +158,6 @@ public class RegisteringGuestService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Search Guest By BranchID And Name,Phone,CurName and Paging">
-    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndCustomerName(int branchId, String customerName, String phone, String curriculumName, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndCustomerNameContainingAndPhoneContainingAndCurriculum_CurriculumNameContaining(branchId, customerName, phone, curriculumName, pageable);
-        List<RegisteringGuest> registeringGuestList = page.getContent();
-        List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo, pageSize, pageTotal, registeringGuestSearchResponseDtos);
-
-        return registeringGuestSearchPagingResponseDto;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Search Guest by Status">
-    public RegisteringGuestSearchPagingResponseDto findRegisterGuestByBranchIdAndStatus(int branchId, String status, int pageNo, int pageSize) {
-        // pageNo starts at 0
-        // always set first page = 1 ---> pageNo - 1
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-        Page<RegisteringGuest> page = registeringGuestRepository.findRegisteringGuestByBranch_BranchIdAndStatusContaining(branchId, status, pageable);
-        List<RegisteringGuest> registeringGuestList = page.getContent();
-        List<RegisteringGuestSearchResponseDto> registeringGuestSearchResponseDtos = registeringGuestList.stream().map(registeringGuest -> registeringGuest.convertToDto()).collect(Collectors.toList());
-        int pageTotal = page.getTotalPages();
-
-        RegisteringGuestSearchPagingResponseDto registeringGuestSearchPagingResponseDto = new RegisteringGuestSearchPagingResponseDto(pageNo, pageSize, pageTotal, registeringGuestSearchResponseDtos);
-
-        return registeringGuestSearchPagingResponseDto;
     }
     //</editor-fold>
 }

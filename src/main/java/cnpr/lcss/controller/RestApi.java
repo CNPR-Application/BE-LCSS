@@ -62,6 +62,8 @@ public class RestApi {
     SchedulerService schedulerService;
     @Autowired
     TeachingSubjectService teachingSubjectService;
+    @Autowired
+    StatisticService statisticService;
 
     //<editor-fold desc="Welcome Page">
 
@@ -107,6 +109,7 @@ public class RestApi {
      * @param pageSize
      * @return
      * @throws Exception
+     * @author LamHNT - 2021.11.10
      * @apiNote 1.02-search-account-like-username-paging
      */
     @CrossOrigin
@@ -120,7 +123,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.03 - Search Account By Name and Paging">
+    //<editor-fold desc="1.03-search-account-like-name">
 
     /**
      * @param name
@@ -299,15 +302,15 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/student", method = RequestMethod.GET)
-    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId")int branchId,
+    public ResponseEntity<?> findStudentInABranch(@RequestParam(value = "branchId") int branchId,
                                                   @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                  @RequestParam(value = "pageNo")int pageNo,
-                                                  @RequestParam(value = "pageSize")int pageSize) throws Exception {
+                                                  @RequestParam(value = "pageNo") int pageNo,
+                                                  @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentService.findStudentInABranch(branchId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
 
-    //<editor-fold desc="1.14 Delete Student">
+    //<editor-fold desc="1.14-delete-student">
 
     /**
      * @param username
@@ -407,6 +410,64 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="1.19-get-available-teacher-for-opening-class">
+
+    /**
+     * @param branchId
+     * @param shiftId
+     * @param openingDate
+     * @param subjectId
+     * @return
+     * @throws Exception
+     * @apiNote 1.19-get-available-teacher-for-opening-class
+     * @author HuuNT - 2021.10.28
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/teachers/{branchId}/search", method = RequestMethod.GET)
+    public ResponseEntity<?> getAvailableTeachersOpeningClass(@PathVariable int branchId,
+                                                              @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam String openingDate,
+                                                              @RequestParam(value = "subjectId") int subjectId) throws Exception {
+        return teacherService.getAvailableTeachersForOpeningClass(branchId, shiftId, openingDate, subjectId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.20-get-account-by-role-and-branch-and-isAvailable">
+
+    /**
+     * @param branchId
+     * @param role
+     * @param isAvailable
+     * @return
+     * @throws Exception
+     * @apiNote 1.20-get-account-by-role-and-branch-and-isAvailable
+     * @author HuuNT - 2021.11.01
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/accounts-by-role", method = RequestMethod.GET)
+    public ResponseEntity<?> searchInfoByUsername(@RequestParam(value = "branchId") int branchId,
+                                                  @RequestParam(value = "role") String role,
+                                                  @RequestParam(value = "isAvailable") boolean isAvailable) throws Exception {
+        return accountService.getAccountByRoleAndIsAvalableInBranch(branchId, role, isAvailable);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="1.21-forgot-password">
+
+    /**
+     * @param username
+     * @return
+     * @throws Exception
+     * @apiNote 1.21-forgot-password
+     * @author HuuNT - 2021.11.04
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.PUT)
+    public ResponseEntity<?> forgotPassword(@RequestParam(value = "username") String username) throws Exception {
+        return accountService.forgotPassword(username);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------BRANCH--------------------------------
      */
@@ -419,15 +480,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 2.01-search-branch-by-branch-name
-     * @author HuuNT - 2021.06.09
+     * @author HuuNT - 2021.06.09 | LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/admin/branches", params = "name", method = RequestMethod.GET)
-    public BranchPagingResponseDto searchBranchByName(@RequestParam(value = "name") String keyword,
-                                                      @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                      @RequestParam(value = "pageNo") int pageNo,
-                                                      @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchBranchByName(@RequestParam(value = "name") String keyword,
+                                                @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                @RequestParam(value = "pageNo") int pageNo,
+                                                @RequestParam(value = "pageSize") int pageSize) {
         return branchService.findByBranchNameContainingIgnoreCaseAndIsAvailableIsTrue(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -515,11 +575,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "name", method = RequestMethod.GET)
-    public CurriculumPagingResponseDto searchCurriculumByName(@RequestParam(value = "name") String keyword,
-                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchCurriculumByName(@RequestParam(value = "name") String keyword,
+                                                    @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return curriculumService.findByCurriculumNameContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -536,11 +595,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/curriculums", params = "code", method = RequestMethod.GET)
-    public CurriculumPagingResponseDto searchCurriculumByCode(@RequestParam(value = "code") String keyword,
-                                                              @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                              @RequestParam(value = "pageSize") int pageSize) {
-        // pageNo starts at 0
+    public ResponseEntity<?> searchCurriculumByCode(@RequestParam(value = "code") String keyword,
+                                                    @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) {
         return curriculumService.findByCurriculumCodeContainingIgnoreCaseAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -649,10 +707,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "code", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByCode(@RequestParam(value = "code") String keyword,
-                                                        @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                        @RequestParam(value = "pageNo") int pageNo,
-                                                        @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> searchSubjectByCode(@RequestParam(value = "code") String keyword,
+                                                 @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                 @RequestParam(value = "pageNo") int pageNo,
+                                                 @RequestParam(value = "pageSize") int pageSize) {
 
         return subjectService.findBySubjectCodeAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
@@ -670,10 +728,10 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects", params = "curriculumId", method = RequestMethod.GET)
-    public SubjectPagingResponseDto searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
-                                                                @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                                @RequestParam(value = "pageNo") int pageNo,
-                                                                @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> searchSubjectByCurriculumId(@RequestParam(value = "curriculumId") int keyword,
+                                                         @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                         @RequestParam(value = "pageNo") int pageNo,
+                                                         @RequestParam(value = "pageSize") int pageSize) {
         return subjectService.findSubjectByCurriculumIdAndAndIsAvailable(keyword, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -745,6 +803,26 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="4.08-get-subject-of-teacher">
+
+    /**
+     * @param teacherUsername
+     * @param pageNo
+     * @param pageSize
+     * @return
+     * @throws Exception
+     * @apiNote 4.08-get-subject-of-teacher
+     * @author HuuNT - 2021.11.02
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/subjects", params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> searchSubjectOfTeacher(@RequestParam(value = "teacherUsername") String teacherUsername,
+                                                    @RequestParam(value = "pageNo") int pageNo,
+                                                    @RequestParam(value = "pageSize") int pageSize) throws Exception {
+        return subjectService.searchSubjectOfTeacher(teacherUsername, pageNo, pageSize);
+    }
+    //</editor-fold>
+
     /**
      * -------------------------------SUBJECT DETAIL--------------------------------
      */
@@ -757,14 +835,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 5.01-search-subject-detail-by-subject-id
-     * @author LamHNT - 2021.06.18
+     * @author LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/subjects/details", method = RequestMethod.GET)
-    public SubjectDetailPagingResponseDto findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
-                                                                       @RequestParam(value = "isAvailable") boolean isAvailable,
-                                                                       @RequestParam(value = "pageNo") int pageNo,
-                                                                       @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findSubjectDetailBySubjectId(@RequestParam(value = "subjectId") int subjectId,
+                                                          @RequestParam(value = "isAvailable") boolean isAvailable,
+                                                          @RequestParam(value = "pageNo") int pageNo,
+                                                          @RequestParam(value = "pageSize") int pageSize) {
         return subjectDetailService.findSubjectDetailBySubjectId(subjectId, isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -885,22 +963,22 @@ public class RestApi {
      * @param pageNo
      * @param pageSize
      * @return
-     * @author HuuNT 2021-07-08
+     * @author HuuNT 2021.07.08 | LamHNT 2021.11.10
      * @apiNote 7.01-search-guest-by-branchid-and-name
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", method = RequestMethod.GET)
-    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndName(@RequestParam(value = "branchId") int branchId,
-                                                                              @RequestParam(value = "name") String name,
-                                                                              @RequestParam(value = "phone") String phone,
-                                                                              @RequestParam(value = "curriculumName") String curriculumName,
-                                                                              @RequestParam(value = "pageNo") int pageNo,
-                                                                              @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findGuestByBranchIdAndName(@RequestParam(value = "branchId") int branchId,
+                                                        @RequestParam(value = "name") String name,
+                                                        @RequestParam(value = "phone") String phone,
+                                                        @RequestParam(value = "curriculumName") String curriculumName,
+                                                        @RequestParam(value = "pageNo") int pageNo,
+                                                        @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndCustomerName(branchId, name, phone, curriculumName, pageNo, pageSize);
     }
     //</editor-fold>
 
-    //<editor-fold desc="7.05-search guest by status">
+    //<editor-fold desc="7.05-search-guest-by-status">
 
     /**
      * @param branchId
@@ -909,14 +987,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 7.05-search Guest by Status
-     * @author HuuNT - 2021.07-09
+     * @author HuuNT - 2021.07.09 | LamHNT 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/guests", params = "status", method = RequestMethod.GET)
-    public RegisteringGuestSearchPagingResponseDto findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
-                                                                                @RequestParam(value = "status") String status,
-                                                                                @RequestParam(value = "pageNo") int pageNo,
-                                                                                @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> findGuestByBranchIdAndStatus(@RequestParam(value = "branchId") int branchId,
+                                                          @RequestParam(value = "status") String status,
+                                                          @RequestParam(value = "pageNo") int pageNo,
+                                                          @RequestParam(value = "pageSize") int pageSize) {
         return registeringGuestService.findRegisterGuestByBranchIdAndStatus(branchId, status, pageNo, pageSize);
     }
     //</editor-fold>
@@ -960,7 +1038,7 @@ public class RestApi {
      * -------------------------------BOOKING-------------------------------
      */
 
-    //<editor-fold desc="8.01-search booking by classID and status in a branch">
+    //<editor-fold desc="8.01-search-booking-by-class-id-and-status-in-a-branch">
 
     /**
      * @param classId
@@ -977,7 +1055,7 @@ public class RestApi {
                                                                    @RequestParam(value = "status") String status,
                                                                    @RequestParam(value = "pageNo") int pageNo,
                                                                    @RequestParam(value = "pageSize") int pageSize) {
-        return bookingService.findBookingByClassIdandPhoneAndStatus(classId, status, pageNo, pageSize);
+        return bookingService.findBookingByClassIdAndPhoneAndStatus(classId, status, pageNo, pageSize);
     }
     //</editor-fold>
 
@@ -1032,7 +1110,7 @@ public class RestApi {
     }
     //</editor-fold>
 
-    //<editor-fold desc="8.06-Update Booking">
+    //<editor-fold desc="8.06-update-booking">
 
     /**
      * @param bookingId
@@ -1124,6 +1202,22 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.04-search-class-detail-by-class-id">
+
+    /**
+     * @param classId
+     * @return
+     * @throws Exception
+     * @apiNote 9.04-search-class-detail-by-class-id
+     * @author LamHNT - 2021.11.11
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.GET)
+    public ResponseEntity<?> searchClassDetailByClassId(@PathVariable(value = "classId") Integer classId) throws Exception {
+        return classService.searchClassDetailByClassId(classId);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.05-search-class-of-teacher-by-username">
 
     /**
@@ -1177,6 +1271,23 @@ public class RestApi {
     public ResponseEntity<?> editClass(@PathVariable int classId,
                                        @RequestBody Map<String, Object> reqBody) throws Exception {
         return classService.editClass(classId, reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.08-delete-class">
+
+    /**
+     * @param classId
+     * @return
+     * @throws Exception
+     * @apiNote 9.08-delete-class
+     * @author LamHNT - 2021.11.16
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes/{classId}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> deleteClass(@PathVariable(value = "classId") Integer classId,
+                                         @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return classService.deleteClass(classId, reqBody);
     }
     //</editor-fold>
 
@@ -1240,6 +1351,21 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.13-class-static-teacher">
+
+    /**
+     * @param teacherUsername
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.11.17
+     * @apiNote 9.13-class-static-teacher
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/classes-status", params = "teacherUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> getTeacherClassesStatistic(@RequestParam(value = "teacherUsername") String teacherUsername) throws Exception {
+        return classService.getTeacherClassesStatistic(teacherUsername);
+    }
+    //</editor-fold>
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
@@ -1287,13 +1413,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 10.04-get-student-in-class-by-class-id
-     * @author HuuNT - 2021.07.19
+     * @author HuuNT - 2021.07.19 | LamHNT - 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/student-in-class", method = RequestMethod.GET)
-    public StudentInClassSearchPagingResponseDto getStudentInClass(@RequestParam(value = "classId") int classId,
-                                                                   @RequestParam(value = "pageNo") int pageNo,
-                                                                   @RequestParam(value = "pageSize") int pageSize) throws Exception {
+    public ResponseEntity<?> getStudentInClass(@RequestParam(value = "classId") int classId,
+                                               @RequestParam(value = "pageNo") int pageNo,
+                                               @RequestParam(value = "pageSize") int pageSize) throws Exception {
         return studentInClassService.findStudentInClassByClassId(classId, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1333,8 +1459,9 @@ public class RestApi {
      */
     @CrossOrigin
     @RequestMapping(value = "/schedules", method = RequestMethod.GET)
-    public ResponseEntity<?> viewSchedule(@RequestParam String date) throws Exception {
-        return sessionService.viewSchedule(date);
+    public ResponseEntity<?> viewSchedule(@RequestParam(value = "date") String date,
+                                          @RequestParam(value = "branchId") int branchId) throws Exception {
+        return sessionService.viewSchedule(date, branchId);
     }
     //</editor-fold>
 
@@ -1518,14 +1645,14 @@ public class RestApi {
      * @param pageSize
      * @return
      * @apiNote 13.02-search-shift-by-dow-and-by-time-start-containing
-     * @author HuuNT - 2021.06.24 / LamHNT - 2021.06.26
+     * @author HuuNT - 2021.06.24 | LamHNT - 2021.06.26
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts", params = "dayOfWeek", method = RequestMethod.GET)
-    public ShiftPagingResponseDto searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
-                                                                                        @RequestParam(value = "timeStart") String timeStart,
-                                                                                        @RequestParam(value = "pageNo") int pageNo,
-                                                                                        @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> searchShiftByDayOfWeekContainingOrTimeStartContaining(@RequestParam(value = "dayOfWeek") String dayOfWeek,
+                                                                                   @RequestParam(value = "timeStart") String timeStart,
+                                                                                   @RequestParam(value = "pageNo") int pageNo,
+                                                                                   @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.searchShiftByDayOfWeekContainingOrTimeStartContaining(dayOfWeek, timeStart, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1572,13 +1699,13 @@ public class RestApi {
      * @return
      * @throws Exception
      * @apiNote 13.05-get-all-shift-by-isAvailable
-     * @author HuuNT 2021-06-26
+     * @author HuuNT 2021.06.26 | LamHNT 2021.11.10
      */
     @CrossOrigin
     @RequestMapping(value = "/shifts", method = RequestMethod.GET)
-    public ShiftPagingResponseDto getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
-                                                           @RequestParam(value = "pageNo") int pageNo,
-                                                           @RequestParam(value = "pageSize") int pageSize) {
+    public ResponseEntity<?> getAllShiftByIsAvailable(@RequestParam(value = "isAvailable") boolean isAvailable,
+                                                      @RequestParam(value = "pageNo") int pageNo,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
         return shiftService.findAllShiftByIsAvailable(isAvailable, pageNo, pageSize);
     }
     //</editor-fold>
@@ -1795,6 +1922,62 @@ public class RestApi {
     public ResponseEntity<?> updateNotification(@PathVariable(value = "notificationId") int notificationId,
                                                 @RequestBody HashMap<String, Object> reqBody) throws Exception {
         return notificationService.updateNotification(notificationId, reqBody);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="15.07-send-noti-and-email-to-group-person">
+
+    /**
+     * @param notiAndEmailToGroupRequestDto
+     * @return
+     * @throws Exception
+     * @apiNote 15.07-send-noti-and-email-to-group-person
+     * @author HuuNT - 2021.11.04
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/notification-to-group", method = RequestMethod.POST)
+    public ResponseEntity<?> createNotificationAndSendEmailToGroup(@RequestBody NotiAndEmailToGroupRequestDto notiAndEmailToGroupRequestDto) throws Exception {
+        return notificationService.createNotificationAndSendEmailToGroup(notiAndEmailToGroupRequestDto);
+    }
+    //</editor-fold>
+
+    /**
+     * -------------------------------STATISTIC--------------------------------
+     **/
+
+    //<editor-fold desc="16.07-get-manager-statistic-in-month">
+
+    /**
+     * @param date
+     * @param branchId
+     * @return
+     * @throws Exception
+     * @apiNote 16.07-get-manager-statistic
+     * @author HuuNT - 2021.11.19
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/manager-statistic", method = RequestMethod.GET)
+    public ResponseEntity<?> getManagerStatistic(@RequestParam(value = "date")
+                                                 @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date date,
+                                                 @RequestParam(value = "branchId") int branchId) throws Exception {
+        return statisticService.getManagerStatistic(date, branchId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="16.08-get-admin-statistic-in-month">
+
+    /**
+     * @param date
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.11.19
+     * @apiNote 16.08-get-admin-statistic-in-month
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/admin-statistic", method = RequestMethod.GET)
+    public ResponseEntity<?> getAdminStatistic(@RequestParam(value = "date")
+                                               @DateTimeFormat(pattern = Constant.DATE_PATTERN) Date date) throws Exception {
+        return statisticService.getAdminStatistic(date);
     }
     //</editor-fold>
 
