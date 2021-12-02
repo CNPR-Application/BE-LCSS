@@ -1367,6 +1367,24 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.14-suspend-class">
+
+    /**
+     * @param studentInClassId
+     * @param reqBody
+     * @return
+     * @throws Exception
+     * @apiNote 9.14-suspend-class
+     * @author LamHNT - 2021.12.02
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/class-suspend", method = RequestMethod.PUT)
+    public ResponseEntity<?> suspendClass(@RequestParam(value = "studentInClassId") Integer studentInClassId,
+                                          @RequestBody HashMap<String, Object> reqBody) throws Exception {
+        return classService.suspendClass(studentInClassId, reqBody);
+    }
+    //</editor-fold>
+
     //<editor-fold desc="9.15-search-class-to-suspend">
 
     /**
@@ -1386,6 +1404,7 @@ public class RestApi {
         return classService.getClassToSuspend(status, price, branchId);
     }
     //</editor-fold>
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

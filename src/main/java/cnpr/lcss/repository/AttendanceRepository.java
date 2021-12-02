@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -63,4 +64,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     @Query("select a from Attendance a where a.isReopen = true")
     List<Attendance> findByIsReopenIsTrue();
+
+    @Query(
+            nativeQuery = true,
+            value = "select att.* " +
+                    "from attendance as att " +
+                    "join session ses on att.session_id = ses.session_id " +
+                    "join student_in_class sic on att.student_class_id = sic.student_class_id " +
+                    "where sic.student_class_id = :studentInClassId " +
+                    "and ses.start_time >= :currentDate"
+    )
+    List<Attendance> findAttendanceAfter(@Param(value = "currentDate") Date currentDate,
+                                         @Param(value = "studentInClassId") Integer studentInClassId);
 }

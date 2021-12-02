@@ -16,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -870,6 +872,106 @@ public class ClassService {
             return ResponseEntity.ok(mapObj);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="9.14-suspend-class">
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<?> suspendClass(Integer studentInClassId, HashMap<String, Object> reqBody) throws Exception {
+        try {
+            String insOpeningDate = (String) reqBody.get("openingDate");
+            String type = (String) reqBody.get("type");
+            Integer newClassId = Integer.parseInt(reqBody.get("newClassId").toString());
+            String studentUsername = (String) reqBody.get("studentUsername");
+            Integer branchId = Integer.parseInt(reqBody.get("branchId").toString());
+            String status = (String) reqBody.get("status");
+            String description = (String) reqBody.get("description");
+            Integer subjectId = Integer.parseInt(reqBody.get("subjectId").toString());
+
+            ZonedDateTime currentDate = ZonedDateTime.now();
+            LocalDate localDate = LocalDate.parse(insOpeningDate, DateTimeFormatter.ofPattern(Constant.DATE_PATTERN));
+            ZonedDateTime openingDate = localDate.atStartOfDay(ZoneId.of(Constant.TIMEZONE));
+            if (currentDate.isAfter(openingDate.plusDays(7))) {
+                throw new Exception(Constant.ERROR_SUSPEND_CLASS);
+            } else {
+                List<Attendance> attendanceList = attendanceRepository.
+                        findAttendanceAfter(Date.from(currentDate.toInstant()), studentInClassId);
+                for (Attendance att : attendanceList) {
+                    attendanceRepository.delete(att);
+                }
+
+                Class newClass = classRepository.findClassByClassId(newClassId);
+                Student student = studentRepository.findByStudent_StudentUsername(studentUsername);
+
+                if (!type.equalsIgnoreCase("class") && !type.equalsIgnoreCase("booking")) {
+                    throw new Exception(Constant.ERROR_SUSPEND_CLASS_TYPE);
+                } else if (type.equalsIgnoreCase("class")) {
+                    StudentInClass newSic = null;
+                    try {
+                        StudentInClass sic = new StudentInClass();
+                        sic.setAClass(newClass);
+                        sic.setStudent(student);
+                        sic.setTeacherRating(0);
+                        sic.setSubjectRating(0);
+                        sic.setFeedback(null);
+                        sic.setSuspend(Boolean.FALSE);
+                        newSic = studentInClassRepository.saveAndFlush(sic);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        studentInClassRepository.delete(newSic);
+                        throw new Exception(Constant.ERROR_SAVE_STUDENT_IN_CLASS);
+                    }
+
+                    List<Session> sessionList = sessionRepository.
+                            findSessionByaClass_ClassId(newClassId);
+                    try {
+                        for (Session ses : sessionList) {
+                            Attendance att = new Attendance();
+                            if (currentDate.isAfter(ZonedDateTime.ofInstant(ses.getStartTime().toInstant(), ZoneId.of(Constant.TIMEZONE)))) {
+                                att.setStatus(Constant.ATTENDANCE_STATUS_ABSENT);
+                            } else {
+                                att.setStatus(Constant.ATTENDANCE_STATUS_NOT_YET);
+                            }
+                            att.setCheckingDate(ses.getStartTime());
+                            att.setIsReopen(Boolean.FALSE);
+                            att.setClosingDate(null);
+                            att.setReopenReason(null);
+                            att.setSession(ses);
+                            att.setStudentInClass(newSic);
+                            attendanceRepository.save(att);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new Exception(Constant.ERROR_INSERT_TO_ATTENDANCE);
+                    }
+                } else if (type.equalsIgnoreCase("booking")) {
+                    Booking tmpBkn = null;
+                    try {
+                        Booking bkn = new Booking();
+                        bkn.setPayingDate(Date.from(currentDate.toInstant()));
+                        bkn.setSubjectId(subjectId);
+                        bkn.setBranch(branchRepository.findByBranchId(branchId));
+                        bkn.setStatus(Constant.BOOKING_STATUS_PAID);
+                        bkn.setPayingPrice(subjectRepository.findSubjectPriceBySubjectId(subjectId));
+                        bkn.setDescription(description);
+                        bkn.setAClass(newClass);
+                        bkn.setStudent(student);
+                        tmpBkn = bookingRepository.saveAndFlush(bkn);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        bookingRepository.delete(tmpBkn);
+                        throw new Exception(Constant.ERROR_INSERT_TO_BOOKING);
+                    }
+                }
+
+                StudentInClass oldSic = studentInClassRepository.findSicBySicId(studentInClassId);
+                oldSic.setSuspend(Boolean.TRUE);
+                studentInClassRepository.save(oldSic);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

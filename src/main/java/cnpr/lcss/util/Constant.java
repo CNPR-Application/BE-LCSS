@@ -96,10 +96,11 @@ public class Constant {
     public static final String BOOKING_STATUS_PAID = "paid";
     public static final String BOOKING_STATUS_PROCESSED = "processed";
     // Error Message
+    public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
+    public static final String ERROR_INSERT_TO_BOOKING = "Error at insert Student to Booking!";
     public static final String INVALID_BOOKING_ID = "Invalid Booking ID!";
     public static final String INVALID_BOOKING_PAYING_PRICE = "Paying Price must be GREATER or EQUAL to Subject's Price!";
     public static final String INVALID_BOOKING_STATUS = "Booking Status must be paid/canceled/processed!";
-    public static final String ERROR_GET_BOOKING_ID = "Unable to get Booking ID!";
     // </editor-fold>
 
     // <editor-fold desc="Branch">
@@ -128,15 +129,17 @@ public class Constant {
     // Error Message
     public static final String ERROR_DELETE_CLASS = "Unable to delete this class!";
     public static final String ERROR_GET_CLASS_ID = "Unable to get Class ID!";
+    public static final String ERROR_SUSPEND_CLASS = "Class suspension request denied!";
+    public static final String ERROR_SUSPEND_CLASS_TYPE = "Type must be class or booking!";
     public static final String INVALID_CLASS_CREATOR = "Invalid Class Creator!";
     public static final String INVALID_CLASS_ID = "Class ID not exist!";
     public static final String INVALID_CLASS_NAME = "Null or empty class name!";
     public static final String INVALID_CLASS_STATUS_NOT_WAITING = "Class Status must be waiting!";
+    public static final String INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING = "Class status must be waiting or studying!";
     public static final String INVALID_DELETE_CLASS_REASON = "Delete Class Reason must not be empty or null!";
     public static final String INVALID_OPENING_DATE = "Null or invalid opening day!";
     public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";
     public static final String INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK = "Subject's slot per week incompatible with Shift's days of week!";
-    public static final String INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING = "Class status must be waiting and studying!";
     // </editor-fold>
 
     // <editor-fold desc="Curriculum">

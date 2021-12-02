@@ -40,4 +40,12 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
                     "and a.is_available = 1"
     )
     List<StudentInClass> findStudentInClassIsAvailableByClassId(int classId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select sic.* " +
+                    "from student_in_class as sic " +
+                    "where sic.student_class_id = ?1"
+    )
+    StudentInClass findSicBySicId(Integer studentInClassId);
 }

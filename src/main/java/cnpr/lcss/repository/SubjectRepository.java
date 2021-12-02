@@ -58,4 +58,12 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     @Query("select distinct s from Subject s left join s.teachingSubjectList teachingSubjectList where teachingSubjectList.teacher.account.username = ?1")
     Page<Subject> findDistinctByTeachingSubjectList_Account_TeacherUsername(String teacherUsername, Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "select sub.price " +
+                    "from subject as sub " +
+                    "where sub.subject_id = ?1"
+    )
+    Float findSubjectPriceBySubjectId(Integer subjectId);
 }
