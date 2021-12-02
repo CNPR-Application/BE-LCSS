@@ -28,7 +28,7 @@ public class StudentInClass implements Serializable {
     @Column(name = "feedback")
     private String feedback;
     @Column(name = "suspend")
-    private boolean suspend;
+    private Boolean suspend;
 
     @ManyToOne
     @JoinColumn(name = "class_id")

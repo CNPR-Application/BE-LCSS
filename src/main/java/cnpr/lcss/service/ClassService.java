@@ -334,6 +334,15 @@ public class ClassService {
                         Teacher teacher = sessionList.get(0).getTeacher();
                         aClass.setTeacherId(teacher.getTeacherId());
                         aClass.setTeacherName(teacher.getAccount().getName());
+
+                        //Get field suspend
+                        StudentInClass studentInClass = studentInClassRepository.findByStudent_IdAndAClass_ClassId(student.getId(), aClass.getClassId());
+                        if(studentInClass.getSuspend()==null){
+                            aClass.setSuspend(null);
+                        }else {
+                            aClass.setSuspend(studentInClass.getSuspend());
+                        }
+                        aClass.setStudentInClassId(studentInClass.getStudentInClassId());
                     }
                     //ROOM
                     //find room by ID with class status not equal WAITING
@@ -343,11 +352,8 @@ public class ClassService {
                         aClass.setRoomName(room.getRoomName());
                         aClass.setRoomId(room.getRoomId());
                     }
-                    StudentInClass studentInClass = studentInClassRepository.findByStudent_IdAndAClass_ClassId(student.getId(), aClass.getClassId());
-                    aClass.setSuspend(studentInClass.isSuspend());
-                    aClass.setStudentInClassId(studentInClass.getStudentInClassId());
-                }
 
+                }
                 mapObj.put("pageNo", pageNo);
                 mapObj.put("pageSize", pageSize);
                 mapObj.put("totalPage", pageTotal);

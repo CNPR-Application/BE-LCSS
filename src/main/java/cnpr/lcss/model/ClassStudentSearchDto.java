@@ -26,5 +26,5 @@ public class ClassStudentSearchDto {
     private String roomName;
     private Integer roomId;
     private int studentInClassId;
-    private boolean suspend;
+    private Boolean suspend;
 }
