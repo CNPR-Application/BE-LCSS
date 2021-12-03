@@ -337,9 +337,9 @@ public class ClassService {
 
                         //Get field suspend
                         StudentInClass studentInClass = studentInClassRepository.findByStudent_IdAndAClass_ClassId(student.getId(), aClass.getClassId());
-                        if(studentInClass.getSuspend()==null){
+                        if (studentInClass.getSuspend() == null) {
                             aClass.setSuspend(null);
-                        }else {
+                        } else {
                             aClass.setSuspend(studentInClass.getSuspend());
                         }
                         aClass.setStudentInClassId(studentInClass.getStudentInClassId());
@@ -993,7 +993,7 @@ public class ClassService {
             if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_WAITING)) {
                 List<ClassSearchToSuspend> classList = classRepository.findClassByStatusAndSubject_PriceAndBranch_BranchId(status, price, branchId).stream().map(aClass -> aClass.convertToSearchToSuspendDto()).collect(Collectors.toList());
                 int numberofStudent = 0;
-                for (ClassSearchToSuspend classSearchToSuspend: classList) {
+                for (ClassSearchToSuspend classSearchToSuspend : classList) {
                     if (classSearchToSuspend.getStatus().matches(Constant.CLASS_STATUS_STUDYING)) {
                         numberofStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(classSearchToSuspend.getClassId());
                     }
