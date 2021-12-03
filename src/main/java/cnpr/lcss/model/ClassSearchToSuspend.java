@@ -20,4 +20,5 @@ public class ClassSearchToSuspend {
     private String shiftDescription;
     private String roomName;
     private Integer roomId;
+    private int numberOfStudent;
 }

@@ -986,13 +986,22 @@ public class ClassService {
     //<editor-fold desc="9.15-search-class-to-suspend">
     public ResponseEntity<?> getClassToSuspend(String status, float price, int branchId) throws Exception {
         try {
-
             if (!branchRepository.existsBranchByBranchId(branchId))
                 throw new Exception(Constant.INVALID_BRANCH_ID);
             if (price < 0)
                 throw new Exception(Constant.INVALID_SUBJECT_PRICE);
             if (status.matches(Constant.CLASS_STATUS_STUDYING) || status.matches(Constant.CLASS_STATUS_WAITING)) {
                 List<ClassSearchToSuspend> classList = classRepository.findClassByStatusAndSubject_PriceAndBranch_BranchId(status, price, branchId).stream().map(aClass -> aClass.convertToSearchToSuspendDto()).collect(Collectors.toList());
+                int numberofStudent = 0;
+                for (ClassSearchToSuspend classSearchToSuspend: classList) {
+                    if (classSearchToSuspend.getStatus().matches(Constant.CLASS_STATUS_STUDYING)) {
+                        numberofStudent = studentInClassRepository.countStudentInClassByAClass_ClassId(classSearchToSuspend.getClassId());
+                    }
+                    if (classSearchToSuspend.getStatus().matches(Constant.CLASS_STATUS_WAITING)) {
+                        numberofStudent = (int) bookingRepository.countWaitingBookingByClassIdAndStatusIsPaid(classSearchToSuspend.getClassId(), Constant.BOOKING_STATUS_PAID);
+                    }
+                    classSearchToSuspend.setNumberOfStudent(numberofStudent);
+                }
                 return ResponseEntity.status(HttpStatus.OK).body(classList);
             } else {
                 throw new Exception(Constant.INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING);
