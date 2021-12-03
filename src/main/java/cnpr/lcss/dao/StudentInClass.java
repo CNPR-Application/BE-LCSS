@@ -1,5 +1,6 @@
 package cnpr.lcss.dao;
 
+import cnpr.lcss.model.StudentInClassSuspendIsTrueOfStudent;
 import cnpr.lcss.model.FeedbackDto;
 import cnpr.lcss.model.StudentInClassSearchResponseDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -72,7 +73,18 @@ public class StudentInClass implements Serializable {
         dto.setImage(student.getAccount().getImage());
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="convertToSuspendSearchDto">
+    public StudentInClassSuspendIsTrueOfStudent convertToSuspendSearchDto() {
+        StudentInClassSuspendIsTrueOfStudent dto = new StudentInClassSuspendIsTrueOfStudent();
+        dto.setClassId(aClass.getClassId());
+        dto.setStudentInClassId(studentInClassId);
+        dto.setSubjectId(aClass.getSubject().getSubjectId());
+        dto.setOpeningDate(aClass.getOpeningDate());
+        dto.setSuspend(suspend);
+        return dto;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Convert to FeedbackDto">

@@ -1405,6 +1405,21 @@ public class RestApi {
     }
     //</editor-fold>
 
+    //<editor-fold desc="9.16-get-class-suspend-true-of-student">
+    /**
+     *
+     * @param studentUsername
+     * @return
+     * @throws Exception
+     * @author HuuNT - 2021.12.01
+     * @apiNote 9.16-get-class-suspend-true-of-student
+     */
+    @CrossOrigin
+    @RequestMapping(value = "/class-suspend",params = "studentUsername", method = RequestMethod.GET)
+    public ResponseEntity<?> getClassSuspendIsTrueOfStudent(@RequestParam(value = "studentUsername") String studentUsername) throws Exception {
+        return classService.getClassSuspendIsTrueOfStudent(studentUsername);
+    }
+    //</editor-fold>
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */

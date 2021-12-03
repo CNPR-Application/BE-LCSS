@@ -48,4 +48,6 @@ public interface StudentInClassRepository extends JpaRepository<StudentInClass, 
                     "where sic.student_class_id = ?1"
     )
     StudentInClass findSicBySicId(Integer studentInClassId);
+
+    List<StudentInClass> findByaClass_StatusIsInAndStudent_IdAndAndSuspend(List<String> status, int studentId, Boolean suspend);
 }

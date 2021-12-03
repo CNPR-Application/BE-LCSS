@@ -1012,4 +1012,23 @@ public class ClassService {
         }
     }
     //</editor-fold>
+    //<editor-fold desc="9.16-get-class-suspend-true-of-student">
+    public ResponseEntity<?> getClassSuspendIsTrueOfStudent(String studentUsername) throws Exception {
+        try {
+            Student student= studentRepository.findByStudent_StudentUsername(studentUsername);
+            if(student==null){
+                throw new Exception(Constant.INVALID_USERNAME);
+            }else {
+                List<String> status=new ArrayList<>();
+                status.add(Constant.CLASS_STATUS_STUDYING);
+                status.add(Constant.CLASS_STATUS_FINISHED);
+                List<StudentInClassSuspendIsTrueOfStudent> list = studentInClassRepository.findByaClass_StatusIsInAndStudent_IdAndAndSuspend(status,student.getId(), Boolean.TRUE).stream().map(studentInClass -> studentInClass.convertToSuspendSearchDto()).collect(Collectors.toList());
+                return ResponseEntity.status(HttpStatus.OK).body(list);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    //</editor-fold>
 }
