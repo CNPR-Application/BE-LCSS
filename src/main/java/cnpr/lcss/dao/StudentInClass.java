@@ -75,7 +75,7 @@ public class StudentInClass implements Serializable {
     }
     //</editor-fold>
 
-    //<editor-fold desc="convertToSuspendSearchDto">
+    //<editor-fold desc="convert to SuspendSearchDto">
     public StudentInClassSuspendIsTrueOfStudent convertToSuspendSearchDto() {
         StudentInClassSuspendIsTrueOfStudent dto = new StudentInClassSuspendIsTrueOfStudent();
         dto.setClassId(aClass.getClassId());
