@@ -87,7 +87,7 @@ public class ClassService {
         // Copy the old one to the new one
         System.arraycopy(daysOfWeek, 0, daysOfWeekCopy, 0, daysOfWeek.length);
         // Replace the last element from "CN" to "1"
-        if (daysOfWeekCopy[daysOfWeek.length - 1] == "CN") {
+        if (daysOfWeekCopy[daysOfWeek.length - 1].equalsIgnoreCase("CN")) {
             daysOfWeekCopy[daysOfWeek.length - 1] = "1";
         }
         // Append
@@ -474,65 +474,6 @@ public class ClassService {
     //<editor-fold desc="9.06-create-new-class">
     public ResponseEntity<?> createNewClass(ClassRequestDto insClass) throws Exception {
         try {
-            /*Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constant.TIMEZONE));
-            Date today = calendar.getTime();
-            Class newClass = new Class();
-
-            newClass.setClassName(insClass.getClassName());
-            // Default Status for new Class - "waiting"
-            newClass.setStatus(Constant.CLASS_STATUS_WAITING);
-            newClass.setBranch(branchRepository.findByBranchId(insClass.getBranchId()));
-            newClass.setSubject(subjectRepository.findBySubjectId(insClass.getSubjectId()));
-            // Slot of Class = Slot of inserted Subject
-            newClass.setSlot(subjectRepository.findSlotBySubjectId(insClass.getSubjectId()));
-            // Check compatibility of subject's slot per week & shift's day of week
-            // If (slot per week) of (insert subject) = 2 => (day of week) of (shift) = 2
-            // Else if (slot per week) of (insert subject) = 3 => (day of week) of (shift) = 3
-            // Else throw new Exception
-            int subject_slotPerWeek = subjectRepository.findSlotPerWeekBySubjectId(insClass.getSubjectId());
-            String shift_dayOfWeek = shiftRepository.findShift_DayOfWeekByShiftId(insClass.getShiftId());
-            if ((subject_slotPerWeek == 2 && shift_dayOfWeek.matches(Constant.TWO_DAYS_OF_WEEK_PATTERN))
-                    || subject_slotPerWeek == 3 && shift_dayOfWeek.matches(Constant.THREE_DAYS_OF_WEEK_PATTERN)) {
-                newClass.setShift(shiftRepository.findShiftByShiftId(insClass.getShiftId()));
-            } else {
-                throw new ValidationException(Constant.INVALID_SLOT_PER_WEEK_AND_DAY_OF_WEEK);
-            }
-            // Check whether Opening Date is a day in Shift
-            if (insClass.getOpeningDate() != null && insClass.getOpeningDate().compareTo(today) >= 0) {
-                Date openingDate = insClass.getOpeningDate();
-                // Sunday = 0
-                int openingDayOfWeek = openingDate.getDay() + 1;
-                Shift shift = shiftRepository.findShiftByShiftId(insClass.getShiftId());
-                String[] shiftDaysOfWeek = shift.getDayOfWeek().split("-");
-                shiftDaysOfWeek = convertDowToInteger(shiftDaysOfWeek);
-                boolean coincidence = false;
-                for (String day : shiftDaysOfWeek) {
-                    if (day.equalsIgnoreCase(Integer.toString(openingDayOfWeek))) {
-                        coincidence = true;
-                    }
-                }
-                if (!coincidence) {
-                    throw new ValidationException(Constant.INVALID_OPENING_DAY_VS_DAY_IN_SHIFT);
-                }
-                // Set time start as same as time start of shift
-                openingDate.setHours(Integer.parseInt(shiftRepository.findShift_TimeStartByShiftId(insClass.getShiftId()).substring(0, 1)));
-                newClass.setOpeningDate(openingDate);
-            } else {
-                throw new ValidationException(Constant.INVALID_OPENING_DATE);
-            }
-            // Creator is Account-Username
-            newClass.setStaff(staffRepository.findByAccount_Username(insClass.getCreator()));
-            newClass.setRoom(null);
-
-            // Get Booking ID
-            int classId;
-            try {
-                Class aClass = classRepository.save(newClass);
-                classId = aClass.getClassId();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception(Constant.ERROR_GET_CLASS_ID);
-            }*/
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("classId", createANewClass(insClass));
             return ResponseEntity.ok(mapObj);
@@ -755,9 +696,9 @@ public class ClassService {
 
             // Create Session
             int numberOfSlot = activateClass.getSlot();
-            String[] daysOfWeek = shift.getDayOfWeek().split("-");
+            String[] daysOfWeek = shift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
             daysOfWeek = convertDowToInteger(daysOfWeek);
-            String[] timeStart = shift.getTimeStart().split(":");
+            String[] timeStart = shift.getTimeStart().split(Constant.SYMBOL_COLON);
             int totalSession = 0;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(activateClass.getOpeningDate());
@@ -1012,7 +953,7 @@ public class ClassService {
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="9.16-get-class-suspend-true-of-student">
     public ResponseEntity<?> getClassSuspendIsTrueOfStudent(String studentUsername) throws Exception {
         try {
