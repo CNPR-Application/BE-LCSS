@@ -135,7 +135,7 @@ public class Constant {
     public static final String INVALID_CLASS_ID = "Class ID not exist!";
     public static final String INVALID_CLASS_NAME = "Null or empty class name!";
     public static final String INVALID_CLASS_STATUS_NOT_WAITING = "Class Status must be waiting!";
-    public static final String INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING = "Class status must be waiting or studying!";
+    public static final String INVALID_CLASS_STATUS_NOT_WAITING_OR_STUDYING = "Class status must be waiting or studying!";
     public static final String INVALID_DELETE_CLASS_REASON = "Delete Class Reason must not be empty or null!";
     public static final String INVALID_OPENING_DATE = "Null or invalid opening day!";
     public static final String INVALID_OPENING_DAY_VS_DAY_IN_SHIFT = "Opening Day must be a day in Shift!";

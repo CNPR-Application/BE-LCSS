@@ -945,7 +945,7 @@ public class ClassService {
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(classList);
             } else {
-                throw new Exception(Constant.INVALID_CLASS_STATUS_NOT_WAITTING_OR_STUDYING);
+                throw new Exception(Constant.INVALID_CLASS_STATUS_NOT_WAITING_OR_STUDYING);
             }
         } catch (Exception e) {
             e.printStackTrace();
