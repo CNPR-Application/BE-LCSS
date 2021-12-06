@@ -43,4 +43,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     int countDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(Date date, int branchId);
 
     int countBookingByBranch_BranchId(int branchId);
+
+    List<Booking> findDistinctByPayingDateIsGreaterThanEqualAndBranch_BranchId(Date date, int branchId);
 }
