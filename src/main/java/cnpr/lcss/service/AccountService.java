@@ -516,11 +516,6 @@ public class AccountService implements UserDetailsService {
                 throw new Exception(Constant.INVALID_EMAIL_PATTERN);
             }
 
-            // Image
-            if (newAcc.getImage() != null && !newAcc.getImage().isEmpty()) {
-                account.setImage(newAcc.getImage().trim());
-            }
-
             // Role
             String insRole = newAcc.getRole();
             Role userRole = roleRepository.findByRoleIdAllIgnoreCase(insRole);
@@ -579,7 +574,7 @@ public class AccountService implements UserDetailsService {
             accTmp.setAddress(newAcc.getAddress());
             accTmp.setPhone(newAcc.getPhone());
             accTmp.setEmail(newAcc.getEmail());
-            accTmp.setImage(newAcc.getImage());
+            accTmp.setImage(Constant.randomAvatar());
             accTmp.setRole(userRole);
             accTmp.setIsAvailable(true);
             accTmp.setCreatingDate(today);
