@@ -235,6 +235,7 @@ public class Constant {
      * -----STAFF-----
      */
     // Error Message
+    public static final String UPDATE_BRANCH_FOR_MANAGER_FAILED = "Update branch for Manager FAILED!";
     // </editor-fold>
 
     // <editor-fold desc="Student">
