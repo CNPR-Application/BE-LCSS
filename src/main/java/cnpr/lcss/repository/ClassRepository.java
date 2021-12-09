@@ -75,4 +75,12 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     int countDistinctByBranch_BranchId(int branchId);
 
     List<Class> findClassByStatusAndSubject_PriceAndBranch_BranchId(String status, float price, int branchId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select cls.slot " +
+                    "from class as cls " +
+                    "where cls.class_id = ?1"
+    )
+    int findNumberOfSlotByClassId(Integer classId);
 }

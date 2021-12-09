@@ -1420,7 +1420,7 @@ public class RestApi {
         return classService.getClassSuspendIsTrueOfStudent(studentUsername);
     }
     //</editor-fold>
-    
+
     /**
      * -------------------------------STUDENT IN CLASS--------------------------------
      */
@@ -1790,6 +1790,7 @@ public class RestApi {
     /**
      * @param branchId
      * @param shiftId
+     * @param classId
      * @param openingDate
      * @return
      * @throws Exception
@@ -1800,8 +1801,9 @@ public class RestApi {
     @RequestMapping(value = "/rooms/{branchId}/search", method = RequestMethod.GET)
     public ResponseEntity<?> getAvailableRoomsForOpeningClass(@PathVariable int branchId,
                                                               @RequestParam(value = "shiftId") int shiftId,
+                                                              @RequestParam(value = "classId") int classId,
                                                               @RequestParam String openingDate) throws Exception {
-        return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, openingDate);
+        return roomService.getAvailableRoomsForOpeningClass(branchId, shiftId, classId, openingDate);
     }
     //</editor-fold>
 

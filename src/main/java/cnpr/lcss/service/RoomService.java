@@ -5,10 +5,7 @@ import cnpr.lcss.dao.Session;
 import cnpr.lcss.dao.Shift;
 import cnpr.lcss.model.RoomAndBranchDto;
 import cnpr.lcss.model.RoomDto;
-import cnpr.lcss.repository.BranchRepository;
-import cnpr.lcss.repository.RoomRepository;
-import cnpr.lcss.repository.SessionRepository;
-import cnpr.lcss.repository.ShiftRepository;
+import cnpr.lcss.repository.*;
 import cnpr.lcss.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,16 +17,17 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
     @Autowired
     BranchRepository branchRepository;
+    @Autowired
+    ClassRepository classRepository;
+    @Autowired
+    ClassService classService;
     @Autowired
     RoomRepository roomRepository;
     @Autowired
@@ -44,13 +42,41 @@ public class RoomService {
      * Which are Available from the Date (openingDate)
      * In order to select rooms for class that about to start
      */
-    public ResponseEntity<?> getAvailableRoomsForOpeningClass(int branchId, int shiftId, String insOpnDate) throws Exception {
+    public ResponseEntity<?> getAvailableRoomsForOpeningClass(int branchId, int shiftId, int classId, String insOpnDate) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
             Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
-            List<RoomAndBranchDto> roomList = roomRepository.findAvailableRoomsForOpeningClass(branchId, shiftId)
+
+            SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_PATTERN);
+            Date openingDate = sdf.parse(insOpnDate);
+            openingDate.setHours(Integer.parseInt(insShift.getTimeStart().split(Constant.SYMBOL_COLON)[0]));
+            openingDate.setMinutes(Integer.parseInt(insShift.getTimeStart().split(Constant.SYMBOL_COLON)[1]));
+            openingDate.setSeconds(0);
+
+            Integer numberOfSlot = classRepository.findNumberOfSlotByClassId(classId);
+            String[] daysOfWeek = insShift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
+            daysOfWeek = classService.convertDowToInteger(daysOfWeek);
+            int totalSession = 0;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(openingDate);
+            calendar.set(Calendar.HOUR_OF_DAY, openingDate.getHours());
+            calendar.set(Calendar.MINUTE, openingDate.getMinutes());
+            List<Date> dateList = new ArrayList<>();
+            while (totalSession < numberOfSlot) {
+                if (classService.isDaysInShift(daysOfWeek, calendar)) {
+                    totalSession++;
+                    dateList.add(calendar.getTime());
+                }
+                calendar.add(Calendar.DATE, 1);
+            }
+            Date lastSessionStartTime = dateList.get(dateList.size() - 1);
+            Date lastSessionEndTime = new Date();
+            lastSessionEndTime.setDate(lastSessionStartTime.getDate());
+            lastSessionEndTime.setTime(lastSessionStartTime.getTime() + insShift.getDuration() * 60000);
+
+            List<RoomAndBranchDto> roomList = roomRepository.findAvailableRoomsForOpeningClass(branchId, shiftId, openingDate, lastSessionEndTime)
                     .stream().map(Room::convertToRoomAndBranchDto).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("roomList", roomList);
