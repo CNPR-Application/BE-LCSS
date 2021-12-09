@@ -50,29 +50,8 @@ public class RoomService {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
             Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
-            SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_PATTERN);
-            Date openingDate = sdf.parse(insOpnDate);
-            Integer startHour = Integer.parseInt(insShift.getTimeStart().split(Constant.SYMBOL_COLON)[0]);
-            Integer startMinute = Integer.parseInt(insShift.getTimeStart().split(Constant.SYMBOL_COLON)[1]);
-            Integer endHour = Integer.parseInt(insShift.getTimeEnd().split(Constant.SYMBOL_COLON)[0]);
-            Integer endMinute = Integer.parseInt(insShift.getTimeEnd().split(Constant.SYMBOL_COLON)[1]);
-            Date datetimeStart = new Date();
-            datetimeStart.setDate(openingDate.getDate());
-            datetimeStart.setMonth(openingDate.getMonth());
-            datetimeStart.setYear(openingDate.getYear());
-            datetimeStart.setHours(startHour);
-            datetimeStart.setMinutes(startMinute);
-            datetimeStart.setSeconds(0);
-            Date datetimeEnd = new Date();
-            datetimeEnd.setDate(openingDate.getDate());
-            datetimeEnd.setMonth(openingDate.getMonth());
-            datetimeEnd.setYear(openingDate.getYear());
-            datetimeEnd.setHours(endHour);
-            datetimeEnd.setMinutes(endMinute);
-            datetimeEnd.setSeconds(0);
-
-            List<Room> roomQuery = roomRepository.findAvailableRoomsForOpeningClass(branchId, datetimeStart, datetimeEnd);
-            List<RoomAndBranchDto> roomList = roomQuery.stream().map(Room::convertToRoomAndBranchDto).collect(Collectors.toList());
+            List<RoomAndBranchDto> roomList = roomRepository.findAvailableRoomsForOpeningClass(branchId, shiftId)
+                    .stream().map(Room::convertToRoomAndBranchDto).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("roomList", roomList);
             return ResponseEntity.ok(mapObj);

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -28,13 +27,12 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
                     "(SELECT r.room_id, r.room_name, r.is_available, r.branch_id " +
                     "FROM room AS r " +
                     "JOIN class c ON r.room_id = c.room_id " +
-                    "JOIN session s ON c.class_id = s.class_id " +
+                    "JOIN shift s on c.shift_id = s.shift_id " +
                     "WHERE r.branch_id = :branchId " +
-                    "AND (s.start_time >= :datetimeStart AND s.start_time < :datetimeEnd))"
+                    "AND s.shift_id = :shiftId)"
     )
     List<Room> findAvailableRoomsForOpeningClass(@Param(value = "branchId") int branchId,
-                                                 @Param(value = "datetimeStart") Date datetimeStart,
-                                                 @Param(value = "datetimeEnd") Date datetimeEnd);
+                                                 @Param(value = "shiftId") int shiftId);
 
     Page<Room> findAllByBranch_BranchIdAndAndIsAvailable(int branchId, boolean isAvailable, Pageable pageable);
 
