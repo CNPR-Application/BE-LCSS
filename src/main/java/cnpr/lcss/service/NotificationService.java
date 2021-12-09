@@ -422,6 +422,43 @@ public class NotificationService {
         }
     }
     //</editor-fold>
+
+    //<editor-fold desc="create-notification-for-staff-and-manager-in-a-branch FOR RELOADING">
+
+    public void createNotificationToStaffForReloading(int branchId) throws Exception {
+        try {
+            String title = Constant.SYSTEM_NOTI_TITLE_FOR_RELOADING;
+            String body = Constant.SYSTEM_NOTI_BODY_FOR_RELOADING;
+            List<Account> staffList = accountRepository.findAvailableStaffAndManagerByBranchId(Constant.ROLE_ADMIN, branchId);
+            try {
+                //first loop to first user who has token to send Noti first
+                for (Account staff : staffList) {
+                    if (staff.getToken() != null) {
+                        // Send notification to token's device
+                        Message message = com.google.firebase.messaging.Message.builder()
+                                .setToken(staff.getToken())
+                                .setNotification(new com.google.firebase.messaging.Notification(title, body))
+                                .putData("content",title)
+                                .putData("body", body)
+                                .build();
+                        String response = "";
+                        try {
+                            response = FirebaseMessaging.getInstance().send(message);
+                        } catch (Exception e) {
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(Constant.ERROR_GENERATE_NOTIFICATION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //</editor-fold>
+
 }
 
 

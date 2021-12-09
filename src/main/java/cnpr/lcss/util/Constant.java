@@ -379,6 +379,8 @@ public class Constant {
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";
+    public static final String SYSTEM_NOTI_TITLE_FOR_RELOADING ="[guest/booking]";
+    public static final String SYSTEM_NOTI_BODY_FOR_RELOADING ="reload BE notification";
     // </editor-fold>
 
     // <editor-fold desc="Conversion">
