@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -53,6 +54,22 @@ public class SessionService {
         LocalDateTime ldtCurrentDate = insDate.toLocalDateTime().toLocalDate().atTime(LocalTime.MAX);
         Date endTimeOfTheDate = Date.from(ldtCurrentDate.atZone(ZoneId.of(Constant.TIMEZONE)).toInstant());
         return endTimeOfTheDate;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Check available Teacher Or/And Room of a Session">
+    public ClassIdAndTeacherIdAndRoomIdDto checkAvailableTeacherAndRoomOfSession(Date insDate, Integer teacherId, Integer roomId) throws Exception {
+        ClassIdAndTeacherIdAndRoomIdDto dto = null;
+        if (sessionRepository.existsByStartTimeAndTeacher_TeacherIdAndRoom_RoomId(insDate, teacherId, roomId)) {
+            return sessionRepository.findByStartTimeAndTeacherIdAndRoomId(insDate, teacherId, roomId)
+                    .convertToClassIdAndTeacherIdAndRoomIdDto();
+        } else if (sessionRepository.existsByStartTimeAndTeacher_TeacherId(insDate, teacherId)) {
+            return sessionRepository.findByStartTimeAndTeacherId(insDate, teacherId).convertToClassIdAndTeacherIdAndRoomIdDto();
+        } else if (sessionRepository.existsByStartTimeAndRoom_RoomId(insDate, roomId)) {
+            return sessionRepository.findByStartTimeAndRoomId(insDate, roomId).convertToClassIdAndTeacherIdAndRoomIdDto();
+        } else {
+            return null;
+        }
     }
     //</editor-fold>
 
@@ -150,12 +167,13 @@ public class SessionService {
     //</editor-fold>
 
     //<editor-fold desc="11.08-update-session-in-class">
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> updateSessionInClass(HashMap<String, Object> reqBody) throws Exception {
         try {
             Integer sessionId = Integer.parseInt(reqBody.get("sessionId").toString());
             Integer classId = Integer.parseInt(reqBody.get("classId").toString());
             Session updateSession = sessionRepository.findBySessionId(sessionId);
-            Class updateClass = classRepository.getById(classId);
+            Class updateClass = classRepository.findClassByClassId(classId);
             List<Session> sessionList = sessionRepository.findSessionByaClass_ClassId(classId);
             String insNewRoomId = reqBody.get("newRoomId").toString();
             Boolean changeAllRoom = Boolean.valueOf(reqBody.get("changeAllRoom").toString());
@@ -180,7 +198,7 @@ public class SessionService {
                     sessionRepository.save(updateSession);
                 }
             } else {
-                newRoomId = sessionList.get(sessionList.indexOf(updateSession)).getRoom().getRoomId();
+                newRoomId = updateSession.getRoom().getRoomId();
             }
             //</editor-fold>
 
@@ -199,7 +217,7 @@ public class SessionService {
                     sessionRepository.save(updateSession);
                 }
             } else {
-                newTeacherId = sessionList.get(sessionList.indexOf(updateSession)).getTeacher().getTeacherId();
+                newTeacherId = updateSession.getTeacher().getTeacherId();
             }
             //</editor-fold>
 
@@ -208,6 +226,10 @@ public class SessionService {
             if (!insNewStartTime.equals(Constant.NUMBER_ZERO)) {
                 SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
                 newStartTime = sdf.parse(insNewStartTime);
+//                ClassIdAndTeacherIdAndRoomIdDto existedSession = checkAvailableTeacherAndRoomOfSession(newStartTime, updateSession.getTeacher().getTeacherId(), updateSession.getRoom().getRoomId());
+//                if (existedSession != null) {
+//                    throw new Exception("New start time not available! Class ID [" + existedSession.getClassId() + "] of Teacher ID [" + existedSession.getTeacherId() + "] and Room ID [" + existedSession.getRoomId() + "] took this place!");
+//                }
                 if (changeAllTime) {
                     String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
                     String[] daysOfWeek = updateClass.getShift().getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
@@ -226,12 +248,15 @@ public class SessionService {
                             calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(updateClass.getShift().getTimeStart().split(Constant.SYMBOL_COLON)[0]));
                             calendar.set(Calendar.MINUTE, Integer.valueOf(updateClass.getShift().getTimeStart().split(Constant.SYMBOL_COLON)[1]));
                             int totalSession = sessionList.indexOf(updateSession);
-                            List<Date> dateList = new ArrayList<>();
                             while (totalSession < updateClass.getSlot()) {
                                 if (classService.isDaysInShift(daysOfWeek, calendar)) {
                                     sessionList.get(totalSession).setAClass(updateClass);
                                     sessionList.get(totalSession).setStartTime(calendar.getTime());
                                     Date newDate = new Date();
+//                                    existedSession = checkAvailableTeacherAndRoomOfSession(newStartTime, updateSession.getTeacher().getTeacherId(), updateSession.getRoom().getRoomId());
+//                                    if (existedSession != null) {
+//                                        throw new Exception("New start time not available! Class ID [" + existedSession.getClassId() + "] of Teacher ID: [" + existedSession.getTeacherId() + "] and Room ID [" + existedSession.getRoomId() + "] took this place!");
+//                                    }
                                     newDate.setDate(calendar.getTime().getDate());
                                     newDate.setTime(calendar.getTime().getTime() + updateClass.getShift().getDuration() * 60000);
                                     sessionList.get(totalSession).setEndTime(newDate);
@@ -270,12 +295,15 @@ public class SessionService {
                                     calendar.set(Calendar.MINUTE, Integer.valueOf(newShift.getTimeStart().split(Constant.SYMBOL_COLON)[1]));
                                     int totalSession = sessionList.indexOf(updateSession);
                                     daysOfWeek = classService.convertDowToInteger(newShift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN));
-                                    List<Date> dateList = new ArrayList<>();
                                     while (totalSession < updateClass.getSlot()) {
                                         if (classService.isDaysInShift(daysOfWeek, calendar)) {
                                             sessionList.get(totalSession).setAClass(updateClass);
                                             sessionList.get(totalSession).setStartTime(calendar.getTime());
                                             Date newDate = new Date();
+//                                            existedSession = checkAvailableTeacherAndRoomOfSession(newStartTime, updateSession.getTeacher().getTeacherId(), updateSession.getRoom().getRoomId());
+//                                            if (existedSession != null) {
+//                                                throw new Exception("New start time not available! Class ID [" + existedSession.getClassId() + "] of Teacher ID: [" + existedSession.getTeacherId() + "] and Room ID [" + existedSession.getRoomId() + "] took this place!");
+//                                            }
                                             newDate.setDate(calendar.getTime().getDate());
                                             newDate.setTime(calendar.getTime().getTime() + newShift.getDuration() * 60000);
                                             sessionList.get(totalSession).setEndTime(newDate);
@@ -330,6 +358,7 @@ public class SessionService {
                 newStartTime = sessionList.get(sessionList.indexOf(updateSession)).getStartTime();
             }
             //</editor-fold>
+
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();

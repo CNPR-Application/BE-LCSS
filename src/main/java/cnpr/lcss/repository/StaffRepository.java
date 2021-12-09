@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
-
     @Query("SELECT s.branch.branchId " +
             "FROM Staff AS s " +
             "WHERE s.account.username = :username")
@@ -20,4 +19,6 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     String findBranchNameByStaffUsername(@Param("username") String staffUsername);
 
     Staff findByAccount_Username(String staffUsername);
+
+    boolean existsByAccount_Role_RoleIdAndBranch_BranchId(String roleId, int branchId);
 }

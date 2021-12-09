@@ -1,9 +1,6 @@
 package cnpr.lcss.dao;
 
-import cnpr.lcss.model.SessionClassDto;
-import cnpr.lcss.model.SessionResponseDto;
-import cnpr.lcss.model.StudentScheduleDto;
-import cnpr.lcss.model.TeacherScheduleDto;
+import cnpr.lcss.model.*;
 import cnpr.lcss.util.Constant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -121,6 +118,16 @@ public class Session implements Serializable {
         dto.setSubjectName(aClass.getSubject().getSubjectName());
         dto.setRoomId(room.getRoomId());
         dto.setRoomName(room.getRoomName());
+        return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Convert to ClassIdAndTeacherIdAndRoomIdDto">
+    public ClassIdAndTeacherIdAndRoomIdDto convertToClassIdAndTeacherIdAndRoomIdDto() {
+        ClassIdAndTeacherIdAndRoomIdDto dto = new ClassIdAndTeacherIdAndRoomIdDto();
+        dto.setClassId(aClass.getClassId());
+        dto.setTeacherId(teacher.getTeacherId());
+        dto.setRoomId(room.getRoomId());
         return dto;
     }
     //</editor-fold>

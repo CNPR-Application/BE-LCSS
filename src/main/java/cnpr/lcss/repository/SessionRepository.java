@@ -18,10 +18,9 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
             value = "select ses.* " +
                     "from session as ses " +
                     "join class c on ses.class_id = c.class_id " +
-                    "join branch b on c.branch_id = b.branch_id " +
                     "where c.status = :status " +
                     "and (ses.start_time >= :datetimeStart and ses.end_time <= :datetimeEnd) " +
-                    "and b.branch_id = :branchId " +
+                    "and c.branch_id = :branchId " +
                     "order by ses.start_time asc"
     )
     List<Session> findSessionByDateAndBranchIdAndStatus(@Param("datetimeStart") Date datetimeStart,
@@ -56,4 +55,42 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     List<Session> findByStartTimeAndEndTimeAndTeacherId(Date srchStartTime, Date srchEndTime, int teacherId);
 
     List<Session> findAllByRoom_RoomId(int roomId);
+
+    boolean existsByStartTimeAndTeacher_TeacherIdAndRoom_RoomId(Date startTime, int teacherId, Integer roomId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select ses.* " +
+                    "from session as ses " +
+                    "where ses.start_time = :startTime " +
+                    "and ses.teacher_id = :teacherId " +
+                    "and ses.room_id = :roomId"
+    )
+    Session findByStartTimeAndTeacherIdAndRoomId(@Param(value = "startTime") Date startTime,
+                                                 @Param(value = "teacherId") Integer teacherId,
+                                                 @Param(value = "roomId") Integer roomId);
+
+    boolean existsByStartTimeAndTeacher_TeacherId(Date startTime, int teacherId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select ses.* " +
+                    "from session as ses " +
+                    "where ses.start_time = :startTime " +
+                    "and ses.teacher_id = :teacherId "
+    )
+    Session findByStartTimeAndTeacherId(@Param(value = "startTime") Date startTime,
+                                        @Param(value = "teacherId") Integer teacherId);
+
+    boolean existsByStartTimeAndRoom_RoomId(Date startTime, Integer roomId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select ses.* " +
+                    "from session as ses " +
+                    "where ses.start_time = :startTime " +
+                    "and ses.room_id = :roomId"
+    )
+    Session findByStartTimeAndRoomId(@Param(value = "startTime") Date startTime,
+                                     @Param(value = "roomId") Integer roomId);
 }
