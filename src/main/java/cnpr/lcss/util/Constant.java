@@ -3,7 +3,9 @@ package cnpr.lcss.util;
 import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 public class Constant {
     // <editor-fold desc="Account">
@@ -175,6 +177,45 @@ public class Constant {
     public static final String CURRICULUM = "curriculum";
     public static final String AVATAR = "avatar";
     public static final String SUBJECT = "subject";
+
+    // Image Firebase Link
+    public static String randomAvatar() {
+        ArrayList<String> imgArr = new ArrayList<>();
+        imgArr.add(AVA01);
+        imgArr.add(AVA02);
+        imgArr.add(AVA03);
+        imgArr.add(AVA04);
+        imgArr.add(AVA05);
+        imgArr.add(AVA06);
+        imgArr.add(AVA07);
+        imgArr.add(AVA08);
+        imgArr.add(AVA09);
+        imgArr.add(AVA10);
+        imgArr.add(AVA11);
+        imgArr.add(AVA12);
+        imgArr.add(AVA13);
+        imgArr.add(AVA14);
+        imgArr.add(AVA15);
+        Random randomAva = new Random();
+        int noOfAva = randomAva.nextInt(imgArr.size());
+        return imgArr.get(noOfAva);
+    }
+
+    public static final String AVA01 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/8202997e-1419-4083-9d25-21de7be149ae.jpg?alt=media";
+    public static final String AVA02 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/42780b7d-1838-423d-9095-de05e2a424e4.jpg?alt=media";
+    public static final String AVA03 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/89215548-cc22-4123-9f32-9181b852d098.jpg?alt=media";
+    public static final String AVA04 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/5927cbdb-7461-4709-8ac9-cc7c0ff5b6e6.jpg?alt=media";
+    public static final String AVA05 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/73616c15-5120-41c6-a322-fcfb0e6569e0.jpg?alt=media";
+    public static final String AVA06 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/047249bd-caa8-489d-89cd-e7ac30bad6b5.jpg?alt=media";
+    public static final String AVA07 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/2cf4851b-c1ac-4c7f-b897-92180450443b.jpg?alt=media";
+    public static final String AVA08 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/ef326b6f-e7e7-4f58-b287-c601d10e6add.jpg?alt=media";
+    public static final String AVA09 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/c254a2af-24f6-42af-8d75-ab9ff73520e3.jpg?alt=media";
+    public static final String AVA10 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/6a5e4bea-af0e-4227-92ab-5f00eb5b5048.jpg?alt=media";
+    public static final String AVA11 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/d9a5dda3-04ab-4d8b-add3-0b0a18e5818c.jpg?alt=media";
+    public static final String AVA12 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/afca81b0-1e05-442d-aad7-33703c891360.jpg?alt=media";
+    public static final String AVA13 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/0fcb0fce-83b6-42a6-89ad-7cc5f95c99c6.jpg?alt=media";
+    public static final String AVA14 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/048f08ec-1a58-4410-9e64-f93a50fce840.jpg?alt=media";
+    public static final String AVA15 = "https://firebasestorage.googleapis.com/v0/b/app-test-c1bfb.appspot.com/o/035b2b2d-d667-4929-ad15-db1dade910cd.jpg?alt=media";
     // </editor-fold>
 
     // <editor-fold desc="Registering Guest">
@@ -235,6 +276,7 @@ public class Constant {
      * -----STAFF-----
      */
     // Error Message
+    public static final String UPDATE_BRANCH_FOR_MANAGER_FAILED = "Update branch for Manager FAILED!";
     // </editor-fold>
 
     // <editor-fold desc="Student">
@@ -320,7 +362,7 @@ public class Constant {
     public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_PATTERN = "yyyy-MM-dd";
-    public static final String DAY_END = " 11:59:59";
+    public static final String DAY_END = " 23:59:59";
     public static final String DAY_START = " 00:00:00";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9]+[@]{1}+[a-zA-Z0-9]+[.]{1}+([a-zA-Z0-9]+[.]{1})*+[a-zA-Z0-9]+$";
     public static final String ERROR_SENDING_EMAIL = "Email Authenticated Failed Exception";
@@ -379,6 +421,8 @@ public class Constant {
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";
+    public static final String SYSTEM_NOTI_TITLE_FOR_RELOADING ="[guest/booking]";
+    public static final String SYSTEM_NOTI_BODY_FOR_RELOADING ="reload BE notification";
     // </editor-fold>
 
     // <editor-fold desc="Conversion">

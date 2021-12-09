@@ -44,24 +44,14 @@ public class RoomService {
      * Which are Available from the Date (openingDate)
      * In order to select rooms for class that about to start
      */
-    public ResponseEntity<?> getAvailableRoomsForOpeningClass(int branchId, int shiftId, String openingDate) throws Exception {
+    public ResponseEntity<?> getAvailableRoomsForOpeningClass(int branchId, int shiftId, String insOpnDate) throws Exception {
         try {
             if (!branchRepository.existsById(branchId)) {
                 throw new IllegalArgumentException(Constant.INVALID_BRANCH_ID);
             }
-
-            String datetimeStart, dateTimeEnd;
-            try {
-                Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
-                datetimeStart = openingDate + " " + insShift.getTimeStart() + ":00";
-                dateTimeEnd = openingDate + " " + insShift.getTimeEnd() + ":00";
-            } catch (IllegalArgumentException iae) {
-                iae.printStackTrace();
-                throw new IllegalArgumentException(Constant.INVALID_SHIFT_ID);
-            }
-
-            List<Room> roomQuery = roomRepository.findAvailableRoomsForOpeningClass(branchId, datetimeStart, dateTimeEnd);
-            List<RoomAndBranchDto> roomList = roomQuery.stream().map(Room::convertToRoomAndBranchDto).collect(Collectors.toList());
+            Shift insShift = shiftRepository.findShiftByShiftId(shiftId);
+            List<RoomAndBranchDto> roomList = roomRepository.findAvailableRoomsForOpeningClass(branchId, shiftId)
+                    .stream().map(Room::convertToRoomAndBranchDto).collect(Collectors.toList());
             HashMap<String, Object> mapObj = new LinkedHashMap<>();
             mapObj.put("roomList", roomList);
             return ResponseEntity.ok(mapObj);

@@ -28,6 +28,8 @@ public class RegisteringGuestService {
     BranchRepository branchRepository;
     @Autowired
     RegisteringGuestRepository registeringGuestRepository;
+    @Autowired
+    NotificationService notificationService;
 
     //<editor-fold desc="Convert from Unicode to normal string">
     public static String stripAccents(String s) {
@@ -124,7 +126,7 @@ public class RegisteringGuestService {
             }
 
             registeringGuestRepository.save(newGuest);
-
+            notificationService.createNotificationToStaffForReloading(insGuest.getBranchId());
             return ResponseEntity.ok(true);
         } catch (Exception e) {
             e.printStackTrace();
