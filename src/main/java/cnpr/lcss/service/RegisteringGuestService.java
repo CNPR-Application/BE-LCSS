@@ -156,6 +156,7 @@ public class RegisteringGuestService {
             }
             updateGuest.setDescription(description);
             registeringGuestRepository.save(updateGuest);
+            notificationService.createNotificationToStaffForReloading(updateGuest.getBranch().getBranchId());
             return ResponseEntity.ok(true);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
