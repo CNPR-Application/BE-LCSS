@@ -83,4 +83,12 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                     "where cls.class_id = ?1"
     )
     int findNumberOfSlotByClassId(Integer classId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select cl.class_name\n" +
+                    "from class as cl\n" +
+                    "where cl.class_id = ?1"
+    )
+    String findClassNameByClassId(Integer classId);
 }

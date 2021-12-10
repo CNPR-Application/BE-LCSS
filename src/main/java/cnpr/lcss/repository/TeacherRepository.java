@@ -105,4 +105,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
     @Query("select count(t) from Teacher t left join t.teachingBranchList teachingBranchList where teachingBranchList.branch.branchId = ?1 and t.account.isAvailable = ?2")
     int countDistinctByTeachingBranchList_Branch_BranchIdAndAccount_IsAvailable(int branchId, boolean isAvailable);
+
+    @Query(
+            nativeQuery = true,
+            value = "select t.teacher_username\n" +
+                    "from teacher as t\n" +
+                    "where t.teacher_id = ?1"
+    )
+    String findTeacherUsernameByTeacherId(Integer teacherId);
 }
