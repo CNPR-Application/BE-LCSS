@@ -52,4 +52,12 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
                     "where c.class_id = ?1"
     )
     Integer findRoomIdByClassId(Integer classId);
+
+    @Query(
+            nativeQuery = true,
+            value = "select r.room_name\n" +
+                    "from room as r\n" +
+                    "where r.room_id = ?1"
+    )
+    String findRoomNameByRoomId(Integer roomId);
 }
