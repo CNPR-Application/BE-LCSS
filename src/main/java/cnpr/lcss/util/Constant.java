@@ -249,6 +249,9 @@ public class Constant {
     // Error Message
     public static final String ERROR_GENERATE_SESSIONS = "Error at Generate Sessions!";
     public static final String INVALID_NEW_SESSION = "New Start Time already existed in Session List!";
+    public static final String ERROR_UPDATE_NEW_START_TIME = "Update new start time FAILED!";
+    public static final String ERROR_UPDATE_NEW_ROOM = "Update new room FAILED!";
+    public static final String ERROR_UPDATE_NEW_TEACHER = "Update new teacher FAILED!";
     // </editor-fold>
 
     // <editor-fold desc="Shift">
@@ -421,8 +424,8 @@ public class Constant {
             "\n" +
             "Chân thành cám ơn,\n" +
             "CNPR.";
-    public static final String SYSTEM_NOTI_TITLE_FOR_RELOADING ="[guest/booking]";
-    public static final String SYSTEM_NOTI_BODY_FOR_RELOADING ="reload BE notification";
+    public static final String SYSTEM_NOTI_TITLE_FOR_RELOADING = "[guest/booking]";
+    public static final String SYSTEM_NOTI_BODY_FOR_RELOADING = "reload BE notification";
     // </editor-fold>
 
     // <editor-fold desc="Conversion">

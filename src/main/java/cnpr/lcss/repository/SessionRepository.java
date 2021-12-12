@@ -93,4 +93,16 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     )
     Session findByStartTimeAndRoomId(@Param(value = "startTime") Date startTime,
                                      @Param(value = "roomId") Integer roomId);
+
+    List<Session> findByStartTime(Date startTime);
+
+    @Query(
+            nativeQuery = true,
+            value = "select s.*\n" +
+                    "from session as s\n" +
+                    "where s.room_id = ?1\n" +
+                    "  and s.teacher_id = ?2\n" +
+                    "  and s.class_id != ?3"
+    )
+    Session findByRoom_RoomIdAndTeacher_TeacherIdAndAClass_ClassIdIsNot(Integer roomId, int teacherId, int classId);
 }
