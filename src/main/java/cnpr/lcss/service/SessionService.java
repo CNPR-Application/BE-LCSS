@@ -57,7 +57,7 @@ public class SessionService {
     //</editor-fold>
 
     //<editor-fold desc="Validate Update Session's new Start Time">
-    public void validateUpdateSession_NewStartTime(Date newStartTime, Integer newShiftId, Class updateClass) throws Exception {
+    public void validateUpdateSession_NewStartTime(Date newStartTime, Integer newShiftId, Class updateClass, Boolean changeAllTime) throws Exception {
         String startTime = String.format("%02d", newStartTime.getHours()) + Constant.SYMBOL_COLON + String.format("%02d", newStartTime.getMinutes());
 
         String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
@@ -73,7 +73,8 @@ public class SessionService {
 
         if (!startTime.matches(Constant.TIME_START_PATTERN)) {
             throw new Exception(Constant.TIME_START_PATTERN_ERROR);
-        } else if (!startTime.equals(updateClass.getShift().getTimeStart()) && !isDayInShift && newShiftId.equals(0)) {
+        } else if (newShiftId == 0 && changeAllTime == Boolean.TRUE
+                && (!updateClass.getShift().getTimeStart().equals(startTime) || isDayInShift == Boolean.FALSE)) {
             throw new Exception(Constant.INVALID_NEW_SHIFT_ID);
         }
     }
@@ -81,11 +82,10 @@ public class SessionService {
 
     //<editor-fold desc="Check existence Session by Start Time And Teacher or Start Time and Room">
     public String existSessionByStartTimeAndTeacherOrStartTimeAndRoom(Integer roomId, Integer teacherId, Integer classId) {
-        Session existedSession = sessionRepository.findByRoom_RoomIdAndTeacher_TeacherIdAndAClass_ClassIdIsNot(roomId, teacherId, classId);
         return "New start time not available!\n" +
-                "Class [" + classRepository.findClassNameByClassId(existedSession.getAClass().getClassId()) + " - ID: " + existedSession.getAClass().getClassId() + "]\n" +
-                "of Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacher().getTeacherId()) + " - ID: " + existedSession.getTeacher().getTeacherId() + "]\n" +
-                "and Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoom().getRoomId()) + " - ID: " + existedSession.getRoom().getRoomId() + "] took this place!";
+                "Class [" + classRepository.findClassNameByClassId(classId) + " - ID: " + classId + "]\n" +
+                "of Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(teacherId) + " - ID: " + teacherId + "]\n" +
+                "and Room [" + roomRepository.findRoomNameByRoomId(roomId) + " - ID: " + roomId + "] took this place!";
     }
     //</editor-fold>
 
@@ -311,24 +311,28 @@ public class SessionService {
             Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
             if (!updateSession.getStartTime().equals(newStartTime)) {
-                try {
-                    validateUpdateSession_NewStartTime(newStartTime, newShiftId, updateClass);
-                } catch (Exception e) {
-                    throw new Exception(e);
-                }
+                validateUpdateSession_NewStartTime(newStartTime, newShiftId, updateClass, changeAllTime);
 
                 if (!changeAllTime) {
                     // change new start time for 1 session
                     List<Session> sessionsOfStartTime = sessionRepository.findByStartTime(newStartTime);
                     for (Session ses : sessionsOfStartTime) {
-                        if (ses.getRoom().getRoomId().equals(insNewRoomId)
-                                && ses.getTeacher().getTeacherId() == Integer.parseInt(insNewTeacherId)
-                                && ses.getAClass().getClassId() != updateClass.getClassId()) {
-                            throw new Exception(existSessionByStartTimeAndTeacherOrStartTimeAndRoom(ses.getRoom().getRoomId(), ses.getTeacher().getTeacherId(), ses.getAClass().getClassId()));
-                        } else if (ses.getRoom().getRoomId().equals(insNewRoomId)
-                                && ses.getTeacher().getTeacherId() == Integer.parseInt(insNewTeacherId)
-                                && ses.getAClass().getClassId() == updateClass.getClassId()) {
-                            throw new Exception(Constant.INVALID_NEW_SESSION);
+                        if (ses.getAClass().getClassId() != updateClass.getClassId()) {
+                            // different class
+                            if (ses.getRoom().getRoomId().equals(updateSession.getRoom().getRoomId())
+                                    || ses.getTeacher().getTeacherId() == updateSession.getTeacher().getTeacherId()) {
+                                // same room OR same teacher
+                                throw new Exception(existSessionByStartTimeAndTeacherOrStartTimeAndRoom(ses.getRoom().getRoomId(), ses.getTeacher().getTeacherId(), ses.getAClass().getClassId()));
+                            }
+                        } else {
+                            // same class
+                            if (ses.getRoom().getRoomId().equals(updateSession.getRoom().getRoomId())
+                                    && ses.getTeacher().getTeacherId() == updateSession.getTeacher().getTeacherId())
+                                // same room AND same teacher AND
+                                // not the first session of class
+                                if (!ses.getSessionId().equals(sessionRepository.findSessionByaClass_ClassId(updateClass.getClassId()).get(0).getSessionId())) {
+                                    throw new Exception(Constant.INVALID_NEW_SESSION);
+                                }
                         }
                     }
                     updateNewStartTime(newStartTime, Boolean.FALSE, newShiftId, sessionList, updateSession, updateClass);
@@ -357,230 +361,6 @@ public class SessionService {
                 updateNewRoom(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
                 updateNewTeacher(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
             }
-
-            //<editor-fold desc="CASE 1: Update Session with new Room ID">
-            //            Integer newRoomId;
-            //            if (!insNewRoomId.equals(Constant.NUMBER_ZERO)) {
-            //                newRoomId = Integer.parseInt(insNewRoomId);
-            //                Room updateRoom = roomRepository.getById(newRoomId);
-            //                if (changeAllRoom) {
-            //                    for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
-            //                        sessionList.get(i).setRoom(roomRepository.findByRoomId(newRoomId));
-            //                    }
-            //                    sessionRepository.saveAll(sessionList);
-            //                } else {
-            //                    updateSession.setRoom(roomRepository.findByRoomId(newRoomId));
-            //                    sessionRepository.save(updateSession);
-            //                }
-            //            } else {
-            //                newRoomId = updateSession.getRoom().getRoomId();
-            //            }
-            //            //</editor-fold>
-
-            //<editor-fold desc="CASE 2: Update Session with new Teacher ID">
-            //            Integer newTeacherId;
-            //            if (!insNewTeacherId.equals(Constant.NUMBER_ZERO)) {
-            //                newTeacherId = Integer.parseInt(insNewTeacherId);
-            //                Teacher updateTeacher = teacherRepository.findByTeacherId(newTeacherId);
-            //                if (changeAllTeacher) {
-            //                    for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
-            //                        sessionList.get(i).setTeacher(teacherRepository.findByTeacherId(newTeacherId));
-            //                    }
-            //                    sessionRepository.saveAll(sessionList);
-            //                } else {
-            //                    updateSession.setTeacher(teacherRepository.findByTeacherId(newTeacherId));
-            //                    sessionRepository.save(updateSession);
-            //                }
-            //            } else {
-            //                newTeacherId = updateSession.getTeacher().getTeacherId();
-            //            }
-            //            //</editor-fold>
-
-            //<editor-fold desc="CASE 3: Update Session with new Start Time">
-            //            Date newStartTime = new Date();
-            //            if (!insNewStartTime.equals(Constant.NUMBER_ZERO)) {
-            //                SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATETIME_PATTERN);
-            //                newStartTime = sdf.parse(insNewStartTime);
-            //                String formatStartTime = String.format("%02d", newStartTime.getHours()) + Constant.SYMBOL_COLON + String.format("%02d", newStartTime.getMinutes());
-            //                if (!formatStartTime.matches(Constant.TIME_START_PATTERN)) {
-            //                    throw new Exception(Constant.TIME_START_PATTERN_ERROR);
-            //                }
-            //
-            //                if (changeAllTime) {
-            //                    String newStartTime_dayOfWeek = String.valueOf(newStartTime.getDay() + 1);
-            //                    String[] daysOfWeek = updateClass.getShift().getDayOfWeek().split(Constant.SYMBOL_HYPHEN);
-            //                    daysOfWeek = classService.convertDowToInteger(daysOfWeek);
-            //                    boolean coincidence = false;
-            //                    for (String dow : daysOfWeek) {
-            //                        if (dow.equalsIgnoreCase(newStartTime_dayOfWeek)) {
-            //                            coincidence = true;
-            //                            break;
-            //                        }
-            //                    }
-            //                    if (coincidence) {
-            //                        Calendar calendar = Calendar.getInstance();
-            //                        calendar.setTime(newStartTime);
-            //                        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(newStartTime.getHours()));
-            //                        calendar.set(Calendar.MINUTE, Integer.valueOf(newStartTime.getMinutes()));
-            //                        int totalSession = sessionList.indexOf(updateSession);
-            //
-            //                        // check existence Session by Start Time And Teacher or Start Time and Room
-            //                        while (totalSession < updateClass.getSlot()) {
-            //                            if (classService.isDaysInShift(daysOfWeek, calendar)) {
-            //                                if (sessionRepository.existsByStartTimeAndTeacher_TeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId())) {
-            //                                    ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                                    throw new Exception("Unavailable Teacher!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                            + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                            + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                                } else if (sessionRepository.existsByStartTimeAndRoom_RoomId(calendar.getTime(), updateSession.getRoom().getRoomId())) {
-            //                                    ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                                    throw new Exception("Unavailable Room!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                            + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                            + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                                }
-            //                            }
-            //                            calendar.add(Calendar.DATE, 1);
-            //                        }
-            //
-            //                        try {
-            //                            // reset totalSession
-            //                            totalSession = sessionList.indexOf(updateSession);
-            //                            while (totalSession < updateClass.getSlot()) {
-            //                                if (classService.isDaysInShift(daysOfWeek, calendar)) {
-            //                                    sessionList.get(totalSession).setAClass(updateClass);
-            //                                    sessionList.get(totalSession).setStartTime(calendar.getTime());
-            //                                    Date newDate = new Date();
-            //                                    newDate.setDate(calendar.getTime().getDate());
-            //                                    newDate.setTime(calendar.getTime().getTime() + updateClass.getShift().getDuration() * 60000);
-            //                                    sessionList.get(totalSession).setEndTime(newDate);
-            //                                    totalSession++;
-            //                                }
-            //                                calendar.add(Calendar.DATE, 1);
-            //                            }
-            //                            sessionRepository.saveAll(sessionList);
-            //                        } catch (Exception e) {
-            //                            e.printStackTrace();
-            //                            throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
-            //                        }
-            //
-            //                        for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
-            //                            List<Attendance> attendanceList = attendanceRepository.findBySession_SessionId(sessionList.get(i).getSessionId());
-            //                            for (Attendance attendance : attendanceList) {
-            //                                attendance.setCheckingDate(sessionList.get(i).getStartTime());
-            //                            }
-            //                            attendanceRepository.saveAll(attendanceList);
-            //                        }
-            //                    } else { // New Start Time is NOT a day in Shift
-            //                        if (newShiftId == 0) {
-            //                            throw new Exception(Constant.INVALID_NEW_SHIFT_ID);
-            //                        } else {
-            //                            String newStartTime_startTime = LocalTime.of(newStartTime.getHours(), newStartTime.getMinutes())
-            //                                    .format(DateTimeFormatter.ofPattern(Constant.TIME_PATTERN));
-            //                            String newShift_startTime = shiftRepository.findShift_TimeStartByShiftId(newShiftId);
-            //                            if (!newStartTime_startTime.equalsIgnoreCase(newShift_startTime)) {
-            //                                throw new Exception(Constant.INCOMPATIBLE_START_TIME);
-            //                            } else {
-            //                                Shift newShift = shiftRepository.findShiftByShiftId(newShiftId);
-            //                                Calendar calendar = Calendar.getInstance();
-            //                                calendar.setTime(newStartTime);
-            //                                calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(newShift.getTimeStart().split(Constant.SYMBOL_COLON)[0]));
-            //                                calendar.set(Calendar.MINUTE, Integer.valueOf(newShift.getTimeStart().split(Constant.SYMBOL_COLON)[1]));
-            //                                int totalSession = sessionList.indexOf(updateSession);
-            //                                daysOfWeek = classService.convertDowToInteger(newShift.getDayOfWeek().split(Constant.SYMBOL_HYPHEN));
-            //
-            //                                // check existence Session by Start Time And Teacher or Start Time and Room
-            //                                while (totalSession < updateClass.getSlot()) {
-            //                                    if (classService.isDaysInShift(daysOfWeek, calendar)) {
-            //                                        if (sessionRepository.existsByStartTimeAndTeacher_TeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId())) {
-            //                                            ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                                            throw new Exception("Unavailable Teacher!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                                    + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                                    + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                                        } else if (sessionRepository.existsByStartTimeAndRoom_RoomId(calendar.getTime(), updateSession.getRoom().getRoomId())) {
-            //                                            ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(calendar.getTime(), updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                                            throw new Exception("Unavailable Room!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                                    + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                                    + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                                        }
-            //                                    }
-            //                                    calendar.add(Calendar.DATE, 1);
-            //                                }
-            //
-            //                                try {
-            //                                    // reset totalSession
-            //                                    totalSession = sessionList.indexOf(updateSession);
-            //                                    while (totalSession < updateClass.getSlot()) {
-            //                                        if (classService.isDaysInShift(daysOfWeek, calendar)) {
-            //                                            sessionList.get(totalSession).setAClass(updateClass);
-            //                                            sessionList.get(totalSession).setStartTime(calendar.getTime());
-            //                                            Date newDate = new Date();
-            //                                            newDate.setDate(calendar.getTime().getDate());
-            //                                            newDate.setTime(calendar.getTime().getTime() + newShift.getDuration() * 60000);
-            //                                            sessionList.get(totalSession).setEndTime(newDate);
-            //                                            totalSession++;
-            //                                        }
-            //                                        calendar.add(Calendar.DATE, 1);
-            //                                    }
-            //                                    sessionRepository.saveAll(sessionList);
-            //                                } catch (Exception e) {
-            //                                    e.printStackTrace();
-            //                                    throw new Exception(Constant.ERROR_GENERATE_SESSIONS);
-            //                                }
-            //
-            //                                for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
-            //                                    List<Attendance> attendanceList = attendanceRepository.findBySession_SessionId(sessionList.get(i).getSessionId());
-            //                                    for (Attendance attendance : attendanceList) {
-            //                                        attendance.setCheckingDate(sessionList.get(i).getStartTime());
-            //                                    }
-            //                                    attendanceRepository.saveAll(attendanceList);
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                } else { // changeAllTime = FALSE
-            //                    boolean coincidence = false;
-            //                    for (int i = sessionList.indexOf(updateSession); i < sessionList.size(); i++) {
-            //                        if (sessionList.get(i).getStartTime().compareTo(newStartTime) == 0) {
-            //                            coincidence = true;
-            //                            break;
-            //                        }
-            //                    }
-            //                    if (coincidence) {
-            //                        throw new Exception(Constant.INVALID_NEW_SESSION);
-            //                    } else {
-            //                        // check existence Session by Start Time And Teacher or Start Time and Room
-            //                        if (sessionRepository.existsByStartTimeAndTeacher_TeacherId(newStartTime, updateSession.getTeacher().getTeacherId())) {
-            //                            ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(newStartTime, updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                            throw new Exception("Unavailable Teacher!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                    + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                    + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                        } else if (sessionRepository.existsByStartTimeAndRoom_RoomId(newStartTime, updateSession.getRoom().getRoomId())) {
-            //                            ClassIdAndTeacherIdAndRoomIdDto existedSession = sessionRepository.findByStartTimeAndTeacherId(newStartTime, updateSession.getTeacher().getTeacherId()).convertToClassIdAndTeacherIdAndRoomIdDto();
-            //                            throw new Exception("Unavailable Room!\nClass [" + classRepository.findClassNameByClassId(existedSession.getClassId()) + " - ID: " + existedSession.getClassId()
-            //                                    + "]\nof Teacher [" + teacherRepository.findTeacherUsernameByTeacherId(existedSession.getTeacherId()) + " - ID: " + existedSession.getTeacherId()
-            //                                    + "]\nand Room [" + roomRepository.findRoomNameByRoomId(existedSession.getRoomId()) + " - ID: " + existedSession.getRoomId() + "] took this place!");
-            //                        } else {
-            //                            updateSession.setStartTime(newStartTime);
-            //                            Shift updateClass_Shift = shiftRepository.findByClassList_ClassId(classId);
-            //                            Date newDate = new Date();
-            //                            newDate.setDate(newStartTime.getDate());
-            //                            newDate.setTime(newStartTime.getTime() + updateClass_Shift.getDuration() * 60000);
-            //                            updateSession.setEndTime(newDate);
-            //                            sessionRepository.save(updateSession);
-            //
-            //                            List<Attendance> attendanceList = attendanceRepository.findBySession_SessionId(updateSession.getSessionId());
-            //                            for (Attendance attendance : attendanceList) {
-            //                                attendance.setCheckingDate(newStartTime);
-            //                            }
-            //                            attendanceRepository.saveAll(attendanceList);
-            //                        }
-            //                    }
-            //                }
-            //            } else {
-            //                newStartTime = sessionList.get(sessionList.indexOf(updateSession)).getStartTime();
-            //            }
-            //            //</editor-fold>
-
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
