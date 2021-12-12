@@ -362,7 +362,7 @@ public class Constant {
      */
     // String
     public static final String CAPITAL_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 25 14 * * *";
+    public static final String CRON_EVERY_DAY_AT_MIDNIGHT = "0 0 0 * * *";
     public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final String DAY_END = " 23:59:59";
@@ -384,7 +384,7 @@ public class Constant {
     public static final String PHONE_PATTERN = "(84|0[3|5|7|8|9])+([0-9]{8})\\b";
     public static final String RATING_PATTERN = "#.#";
     public static final String SECRET_KEY = "LCSS_FA21#CNPR";
-    public static final String SPECIAL_CHARACTERS = "!@#$";
+    public static final String SPECIAL_CHARACTERS = "!#$";
     public static final String STRING_AUTHORIZATION = "Authorization";
     public static final String SYMBOL_COLON = ":";
     public static final String SYMBOL_HYPHEN = "-";
