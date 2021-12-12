@@ -161,7 +161,9 @@ public class SessionService {
             if (changeAllRoom == Boolean.TRUE) {
                 // change room for all sessions
                 for (Session ses : sessionList) {
-                    ses.setRoom(newRoom);
+                    if (ses.getSessionId().compareTo(updateSession.getSessionId()) >= 0) {
+                        ses.setRoom(newRoom);
+                    }
                 }
                 sessionRepository.saveAll(sessionList);
             } else {
@@ -183,7 +185,9 @@ public class SessionService {
             if (changeAllTeacher == Boolean.TRUE) {
                 // change teacher for all sessions
                 for (Session ses : sessionList) {
-                    ses.setTeacher(newTeacher);
+                    if (ses.getSessionId().compareTo(updateSession.getSessionId()) >= 0) {
+                        ses.setTeacher(newTeacher);
+                    }
                 }
                 sessionRepository.saveAll(sessionList);
             } else {
@@ -310,7 +314,9 @@ public class SessionService {
             Boolean changeAllTime = Boolean.valueOf(reqBody.get("changeAllTime").toString());
             Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
-            if (!updateSession.getStartTime().equals(newStartTime)) {
+            if (!newStartTime.equals(updateSession.getStartTime())) {
+                System.out.println(newStartTime);
+                System.out.println(updateSession.getStartTime());
                 validateUpdateSession_NewStartTime(newStartTime, newShiftId, updateClass, changeAllTime);
 
                 if (!changeAllTime) {
@@ -359,7 +365,7 @@ public class SessionService {
                 }
             } else {
                 updateNewRoom(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
-                updateNewTeacher(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
+                updateNewTeacher(Integer.parseInt(insNewTeacherId), changeAllTeacher, sessionList, updateSession);
             }
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
