@@ -315,8 +315,6 @@ public class SessionService {
             Integer newShiftId = Integer.parseInt(reqBody.get("newShiftId").toString());
 
             if (!newStartTime.equals(updateSession.getStartTime())) {
-                System.out.println(newStartTime);
-                System.out.println(updateSession.getStartTime());
                 validateUpdateSession_NewStartTime(newStartTime, newShiftId, updateClass, changeAllTime);
 
                 if (!changeAllTime) {
@@ -343,7 +341,7 @@ public class SessionService {
                     }
                     updateNewStartTime(newStartTime, Boolean.FALSE, newShiftId, sessionList, updateSession, updateClass);
                     updateNewRoom(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
-                    updateNewTeacher(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
+                    updateNewTeacher(Integer.parseInt(insNewTeacherId), changeAllTeacher, sessionList, updateSession);
                 } else {
                     // change all time by new start time
                     Integer noOfSession = sessionList.indexOf(updateSession);
@@ -361,7 +359,7 @@ public class SessionService {
                     }
                     updateNewStartTime(newStartTime, Boolean.TRUE, newShiftId, sessionList, updateSession, updateClass);
                     updateNewRoom(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
-                    updateNewTeacher(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
+                    updateNewTeacher(Integer.parseInt(insNewTeacherId), changeAllTeacher, sessionList, updateSession);
                 }
             } else {
                 updateNewRoom(Integer.parseInt(insNewRoomId), changeAllRoom, sessionList, updateSession);
