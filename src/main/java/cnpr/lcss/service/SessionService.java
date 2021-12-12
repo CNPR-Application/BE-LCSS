@@ -162,6 +162,7 @@ public class SessionService {
                 // change room for all sessions
                 for (Session ses : sessionList) {
                     if (ses.getSessionId().compareTo(updateSession.getSessionId()) >= 0) {
+                        // TODO: check session's room available
                         ses.setRoom(newRoom);
                     }
                 }
@@ -184,10 +185,22 @@ public class SessionService {
             Teacher newTeacher = teacherRepository.findByTeacherId(newTeacherId);
             if (changeAllTeacher == Boolean.TRUE) {
                 // change teacher for all sessions
+                List<Session> sessionsOfAllStartTime = new ArrayList<>();
                 for (Session ses : sessionList) {
                     if (ses.getSessionId().compareTo(updateSession.getSessionId()) >= 0) {
-                        ses.setTeacher(newTeacher);
+                        // TODO: check session's teacher available
+                        List<Session> sessionsOfStartTime = sessionRepository.findByStartTime(ses.getStartTime());
+                        for (Session ss : sessionsOfStartTime) {
+                            if (ss.getTeacher().getTeacherId() == newTeacherId
+                                    && ss.getAClass().getClassId() != updateSession.getAClass().getClassId()) {
+                                throw new Exception(existSessionByStartTimeAndTeacherOrStartTimeAndRoom(ss.getRoom().getRoomId(), ss.getTeacher().getTeacherId(), ss.getAClass().getClassId()));
+                            }
+                            sessionsOfAllStartTime.add(ss);
+                        }
                     }
+                }
+                for (Session session : sessionsOfAllStartTime) {
+                    session.setTeacher(newTeacher);
                 }
                 sessionRepository.saveAll(sessionList);
             } else {

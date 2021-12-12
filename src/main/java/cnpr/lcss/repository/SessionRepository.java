@@ -105,4 +105,6 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
                     "  and s.class_id != ?3"
     )
     Session findByRoom_RoomIdAndTeacher_TeacherIdAndAClass_ClassIdIsNot(Integer roomId, int teacherId, int classId);
+
+    boolean existsByTeacher_TeacherIdAndStartTimeAndAClass_ClassIdIsNot(int teacherId, Date startTime, int classId);
 }
