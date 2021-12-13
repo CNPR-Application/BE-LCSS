@@ -664,7 +664,7 @@ public class AccountService implements UserDetailsService {
             String parentPhone = (String) reqBody.get("parentPhone");
             String experience = (String) reqBody.get("experience");
             Boolean isAvailable = (Boolean) reqBody.get("isAvailable");
-            Integer newBranchId = Integer.parseInt((String) reqBody.get("branchId"));
+            Integer newBranchId = Integer.parseInt(reqBody.get("branchId").toString());
             Account updateAccount = accountRepository.findOneByUsername(username);
 
             //<editor-fold desc="GENERAL INFORMATION">
@@ -732,22 +732,21 @@ public class AccountService implements UserDetailsService {
             }
             //</editor-fold>
 
-            // Update Branch for Manager
-            // Each branch has only one Manager
-            try {
-                Integer manager_branchId = staffRepository.findBranchIdByStaffUsername(updateAccount.getUsername());
-                if (manager_branchId != null && updateAccount.getRole().getRoleId().equals(Constant.ROLE_MANAGER)) {
-                    if (!staffRepository.existsByAccount_Role_RoleIdAndBranch_BranchId(Constant.ROLE_MANAGER, manager_branchId)) {
-                        Staff updateStaff = staffRepository.findByAccount_Username(updateAccount.getUsername());
-                        updateStaff.setBranch(branchRepository.findByBranchId(newBranchId));
-                        staffRepository.save(updateStaff);
-                    }
-                }
-            } catch (Exception e) {
-                throw new Exception(Constant.UPDATE_BRANCH_FOR_MANAGER_FAILED);
-            }
-
             accountRepository.save(updateAccount);
+
+            //<editor-fold desc="MANAGER INFORMATION">
+            // Each branch has only one Manager
+            Staff manager = staffRepository.findByAccount_Username(username);
+            if (!newBranchId.equals(manager.getBranch().getBranchId()) && manager.getAccount().getRole().getRoleId().equals(Constant.ROLE_MANAGER)) {
+                if (!staffRepository.existsByAccount_Role_RoleIdAndBranch_BranchId(Constant.ROLE_MANAGER, newBranchId)) {
+                    manager.setBranch(branchRepository.findByBranchId(newBranchId));
+                    staffRepository.save(manager);
+                } else {
+                    throw new Exception(Constant.MANAGER_EXISTED_IN_BRANCH);
+                }
+            }
+            //</editor-fold>
+
             return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();

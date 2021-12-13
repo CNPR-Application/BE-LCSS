@@ -280,6 +280,7 @@ public class Constant {
      */
     // Error Message
     public static final String UPDATE_BRANCH_FOR_MANAGER_FAILED = "Update branch for Manager FAILED!";
+    public static final String MANAGER_EXISTED_IN_BRANCH = "This branch already had a manager!";
     // </editor-fold>
 
     // <editor-fold desc="Student">
